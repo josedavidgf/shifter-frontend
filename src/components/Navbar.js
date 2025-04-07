@@ -1,14 +1,16 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
 function Navbar() {
     const { currentUser, logout } = useAuth();
+    const navigate = useNavigate();
 
     const handleLogout = async () => {
         try {
             await logout();
             alert('Sesión cerrada');
+            navigate('/login');  // Redirigir al login después de cerrar sesión
         } catch (error) {
             console.log('Error al cerrar sesión:', error.message);
         }

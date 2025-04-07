@@ -1,7 +1,5 @@
-// src/context/AuthContext.js
 import React, { useContext, useState, useEffect, createContext } from 'react';
-import { onAuthStateChanged, signOut } from 'firebase/auth';
-import { auth } from '../config/firebaseConfig';
+import supabase from '../config/supabase';
 
 const AuthContext = createContext();
 
@@ -13,18 +11,29 @@ export function AuthProvider({ children }) {
     const [currentUser, setCurrentUser] = useState(null);
     const [loading, setLoading] = useState(true);
 
+    // Verificar el estado de autenticación al cargar la aplicación
     useEffect(() => {
-        const unsubscribe = onAuthStateChanged(auth, (user) => {
-            setCurrentUser(user);
-            setLoading(false);
-        });
-
-        return unsubscribe;
+        const checkSession = async () => {
+            try {
+                const { data } = await supabase.auth.getSession();
+                setCurrentUser(data.session?.user || null);
+            } catch (error) {
+                console.error('Error fetching session:', error.message);
+            } finally {
+                setLoading(false);
+            }
+        };
+        checkSession();
     }, []);
 
+    // Cerrar sesión
     const logout = async () => {
-        await signOut(auth);
-        setCurrentUser(null);
+        try {
+            await supabase.auth.signOut();
+            setCurrentUser(null);
+        } catch (error) {
+            console.error('Error during logout:', error.message);
+        }
     };
 
     const value = {
