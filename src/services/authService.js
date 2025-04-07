@@ -1,26 +1,38 @@
 import axios from 'axios';
 
-const API_URL = 'http://localhost:4000/api/auth';
+const BASE_URL = process.env.REACT_APP_BACKEND_URL;
 
-// Registro
-export const register = async (email, password) => {
-  const response = await axios.post(`${API_URL}/register`, { email, password });
-  return response.data;
-};
+// Registro de usuario
+export async function registerUser(email, password) {
+    try {
+        const response = await axios.post(`${BASE_URL}/api/auth/register`, { email, password });
+        return response.data;
+    } catch (err) {
+        throw new Error(err.response?.data?.message || 'Error al registrar');
+    }
+}
 
 // Inicio de sesión
-export const login = async (email, password) => {
-  const response = await axios.post(`${API_URL}/login`, { email, password });
-  localStorage.setItem('token', response.data.data.session.access_token);
-  return response.data;
-};
+export async function loginUser(email, password) {
+    try {
+        const response = await axios.post(`${BASE_URL}/api/auth/login`, { email, password });
+        return response.data;
+    } catch (err) {
+        throw new Error(err.response?.data?.message || 'Error al iniciar sesión');
+    }
+}
 
-// Cerrar sesión
-export const logout = () => {
-  localStorage.removeItem('token');
-};
-
-// Obtener el token del usuario actual
-export const getToken = () => {
-  return localStorage.getItem('token');
-};
+// Obtener perfil de usuario
+export async function getUserProfile() {
+    try {
+        const token = localStorage.getItem('token');
+        const response = await axios.get(`${BASE_URL}/api/auth/profile`, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
+        return response.data;
+    } catch (err) {
+        throw new Error(err.response?.data?.message || 'Error al obtener el perfil');
+    }
+}

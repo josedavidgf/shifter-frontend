@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 
-function Login() {
-    const { login } = useAuth();
+function Register() {
+    const { register } = useAuth();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
@@ -12,9 +12,9 @@ function Login() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            await login(email, password);
-            alert('Inicio de sesión exitoso');
-            navigate('/dashboard');  // Redirigir después del login
+            await register(email, password);
+            alert('Registro exitoso');
+            navigate('/dashboard');
         } catch (err) {
             setError(err.message);
         }
@@ -22,7 +22,7 @@ function Login() {
 
     return (
         <div>
-            <h2>Iniciar Sesión</h2>
+            <h2>Registro</h2>
             {error && <p style={{ color: 'red' }}>{error}</p>}
             <form onSubmit={handleSubmit}>
                 <input
@@ -37,10 +37,10 @@ function Login() {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                 />
-                <button type="submit">Iniciar Sesión</button>
+                <button type="submit">Registrarse</button>
             </form>
         </div>
     );
 }
 
-export default Login;
+export default Register;

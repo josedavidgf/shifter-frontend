@@ -1,11 +1,15 @@
-// src/pages/Home.js
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 function Home() {
     return (
         <div>
             <h1>Bienvenido a Shifter</h1>
-            <p>Gestiona tus intercambios de turnos fácilmente.</p>
+            <p>Intercambia turnos de manera sencilla y rápida.</p>
+            <nav>
+                <Link to="/login">Iniciar Sesión</Link> | 
+                <Link to="/register">Registrarse</Link>
+            </nav>
         </div>
     );
 }

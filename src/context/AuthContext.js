@@ -1,5 +1,5 @@
-import React, { useContext, useState, useEffect, createContext } from 'react';
-import supabase from '../config/supabase';
+import React, { createContext, useContext, useState } from 'react';
+import { loginUser, registerUser } from '../services/authService';
 
 const AuthContext = createContext();
 
@@ -9,41 +9,52 @@ export function useAuth() {
 
 export function AuthProvider({ children }) {
     const [currentUser, setCurrentUser] = useState(null);
-    const [loading, setLoading] = useState(true);
 
-    // Verificar el estado de autenticación al cargar la aplicación
-    useEffect(() => {
-        const checkSession = async () => {
-            try {
-                const { data } = await supabase.auth.getSession();
-                setCurrentUser(data.session?.user || null);
-            } catch (error) {
-                console.error('Error fetching session:', error.message);
-            } finally {
-                setLoading(false);
-            }
-        };
-        checkSession();
-    }, []);
-
-    // Cerrar sesión
-    const logout = async () => {
+    async function register(email, password) {
         try {
-            await supabase.auth.signOut();
-            setCurrentUser(null);
+            const data = await registerUser(email, password);
+            const accessToken = data.data.session.access_token;
+    
+            if (!accessToken) throw new Error('Token no encontrado');
+    
+            localStorage.setItem('token', accessToken);
+            setCurrentUser({ token: accessToken });
+            return data;
         } catch (error) {
-            console.error('Error during logout:', error.message);
+            throw new Error(error.message);
         }
-    };
+    }
+
+    async function login(email, password) {
+        try {
+            const data = await loginUser(email, password);
+            const accessToken = data.data.session.access_token;
+    
+            if (!accessToken) throw new Error('Token no encontrado');
+    
+            localStorage.setItem('token', accessToken);
+            setCurrentUser({ token: accessToken });
+            return data;
+        } catch (error) {
+            throw new Error(error.message);
+        }
+    }
+
+    function logout() {
+        localStorage.removeItem('token');
+        setCurrentUser(null);
+    }
 
     const value = {
         currentUser,
+        register,
+        login,
         logout,
     };
 
     return (
         <AuthContext.Provider value={value}>
-            {!loading && children}
+            {children}
         </AuthContext.Provider>
     );
 }
