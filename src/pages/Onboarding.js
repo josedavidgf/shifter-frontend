@@ -11,7 +11,7 @@ function Onboarding() {
     const [workerTypes, setWorkerTypes] = useState([]);
     const [error, setError] = useState('');
     const navigate = useNavigate();
-    const { getToken,completeOnboarding } = useAuth();
+    const { getToken,completeOnboarding, logout } = useAuth();
 
 
     useEffect(() => {
@@ -55,6 +55,14 @@ function Onboarding() {
         }
     };
     
+    const handleLogout = async () => {
+        try {
+            await logout();
+            alert('Sesión cerrada');
+        } catch (error) {
+            console.log('Error al cerrar sesión:', error.message);
+        }
+    };
     
 
     return (
@@ -96,6 +104,7 @@ function Onboarding() {
                     </select>
                 </div>
                 <button type="submit">Guardar</button>
+                <button onClick={handleLogout}>Logout</button>
             </form>
         </div>
     );

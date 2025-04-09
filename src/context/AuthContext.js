@@ -1,5 +1,8 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import supabase from '../config/supabase';
+import { checkIfWorkerExists } from '../services/userService';
+import { useNavigate } from 'react-router-dom';
+
 
 const AuthContext = createContext();
 
@@ -10,6 +13,8 @@ export function useAuth() {
 export function AuthProvider({ children }) {
     const [currentUser, setCurrentUser] = useState(null);
     const [loading, setLoading] = useState(true);
+    const navigate = useNavigate();
+    
 
     // Recuperar usuario al iniciar app
     useEffect(() => {
@@ -43,8 +48,24 @@ export function AuthProvider({ children }) {
         try {
             const { data, error } = await supabase.auth.signInWithPassword({ email, password });
             if (error) throw error;
+
+            const user = data.user;
             localStorage.setItem('token', data.session.access_token);
             setCurrentUser(data.user);
+
+            console.log('🧑 ID del usuario logueado:', user.id);
+            
+            const isWorker = await checkIfWorkerExists(user.id);
+            if (isWorker) {
+                localStorage.setItem('hasCompletedOnboarding', 'true');
+                setHasCompletedOnboarding(true); // 👈 importante si usas estado reactivo
+                navigate('/dashboard');          // 👈 redirección directa
+            } else {
+                localStorage.removeItem('hasCompletedOnboarding'); // 👈 por si quedó guardado antes
+                setHasCompletedOnboarding(false);
+                navigate('/onboarding'); // 👈 aquí faltaba el else
+            }
+
             return data;
         } catch (err) {
             throw new Error(err.message);
@@ -57,6 +78,7 @@ export function AuthProvider({ children }) {
         localStorage.removeItem('token');
         localStorage.removeItem('hasCompletedOnboarding');
         setCurrentUser(null);
+        setHasCompletedOnboarding(false);
     };
 
     // Obtener token actual
