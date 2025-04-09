@@ -71,6 +71,19 @@ export function AuthProvider({ children }) {
             throw new Error(err.message);
         }
     };
+    const loginWithGoogle = async () => {
+        try {
+          const { error } = await supabase.auth.signInWithOAuth({
+            provider: 'google',
+          });
+          if (error) throw error;
+          // El usuario será redirigido automáticamente
+        } catch (err) {
+          console.error('Google login error:', err.message);
+          throw err;
+        }
+      };
+      
 
     // Logout
     const logout = async () => {
@@ -107,6 +120,7 @@ export function AuthProvider({ children }) {
         getToken,
         hasCompletedOnboarding,
         completeOnboarding,
+        loginWithGoogle,
     };
 
     return (

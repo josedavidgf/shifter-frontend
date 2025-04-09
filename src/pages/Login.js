@@ -3,7 +3,7 @@ import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 
 function Login() {
-    const { login } = useAuth();
+    const { login, loginWithGoogle } = useAuth();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
@@ -39,6 +39,8 @@ function Login() {
                 />
                 <button type="submit">Iniciar Sesión</button>
             </form>
+            <hr />
+            <button onClick={loginWithGoogle}>Sign in with Google</button>
         </div>
     );
 }
