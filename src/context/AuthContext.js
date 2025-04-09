@@ -55,6 +55,7 @@ export function AuthProvider({ children }) {
     const logout = async () => {
         await supabase.auth.signOut();
         localStorage.removeItem('token');
+        localStorage.removeItem('hasCompletedOnboarding');
         setCurrentUser(null);
     };
 
@@ -66,9 +67,14 @@ export function AuthProvider({ children }) {
         return data.session.access_token;
     };
 
-    const [hasCompletedOnboarding] = useState(() =>
+    const [hasCompletedOnboarding, setHasCompletedOnboarding] = useState(() =>
         localStorage.getItem('hasCompletedOnboarding') === 'true'
       );
+      
+      const completeOnboarding = () => {
+        localStorage.setItem('hasCompletedOnboarding', 'true');
+        setHasCompletedOnboarding(true); // 👈 esto forzará el rerender
+      };
       
 
     const value = {
@@ -78,6 +84,7 @@ export function AuthProvider({ children }) {
         logout,
         getToken,
         hasCompletedOnboarding,
+        completeOnboarding,
     };
 
     return (

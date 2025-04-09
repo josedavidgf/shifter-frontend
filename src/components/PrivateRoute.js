@@ -15,6 +15,9 @@ const PrivateRoute = ({ children }) => {
   if (hasCompletedOnboarding && location.pathname === '/onboarding') {
     return <Navigate to="/dashboard" />;
   }
+    console.log('🧭 currentUser:', currentUser);
+    console.log('🎯 hasCompletedOnboarding:', hasCompletedOnboarding);
+
 
   return children;
 };
