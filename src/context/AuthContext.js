@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { loginUser, registerUser } from '../services/authService';
+import supabase from '../config/supabase';
 
 const AuthContext = createContext();
 
@@ -9,63 +9,80 @@ export function useAuth() {
 
 export function AuthProvider({ children }) {
     const [currentUser, setCurrentUser] = useState(null);
+    const [loading, setLoading] = useState(true);
 
-    // Cargar el usuario desde el localStorage al iniciar la aplicación
+    // Recuperar usuario al iniciar app
     useEffect(() => {
-        const token = localStorage.getItem('token');
-        if (token) {
-            setCurrentUser({ token });
-        }
+        const checkUser = async () => {
+            const { data, error } = await supabase.auth.getUser();
+            if (error || !data?.user) {
+                setCurrentUser(null);
+            } else {
+                setCurrentUser(data.user);
+            }
+            setLoading(false);
+        };
+        checkUser();
     }, []);
 
-    // Registro de usuario
-    async function register(email, password) {
+    // Registro
+    const register = async (email, password) => {
         try {
-            const data = await registerUser(email, password);
-            const accessToken = data.data.session.access_token;
-
-            if (!accessToken) throw new Error('Token no encontrado');
-
-            localStorage.setItem('token', accessToken);
-            setCurrentUser({ token: accessToken });
+            const { data, error } = await supabase.auth.signUp({ email, password });
+            if (error) throw error;
+            localStorage.setItem('token', data.session.access_token);
+            setCurrentUser(data.user);
             return data;
-        } catch (error) {
-            throw new Error(error.message);
+        } catch (err) {
+            throw new Error(err.message);
         }
-    }
+    };
 
-    // Inicio de sesión
-    async function login(email, password) {
+    // Login
+    const login = async (email, password) => {
         try {
-            const data = await loginUser(email, password);
-            const accessToken = data.data.session.access_token;
-
-            if (!accessToken) throw new Error('Token no encontrado');
-
-            localStorage.setItem('token', accessToken);
-            setCurrentUser({ token: accessToken });
+            const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+            if (error) throw error;
+            localStorage.setItem('token', data.session.access_token);
+            setCurrentUser(data.user);
             return data;
-        } catch (error) {
-            throw new Error(error.message);
+        } catch (err) {
+            throw new Error(err.message);
         }
-    }
+    };
 
-    // Cerrar sesión
-    function logout() {
+    // Logout
+    const logout = async () => {
+        await supabase.auth.signOut();
         localStorage.removeItem('token');
         setCurrentUser(null);
-    }
+    };
+
+    // Obtener token actual
+    const getToken = async () => {
+        const { data, error } = await supabase.auth.getSession();
+        console.log('🧪 Token desde getToken:', data?.session?.access_token);
+        if (error || !data?.session?.access_token) return null;
+        return data.session.access_token;
+    };
+
+    const [hasCompletedOnboarding] = useState(() =>
+        localStorage.getItem('hasCompletedOnboarding') === 'true'
+      );
+      
 
     const value = {
         currentUser,
         register,
         login,
         logout,
+        getToken,
+        hasCompletedOnboarding,
     };
 
     return (
         <AuthContext.Provider value={value}>
-            {children}
+            {!loading && children}
         </AuthContext.Provider>
     );
 }

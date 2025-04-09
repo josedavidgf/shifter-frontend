@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { getWorkerTypes, createWorker } from '../services/workerService';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 
 
 function Onboarding() {
@@ -10,6 +11,7 @@ function Onboarding() {
     const [workerTypes, setWorkerTypes] = useState([]);
     const [error, setError] = useState('');
     const navigate = useNavigate();
+    const { getToken } = useAuth();
 
 
     useEffect(() => {
@@ -27,20 +29,22 @@ function Onboarding() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        const token = await getToken();
         try {
             // Recoger los datos del formulario
             const workerData = {
                 name: name.trim(),
                 surname: surname.trim(),
-                workerType: workerType,  // Asegúrate de que workerType sea un UUID
+                workerType: workerType,
             };
             console.log('Datos a enviar:', workerData);
     
-            const response = await createWorker(workerData);
-    
+            const response = await createWorker(workerData,token);
+            console.log('Response:', response);
             if (response?.success) {
                 alert('Trabajador creado con éxito');
                 navigate('/dashboard');
+                localStorage.setItem('hasCompletedOnboarding', 'true');
             } else {
                 throw new Error(response?.message || 'Error al crear el trabajador');
             }

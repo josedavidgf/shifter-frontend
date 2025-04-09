@@ -1,38 +1,29 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { useAuth } from '../context/AuthContext';
-import { getUserProfile } from '../services/authService';
 
 function Dashboard() {
-    const { logout } = useAuth();
-    const [profile, setProfile] = useState(null);
+    const { currentUser, logout } = useAuth();
 
-    useEffect(() => {
-        async function fetchProfile() {
-            try {
-                const data = await getUserProfile();
-                setProfile(data.user);
-            } catch (err) {
-                console.error('Error al obtener el perfil:', err.message);
-            }
+    const handleLogout = async () => {
+        try {
+            await logout();
+            alert('Sesión cerrada');
+        } catch (error) {
+            console.log('Error al cerrar sesión:', error.message);
         }
-        fetchProfile();
-    }, []);
-
-    const handleLogout = () => {
-        logout();
-        alert('Sesión cerrada');
-        window.location.href = '/login';
     };
 
     return (
         <div>
             <h2>Dashboard</h2>
-            {profile ? (
-                <p>Bienvenido, {profile.email}</p>
+            {currentUser ? (
+                <div>
+                    <p>Usuario logueado: {currentUser.email}</p>
+                    <button onClick={handleLogout}>Logout</button>
+                </div>
             ) : (
-                <p>Cargando perfil...</p>
+                <p>No hay usuario logueado</p>
             )}
-            <button onClick={handleLogout}>Logout</button>
         </div>
     );
 }

@@ -19,17 +19,18 @@ export async function getWorkerTypes() {
     }
 }
 
-export async function createWorker(workerData) {
-    try {
-        const token = localStorage.getItem('token');
-        const response = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/workers`, workerData, {
+export async function createWorker(data, token) {
+    console.log('📤 Enviando token al backend:', token); // 👈
+    try{
+        console.log('📤 Datos a enviar:', data,token); // 👈
+        const response = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/workers`, data, {
             headers: {
                 Authorization: `Bearer ${token}`,
             },
         });
         return response.data;
     } catch (error) {
-        console.error('❌ Error al crear el trabajador:', error.response?.data || error.message);
+        console.error('Error al crear trabajador:', error.message?.data || error.message);
         throw error;
     }
 }
