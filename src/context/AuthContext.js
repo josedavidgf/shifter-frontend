@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import supabase from '../config/supabase';
-import { checkIfWorkerExists } from '../services/userService';
+import { checkIfWorkerExists, checkIfWorkerHasHospitalAndSpeciality } from '../services/userService';
 import { useNavigate } from 'react-router-dom';
 
 
@@ -46,29 +46,39 @@ export function AuthProvider({ children }) {
     // Login
     const login = async (email, password) => {
         try {
-            const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-            if (error) throw error;
-
-            const user = data.user;
-            localStorage.setItem('token', data.session.access_token);
-            setCurrentUser(data.user);
-
-            console.log('🧑 ID del usuario logueado:', user.id);
-            
-            const isWorker = await checkIfWorkerExists(user.id);
-            if (isWorker) {
-                localStorage.setItem('hasCompletedOnboarding', 'true');
-                setHasCompletedOnboarding(true); // 👈 importante si usas estado reactivo
-                navigate('/dashboard');          // 👈 redirección directa
+          const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+          if (error) throw error;
+      
+          const user = data.user;
+          localStorage.setItem('token', data.session.access_token);
+          setCurrentUser(user);
+      
+          console.log('🧑 ID del usuario logueado:', user.id);
+      
+          const isWorker = await checkIfWorkerExists(user.id);
+      
+          if (isWorker) {
+            const hasFullOnboarding = await checkIfWorkerHasHospitalAndSpeciality(user.id);
+      
+            if (hasFullOnboarding) {
+              localStorage.setItem('hasCompletedOnboarding', 'true');
+              setHasCompletedOnboarding(true);
+              navigate('/dashboard');
             } else {
-                localStorage.removeItem('hasCompletedOnboarding'); // 👈 por si quedó guardado antes
-                setHasCompletedOnboarding(false);
-                navigate('/onboarding'); // 👈 aquí faltaba el else
+              localStorage.removeItem('hasCompletedOnboarding');
+              setHasCompletedOnboarding(false);
+              navigate('/onboarding/step-2');
             }
-
-            return data;
+      
+          } else {
+            localStorage.removeItem('hasCompletedOnboarding');
+            setHasCompletedOnboarding(false);
+            navigate('/onboarding');
+          }
+      
+          return data;
         } catch (err) {
-            throw new Error(err.message);
+          throw new Error(err.message);
         }
     };
     const loginWithGoogle = async () => {

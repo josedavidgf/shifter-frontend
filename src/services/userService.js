@@ -19,3 +19,13 @@ export const checkIfWorkerExists = async (userId) => {
 
     return !!data;
 };
+
+export const checkIfWorkerHasHospitalAndSpeciality = async (userId) => {
+    const [hospitals, specialities] = await Promise.all([
+      supabase.from('workers_hospitals').select('*').eq('worker_id', userId),
+      supabase.from('workers_specialities').select('*').eq('worker_id', userId),
+    ]);
+  
+    return (hospitals?.data?.length > 0 && specialities?.data?.length > 0);
+  };
+  

@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
 
-function Onboarding() {
+function OnboardingStep1() {
     const [name, setName] = useState('');
     const [surname, setSurname] = useState('');
     const [workerType, setWorkerType] = useState('');
@@ -110,4 +110,4 @@ function Onboarding() {
     );
 }
 
-export default Onboarding;
+export default OnboardingStep1;

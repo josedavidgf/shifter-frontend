@@ -34,3 +34,27 @@ export async function createWorker(data, token) {
         throw error;
     }
 }
+
+export const createWorkerHospital = async (workerId, hospitalId, token) => {
+const response = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/workers/hospitals`, {
+    worker_id: workerId,
+    hospital_id: hospitalId,
+}, {
+    headers: { Authorization: `Bearer ${token}` }
+});
+
+return response.data;
+};
+
+export const createWorkerSpeciality = async (workerId, specialityId, qualificationLevel, token) => {
+const response = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/workers/specialities`, {
+    worker_id: workerId,
+    speciality_id: specialityId,
+    qualification_level: qualificationLevel,
+}, {
+    headers: { Authorization: `Bearer ${token}` }
+});
+
+return response.data;
+};
+  

@@ -4,7 +4,8 @@ import Home from './pages/Home';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
-import Onboarding from './pages/Onboarding';
+import OnboardingStep1 from './pages/OnboardingStep1';
+import OnboardingStep2 from './pages/OnboardingStep2';
 import PrivateRoute from './components/PrivateRoute';
 import PublicRoute from './components/PublicRoute';
 
@@ -14,7 +15,8 @@ function App() {
             <Route path="/" element={<PublicRoute><Home /></PublicRoute>} />
             <Route path="/login" element={<PublicRoute><Login /></PublicRoute>} />
             <Route path="/register" element={<PublicRoute><Register /></PublicRoute>} />
-            <Route path="/onboarding" element={<PrivateRoute><Onboarding /></PrivateRoute>} />
+            <Route path="/onboarding" element={<PrivateRoute><OnboardingStep1 /></PrivateRoute>} />
+            <Route path="/onboarding/step-2" element={<PrivateRoute><OnboardingStep2 /></PrivateRoute>} />
             <Route path="/dashboard" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
         </Routes>
     );
