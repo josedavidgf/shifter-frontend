@@ -12,23 +12,35 @@ export function useAuth() {
 
 export function AuthProvider({ children }) {
     const [currentUser, setCurrentUser] = useState(null);
+    const [isWorker, setIsWorker] = useState(false);
     const [loading, setLoading] = useState(true);
     const navigate = useNavigate();
     
 
     // Recuperar usuario al iniciar app
     useEffect(() => {
-        const checkUser = async () => {
-            const { data, error } = await supabase.auth.getUser();
-            if (error || !data?.user) {
-                setCurrentUser(null);
-            } else {
-                setCurrentUser(data.user);
-            }
-            setLoading(false);
-        };
-        checkUser();
-    }, []);
+        async function rehydrateUser() {
+          const { data } = await supabase.auth.getSession();
+          if (data.session) {
+            const user = data.session.user;
+            const token = data.session.access_token;
+            setCurrentUser(user);
+      
+            const isWorker = await checkIfWorkerExists(token);
+            setIsWorker(isWorker);
+      
+            const hasCompleted = await checkIfWorkerHasHospitalAndSpeciality(token);
+            setHasCompletedOnboarding(hasCompleted);
+          }
+      
+          setLoading(false); // 🔁 importante para PrivateRoute
+        }
+      
+        rehydrateUser();
+      }, []);
+      
+
+    
 
     // Registro
     const register = async (email, password) => {
@@ -50,31 +62,30 @@ export function AuthProvider({ children }) {
           if (error) throw error;
       
           const user = data.user;
-          localStorage.setItem('token', data.session.access_token);
+          const token = data.session.access_token;
+          localStorage.setItem('token', token);
           setCurrentUser(user);
-      
-          console.log('🧑 ID del usuario logueado:', user.id);
-      
-          const isWorker = await checkIfWorkerExists(user.id);
-      
-          if (isWorker) {
-            const hasFullOnboarding = await checkIfWorkerHasHospitalAndSpeciality(user.id);
-      
+          console.log('🔑 Token guardado en localStorage:', token);
+          console.log('👤 Usuario guardado en localStorage:', user);
+        
+          const isWorker = await checkIfWorkerExists(token);
+          setIsWorker(isWorker); // 👈 importante
+            console.log('👷 El usuario es trabajador:', isWorker);
+            if (!isWorker) {
+                console.log('❌ El usuario no es trabajador');
+                setHasCompletedOnboarding(false);
+                return navigate('/onboarding');
+              }
+              const hasFullOnboarding = await checkIfWorkerHasHospitalAndSpeciality(token);
+              setHasCompletedOnboarding(hasFullOnboarding);
+
             if (hasFullOnboarding) {
-              localStorage.setItem('hasCompletedOnboarding', 'true');
-              setHasCompletedOnboarding(true);
-              navigate('/dashboard');
+                console.log('✅ El trabajador ha completado el onboarding');
+                navigate('/dashboard');
             } else {
-              localStorage.removeItem('hasCompletedOnboarding');
-              setHasCompletedOnboarding(false);
-              navigate('/onboarding/step-2');
+                console.log('❌ El trabajador no ha completado el onboarding');
+                navigate('/onboarding/step-2');
             }
-      
-          } else {
-            localStorage.removeItem('hasCompletedOnboarding');
-            setHasCompletedOnboarding(false);
-            navigate('/onboarding');
-          }
       
           return data;
         } catch (err) {
@@ -99,9 +110,9 @@ export function AuthProvider({ children }) {
     const logout = async () => {
         await supabase.auth.signOut();
         localStorage.removeItem('token');
-        localStorage.removeItem('hasCompletedOnboarding');
         setCurrentUser(null);
         setHasCompletedOnboarding(false);
+        setIsWorker(false);
     };
 
     // Obtener token actual
@@ -112,12 +123,9 @@ export function AuthProvider({ children }) {
         return data.session.access_token;
     };
 
-    const [hasCompletedOnboarding, setHasCompletedOnboarding] = useState(() =>
-        localStorage.getItem('hasCompletedOnboarding') === 'true'
-      );
+    const [hasCompletedOnboarding, setHasCompletedOnboarding] = useState((false));
       
       const completeOnboarding = () => {
-        localStorage.setItem('hasCompletedOnboarding', 'true');
         setHasCompletedOnboarding(true); // 👈 esto forzará el rerender
       };
       
@@ -131,6 +139,9 @@ export function AuthProvider({ children }) {
         hasCompletedOnboarding,
         completeOnboarding,
         loginWithGoogle,
+        isWorker, // 👈 nuevo export
+        loading,
+        setIsWorker
     };
 
     return (

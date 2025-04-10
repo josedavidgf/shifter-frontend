@@ -1,31 +1,30 @@
-import supabase from '../config/supabase';
+import axios from 'axios';
 
-export const checkIfWorkerExists = async (userId) => {
-    console.log('🔍 Verificando si el trabajador existe con userId:', userId);
+const API_URL = process.env.REACT_APP_BACKEND_URL;
 
-    const { data, error } = await supabase
-        .from('workers')
-        .select('worker_id')
-        .eq('user_id', userId)
-        .single();
 
-    if (error) {
-        console.error('Error al verificar si el trabajador existe:', error.message);
-        // No existe o hubo error
-        return false;
-    }
 
-    console.log('✅ Trabajador encontrado:', data);
 
-    return !!data;
+export const checkIfWorkerExists = async (token) => {
+    const response = await axios.get(`${API_URL}/api/workers/me`, {
+        headers: { Authorization: `Bearer ${token}` },
+    });
+
+    const worker = response.data.data;
+    console.log('📥 Datos del trabajador:', worker);
+    return !!worker; // devuelve true si existe
 };
 
-export const checkIfWorkerHasHospitalAndSpeciality = async (userId) => {
-    const [hospitals, specialities] = await Promise.all([
-      supabase.from('workers_hospitals').select('*').eq('worker_id', userId),
-      supabase.from('workers_specialities').select('*').eq('worker_id', userId),
-    ]);
-  
-    return (hospitals?.data?.length > 0 && specialities?.data?.length > 0);
+
+export const checkIfWorkerHasHospitalAndSpeciality = async (token) => {
+    console.log('📤 Enviando token al backend para completion:', token); // 👈
+    const response = await axios.get(`${API_URL}/api/workers/me/completion`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    console.log('📥 Datos de la respuesta completion:', response.data);
+    const { hasHospital, hasSpeciality } = response.data.data;
+    return hasHospital && hasSpeciality;
   };
+  
+  
   

@@ -11,7 +11,8 @@ function OnboardingStep1() {
     const [workerTypes, setWorkerTypes] = useState([]);
     const [error, setError] = useState('');
     const navigate = useNavigate();
-    const { getToken,completeOnboarding, logout } = useAuth();
+    const { getToken, logout } = useAuth();
+    const { setIsWorker } = useAuth();
 
 
     useEffect(() => {
@@ -43,9 +44,8 @@ function OnboardingStep1() {
             console.log('Response:', response);
             if (response?.success) {
                 alert('Trabajador creado con éxito');
-                localStorage.setItem('hasCompletedOnboarding', 'true');
-                completeOnboarding(); // 👈 actualiza el estado y localStorage
-                navigate('/dashboard');
+                setIsWorker(true);
+                navigate('/onboarding/step-2');
             } else {
                 throw new Error(response?.message || 'Error al crear el trabajador');
             }
