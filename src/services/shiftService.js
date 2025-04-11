@@ -30,4 +30,12 @@ export const createShift = async (data, token) => {
     });
     return response.data.data;
   };
+
+  export const removeShift = async (id, token) => {
+    const response = await axios.patch(`${API_URL}/api/shifts/${id}/remove`, null, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    return response.data.data;
+  };
+  
   

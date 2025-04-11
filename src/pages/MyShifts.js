@@ -1,65 +1,80 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { getMyShifts } from '../services/shiftService';
+import { getMyShifts, removeShift } from '../services/shiftService';
 import { getSpecialities } from '../services/specialityService';
 
 
 const MyShifts = () => {
-  const { getToken } = useAuth();
-  const [shifts, setShifts] = useState([]);
-  const [error, setError] = useState(null);
-  const [specialities, setSpecialities] = useState([]);
-  const navigate = useNavigate();
+    const { getToken } = useAuth();
+    const [shifts, setShifts] = useState([]);
+    const [error, setError] = useState(null);
+    const [specialities, setSpecialities] = useState([]);
+    const navigate = useNavigate();
 
-  const getSpecialityName = (id) => {
-    const match = specialities.find((s) => s.speciality_id === id);
-    return match
-      ? `${match.speciality_category} - ${match.speciality_subcategory}`
-      : id;
-  };
-  
+    const getSpecialityName = (id) => {
+        const match = specialities.find((s) => s.speciality_id === id);
+        return match
+            ? `${match.speciality_category} - ${match.speciality_subcategory}`
+            : id;
+    };
 
-  useEffect(() => {
-    async function fetchShifts() {
-      try {
+    const loadShifts = useCallback(async () => {
+        try {
+          const token = await getToken();
+          const response = await getMyShifts(token);
+          const specs = await getSpecialities(token);
+          setShifts(response);
+          setSpecialities(specs);
+        } catch (err) {
+          setError('Error al cargar turnos');
+        }
+      },[getToken]);
+    
 
-        const token = await getToken();
-        const response = await getMyShifts(token);
-        const specs = await getSpecialities(token); // si es protegido
-        setShifts(response);
-        setSpecialities(specs);
-      } catch (err) {
-        console.error('❌ Error al cargar turnos:', err.message);
-        setError('No se pudieron cargar los turnos');
-      }
-    }
-    fetchShifts();
-  }, [getToken]);
+    useEffect(() => {
+        loadShifts();
+    }, [loadShifts]);
 
-  return (
-    <div>
-      <h2>Mis Turnos Publicados</h2>
+    const handleDelete = async (shiftId) => {
+        if (!window.confirm('¿Seguro que quieres eliminar este turno?')) return;
+        try {
+            const token = await getToken();
+            await removeShift(shiftId, token);
+            alert('Turno eliminado');
+            loadShifts(); // Recarga lista
+        } catch (err) {
+            alert('Error al eliminar turno');
+            console.error('❌', err.message);
+        }
+    };
 
-      {error && <p style={{ color: 'red' }}>{error}</p>}
+    return (
+        <div>
+            <h2>Mis Turnos Publicados</h2>
 
-      {shifts.length === 0 ? (
-        <p>No tienes turnos publicados aún.</p>
-      ) : (
-        <ul>
-          {shifts.map((shift) => (
-            <li key={shift.shift_id} style={{ marginBottom: '1rem' }}>
-              <strong>{shift.date}</strong> | Tipo: {shift.shift_type} | Etiqueta: {shift.shift_label}<br />
-              Especialidad: {getSpecialityName(shift.speciality_id)}
-              <button onClick={() => navigate(`/shifts/edit/${shift.shift_id}`)}>✏️ Editar</button> 
-            </li>
-          ))}
-        </ul>
-      )}
+            {error && <p style={{ color: 'red' }}>{error}</p>}
 
-      <button onClick={() => navigate('/dashboard')}>⬅ Volver al Dashboard</button>
-    </div>
-  );
+            {shifts.length === 0 ? (
+                <p>No tienes turnos publicados aún.</p>
+            ) : (
+                <ul>
+                    {shifts
+                        .filter((s) => s.state === 'published')
+                        .map((shift) => (
+                            <li key={shift.shift_id} style={{ marginBottom: '1rem' }}>
+                                <strong>{shift.date}</strong> | Tipo: {shift.shift_type} | Etiqueta: {shift.shift_label}<br />
+                                Especialidad: {getSpecialityName(shift.speciality_id)}<br />
+                                <button onClick={() => navigate(`/shifts/edit/${shift.shift_id}`)}>✏️ Editar</button>
+                                <button onClick={() => handleDelete(shift.shift_id)}>🗑 Eliminar</button>
+                            </li>
+                        ))}
+                </ul>
+            )}
+
+            <button onClick={() => navigate('/dashboard')}>⬅ Volver al Dashboard</button>
+        </div>
+    );
 };
 
 export default MyShifts;
