@@ -29,6 +29,8 @@ function Dashboard() {
                     <button onClick={() => navigate('/shifts/create')}>📆 Publicar nuevo turno</button>
                     <hr />
                     <button onClick={() => navigate('/shifts/my')}>📋 Ver mis turnos</button>
+                    <hr />
+                    <button onClick={() => navigate('/shifts/hospital')}>🏥 Ver turnos del hospital</button>
                 </div>
             ) : (
                 <p>No hay usuario logueado</p>

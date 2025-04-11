@@ -37,5 +37,12 @@ export const createShift = async (data, token) => {
     });
     return response.data.data;
   };
+
+  export const getHospitalShifts = async (token) => {
+    const response = await axios.get(`${API_URL}/api/shifts/hospital`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    return response.data.data;
+  }
   
   

@@ -12,6 +12,7 @@ import Profile from './pages/Profile';
 import CreateShift from './pages/CreateShift';
 import MyShifts from './pages/MyShifts';
 import EditShift from './pages/EditShift';
+import HospitalShifts from './pages/HospitalShifts';
 
 
 function App() {
@@ -27,6 +28,7 @@ function App() {
             <Route path="/shifts/create" element={<PrivateRoute><CreateShift /></PrivateRoute>} />
             <Route path="/shifts/my" element={<PrivateRoute><MyShifts /></PrivateRoute>} />
             <Route path="/shifts/edit/:id" element={<EditShift />} />
+            <Route path="/shifts/hospital" element={<PrivateRoute><HospitalShifts /></PrivateRoute>} />
         </Routes>
     );
 }
