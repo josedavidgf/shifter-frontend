@@ -11,23 +11,25 @@ const CreateShift = () => {
 
     const [form, setForm] = useState({
         date: '',
-        //start_time: '',
-        //end_time: '',
         shift_type: 'morning',
         shift_label: 'regular',
         speciality_id: '',
     });
     const [specialityId, setSpecialityId] = useState('');
+    const [preferences, setPreferences] = useState([]);
     const [message, setMessage] = useState('');
 
     useEffect(() => {
         async function fetchData() {
-            const token = await getToken();
-            const profile = await getFullWorkerProfile(token);
-            console.log('Perfil del trabajador:', profile);
-            console.log('Especialidad del trabajador:', profile.specialityId);
-            setSpecialityId(profile.specialityId);
-            setForm((prev) => ({ ...prev, speciality_id: profile.specialityId })); // ✅ esto es lo que faltaba
+            try {
+                const token = await getToken();
+                const profile = await getFullWorkerProfile(token);
+                setSpecialityId(profile.specialityId);
+                setForm((prev) => ({ ...prev, speciality_id: profile.specialityId }));
+            } catch (err) {
+                setMessage('❌ Error al cargar el perfil');
+            }
+
 
         }
         fetchData();
@@ -35,15 +37,30 @@ const CreateShift = () => {
 
     const handleChange = (e) => {
         const { name, value } = e.target;
-        setForm((prev) => ({ ...prev,  [name]: value }));
+        setForm((prev) => ({ ...prev, [name]: value }));
     };
+    const handleAddPreference = () => {
+        if (preferences.length >= 3) return;
+        setPreferences([...preferences, { preferred_date: '', preferred_type: 'morning', preferred_label: 'regular' }]);
+    };
+
+    const handlePreferenceChange = (index, field, value) => {
+        const updated = [...preferences];
+        updated[index][field] = value;
+        setPreferences(updated);
+    };
+
+    const handleRemovePreference = (index) => {
+        setPreferences(preferences.filter((_, i) => i !== index));
+    };
+
 
     const handleSubmit = async (e) => {
         console.log('🧾 Turno a enviar:', form);
         e.preventDefault();
         try {
             const token = await getToken();
-            await createShift(form, token);
+            await createShift({ ...form, preferences }, token);
             setMessage('✅ Turno publicado correctamente');
             setTimeout(() => navigate('/dashboard'), 1500);
         } catch (err) {
@@ -58,13 +75,6 @@ const CreateShift = () => {
             <form onSubmit={handleSubmit}>
                 <label>Fecha:</label>
                 <input type="date" name="date" value={form.date} onChange={handleChange} required />
-
-                {/* <label>Hora inicio:</label>
-        <input type="time" name="start_time" value={form.start_time} onChange={handleChange} required />
-
-        <label>Hora fin:</label>
-        <input type="time" name="end_time" value={form.end_time} onChange={handleChange} required /> */}
-
                 <label>Turno:</label>
                 <select name="shift_type" value={form.shift_type} onChange={handleChange} required>
                     <option value="morning">Mañana</option>
@@ -86,6 +96,48 @@ const CreateShift = () => {
                 />
                 <p>{specialityId}</p>
 
+
+                {preferences.map((pref, index) => (
+                    <div key={index} style={{ border: '1px solid #ccc', marginTop: '1rem', padding: '0.5rem' }}>
+                        <strong>Preferencia {index + 1}</strong>
+                        <br />
+                        <label>Fecha preferida:</label>
+                        <input
+                            type="date"
+                            value={pref.preferred_date}
+                            onChange={(e) => handlePreferenceChange(index, 'preferred_date', e.target.value)}
+                        />
+
+                        <label>Tipo:</label>
+                        <select
+                            value={pref.preferred_type}
+                            onChange={(e) => handlePreferenceChange(index, 'preferred_type', e.target.value)}
+                        >
+                            <option value="morning">Mañana</option>
+                            <option value="evening">Tarde</option>
+                            <option value="night">Noche</option>
+                        </select>
+
+                        <label>Etiqueta:</label>
+                        <select
+                            value={pref.preferred_label}
+                            onChange={(e) => handlePreferenceChange(index, 'preferred_label', e.target.value)}
+                        >
+                            <option value="regular">Regular</option>
+                            <option value="duty">Guardia</option>
+                        </select>
+
+                        <button type="button" onClick={() => handleRemovePreference(index)}>🗑 Quitar</button>
+                    </div>
+                ))}
+
+                {preferences.length < 3 && (
+                    <button type="button" onClick={handleAddPreference} style={{ marginTop: '1rem' }}>
+                        ➕ Añadir preferencia
+                    </button>
+                )}
+
+                <br />
 
 
                 <button type="submit">Publicar Turno</button>
