@@ -10,6 +10,9 @@ import PrivateRoute from './components/PrivateRoute';
 import PublicRoute from './components/PublicRoute';
 import Profile from './pages/Profile';
 import CreateShift from './pages/CreateShift';
+import MyShifts from './pages/MyShifts';
+import EditShift from './pages/EditShift';
+
 
 function App() {
     return (
@@ -22,6 +25,8 @@ function App() {
             <Route path="/dashboard" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
             <Route path="/profile" element={<PrivateRoute><Profile /></PrivateRoute>} />
             <Route path="/shifts/create" element={<PrivateRoute><CreateShift /></PrivateRoute>} />
+            <Route path="/shifts/my" element={<PrivateRoute><MyShifts /></PrivateRoute>} />
+            <Route path="/shifts/edit/:id" element={<EditShift />} />
         </Routes>
     );
 }
