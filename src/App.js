@@ -8,6 +8,8 @@ import OnboardingStep1 from './pages/OnboardingStep1';
 import OnboardingStep2 from './pages/OnboardingStep2';
 import PrivateRoute from './components/PrivateRoute';
 import PublicRoute from './components/PublicRoute';
+import Profile from './pages/Profile';
+import CreateShift from './pages/CreateShift';
 
 function App() {
     return (
@@ -18,6 +20,8 @@ function App() {
             <Route path="/onboarding" element={<PrivateRoute><OnboardingStep1 /></PrivateRoute>} />
             <Route path="/onboarding/step-2" element={<PrivateRoute><OnboardingStep2 /></PrivateRoute>} />
             <Route path="/dashboard" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
+            <Route path="/profile" element={<PrivateRoute><Profile /></PrivateRoute>} />
+            <Route path="/shifts/create" element={<PrivateRoute><CreateShift /></PrivateRoute>} />
         </Routes>
     );
 }
