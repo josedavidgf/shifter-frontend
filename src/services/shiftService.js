@@ -44,5 +44,33 @@ export const createShift = async (data, token) => {
     });
     return response.data.data;
   }
+  // Obtener las preferencias de un turno
+export async function getShiftPreferencesByShiftId(shiftId, token) {
+    const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/shifts/${shiftId}/preferences`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+  
+    const result = await response.json();
+    if (!response.ok) throw new Error(result.message || 'Error al cargar preferencias');
+    return result.data;
+  }
+  
+  // Actualizar preferencias de un turno
+  export async function updateShiftPreferences(shiftId, preferences, token) {
+    const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/shifts/${shiftId}/preferences`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ preferences }),
+    });
+  
+    const result = await response.json();
+    if (!response.ok) throw new Error(result.message || 'Error al actualizar preferencias');
+    return result.data;
+  }
   
   
