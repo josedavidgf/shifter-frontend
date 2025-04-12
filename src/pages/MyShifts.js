@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { getMyShifts, removeShift } from '../services/shiftService';
 import { getSpecialities } from '../services/specialityService';
-import { getReceivedSwaps,  updateSwapStatus} from '../services/swapService';
+import { getReceivedSwaps,  respondToSwap} from '../services/swapService';
 
 
 const MyShifts = () => {
@@ -64,7 +64,7 @@ const MyShifts = () => {
     const handleSwapAction = async (swapId, action) => {
         try {
             const token = await getToken();
-            await updateSwapStatus(swapId, action, token);
+            await respondToSwap(swapId, action, token);
             alert(`Intercambio ${action === 'accepted' ? 'aceptado' : 'rechazado'} correctamente`);
             // Recargar los swaps
             const swaps = await getReceivedSwaps(token);

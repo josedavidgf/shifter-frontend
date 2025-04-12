@@ -13,24 +13,28 @@ import CreateShift from './pages/CreateShift';
 import MyShifts from './pages/MyShifts';
 import EditShift from './pages/EditShift';
 import HospitalShifts from './pages/HospitalShifts';
+import ProposeSwap from './pages/ProposeSwap';
+import MySwaps from './pages/MySwaps';
 
 
 function App() {
-    return (
-        <Routes>
-            <Route path="/" element={<PublicRoute><Home /></PublicRoute>} />
-            <Route path="/login" element={<PublicRoute><Login /></PublicRoute>} />
-            <Route path="/register" element={<PublicRoute><Register /></PublicRoute>} />
-            <Route path="/onboarding" element={<PrivateRoute><OnboardingStep1 /></PrivateRoute>} />
-            <Route path="/onboarding/step-2" element={<PrivateRoute><OnboardingStep2 /></PrivateRoute>} />
-            <Route path="/dashboard" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
-            <Route path="/profile" element={<PrivateRoute><Profile /></PrivateRoute>} />
-            <Route path="/shifts/create" element={<PrivateRoute><CreateShift /></PrivateRoute>} />
-            <Route path="/shifts/my" element={<PrivateRoute><MyShifts /></PrivateRoute>} />
-            <Route path="/shifts/edit/:id" element={<EditShift />} />
-            <Route path="/shifts/hospital" element={<PrivateRoute><HospitalShifts /></PrivateRoute>} />
-        </Routes>
-    );
+  return (
+    <Routes>
+      <Route path="/" element={<PublicRoute><Home /></PublicRoute>} />
+      <Route path="/login" element={<PublicRoute><Login /></PublicRoute>} />
+      <Route path="/register" element={<PublicRoute><Register /></PublicRoute>} />
+      <Route path="/onboarding" element={<PrivateRoute><OnboardingStep1 /></PrivateRoute>} />
+      <Route path="/onboarding/step-2" element={<PrivateRoute><OnboardingStep2 /></PrivateRoute>} />
+      <Route path="/dashboard" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
+      <Route path="/profile" element={<PrivateRoute><Profile /></PrivateRoute>} />
+      <Route path="/shifts/create" element={<PrivateRoute><CreateShift /></PrivateRoute>} />
+      <Route path="/shifts/my" element={<PrivateRoute><MyShifts /></PrivateRoute>} />
+      <Route path="/shifts/edit/:id" element={<EditShift />} />
+      <Route path="/shifts/hospital" element={<PrivateRoute><HospitalShifts /></PrivateRoute>} />
+      <Route path="/propose-swap/:shift_id" element={<PrivateRoute><ProposeSwap /></PrivateRoute>} />
+      <Route path="/my-swaps" element={<PrivateRoute><MySwaps /></PrivateRoute>} />
+    </Routes>
+  );
 }
 
 export default App;
