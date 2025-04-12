@@ -46,7 +46,7 @@ export const createShift = async (data, token) => {
   }
   // Obtener las preferencias de un turno
 export async function getShiftPreferencesByShiftId(shiftId, token) {
-    const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/shifts/${shiftId}/preferences`, {
+    const response = await fetch(`${API_URL}/api/shifts/${shiftId}/preferences`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -59,7 +59,7 @@ export async function getShiftPreferencesByShiftId(shiftId, token) {
   
   // Actualizar preferencias de un turno
   export async function updateShiftPreferences(shiftId, preferences, token) {
-    const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/shifts/${shiftId}/preferences`, {
+    const response = await fetch(`${API_URL}/api/shifts/${shiftId}/preferences`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
@@ -71,6 +71,20 @@ export async function getShiftPreferencesByShiftId(shiftId, token) {
     const result = await response.json();
     if (!response.ok) throw new Error(result.message || 'Error al actualizar preferencias');
     return result.data;
+  }
+
+  export async function expireOldShifts(token) {
+    try {
+      const response = await axios.patch(`${API_URL}/api/shifts/expire-old`, null, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+      return response.data;
+    } catch (err) {
+      console.error('❌ Error al expirar turnos:', err.message);
+      throw err;
+    }
   }
   
   

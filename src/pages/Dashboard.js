@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { getWorkerStats } from '../services/userService';
+import { expireOldShifts } from '../services/shiftService';
 
 
 function Dashboard() {
@@ -9,6 +10,19 @@ function Dashboard() {
     const [stats, setStats] = useState(null);
 
     const navigate = useNavigate();
+    useEffect(() => {
+        async function runExpiry() {
+            try {
+                const token = await getToken();
+                await expireOldShifts(token);
+                console.log('✔️ Turnos expirados si aplicaba');
+            } catch (err) {
+                // Error ya se loguea dentro del service
+            }
+        }
+
+        runExpiry();
+    }, [getToken]);
 
     useEffect(() => {
         async function fetchStats() {

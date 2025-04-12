@@ -74,7 +74,7 @@ const CreateShift = () => {
             <h2>Crear Turno</h2>
             <form onSubmit={handleSubmit}>
                 <label>Fecha:</label>
-                <input type="date" name="date" value={form.date} onChange={handleChange} required />
+                <input type="date"  min={new Date().toISOString().split('T')[0]} name="date" value={form.date} onChange={handleChange} required />
                 <label>Turno:</label>
                 <select name="shift_type" value={form.shift_type} onChange={handleChange} required>
                     <option value="morning">Mañana</option>
@@ -104,6 +104,7 @@ const CreateShift = () => {
                         <label>Fecha preferida:</label>
                         <input
                             type="date"
+                            min={new Date().toISOString().split('T')[0]}
                             value={pref.preferred_date}
                             onChange={(e) => handlePreferenceChange(index, 'preferred_date', e.target.value)}
                         />

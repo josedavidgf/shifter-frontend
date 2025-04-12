@@ -41,7 +41,12 @@ const ProposeSwap = () => {
 
       <form onSubmit={handleSubmit}>
         <label>Fecha que ofreces:</label>
-        <input type="date" name="offered_date" value={form.offered_date} onChange={handleChange} />
+        <input 
+            type="date" 
+            min={new Date().toISOString().split('T')[0]}
+            name="offered_date" 
+            value={form.offered_date} 
+            onChange={handleChange} />
 
         <label>Tipo de turno que ofreces:</label>
         <select name="offered_type" value={form.offered_type} onChange={handleChange}>
