@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { getMyShifts, removeShift } from '../services/shiftService';
 import { getSpecialities } from '../services/specialityService';
-import { getReceivedSwaps } from '../services/swapService';
+import { getReceivedSwaps,  updateSwapStatus} from '../services/swapService';
 
 
 const MyShifts = () => {
@@ -61,6 +61,19 @@ const MyShifts = () => {
         }
     };
 
+    const handleSwapAction = async (swapId, action) => {
+        try {
+            const token = await getToken();
+            await updateSwapStatus(swapId, action, token);
+            alert(`Intercambio ${action === 'accepted' ? 'aceptado' : 'rechazado'} correctamente`);
+            // Recargar los swaps
+            const swaps = await getReceivedSwaps(token);
+            setReceivedSwaps(swaps);
+        } catch (err) {
+            alert('Error al actualizar el intercambio: ' + err.message);
+        }
+    };
+
     return (
         <div>
             <h2>Mis Turnos Publicados</h2>
@@ -89,6 +102,12 @@ const MyShifts = () => {
                                                 <p><strong>Tipo:</strong> {swap.offered_type}</p>
                                                 <p><strong>Etiqueta:</strong> {swap.offered_label}</p>
                                                 <p><em>Estado:</em> {swap.status}</p>
+                                                {swap.status === 'proposed' && (
+                                                    <>
+                                                        <button onClick={() => handleSwapAction(swap.swap_id, 'accepted')}>✅ Aceptar</button>
+                                                        <button onClick={() => handleSwapAction(swap.swap_id, 'rejected')}>❌ Rechazar</button>
+                                                    </>
+                                                )}
                                             </div>
                                         ))}
                                 </ul>

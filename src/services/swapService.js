@@ -11,3 +11,13 @@ export const getReceivedSwaps = async (token) => {
     return response.data.data; // 👈 accede al contenido dentro del payload de axios
 }
 
+export async function updateSwapStatus(swapId, status, token) {
+    const response = await axios.patch(`${API_URL}/api/swaps/${swapId}`, { status }, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+  
+    return response.data.data;
+  }
+  
