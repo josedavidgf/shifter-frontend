@@ -55,3 +55,11 @@ const API_URL = process.env.REACT_APP_BACKEND_URL;
         return response.data;
     };
   
+    export async function getWorkerStats(token) {
+        const response = await axios.get(`${API_URL}/api/workers/me/stats`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+      
+        return response.data.data;
+      }
+      

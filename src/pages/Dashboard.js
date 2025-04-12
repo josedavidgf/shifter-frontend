@@ -1,11 +1,28 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
+import { getWorkerStats } from '../services/userService';
 
 
 function Dashboard() {
-    const { currentUser, logout } = useAuth();
+    const { currentUser, logout, getToken } = useAuth();
+    const [stats, setStats] = useState(null);
+
     const navigate = useNavigate();
+
+    useEffect(() => {
+        async function fetchStats() {
+            try {
+                const token = await getToken();
+                const data = await getWorkerStats(token);
+                setStats(data);
+            } catch (err) {
+                console.error('Error al cargar métricas:', err.message);
+            }
+        }
+
+        fetchStats();
+    }, [getToken]);
 
     const handleLogout = async () => {
         try {
@@ -16,9 +33,26 @@ function Dashboard() {
         }
     };
 
+    if (!currentUser) return <p>No estás autenticado.</p>;
+    if (!stats) return <p>Cargando métricas...</p>;
+
     return (
         <div>
-            <h2>Dashboard</h2>
+            <h2>👩‍⚕️ Bienvenido al panel</h2>
+
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '1rem' }}>
+                <div style={{ border: '1px solid #ccc', padding: '1rem' }}>
+                    <h3>📋 Tus turnos</h3>
+                    <p>Publicados: <strong>{stats.publishedShifts}</strong></p>
+                    <p>Intercambiados: <strong>{stats.swappedShifts}</strong></p>
+                </div>
+
+                <div style={{ border: '1px solid #ccc', padding: '1rem' }}>
+                    <h3>🔁 Tus intercambios</h3>
+                    <p>Propuestos: <strong>{stats.swapsProposed}</strong></p>
+                    <p>Aceptados: <strong>{stats.swapsAccepted}</strong></p>
+                </div>
+            </div>
             {currentUser ? (
                 <div>
                     <p>Usuario logueado: {currentUser.email}</p>
