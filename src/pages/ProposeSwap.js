@@ -27,7 +27,7 @@ const ProposeSwap = () => {
       const token = await getToken();
       await proposeSwap(shift_id, form, token);
       alert('Intercambio propuesto con éxito');
-      navigate('/shift/hospital');
+      navigate('/shifts/hospital');
     } catch (err) {
       console.error('❌ Error al proponer intercambio:', err.message);
       setError('Error al proponer intercambio');
@@ -63,7 +63,7 @@ const ProposeSwap = () => {
 
         <br />
         <button type="submit">Enviar propuesta</button>
-        <button type="button" onClick={() => navigate('/hospital')}>Cancelar</button>
+        <button type="button" onClick={() => navigate('/shifts/hospital')}>Cancelar</button>
       </form>
     </div>
   );
