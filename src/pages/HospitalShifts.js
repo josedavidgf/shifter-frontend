@@ -4,6 +4,8 @@ import { useAuth } from '../context/AuthContext';
 import { getHospitalShifts } from '../services/shiftService';
 import { getSpecialities } from '../services/specialityService';
 import { getFullWorkerProfile } from '../services/userService';
+import HospitalShiftsTable from '../components/HospitalShiftsTable';
+import { getSentSwaps } from '../services/swapService'; // 👈 añadir
 
 
 const HospitalShifts = () => {
@@ -13,14 +15,7 @@ const HospitalShifts = () => {
     const [error, setError] = useState(null);
     const navigate = useNavigate();
     const [workerId, setWorkerId] = useState(null);
-
-
-    const getSpecialityName = (id) => {
-        const match = specialities.find((s) => s.speciality_id === id);
-        return match
-            ? `${match.speciality_category} - ${match.speciality_subcategory}`
-            : id;
-    };
+    const [sentSwaps, setSentSwaps] = useState([]);
 
     useEffect(() => {
         async function fetchData() {
@@ -29,9 +24,11 @@ const HospitalShifts = () => {
                 const hospitalShifts = await getHospitalShifts(token);
                 const specs = await getSpecialities(token);
                 const profile = await getFullWorkerProfile(token);
+                const swaps = await getSentSwaps(token); // 👈 nuevo
                 setWorkerId(profile.worker_id);
                 setShifts(hospitalShifts);
                 setSpecialities(specs);
+                setSentSwaps(swaps.map(s => s.shift_id)); // 👈 solo ids para comparar fácilmente
             } catch (err) {
                 setError('Error al cargar los turnos del hospital');
             }
@@ -43,24 +40,16 @@ const HospitalShifts = () => {
         <div>
             <h2>Turnos Disponibles en tu Hospital</h2>
             {error && <p style={{ color: 'red' }}>{error}</p>}
-
             {shifts.length === 0 ? (
                 <p>No hay turnos disponibles en tu hospital.</p>
             ) : (
-                <ul>
-                    {shifts.map((shift) => (
-                        <li key={shift.shift_id} style={{ marginBottom: '1rem' }}>
-                            <strong>{shift.date}</strong> | Tipo: {shift.shift_type} | Etiqueta: {shift.shift_label} | Especialidad: {getSpecialityName(shift.speciality_id)}
-                            {shift.worker_id !== workerId && shift.state === 'published' && (
-                                <button onClick={() => navigate(`/propose-swap/${shift.shift_id}`)}>
-                                    🔁 Proponer intercambio
-                                </button>
-                            )}
-                        </li>
-                    ))}
-                </ul>
+                <HospitalShiftsTable
+                    shifts={shifts}
+                    specialities={specialities}
+                    workerId={workerId}
+                    sentSwapShiftIds={sentSwaps}
+                />
             )}
-
             <button onClick={() => navigate('/dashboard')}>⬅ Volver al Dashboard</button>
         </div>
     );
