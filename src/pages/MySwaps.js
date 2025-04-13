@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { getSentSwaps, cancelSwap } from '../services/swapService';
+import { getSentSwaps } from '../services/swapService';
 import { useNavigate } from 'react-router-dom';
 import MySwapsTable from '../components/MySwapsTable';
 
 const MySwaps = () => {
   const { getToken } = useAuth();
   const [mySwaps, setMySwaps] = useState([]);
-  const [error, setError] = useState(null);
+  const [, setError] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -24,23 +24,12 @@ const MySwaps = () => {
     fetchSwaps();
   }, [getToken]);
 
-  const handleCancelSwap = async (swapId) => {
-    try {
-      const token = await getToken();
-      await cancelSwap(swapId, token);
-      const updated = await getSentSwaps(token);
-      setMySwaps(updated);
-    } catch (err) {
-      console.error('❌ Error al cancelar swap:', err.message);
-      alert('Error al cancelar el intercambio');
-    }
-  };
 
 
   return (
     <div>
       <h2>Mis intercambios propuestos</h2>
-      {error && <p style={{ color: 'red' }}>{error}</p>}
+      {/* {error && <p style={{ color: 'red' }}>{error}</p>}
 
       {mySwaps.length === 0 ? (
         <p>No has propuesto ningún intercambio todavía.</p>
@@ -56,7 +45,7 @@ const MySwaps = () => {
             )}
           </div>
         ))
-      )}
+      )} */}
       {mySwaps.length === 0 ? (
         <p>No has propuesto ningún intercambio todavía.</p>
       ) : (

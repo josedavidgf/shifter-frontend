@@ -9,27 +9,37 @@ const ConfirmSignupRedirect = () => {
   useEffect(() => {
     async function handleRedirect() {
       const hash = window.location.hash;
-      const params = new URLSearchParams(hash.substring(1)); // elimina "#"
+      const params = new URLSearchParams(hash.substring(1));
       const access_token = params.get('access_token');
-
-      if (!access_token) {
-        console.error('No token found in URL');
+      const refresh_token = params.get('refresh_token');
+  
+      if (!access_token || !refresh_token) {
+        console.error('Tokens not found in URL');
         return navigate('/login');
       }
-
-      const { data: { user }, error } = await supabase.auth.getUser(access_token);
+  
+      const { error: sessionError } = await supabase.auth.setSession({
+        access_token,
+        refresh_token,
+      });
+  
+      if (sessionError) {
+        console.error('Error setting session:', sessionError.message);
+        return navigate('/login');
+      }
+  
+      const { data: { user }, error } = await supabase.auth.getUser();
       if (error || !user) {
-        console.error('Error retrieving user from token');
+        console.error('Error retrieving user from Supabase:', error);
         return navigate('/login');
       }
-
+  
       localStorage.setItem('token', access_token);
-      console.log('✅ Usuario autenticado tras verificación:', user);
-
-      // verificar si es worker y ha completado onboarding
+      console.log('Usuario autenticado tras verificación:', user);
+  
       const isWorker = await checkIfWorkerExists(access_token);
       const hasOnboarding = isWorker && await checkIfWorkerHasHospitalAndSpeciality(access_token);
-
+  
       if (!isWorker) {
         return navigate('/onboarding');
       } else if (!hasOnboarding) {
@@ -38,9 +48,10 @@ const ConfirmSignupRedirect = () => {
         return navigate('/dashboard');
       }
     }
-
+  
     handleRedirect();
   }, [navigate]);
+  
 
   return <p>Confirmando tu cuenta...</p>;
 };
