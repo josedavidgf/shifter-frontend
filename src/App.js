@@ -17,6 +17,7 @@ import ProposeSwap from './pages/ProposeSwap';
 import MySwaps from './pages/MySwaps';
 import VerifyEmail from './pages/VerifyEmail';
 import ConfirmSignupRedirect from './pages/ConfirmSignupRedirect';
+import CommunicationPreferences from './components/CommunicationPreferences';
 
 
 function App() {
@@ -37,6 +38,7 @@ function App() {
       <Route path="/my-swaps" element={<PrivateRoute><MySwaps /></PrivateRoute>} />
       <Route path="/verify-email" element={<VerifyEmail />} />
       <Route path="/confirm-signup" element={<ConfirmSignupRedirect />} />
+      <Route path="/preferences" element={<PrivateRoute><CommunicationPreferences /></PrivateRoute>} />
     </Routes>
   );
 }

@@ -63,3 +63,18 @@ const API_URL = process.env.REACT_APP_BACKEND_URL;
         return response.data.data;
       }
       
+
+      export async function getUserPreferences(token) {
+        const response = await axios.get(`${API_URL}/api/preferences`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        console.log('📥 Datos de preferencias:', response.data);
+        return response.data.data;
+      }
+      
+      export async function updateUserPreferences(payload, token) {
+        const response = await axios.put(`${API_URL}/api/preferences`, payload, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        return response.data;
+      }

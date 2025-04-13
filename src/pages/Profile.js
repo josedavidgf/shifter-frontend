@@ -105,7 +105,9 @@ const Profile = () => {
 
         <button type="submit">Guardar cambios</button>
       </form>
-
+      <hr />
+      <button onClick={() => navigate('/preferences')}>Preferencias de comunicación</button>
+      <hr />
       {message && <p>{message}</p>}
       <button onClick={() => navigate('/dashboard')}>⬅ Volver al Dashboard</button>
     </div>
