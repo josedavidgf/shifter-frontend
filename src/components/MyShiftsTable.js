@@ -89,7 +89,7 @@ const MyShiftsTable = ({
                     </div>
                   ))}
               </td>
-              <td>{shift.status}</td>
+              <td>{shift.state}</td>
               <td>
                 <button onClick={() => navigate(`/shifts/edit/${shift.shift_id}`)}>✏️</button>
                 <button onClick={() => handleDelete(shift.shift_id)}>🗑</button>
