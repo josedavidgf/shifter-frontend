@@ -59,7 +59,7 @@ const MyShiftsTable = ({
             <th>Tipo</th>
             <th>Etiqueta</th>
             <th>Especialidad</th>
-            <th>Preferencias</th>
+            <th>Propuestas intercambio</th>
             <th>Estado</th>
             <th>Acciones</th>
           </tr>
