@@ -11,7 +11,7 @@ const PrivateRoute = ({ children }) => {
 
   if (!currentUser) return <Navigate to="/login" />;
 
-  if (!currentUser.email_confirmated_at) {
+  if (!currentUser.email_confirmed_at) {
     return <Navigate to="/verify-email" />;
   }
 
