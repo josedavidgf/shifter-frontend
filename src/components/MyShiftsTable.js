@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
+
 const MyShiftsTable = ({
   shifts,
   getSpecialityName,
@@ -11,6 +12,7 @@ const MyShiftsTable = ({
   const [filtered, setFiltered] = useState(shifts);
   const [filterDate, setFilterDate] = useState('');
   const [filterState, setFilterState] = useState('');
+
 
   useEffect(() => {
     let updated = shifts;
@@ -30,6 +32,7 @@ const MyShiftsTable = ({
     setFilterDate('');
     setFilterState('');
   };
+
 
   return (
     <div>
@@ -75,8 +78,8 @@ const MyShiftsTable = ({
                     <div key={swap.swap_id} style={{ marginBottom: '0.5rem' }}>
                       <span>{swap.offered_date || '—'} | {swap.offered_type} | {swap.offered_label}</span>
                       <br />
-                      <em>{swap.state}</em>
-                      {swap.state === 'proposed' && (
+                      <em>{swap.status}</em>
+                      {swap.status === 'proposed' && (
                         <>
                           <br />
                           <button onClick={() => handleSwapAction(swap.swap_id, 'accepted')}>✅</button>
@@ -86,7 +89,7 @@ const MyShiftsTable = ({
                     </div>
                   ))}
               </td>
-              <td>{shift.state}</td>
+              <td>{shift.status}</td>
               <td>
                 <button onClick={() => navigate(`/shifts/edit/${shift.shift_id}`)}>✏️</button>
                 <button onClick={() => handleDelete(shift.shift_id)}>🗑</button>
