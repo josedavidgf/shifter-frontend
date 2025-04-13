@@ -42,7 +42,6 @@ const HospitalShiftsTable = ({ shifts, specialities, workerId, sentSwapShiftIds 
 
   return (
     <div>
-      <h3>Filtrar turnos</h3>
       <div style={{ display: 'flex', gap: '1rem', marginBottom: '1rem' }}>
         <input
           type="date"

@@ -1,11 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { getSentSwaps, cancelSwap } from '../services/swapService';
+import { useNavigate } from 'react-router-dom';
+import MySwapsTable from '../components/MySwapsTable';
 
 const MySwaps = () => {
   const { getToken } = useAuth();
   const [mySwaps, setMySwaps] = useState([]);
   const [error, setError] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     async function fetchSwaps() {
@@ -32,7 +35,7 @@ const MySwaps = () => {
       alert('Error al cancelar el intercambio');
     }
   };
-  
+
 
   return (
     <div>
@@ -54,6 +57,13 @@ const MySwaps = () => {
           </div>
         ))
       )}
+      {mySwaps.length === 0 ? (
+        <p>No has propuesto ningún intercambio todavía.</p>
+      ) : (
+        <MySwapsTable />
+      )}
+      <hr />
+      <button onClick={() => navigate('/dashboard')}>⬅ Volver al Dashboard</button>
     </div>
   );
 };

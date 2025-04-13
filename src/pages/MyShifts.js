@@ -3,7 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { getMyShifts, removeShift } from '../services/shiftService';
 import { getSpecialities } from '../services/specialityService';
-import { getReceivedSwaps,  respondToSwap} from '../services/swapService';
+import { getReceivedSwaps, respondToSwap } from '../services/swapService';
+import MyShiftsTable from '../components/MyShiftsTable';
 
 
 const MyShifts = () => {
@@ -80,7 +81,7 @@ const MyShifts = () => {
 
             {error && <p style={{ color: 'red' }}>{error}</p>}
 
-            {shifts.length === 0 ? (
+            {/* {shifts.length === 0 ? (
                 <p>No tienes turnos publicados aún.</p>
             ) : (
                 <ul>
@@ -116,8 +117,20 @@ const MyShifts = () => {
                             </li>
                         ))}
                 </ul>
+            )} */}
+            {shifts.length === 0 ? (
+                <p>No tienes turnos publicados aún.</p>
+            ) : (
+                <MyShiftsTable
+                    shifts={shifts}
+                    getSpecialityName={getSpecialityName}
+                    receivedSwaps={receivedSwaps}
+                    handleSwapAction={handleSwapAction}
+                    handleDelete={handleDelete}
+                    navigate={navigate}
+                />
             )}
-
+            <hr />
             <button onClick={() => navigate('/dashboard')}>⬅ Volver al Dashboard</button>
         </div>
     );
