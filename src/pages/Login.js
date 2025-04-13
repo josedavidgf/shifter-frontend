@@ -13,7 +13,6 @@ function Login() {
         e.preventDefault();
         try {
             await login(email, password);
-            alert('Inicio de sesión exitoso');
             navigate('/dashboard');  // Redirigir después del login
         } catch (err) {
             setError(err.message);

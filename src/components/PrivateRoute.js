@@ -11,6 +11,10 @@ const PrivateRoute = ({ children }) => {
 
   if (!currentUser) return <Navigate to="/login" />;
 
+  if (!currentUser.email_confirmated_at) {
+    return <Navigate to="/verify-email" />;
+  }
+
   // No ha hecho el onboarding step 1
   if (!isWorker && location.pathname !== '/onboarding') {
     return <Navigate to="/onboarding" />;

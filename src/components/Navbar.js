@@ -8,7 +8,7 @@ function Navbar() {
     const handleLogout = async () => {
         try {
             await logout();
-            alert('Sesión cerrada');
+            alert('cerrada');
             window.location.href = '/login'; // Redireccionar al login
         } catch (error) {
             console.log('Error al cerrar sesión:', error.message);

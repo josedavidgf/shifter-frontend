@@ -63,7 +63,6 @@ function OnboardingStep2() {
   const handleLogout = async () => {
     try {
       await logout();
-      alert('Sesión cerrada');
     } catch (error) {
       console.log('Error al cerrar sesión:', error.message);
     }

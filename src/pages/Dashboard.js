@@ -41,7 +41,6 @@ function Dashboard() {
     const handleLogout = async () => {
         try {
             await logout();
-            alert('Sesión cerrada');
         } catch (error) {
             console.log('Error al cerrar sesión:', error.message);
         }
