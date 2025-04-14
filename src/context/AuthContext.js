@@ -59,7 +59,7 @@ export function AuthProvider({ children }) {
     try {
       const { data, error } = await supabase.auth.signUp({ email, password });
 
-      if (error) {
+      if (error && !data?.user) {
         console.error('❌ Error en el registro:', error.message);
         return;
       }
@@ -69,10 +69,11 @@ export function AuthProvider({ children }) {
         navigate('/verify-email'); // o muestra mensaje si no tienes esa ruta
         return;
       }
-      if (error) throw error;
+
       localStorage.setItem('token', data.session.access_token);
       setCurrentUser(data.user);
       return data;
+      
     } catch (err) {
       throw new Error(err.message);
     }
