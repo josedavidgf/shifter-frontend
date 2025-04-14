@@ -78,6 +78,9 @@ const MySwapsTable = () => {
         <thead>
           <tr>
             <th>Fecha objetivo</th>
+            <th>Nombre</th>
+            <th>Apellido</th>
+            <th>Email</th>
             <th>Tipo objetivo</th>
             <th>Fecha ofrecida</th>
             <th>Tipo ofrecido</th>
@@ -90,6 +93,9 @@ const MySwapsTable = () => {
           {filtered.map((swap) => (
             <tr key={swap.swap_id}>
               <td>{swap.shift?.date}</td>
+              <td>{swap.shift?.worker.name}</td>
+              <td>{swap.shift?.worker.surname}</td>
+              <td>{swap.shift?.worker.email}</td>
               <td>{swap.shift?.shift_type}</td>
               <td>{swap.offered_date || '—'}</td>
               <td>{swap.offered_type}</td>
