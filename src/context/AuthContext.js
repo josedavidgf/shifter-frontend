@@ -21,23 +21,35 @@ export function AuthProvider({ children }) {
   useEffect(() => {
     async function rehydrateUser() {
       const { data } = await supabase.auth.getSession();
+
       if (data.session) {
-        const user = data.session.user;
         const token = data.session.access_token;
-        setCurrentUser(user);
+        setCurrentUser(data.session.user);
 
-        const isWorker = await checkIfWorkerExists(token);
-        setIsWorker(isWorker);
+        try {
+          const isWorker = await checkIfWorkerExists(token);
+          setIsWorker(isWorker);
+        } catch (err) {
+          console.warn("Worker not found (expected on new signups)", err);
+          setIsWorker(false);
+        }
 
-        const hasCompleted = await checkIfWorkerHasHospitalAndSpeciality(token);
-        setHasCompletedOnboarding(hasCompleted);
+        try {
+          const hasCompleted = await checkIfWorkerHasHospitalAndSpeciality(token);
+          setHasCompletedOnboarding(hasCompleted);
+        } catch (err) {
+          console.warn("No onboarding info found yet", err);
+          setHasCompletedOnboarding(false);
+        }
       }
 
-      setLoading(false); // 🔁 importante para PrivateRoute
+      setLoading(false);
     }
 
     rehydrateUser();
   }, []);
+
+
 
 
 
