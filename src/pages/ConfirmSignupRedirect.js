@@ -1,59 +1,33 @@
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import supabase from '../config/supabase';
-import { checkIfWorkerExists, checkIfWorkerHasHospitalAndSpeciality } from '../services/userService';
+import { useAuth } from '../context/AuthContext';
 
 const ConfirmSignupRedirect = () => {
   const navigate = useNavigate();
+  const { supabase } = useAuth();
 
   useEffect(() => {
-    async function handleRedirect() {
-      const hash = window.location.hash;
-      const params = new URLSearchParams(hash.substring(1));
-      const access_token = params.get('access_token');
-      const refresh_token = params.get('refresh_token');
-  
-      if (!access_token || !refresh_token) {
-        console.error('Tokens not found in URL');
-        return navigate('/login');
-      }
-  
-      const { error: sessionError } = await supabase.auth.setSession({
-        access_token,
-        refresh_token,
-      });
-  
-      if (sessionError) {
-        console.error('Error setting session:', sessionError.message);
-        return navigate('/login');
-      }
-  
-      const { data: { user }, error } = await supabase.auth.getUser();
-      if (error || !user) {
-        console.error('Error retrieving user from Supabase:', error);
-        return navigate('/login');
-      }
-  
-      localStorage.setItem('token', access_token);
-      console.log('Usuario autenticado tras verificación:', user);
-  
-      const isWorker = await checkIfWorkerExists(access_token);
-      const hasOnboarding = isWorker && await checkIfWorkerHasHospitalAndSpeciality(access_token);
-  
-      if (!isWorker) {
-        return navigate('/onboarding');
-      } else if (!hasOnboarding) {
-        return navigate('/onboarding/step-2');
-      } else {
-        return navigate('/dashboard');
-      }
-    }
-  
-    handleRedirect();
-  }, [navigate]);
-  
+    const url = new URL(window.location.href);
+    const hashParams = new URLSearchParams(url.hash.substring(1)); // quitamos '#'
 
-  return <p>Confirmando tu cuenta...</p>;
+    const access_token = hashParams.get('access_token');
+    const refresh_token = hashParams.get('refresh_token');
+
+    if (access_token && refresh_token) {
+      supabase.auth.setSession({ access_token, refresh_token })
+        .then(() => {
+          navigate('/dashboard'); // o `/onboarding` si quieres forzar onboarding aquí
+        })
+        .catch((err) => {
+          console.error('Error al establecer la sesión desde el hash:', err.message);
+          navigate('/login');
+        });
+    } else {
+      navigate('/login');
+    }
+  }, [navigate, supabase]);
+
+  return null;
 };
 
 export default ConfirmSignupRedirect;
