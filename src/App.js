@@ -16,8 +16,8 @@ import HospitalShifts from './pages/HospitalShifts';
 import ProposeSwap from './pages/ProposeSwap';
 import MySwaps from './pages/MySwaps';
 import VerifyEmail from './pages/VerifyEmail';
-import ConfirmSignupRedirect from './pages/ConfirmSignupRedirect';
 import CommunicationPreferences from './components/CommunicationPreferences';
+import Verified from './components/Verified';
 
 
 function App() {
@@ -37,8 +37,8 @@ function App() {
       <Route path="/propose-swap/:shift_id" element={<PrivateRoute><ProposeSwap /></PrivateRoute>} />
       <Route path="/my-swaps" element={<PrivateRoute><MySwaps /></PrivateRoute>} />
       <Route path="/verify-email" element={<VerifyEmail />} />
-      <Route path="/confirm-signup" element={<ConfirmSignupRedirect />} />
       <Route path="/preferences" element={<PrivateRoute><CommunicationPreferences /></PrivateRoute>} />
+      <Route path="/verified" element={<Verified />} />
     </Routes>
   );
 }
