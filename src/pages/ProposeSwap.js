@@ -12,6 +12,7 @@ const ProposeSwap = () => {
     offered_date: '',
     offered_type: 'morning',
     offered_label: 'regular',
+    swap_comments: '',
   });
 
   const [error, setError] = useState(null);
@@ -60,7 +61,12 @@ const ProposeSwap = () => {
           <option value="regular">Regular</option>
           <option value="duty">Guardia</option>
         </select>
-
+        <label>Comentarios:</label>
+        <textarea 
+            name="swap_comments" 
+            value={form.swap_comments} 
+            onChange={handleChange} 
+            placeholder="Comentarios adicionales" />
         <br />
         <button type="submit">Enviar propuesta</button>
         <button type="button" onClick={() => navigate('/shifts/hospital')}>Cancelar</button>

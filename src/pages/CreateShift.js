@@ -14,6 +14,7 @@ const CreateShift = () => {
         shift_type: 'morning',
         shift_label: 'regular',
         speciality_id: '',
+        shift_comments: '',
     });
     const [specialityId, setSpecialityId] = useState('');
     const [preferences, setPreferences] = useState([]);
@@ -97,7 +98,9 @@ const CreateShift = () => {
                     value={form.specialityId}
                 />
                 <p>{specialityId}</p>
-
+                <label>Comentarios:</label>
+                <textarea name="shift_comments" value={form.shift_comments} onChange={handleChange}/>
+                <br />
 
                 {preferences.map((pref, index) => (
                     <div key={index} style={{ border: '1px solid #ccc', marginTop: '1rem', padding: '0.5rem' }}>

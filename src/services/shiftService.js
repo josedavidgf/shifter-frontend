@@ -28,6 +28,7 @@ export const createShift = async (data, token) => {
     const response = await axios.patch(`${API_URL}/api/shifts/${id}`, updates, {
       headers: { Authorization: `Bearer ${token}` },
     });
+    console.log('📤 Datos del turno actualizado:', response.data.data);
     return response.data.data;
   };
 

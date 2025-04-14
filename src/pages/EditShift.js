@@ -16,6 +16,7 @@ const EditShift = () => {
         date: '',
         shift_type: '',
         shift_label: '',
+        shift_comments: '',
     });
 
     const [preferences, setPreferences] = useState([]);
@@ -31,7 +32,9 @@ const EditShift = () => {
                     date: data.date || '',
                     shift_type: data.shift_type || '',
                     shift_label: data.shift_label || '',
+                    shift_comments: data.shift_comments || '',
                 });
+                console.log('🧾 Datos del turno:', data);
                 const prefs = await getShiftPreferencesByShiftId(id, token);
                 setPreferences(prefs);
             } catch (err) {
@@ -72,7 +75,7 @@ const EditShift = () => {
             setError('No se pudo actualizar el turno.');
         }
     };
-
+    console.log('🧾 Formulario de edición:', form);
     return (
         <div>
             <h2>Editar Turno</h2>
@@ -97,7 +100,9 @@ const EditShift = () => {
                     <option value="regular">Regular</option>
                     <option value="duty">Guardia</option>
                 </select>
-
+                <label>Comentarios:</label>
+                <textarea name="shift_comments" value={form.shift_comments} onChange={handleChange}/>
+                <br />
                 <h3>Preferencias de intercambio</h3>
                 {preferences.map((pref, index) => (
                     <div key={index} style={{ border: '1px solid #ccc', marginTop: '1rem', padding: '0.5rem' }}>
