@@ -46,7 +46,9 @@ const CreateShift = () => {
 
     const handlePreferenceChange = (index, field, value) => {
         const updated = [...preferences];
+        console.log('🧾 Preferencias actualizadas:', updated);
         updated[index][field] = value;
+        console.log('🧾 Preferencia actualizada:', updated[index]);
         setPreferences(updated);
     };
 
