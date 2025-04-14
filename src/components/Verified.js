@@ -1,8 +1,13 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 const Verified = () => {
   const navigate = useNavigate();
+
+  useEffect(() => {
+    localStorage.removeItem('token'); // Limpia el token manual
+    localStorage.removeItem('sb-xxqfqprwincmfwxmsjkf-auth-token'); // Limpia el usuario manual
+  }, []);
 
   return (
     <div style={{ padding: '2rem', textAlign: 'center' }}>
