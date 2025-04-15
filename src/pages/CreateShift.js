@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { getFullWorkerProfile } from '../services/userService';
 import { createShift } from '../services/shiftService';
@@ -7,12 +7,16 @@ import { createShift } from '../services/shiftService';
 
 const CreateShift = () => {
     const navigate = useNavigate();
+    const location = useLocation();
+    const params = new URLSearchParams(location.search);
+    const prefilDate = params.get('date');
+    const prefilShiftType = params.get('shift_type');
     const { getToken } = useAuth();
 
     const [form, setForm] = useState({
         date: '',
-        shift_type: 'morning',
-        shift_label: 'regular',
+        shift_type: '',
+        shift_label: '',
         speciality_id: '',
         shift_comments: '',
     });
@@ -26,7 +30,14 @@ const CreateShift = () => {
                 const token = await getToken();
                 const profile = await getFullWorkerProfile(token);
                 setSpecialityId(profile.specialityId);
-                setForm((prev) => ({ ...prev, speciality_id: profile.specialityId }));
+                if (prefilDate || prefilShiftType) {
+                    setForm((prev) => ({
+                        ...prev,
+                        date: prefilDate || prev.date,
+                        shift_type: prefilShiftType || prev.shift_type,
+                        speciality_id: profile.specialityId
+                    }));
+                }
             } catch (err) {
                 setMessage('❌ Error al cargar el perfil');
             }
@@ -34,7 +45,7 @@ const CreateShift = () => {
 
         }
         fetchData();
-    }, [getToken]);
+    }, [getToken, prefilDate, prefilShiftType]);
 
     const handleChange = (e) => {
         const { name, value } = e.target;

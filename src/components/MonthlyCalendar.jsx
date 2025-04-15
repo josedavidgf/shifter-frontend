@@ -3,30 +3,31 @@ import { format, startOfMonth, endOfMonth, eachDayOfInterval } from 'date-fns';
 import { getMyWorkerProfile, } from '../services/workerService';
 import { getShiftsForMonth, setShiftForDay, removeShiftForDay } from '../services/calendarService';
 import { useAuth } from '../context/AuthContext';
+import { useNavigate } from 'react-router-dom';
+
 
 const shiftColors = {
-  M: 'bg-blue-400',
-  T: 'bg-green-400',
-  N: 'bg-yellow-300',
+  morning: 'bg-blue-400',
+  evening: 'bg-green-400',
+  night: 'bg-yellow-300',
   '': 'bg-gray-200',
 };
 
-const shiftLabels = {
+const shiftTypes = {
   '': '',
-  M: 'M',
-  T: 'T',
-  N: 'N',
+  morning: 'morning',
+  evening: 'evening',
+  night: 'night',
 };
 
 export default function MonthlyCalendar() {
-  //const { workerId } = useAuth();
   const [workerId, setWorkerId] = useState('');
   const [monthDays, setMonthDays] = useState([]);
   const [shiftMap, setShiftMap] = useState({});
   const [selectedMonth, setSelectedMonth] = useState(() => format(new Date(), 'yyyy-MM'));
   const { getToken } = useAuth(); // para auth.uid
   const [setError] = useState(null);
-
+  const navigate = useNavigate();
 
 
   useEffect(() => {
@@ -56,7 +57,7 @@ export default function MonthlyCalendar() {
 
   const toggleShift = async (dateStr) => {
     const current = shiftMap[dateStr] || '';
-    const next = current === '' ? 'M' : current === 'M' ? 'T' : current === 'T' ? 'N' : '';
+    const next = current === '' ? 'morning' : current === 'morning' ? 'evening' : current === 'evening' ? 'night' : '';
     setShiftMap((prev) => ({ ...prev, [dateStr]: next }));
 
     try {
@@ -73,6 +74,8 @@ export default function MonthlyCalendar() {
   const handleMonthChange = (e) => {
     setSelectedMonth(e.target.value);
   };
+
+
 
   return (
     <div className="p-4">
@@ -92,15 +95,28 @@ export default function MonthlyCalendar() {
         {monthDays.map((day) => {
           const dateStr = format(day, 'yyyy-MM-dd');
           const shift = shiftMap[dateStr] || '';
+          console.log('Shift:', shift);
+          const isPast = day > new Date();
           return (
             <div
               key={dateStr}
-              className={`h-16 w-16 flex items-center justify-center rounded cursor-pointer ${shiftColors[shift]}`}
+              className={`h-20 w-20 flex flex flex-col item-center justify-center rounded cursor-pointer ${shiftColors[shift]} ${isPast ? 'opacity-50':''}`}
               onClick={() => toggleShift(dateStr)}
             >
               <div className="text-sm font-medium text-black">
-                {format(day, 'd')} {shiftLabels[shift]}
+                {format(day, 'd')} {shiftTypes[shift]}
               </div>
+              {shift && isPast && (
+                <button
+                  className='absolute bottom-1 text-xs bg-white border border-gray-400 rounded px-1'
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    navigate(`/shifts/create/?date=${dateStr}&shift_type=${shift}`);
+                  }}
+                >
+                  Publicar
+                  </button>
+              )}
             </div>
           );
         })}

@@ -38,3 +38,21 @@ export async function removeShiftForDay(workerId, dateStr) {
 
   if (error) throw new Error(error.message);
 }
+
+export async function publishShiftFromCalendar(workerId, shiftType, date) {
+    const { data, error } = await supabase
+      .from('shifts')
+      .insert([
+        {
+          worker_id: workerId,
+          shift_type: shiftType,
+          date,
+          status: 'published',
+          source: 'calendar',
+        }
+      ]);
+  
+    if (error) throw error;
+    return data;
+  }
+  
