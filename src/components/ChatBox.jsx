@@ -35,9 +35,24 @@ const ChatBox = ({ swapId, myWorkerId, otherWorkerId }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    await sendMessage({ swap_id: swapId, sender_id: myWorkerId, recipient_id: otherWorkerId, content: newMessage });
+  
+    const newMsg = {
+      swap_id: swapId,
+      sender_id: myWorkerId,
+      recipient_id: otherWorkerId,
+      content: newMessage,
+      created_at: new Date().toISOString(),
+    };
+  
+    // Render inmediato en local
+    setMessages((prev) => [...prev, newMsg]);
+  
+    // Enviar al backend
+    await sendMessage(newMsg);
+  
     setNewMessage('');
   };
+  
 
   return (
     <div>
