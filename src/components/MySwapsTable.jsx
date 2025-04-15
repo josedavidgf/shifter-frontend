@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { getSentSwaps, cancelSwap } from '../services/swapService';
+import { useNavigate } from 'react-router-dom';
 
 const MySwapsTable = () => {
   const { getToken } = useAuth();
@@ -9,6 +10,7 @@ const MySwapsTable = () => {
   const [filterStatus, setFilterStatus] = useState('');
   const [filterDate, setFilterDate] = useState('');
   const [, setError] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     async function fetchSwaps() {
@@ -102,6 +104,7 @@ const MySwapsTable = () => {
               <td>{swap.offered_label}</td>
               <td>{swap.status}</td>
               <td>
+                <button onClick={() => navigate(`/swaps/${swap.swap_id}`)}>🔍 Ver detalle</button>
                 {swap.status === 'proposed' && (
                   <button onClick={() => handleCancelSwap(swap.swap_id)}>❌ Cancelar</button>
                 )}

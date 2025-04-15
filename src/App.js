@@ -18,6 +18,7 @@ import MySwaps from './pages/MySwaps';
 import VerifyEmail from './pages/VerifyEmail';
 import CommunicationPreferences from './components/CommunicationPreferences';
 import Verified from './components/Verified';
+import SwapDetail from './pages/SwapDetail';
 
 
 function App() {
@@ -39,6 +40,7 @@ function App() {
       <Route path="/verify-email" element={<VerifyEmail />} />
       <Route path="/preferences" element={<PrivateRoute><CommunicationPreferences /></PrivateRoute>} />
       <Route path="/verified" element={<Verified />} />
+      <Route path="/swaps/:id" element={<PrivateRoute><SwapDetail /></PrivateRoute>}/>
     </Routes>
   );
 }
