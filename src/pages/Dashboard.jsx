@@ -3,11 +3,18 @@ import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { getWorkerStats } from '../services/userService';
 import { expireOldShifts } from '../services/shiftService';
+import { getSwapNotifications } from '../services/swapService';
+import { getMyShifts } from '../services/shiftService'; // si ya tienes este servicio
+import {
+    getMyWorkerProfile,
+  } from '../services/workerService';
 
 
 function Dashboard() {
     const { currentUser, logout, getToken } = useAuth();
     const [stats, setStats] = useState(null);
+    const [notifications, setNotifications] = useState({ incomingCount: 0, updatesCount: 0 });
+    const [workerId, setWorkerId] = useState('');
 
     const navigate = useNavigate();
     useEffect(() => {
@@ -38,6 +45,31 @@ function Dashboard() {
         fetchStats();
     }, [getToken]);
 
+    useEffect(() => {
+        async function fetchNotifications() {
+          try {
+            const token = await getToken();
+      
+            // 1. Obtener mis turnos publicados
+            const shifts = await getMyShifts(token);
+            console.log('Mis turnos:', shifts);
+            const myShiftIds = shifts.map(s => s.shift_id);
+            const worker = await getMyWorkerProfile(token);
+            setWorkerId(worker.worker_id);
+            console.log('IDs de mis turnos:', myShiftIds);
+            console.log('ID del trabajador:', workerId);
+            // 2. Obtener notificaciones
+            const data = await getSwapNotifications(token, workerId, myShiftIds);
+            setNotifications(data);
+            console.log('Notificaciones:', data);
+          } catch (err) {
+            console.error('Error al cargar notificaciones:', err.message);
+          }
+        }
+        fetchNotifications();
+      }, [getToken, workerId]);
+      
+
     const handleLogout = async () => {
         try {
             await logout();
@@ -65,6 +97,21 @@ function Dashboard() {
                     <p>Propuestos: <strong>{stats.swapsProposed}</strong></p>
                     <p>Aceptados: <strong>{stats.swapsAccepted}</strong></p>
                 </div>
+            </div>
+            <div style={{ border: '1px solid #ccc', padding: '1rem', marginTop: '1rem' }}>
+                <h3>🔔 Notificaciones</h3>
+
+                {notifications.incomingCount > 0 ? (
+                    <p>📬 Tienes <strong>{notifications.incomingCount}</strong> propuesta(s) de intercambio que requieren tu revisión.</p>
+                ) : (
+                    <p>✅ No tienes propuestas pendientes.</p>
+                )}
+
+                {notifications.updatesCount > 0 ? (
+                    <p>📨 Tienes <strong>{notifications.updatesCount}</strong> intercambio(s) respondido(s).</p>
+                ) : (
+                    <p>📭 Sin actualizaciones recientes.</p>
+                )}
             </div>
             {currentUser ? (
                 <div>

@@ -1,4 +1,6 @@
 import axios from 'axios';
+import supabase from '../config/supabase';
+
 
 const API_URL = process.env.REACT_APP_BACKEND_URL;
 
@@ -76,5 +78,33 @@ export async function getSwapsByShiftId(shiftId, token) {
   });
 
   return response.data.data;
+}
+
+export async function getSwapNotifications(token, workerId, myShiftIds) {
+  // 🛡 Protección básica
+  if (!workerId || !Array.isArray(myShiftIds) || myShiftIds.length === 0) {
+    return { incomingCount: 0, updatesCount: 0 };
+  }
+
+  // 1. Propuestas que tengo que revisar
+  const { data: incoming } = await supabase
+    .from('swaps')
+    .select('swap_id')
+    .eq('status', 'proposed')
+    .in('shift_id', myShiftIds)
+    .throwOnError();
+
+  // 2. Respuestas que me han dado
+  const { data: updates } = await supabase
+    .from('swaps')
+    .select('swap_id, status')
+    .eq('requester_id', workerId)
+    .in('status', ['accepted', 'rejected'])
+    .throwOnError();
+
+  return {
+    incomingCount: incoming?.length || 0,
+    updatesCount: updates?.length || 0,
+  };
 }
 
