@@ -8,7 +8,7 @@ import {
   } from '../services/workerService';
 
 const SwapDetail = () => {    
-    const { id } = useParams();
+    const { id } = useParams(); // swapId
     console.log('🧾 ID del intercambio:', id);
     const { currentUser, getToken } = useAuth(); // para auth.uid
     console.log('🔑 ID del usuario autenticado:', currentUser.id);

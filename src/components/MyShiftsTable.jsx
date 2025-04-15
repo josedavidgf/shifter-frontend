@@ -92,6 +92,7 @@ const MyShiftsTable = ({
               <td>{shift.state}</td>
               <td>
                 <button onClick={() => navigate(`/shifts/edit/${shift.shift_id}`)}>✏️</button>
+                <button onClick={() => navigate(`/shifts/${shift.shift_id}`)}>🔍 Ver detalle</button>
                 <button onClick={() => handleDelete(shift.shift_id)}>🗑</button>
               </td>
             </tr>

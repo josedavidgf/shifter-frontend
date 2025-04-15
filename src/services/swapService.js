@@ -67,3 +67,14 @@ export async function getSwapById(swapId, token) {
   console.log('⚠️⚠️⚠️ Datos del swap:', response.data.data);
   return response.data.data;
 }
+
+export async function getSwapsByShiftId(shiftId, token) {
+  const response = await axios.get(`${API_URL}/api/swaps/by-shift/${shiftId}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  return response.data.data;
+}
+
