@@ -127,6 +127,9 @@ function Dashboard() {
                     <button onClick={() => navigate('/shifts/hospital')}>🏥 Ver turnos del hospital</button>
                     <hr />
                     <button onClick={() => navigate('/my-swaps')}>Mis intercambios propuestos</button>
+                    <hr />
+                    <button onClick={() => navigate('/calendar')}>🗓 Ver mi calendario</button>
+
                 </div>
             ) : (
                 <p>No hay usuario logueado</p>

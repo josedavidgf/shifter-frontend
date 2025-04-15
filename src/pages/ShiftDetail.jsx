@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { getSwapsByShiftId } from '../services/swapService';
 import ChatBox from '../components/ChatBox';
 
 const ShiftDetail = () => {
+    const navigate = useNavigate();
     const { id } = useParams(); // shiftId
-    const { getToken} = useAuth(); // asegúrate de tener el workerId
+    const { getToken } = useAuth(); // asegúrate de tener el workerId
     const [swaps, setSwaps] = useState([]);
     const [error, setError] = useState(null);
 
@@ -50,6 +51,8 @@ const ShiftDetail = () => {
                     />
                 </div>
             ))}
+            <hr />
+            <button onClick={() => navigate('/dashboard')}>⬅ Volver al Dashboard</button>
         </div>
     );
 };

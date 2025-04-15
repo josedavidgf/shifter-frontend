@@ -1,34 +1,36 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
-import { getSwapById} from '../services/swapService';
+import { useParams, useNavigate } from 'react-router-dom';
+import { getSwapById } from '../services/swapService';
 import ChatBox from '../components/ChatBox';
 import { useAuth } from '../context/AuthContext';
+
 import {
     getMyWorkerProfile,
-  } from '../services/workerService';
+} from '../services/workerService';
 
-const SwapDetail = () => {    
+const SwapDetail = () => {
+    const navigate = useNavigate();
     const { id } = useParams(); // swapId
-    console.log('🧾 ID del intercambio:', id);
-    const { currentUser, getToken } = useAuth(); // para auth.uid
-    console.log('🔑 ID del usuario autenticado:', currentUser.id);
-    console.log('👤 Usuario autenticado:', currentUser);
+    //console.log('🧾 ID del intercambio:', id);
+    const { getToken } = useAuth(); // para auth.uid
+    //console.log('🔑 ID del usuario autenticado:', currentUser.id);
+    //console.log('👤 Usuario autenticado:', currentUser);
     const [swap, setSwap] = useState(null);
-    console.log('🔄 Estado inicial del intercambio:', swap);
+    //console.log('🔄 Estado inicial del intercambio:', swap);
     const [error, setError] = useState(null);
     const [workerId, setWorkerId] = useState('');
-    
+
 
     useEffect(() => {
         async function fetchSwap() {
             try {
                 const token = await getToken();
-                console.log('🔑 Token de autenticación swap detail:', token);
-                const data = await getSwapById(id,token);
-                console.log('⚠️⚠️ Datos del intercambio swap detail:', data);
+                //console.log('🔑 Token de autenticación swap detail:', token);
+                const data = await getSwapById(id, token);
+                //console.log('⚠️⚠️ Datos del intercambio swap detail:', data);
                 setSwap(data);
                 const worker = await getMyWorkerProfile(token);
-                console.log('👤 Datos del trabajador:', worker);
+                //console.log('👤 Datos del trabajador:', worker);
                 setWorkerId(worker.worker_id);
             } catch (err) {
                 setError('No se pudo cargar el intercambio');
@@ -36,7 +38,7 @@ const SwapDetail = () => {
             }
         }
         fetchSwap();
-    }, [id,getToken]);
+    }, [id, getToken]);
 
     if (error) return <p style={{ color: 'red' }}>{error}</p>;
     if (!swap) return <p>Cargando...</p>;
@@ -58,6 +60,8 @@ const SwapDetail = () => {
                     otherWorkerId={swap.requester_id === workerId ? swap.shift.worker_id : swap.requester_id}
                 />
             )}
+            <hr />
+            <button onClick={() => navigate('/dashboard')}>⬅ Volver al Dashboard</button>
         </div>
     );
 };
