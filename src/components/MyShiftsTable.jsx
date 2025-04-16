@@ -10,26 +10,35 @@ const MyShiftsTable = ({
   navigate,
 }) => {
   const [filtered, setFiltered] = useState(shifts);
-  const [filterDate, setFilterDate] = useState('');
-  const [filterState, setFilterState] = useState('');
+  const [filterMonth, setFilterMonth] = useState(() => {
+    const now = new Date();
+    return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+  });
+
+  const [filterState, setFilterState] = useState('published');
 
 
   useEffect(() => {
     let updated = shifts;
 
-    if (filterDate) {
-      updated = updated.filter((s) => s.date === filterDate);
+    if (filterMonth) {
+      updated = updated.filter((s) => {
+        const [year, month] = s.date.split('-');
+        return `${year}-${month}` === filterMonth;
+      });
     }
 
     if (filterState) {
       updated = updated.filter((s) => s.state === filterState);
     }
+    updated = updated.sort((a, b) => new Date(a.date) - new Date(b.date));
+
 
     setFiltered(updated);
-  }, [filterDate, filterState, shifts]);
+  }, [filterMonth, filterState, shifts]);
 
   const clearFilters = () => {
-    setFilterDate('');
+    setFilterMonth('');
     setFilterState('');
   };
 
@@ -37,10 +46,11 @@ const MyShiftsTable = ({
   return (
     <div>
       <input
-        type="date"
-        value={filterDate}
-        onChange={(e) => setFilterDate(e.target.value)}
+        type="month"
+        value={filterMonth}
+        onChange={(e) => setFilterMonth(e.target.value)}
       />
+
       <select
         value={filterState}
         onChange={(e) => setFilterState(e.target.value)}
