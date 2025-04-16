@@ -56,6 +56,16 @@ export async function cancelSwap(swapId, token) {
   
     return response.data.data;
   }
+
+  export async function getAcceptedSwaps(token) {
+    const response = await axios.get(`${API_URL}/api/swaps/accepted`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+  
+    return response.data.data;
+  }
   
   // GET /api/swaps/:id
 export async function getSwapById(swapId, token) {

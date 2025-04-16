@@ -1,24 +1,26 @@
 import React, { useEffect, useState } from 'react';
 import { format, startOfMonth, endOfMonth, eachDayOfInterval } from 'date-fns';
 import { getMyWorkerProfile, } from '../services/workerService';
-import { getShiftsForMonth, setShiftForDay, removeShiftForDay } from '../services/calendarService';
+import { getShiftsForMonth, setShiftForDay, removeShiftForDay, getDayOffset } from '../services/calendarService';
+import { getAcceptedSwaps } from '../services/swapService';
+import { getMyShifts } from '../services/shiftService';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
+import '../index.css';
 
 
-const shiftColors = {
-  morning: 'bg-blue-400',
-  evening: 'bg-green-400',
-  night: 'bg-yellow-300',
-  '': 'bg-gray-200',
-};
-
-const shiftTypes = {
-  '': '',
-  morning: 'morning',
-  evening: 'evening',
-  night: 'night',
-};
+function getShiftLabel(shift) {
+  switch (shift) {
+    case 'morning':
+      return 'M';
+    case 'evening':
+      return 'T';
+    case 'night':
+      return 'N';
+    default:
+      return '';
+  }
+}
 
 export default function MonthlyCalendar() {
   const [workerId, setWorkerId] = useState('');
@@ -26,7 +28,7 @@ export default function MonthlyCalendar() {
   const [shiftMap, setShiftMap] = useState({});
   const [selectedMonth, setSelectedMonth] = useState(() => format(new Date(), 'yyyy-MM'));
   const { getToken } = useAuth(); // para auth.uid
-  const [setError] = useState(null);
+  //const [setError] = useState(null);
   const navigate = useNavigate();
 
 
@@ -43,12 +45,58 @@ export default function MonthlyCalendar() {
         const fetchedWorkerId = worker.worker_id;
         setWorkerId(fetchedWorkerId);
         console.log('ID del trabajador:', fetchedWorkerId);
-        if (fetchedWorkerId) {
+
+        // opción anterior
+        /* if (fetchedWorkerId) {
           getShiftsForMonth(fetchedWorkerId, year, month).then(setShiftMap).catch(console.error);
-        }
+        } */
+        if (!fetchedWorkerId) return;
+
+        // Opción última propuesta
+        const shifts = await getShiftsForMonth(fetchedWorkerId, year, month);
+        const publishedShifts = await getMyShifts(token);
+        console.log('Turnos publicados:', publishedShifts);
+        const swaps = await getAcceptedSwaps(token);
+        console.log('Turnos:', shifts);
+        console.log('Swaps:', swaps);
+
+        // Creamos el shiftMap enriquecido
+        const enrichedMap = {};
+
+        (shifts || []).forEach(({ date, shift_type }) => {
+          enrichedMap[date] = enrichedMap[date] || {};
+          enrichedMap[date].type = shift_type;
+          enrichedMap[date].isMyShift = true
+        });
+
+        /* shifts.forEach(({ date, shift_type }) => {
+          enrichedMap[date] = { type: shift_type };
+        }); */
+
+        (publishedShifts || []).forEach(({ date }) => {
+          if (enrichedMap[date]) enrichedMap[date].isPublished = true;
+        });
+
+        (swaps || []).forEach(({ offered_date, offered_type }) => {
+          enrichedMap[offered_date] = enrichedMap[offered_date] || {};
+          enrichedMap[offered_date].type = offered_type;
+          enrichedMap[offered_date].isReceived = true;
+        });
+
+        swaps.forEach(({ shift }) => {
+          if (shift && shift.date && enrichedMap[shift.date]) {
+            enrichedMap[shift.date].isSwapped = true;
+          }
+        });
+
+        console.log('EnrichedMap:', enrichedMap);
+
+        setShiftMap(enrichedMap);
+        console.log('Shif map:', shiftMap);
+
+
       } catch (err) {
-        setError('No se pudo cargar el intercambio');
-        console.error(err.message);
+        console.error('Error al cargar calendario:', err.message);
       }
     }
     fetchCalendar();
@@ -56,20 +104,39 @@ export default function MonthlyCalendar() {
   }, [selectedMonth]);
 
   const toggleShift = async (dateStr) => {
-    const current = shiftMap[dateStr] || '';
-    const next = current === '' ? 'morning' : current === 'morning' ? 'evening' : current === 'evening' ? 'night' : '';
-    setShiftMap((prev) => ({ ...prev, [dateStr]: next }));
+    const current = shiftMap[dateStr]?.type || '';
+    const next =
+      current === ''
+        ? 'morning'
+        : current === 'morning'
+          ? 'evening'
+          : current === 'evening'
+            ? 'night'
+            : '';
 
     try {
       if (next === '') {
         await removeShiftForDay(workerId, dateStr);
+        setShiftMap((prev) => {
+          const updated = { ...prev };
+          delete updated[dateStr];
+          return updated;
+        });
       } else {
         await setShiftForDay(workerId, dateStr, next);
+        setShiftMap((prev) => ({
+          ...prev,
+          [dateStr]: {
+            type: next,
+            isMyShift: true, // 👈 necesario para que salga botón de publicar
+          },
+        }));
       }
     } catch (error) {
       console.error('Error al guardar turno:', error);
     }
   };
+
 
   const handleMonthChange = (e) => {
     setSelectedMonth(e.target.value);
@@ -91,35 +158,60 @@ export default function MonthlyCalendar() {
         />
       </div>
 
-      <div className="grid grid-cols-7 gap-2">
-        {monthDays.map((day) => {
-          const dateStr = format(day, 'yyyy-MM-dd');
-          const shift = shiftMap[dateStr] || '';
-          console.log('Shift:', shift);
-          const isPast = day > new Date();
-          return (
-            <div
-              key={dateStr}
-              className={`h-20 w-20 flex flex flex-col item-center justify-center rounded cursor-pointer ${shiftColors[shift]} ${isPast ? 'opacity-50':''}`}
-              onClick={() => toggleShift(dateStr)}
-            >
-              <div className="text-sm font-medium text-black">
-                {format(day, 'd')} {shiftTypes[shift]}
-              </div>
-              {shift && isPast && (
-                <button
-                  className='absolute bottom-1 text-xs bg-white border border-gray-400 rounded px-1'
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    navigate(`/shifts/create/?date=${dateStr}&shift_type=${shift}`);
-                  }}
-                >
-                  Publicar
+      <div className="calendar-container">
+        <div className="calendar-grid">
+          {['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'].map((dayName) => (
+            <div key={dayName} className="calendar-header">{dayName}</div>
+          ))}
+
+          {Array.from({ length: getDayOffset(monthDays[0]) }).map((_, i) => (
+            <div key={`empty-${i}`} className="calendar-day empty" />
+          ))}
+
+          {monthDays.map((day) => {
+            const dateStr = format(day, 'yyyy-MM-dd');
+            const shiftData = shiftMap[dateStr] || {};
+            const shift = shiftData.type || '';
+            const flags = shiftData || {};
+            const isPast = day < new Date();
+
+            const indicator = flags.isReceived
+              ? '✅ Turno recibido'
+              : flags.isSwapped
+                ? '🔁 Turno traspasado'
+                : flags.isPublished
+                  ? '📢 Turno publicado'
+                  : flags.isMyShift
+                    ? '✔️'
+                    : '';
+
+            return (
+              <div
+                key={dateStr}
+                className={`calendar-day shift-${shift} ${isPast ? 'past' : ''}`}
+                onClick={() => {
+                  if (!isPast) toggleShift(dateStr);
+                }}
+              >
+                <div className="calendar-text">
+                  {format(day, 'd')} {getShiftLabel(shift)} {indicator}
+                </div>
+
+                {flags.isMyShift && !flags.isPublished && !isPast && (
+                  <button
+                    className="publish-button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      navigate(`/shifts/create/?date=${dateStr}&shift_type=${shift}`);
+                    }}
+                  >
+                    Publicar
                   </button>
-              )}
-            </div>
-          );
-        })}
+                )}
+              </div>
+            );
+          })}
+        </div>
       </div>
     </div>
   );

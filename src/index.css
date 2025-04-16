@@ -11,3 +11,69 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+.publish-button {
+  .position: absolute;
+  bottom: 2px;
+  font-size: 0.75rem;
+  background-color: white;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 1px 4px;
+  cursor: pointer;
+}
+.publish-button:hover {
+  background-color: #f0f0f0;
+}
+
+.calendar-day{
+  width: 48px;
+  height: 48px;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+  border-radius: 6px;
+  position: relative;
+  cursor: pointer;
+}
+.calendar-text{
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: #000;
+}
+
+.shift-morning {
+  background-color: #d1fae5;
+}
+.shift-evening{
+  background-color: #fde68a;
+}
+.shift-night{
+  background-color: #e0e7ff;
+}
+.past{
+  opacity: 0.5;
+}
+
+
+.calendar-container {
+  padding: 1rem;
+}
+
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 6px;
+}
+
+.calendar-header {
+  text-align: center;
+  font-weight: bold;
+  font-size: 0.85rem;
+}
+
+.calendar-day.empty {
+  background: transparent;
+  cursor: default;
+}
