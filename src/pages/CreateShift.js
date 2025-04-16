@@ -3,6 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { getFullWorkerProfile } from '../services/userService';
 import { createShift } from '../services/shiftService';
+import { getSpecialities } from '../services/specialityService';
 
 
 const CreateShift = () => {
@@ -11,6 +12,11 @@ const CreateShift = () => {
     const params = new URLSearchParams(location.search);
     const prefilDate = params.get('date');
     const prefilShiftType = params.get('shift_type');
+    // eslint-disable-next-line no-unused-vars
+    const [specialities, setSpecialities] = useState([]);
+    const [selectedSpeciality, setSelectedSpeciality] = useState(null);
+
+
     const { getToken } = useAuth();
 
     const [form, setForm] = useState({
@@ -20,6 +26,7 @@ const CreateShift = () => {
         speciality_id: '',
         shift_comments: '',
     });
+    // eslint-disable-next-line no-unused-vars
     const [specialityId, setSpecialityId] = useState('');
     const [preferences, setPreferences] = useState([]);
     const [message, setMessage] = useState('');
@@ -30,6 +37,18 @@ const CreateShift = () => {
                 const token = await getToken();
                 const profile = await getFullWorkerProfile(token);
                 setSpecialityId(profile.specialityId);
+                const specs = await getSpecialities(token)
+                setSpecialities(specs);
+                const match = specs.find(s => s.speciality_id === profile.specialityId);
+                setSelectedSpeciality(match);
+
+                setForm((prev) => ({
+                    ...prev,
+                    date: prefilDate || prev.date,
+                    shift_type: prefilShiftType || prev.shift_type,
+                    speciality_id: profile.specialityId,
+                }));
+
                 if (prefilDate || prefilShiftType) {
                     setForm((prev) => ({
                         ...prev,
@@ -88,7 +107,7 @@ const CreateShift = () => {
             <h2>Crear Turno</h2>
             <form onSubmit={handleSubmit}>
                 <label>Fecha:</label>
-                <input type="date"  min={new Date().toISOString().split('T')[0]} name="date" value={form.date} onChange={handleChange} required />
+                <input type="date" min={new Date().toISOString().split('T')[0]} name="date" value={form.date} onChange={handleChange} required />
                 <label>Turno:</label>
                 <select name="shift_type" value={form.shift_type} onChange={handleChange} required>
                     <option value="morning">Mañana</option>
@@ -108,9 +127,12 @@ const CreateShift = () => {
                     name="speciality_id"
                     value={form.specialityId}
                 />
-                <p>{specialityId}</p>
+                {selectedSpeciality &&
+                    <p>{selectedSpeciality.speciality_category} - {selectedSpeciality.speciality_subcategory}</p>
+                }
+
                 <label>Comentarios:</label>
-                <textarea name="shift_comments" value={form.shift_comments} onChange={handleChange}/>
+                <textarea name="shift_comments" value={form.shift_comments} onChange={handleChange} />
                 <br />
 
                 {preferences.map((pref, index) => (
