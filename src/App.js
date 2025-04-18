@@ -21,6 +21,13 @@ import Verified from './components/Verified';
 import SwapDetail from './pages/SwapDetail';
 import ShiftDetail from './pages/ShiftDetail';
 import Calendar from './pages/Calendar';
+import OnboardingCode from './pages/onboarding/OnboardingCode';
+import OnboardingConfirm from './pages/onboarding/OnboardingConfirm';
+import OnboardingSpeciality from './pages/onboarding/OnboardingSpeciality';
+import OnboardingName from './pages/onboarding/OnboardingName';
+import OnboardingPhone from './pages/onboarding/OnboardingPhone';
+import OnboardingSuccess from './pages/onboarding/OnboardingSuccess';
+
 
 
 function App() {
@@ -43,9 +50,16 @@ function App() {
       <Route path="/preferences" element={<PrivateRoute><CommunicationPreferences /></PrivateRoute>} />
       <Route path="/verified" element={<Verified />} />
       <Route path="/calendar" element={<PrivateRoute><Calendar /></PrivateRoute>} />
-      <Route path="/swaps/:id" element={<PrivateRoute><SwapDetail /></PrivateRoute>}/>
-      <Route path="/shifts/:id" element={<PrivateRoute><ShiftDetail /></PrivateRoute>}/>
-    </Routes>
+      <Route path="/swaps/:id" element={<PrivateRoute><SwapDetail /></PrivateRoute>} />
+      <Route path="/shifts/:id" element={<PrivateRoute><ShiftDetail /></PrivateRoute>} />
+      <Route path="/onboarding/code" element={<PrivateRoute><OnboardingCode /></PrivateRoute>} />
+      <Route path="/onboarding/confirm" element={<PrivateRoute><OnboardingConfirm /></PrivateRoute>} />
+      <Route path="/onboarding/speciality" element={<PrivateRoute><OnboardingSpeciality /></PrivateRoute>} />
+      <Route path="/onboarding/name" element={<PrivateRoute><OnboardingName /></PrivateRoute>} />
+      <Route path="/onboarding/phone" element={<PrivateRoute><OnboardingPhone /></PrivateRoute>} />
+      <Route path="/onboarding/success" element={<PrivateRoute><OnboardingSuccess /></PrivateRoute>} />
+      
+    </Routes >
   );
 }
 
