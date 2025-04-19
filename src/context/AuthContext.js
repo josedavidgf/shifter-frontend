@@ -2,12 +2,19 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 import supabase from '../config/supabase';
 import { useNavigate } from 'react-router-dom';
 import { getMyWorkerProfile, } from '../services/workerService';
+import { initAmplitude, identifyUser } from '../lib/amplitude';
+import * as amplitude from '@amplitude/analytics-browser';
+
 
 const AuthContext = createContext();
 
 export function useAuth() {
   return useContext(AuthContext);
 }
+
+
+let isAmplitudeInitialized = false; // 🔥 flag global (fuera del AuthProvider)
+
 
 export function AuthProvider({ children }) {
   const [currentUser, setCurrentUser] = useState(null);
@@ -16,29 +23,44 @@ export function AuthProvider({ children }) {
   const navigate = useNavigate();
 
 
+
   // Recuperar usuario al iniciar app
   useEffect(() => {
     async function rehydrateUser() {
       const { data } = await supabase.auth.getSession();
 
-      if (data.session) {
+      if (!data?.session) {
+        setLoading(false);
+        return;
+      }
+
         const token = data.session.access_token;
         setCurrentUser(data.session.user);
 
+        if (!isAmplitudeInitialized) {
+          initAmplitude();
+          isAmplitudeInitialized = true;
+        }
+
         try {
           const workerProfile = await getMyWorkerProfile(token);
+          if (!workerProfile) {
+            setIsWorker(false);
+            return;
+          }
           setIsWorker(workerProfile);
+          identifyUser(workerProfile);
         } catch (err) {
-          console.warn("Worker not found (expected on new signups)", err);
-          setIsWorker(null); // no es worker aún
+          console.warn('Worker not found', err);
+          setIsWorker(null);
         }
-      }
 
       setLoading(false);
     }
 
-    rehydrateUser();
+    rehydrateUser(); // 👈🏻 Este llamado está bien, **dentro del useEffect** pero **fuera** de async function
   }, []);
+
 
 
 
@@ -122,6 +144,7 @@ export function AuthProvider({ children }) {
     localStorage.removeItem('token');
     setCurrentUser(null);
     setIsWorker(false);
+    amplitude.reset()
   };
 
   // Obtener token actual

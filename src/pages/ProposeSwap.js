@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { proposeSwap } from '../services/swapService';
+import useTrackPageView from '../hooks/useTrackPageView';
 
 const ProposeSwap = () => {
   const { shift_id } = useParams();
@@ -21,6 +22,8 @@ const ProposeSwap = () => {
     const { name, value } = e.target;
     setForm(prev => ({ ...prev, [name]: value }));
   };
+
+  useTrackPageView('propose-swap');
 
   const handleSubmit = async (e) => {
     e.preventDefault();

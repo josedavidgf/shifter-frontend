@@ -4,6 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import { getFullWorkerProfile } from '../services/userService';
 import { createShift } from '../services/shiftService';
 import { getSpecialities } from '../services/specialityService';
+import useTrackPageView from '../hooks/useTrackPageView';
 
 
 const CreateShift = () => {
@@ -30,6 +31,8 @@ const CreateShift = () => {
     const [specialityId, setSpecialityId] = useState('');
     const [preferences, setPreferences] = useState([]);
     const [message, setMessage] = useState('');
+
+    useTrackPageView('create-shift');
 
     useEffect(() => {
         async function fetchData() {

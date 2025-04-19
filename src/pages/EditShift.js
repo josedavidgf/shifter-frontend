@@ -7,6 +7,9 @@ import {
     getShiftPreferencesByShiftId,
     updateShiftPreferences
 } from '../services/shiftService';
+import useTrackPageView from '../hooks/useTrackPageView';
+
+
 
 const EditShift = () => {
     const { id } = useParams();
@@ -18,10 +21,10 @@ const EditShift = () => {
         shift_label: '',
         shift_comments: '',
     });
-
     const [preferences, setPreferences] = useState([]);
-
     const [error, setError] = useState(null);
+
+    useTrackPageView('edit-shift');
 
     useEffect(() => {
         async function fetchShift() {

@@ -5,7 +5,8 @@ import { getHospitalShifts } from '../services/shiftService';
 import { getSpecialities } from '../services/specialityService';
 import { getFullWorkerProfile } from '../services/userService';
 import HospitalShiftsTable from '../components/HospitalShiftsTable';
-import { getSentSwaps } from '../services/swapService'; // 👈 añadir
+import { getSentSwaps } from '../services/swapService';
+import useTrackPageView from '../hooks/useTrackPageView';
 
 
 const HospitalShifts = () => {
@@ -16,6 +17,8 @@ const HospitalShifts = () => {
     const navigate = useNavigate();
     const [workerId, setWorkerId] = useState(null);
     const [sentSwaps, setSentSwaps] = useState([]);
+
+    useTrackPageView('hospital-shifts');
 
     useEffect(() => {
         async function fetchData() {

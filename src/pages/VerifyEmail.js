@@ -1,10 +1,13 @@
 import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { resendVerificationEmail } from '../services/authService';
+import useTrackPageView from '../hooks/useTrackPageView';
 
 const VerifyEmail = () => {
   const { getToken } = useAuth();
   const [status, setStatus] = useState('');
+
+  useTrackPageView('verify-email');
 
   const handleResend = async () => {
     try {

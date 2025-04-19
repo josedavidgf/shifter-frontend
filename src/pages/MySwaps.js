@@ -3,12 +3,15 @@ import { useAuth } from '../context/AuthContext';
 import { getSentSwaps } from '../services/swapService';
 import { useNavigate } from 'react-router-dom';
 import MySwapsTable from '../components/MySwapsTable';
+import useTrackPageView from '../hooks/useTrackPageView';
 
 const MySwaps = () => {
   const { getToken } = useAuth();
   const [mySwaps, setMySwaps] = useState([]);
   const [, setError] = useState(null);
   const navigate = useNavigate();
+
+  useTrackPageView('my-swaps');
 
   useEffect(() => {
     async function fetchSwaps() {

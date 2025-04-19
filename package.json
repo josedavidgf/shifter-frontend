@@ -3,6 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@amplitude/analytics-browser": "^2.15.0",
+    "@amplitude/analytics-react-native": "^1.4.13",
+    "@react-native-async-storage/async-storage": "^2.1.2",
     "@supabase/supabase-js": "^2.49.4",
     "@testing-library/dom": "^10.4.0",
     "@testing-library/jest-dom": "^6.6.3",

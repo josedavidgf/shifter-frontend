@@ -1,11 +1,14 @@
 import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
+import useTrackPageView from '../hooks/useTrackPageView';
 
 const Register = () => {
     const { register } = useAuth();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 
+    useTrackPageView('register');
+    
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {

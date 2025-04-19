@@ -5,6 +5,7 @@ import { getMyShifts, removeShift } from '../services/shiftService';
 import { getSpecialities } from '../services/specialityService';
 import { getReceivedSwaps, respondToSwap } from '../services/swapService';
 import MyShiftsTable from '../components/MyShiftsTable';
+import useTrackPageView from '../hooks/useTrackPageView';
 
 
 const MyShifts = () => {
@@ -42,6 +43,8 @@ const MyShifts = () => {
             setError('Error al cargar swaps');
         }
     }, [getToken]);
+
+    useTrackPageView('my-shifts');
 
 
     useEffect(() => {
