@@ -30,11 +30,6 @@ const PrivateRoute = ({ children }) => {
     if (location.pathname !== '/onboarding/speciality') return <Navigate to="/onboarding/speciality" />;
     return children;
   }
-  console.log('isWorker:', isWorker);
-  console.log('isWorker.name:', isWorker.name);
-  console.log('isWorker.surname:', isWorker.surname);
-  console.log('isWorker.name True:', !isWorker.name);
-  console.log('isWorker.name True:', !isWorker.surname);
 
   if (!isWorker.name || !isWorker.surname) {
     if (location.pathname !== '/onboarding/name') return <Navigate to="/onboarding/name" />;

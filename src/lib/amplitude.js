@@ -28,13 +28,11 @@ export const identifyUser = (userProfile) => {
         console.warn('No user profile provided for Amplitude identification');
         return;
     }
-    console.log('Identifying user in Amplitude:', userProfile);
     if (!userProfile.user_id) {
         console.warn('No user ID found in the provided profile');
         return;
     }
     const identifyObj = new amplitude.Identify();
-    console.log('Profile:', userProfile);
     identifyObj.set('email', userProfile.email || '');
     //identifyObj.set('name', userProfile.name || '');
     identifyObj.set('workerId', userProfile.worker_id || '');
@@ -46,8 +44,6 @@ export const identifyUser = (userProfile) => {
     identifyObj.set('specialityCategory', userProfile.workers_specialities?.[0]?.specialities?.speciality_category || '');
     identifyObj.set('specialitySubcategory', userProfile.workers_specialities?.[0]?.specialities?.speciality_subcategory || '');
   
-    console.log('Identify object:', identifyObj);
-
     amplitude.identify(identifyObj);
     amplitude.flush(); // 💥 Envía enseguida
     

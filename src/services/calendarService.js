@@ -1,9 +1,9 @@
 import supabase from '../config/supabase';
-import { format, startOfMonth, endOfMonth, getDay} from 'date-fns';
+import { /* format, startOfMonth, endOfMonth, */ getDay} from 'date-fns';
 
-export async function getShiftsForMonth(workerId, year, month) {
-    const start = format(startOfMonth(new Date(year, month - 1)), 'yyyy-MM-dd');
-    const end = format(endOfMonth(new Date(year, month - 1)), 'yyyy-MM-dd');
+export async function getShiftsForMonth(workerId /*, year, month */) {
+/*     const start = format(startOfMonth(new Date(year, month - 1)), 'yyyy-MM-dd');
+    const end = format(endOfMonth(new Date(year, month - 1)), 'yyyy-MM-dd'); */
 
 
 
@@ -11,8 +11,9 @@ export async function getShiftsForMonth(workerId, year, month) {
         .from('monthly_schedules')
         .select('date, shift_type')
         .eq('worker_id', workerId)
-        .gte('date', start)
-        .lte('date', end);
+/*         .gte('date', start)
+        .lte('date', end); */
+    console.log('Data shiftsMonth:', data)
     if (error) {
         console.error('❌ Error en getShiftsForMonth:', error.message);
         return []; // Devuelve array vacío para evitar petadas
