@@ -3,11 +3,15 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { proposeSwap } from '../services/swapService';
 import useTrackPageView from '../hooks/useTrackPageView';
+import { useSwapFeedback } from '../hooks/useSwapFeedback';
+
 
 const ProposeSwap = () => {
   const { shift_id } = useParams();
   const { getToken } = useAuth();
   const navigate = useNavigate();
+  const { showSwapFeedback } = useSwapFeedback();
+
 
   const [form, setForm] = useState({
     offered_date: '',
@@ -31,11 +35,7 @@ const ProposeSwap = () => {
       const token = await getToken();
       const swap = await proposeSwap(shift_id, form, token); // 🛠️ capturamos swap aquí
 
-      if (swap.status === 'accepted') {
-        alert('✅ ¡Intercambio realizado directamente!');
-      } else {
-        alert('✅ Solicitud de intercambio creada. Pendiente de aceptación.');
-      }
+      showSwapFeedback(swap); // 🔥 Aquí
 
       navigate('/shifts/hospital');
     } catch (err) {
