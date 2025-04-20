@@ -1,5 +1,7 @@
 import axios from 'axios';
 
+const API_URL = process.env.REACT_APP_BACKEND_URL;
+
 
 // Obtener el token del almacenamiento local
 const getAuthHeader = () => {
@@ -9,7 +11,7 @@ const getAuthHeader = () => {
 
 export async function getWorkerTypes() {
     try {
-        const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/workerTypes`, {
+        const response = await axios.get(`${API_URL}/api/workerTypes`, {
             headers: getAuthHeader()
         });
         return response.data.data;
@@ -20,14 +22,16 @@ export async function getWorkerTypes() {
 }
 
 export async function createWorker(data, token) {
+    console.log('📤 Enviando datos al backend:', data); // 👈
     console.log('📤 Enviando token al backend:', token); // 👈
     try{
         //console.log('📤 Datos a enviar:', data,token); // 👈
-        const response = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/workers`, data, {
+        const response = await axios.post(`${API_URL}/api/workers`, data, {
             headers: {
                 Authorization: `Bearer ${token}`,
             },
         });
+        console.log('📥 Datos de la respuesta:', response.data);
         return response.data;
     } catch (error) {
         console.error('Error al crear trabajador:', error.message?.data || error.message);
@@ -36,7 +40,7 @@ export async function createWorker(data, token) {
 }
 
 export const getMyWorkerProfile = async (token) => {
-    const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/workers/me`, {
+    const response = await axios.get(`${API_URL}/api/workers/me`, {
       headers: { Authorization: `Bearer ${token}` },
     });
     console.log('📥 Datos del perfil del trabajador:', response.data);
@@ -81,4 +85,11 @@ export const createWorkerSpeciality = async (workerId, specialityId, qualificati
         throw error;
     }
 };
+
+export async function completeOnboarding(token) {
+    console.log('📤 Enviando token al backend para completar onboarding:', token); // 👈
+    await axios.patch(`${API_URL}/api/workers/complete-onboarding`, {}, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+  }
   

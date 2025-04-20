@@ -9,6 +9,7 @@ import {
 import { getHospitals } from '../services/hospitalService';
 import { getSpecialities } from '../services/specialityService';
 import { useNavigate } from 'react-router-dom';
+import useTrackPageView from '../hooks/useTrackPageView';
 
 const Profile = () => {
   const { getToken } = useAuth();
@@ -24,6 +25,8 @@ const Profile = () => {
   });
   const [message, setMessage] = useState('');
   const navigate = useNavigate();
+
+  useTrackPageView('profile');
 
   useEffect(() => {
     async function fetchData() {

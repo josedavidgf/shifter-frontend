@@ -2,11 +2,16 @@ import React, { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { proposeSwap } from '../services/swapService';
+import useTrackPageView from '../hooks/useTrackPageView';
+import { useSwapFeedback } from '../hooks/useSwapFeedback';
+
 
 const ProposeSwap = () => {
   const { shift_id } = useParams();
   const { getToken } = useAuth();
   const navigate = useNavigate();
+  const { showSwapFeedback } = useSwapFeedback();
+
 
   const [form, setForm] = useState({
     offered_date: '',
@@ -22,12 +27,16 @@ const ProposeSwap = () => {
     setForm(prev => ({ ...prev, [name]: value }));
   };
 
+  useTrackPageView('propose-swap');
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       const token = await getToken();
-      await proposeSwap(shift_id, form, token);
-      alert('Intercambio propuesto con éxito');
+      const swap = await proposeSwap(shift_id, form, token); // 🛠️ capturamos swap aquí
+
+      showSwapFeedback(swap); // 🔥 Aquí
+
       navigate('/shifts/hospital');
     } catch (err) {
       console.error('❌ Error al proponer intercambio:', err.message);
@@ -42,12 +51,12 @@ const ProposeSwap = () => {
 
       <form onSubmit={handleSubmit}>
         <label>Fecha que ofreces:</label>
-        <input 
-            type="date" 
-            min={new Date().toISOString().split('T')[0]}
-            name="offered_date" 
-            value={form.offered_date} 
-            onChange={handleChange} />
+        <input
+          type="date"
+          min={new Date().toISOString().split('T')[0]}
+          name="offered_date"
+          value={form.offered_date}
+          onChange={handleChange} />
 
         <label>Tipo de turno que ofreces:</label>
         <select name="offered_type" value={form.offered_type} onChange={handleChange}>
@@ -62,11 +71,11 @@ const ProposeSwap = () => {
           <option value="duty">Guardia</option>
         </select>
         <label>Comentarios:</label>
-        <textarea 
-            name="swap_comments" 
-            value={form.swap_comments} 
-            onChange={handleChange} 
-            placeholder="Comentarios adicionales" />
+        <textarea
+          name="swap_comments"
+          value={form.swap_comments}
+          onChange={handleChange}
+          placeholder="Comentarios adicionales" />
         <br />
         <button type="submit">Enviar propuesta</button>
         <button type="button" onClick={() => navigate('/shifts/hospital')}>Cancelar</button>

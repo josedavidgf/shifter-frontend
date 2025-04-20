@@ -12,30 +12,55 @@ code {
     monospace;
 }
 
+.button-container {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: 8px;
+  align-items: center;
+}
+
+
 .publish-button {
-  .position: absolute;
-  bottom: 2px;
+  position: relative; /* Antes era absolute, ahora relative para que no pisen */
   font-size: 0.75rem;
   background-color: white;
   border: 1px solid #ccc;
   border-radius: 4px;
-  padding: 1px 4px;
+  padding: 2px 6px; /* Un pelín más de padding */
   cursor: pointer;
+  width: 100%; /* Cada botón ocupa todo el ancho disponible */
+  text-align: center;
+  margin-top: 2px; /* Separación entre botones */
 }
+
 .publish-button:hover {
   background-color: #f0f0f0;
 }
 
+.day-number {
+  position: absolute;
+  top: 4px;
+  left: 6px;
+  background-color: #f0f0f0; /* gris claro */
+  color: #333; /* gris oscuro para el texto */
+  font-size: 0.7rem;
+  padding: 2px 6px;
+  border-radius: 12px; /* redondito */
+  font-weight: 500;
+}
+
+
+
 .calendar-day{
-  width: 48px;
-  height: 48px;
+  width: auto;
+  height: 100px;
   display: flex;
   justify-content: center;
   flex-direction: column;
   align-items: center;
   border-radius: 6px;
   position: relative;
-  cursor: pointer;
 }
 .calendar-text{
   font-size: 0.75rem;

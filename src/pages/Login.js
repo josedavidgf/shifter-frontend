@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
+import useTrackPageView from '../hooks/useTrackPageView';
 
 function Login() {
     const { login, loginWithGoogle } = useAuth();
@@ -18,6 +19,8 @@ function Login() {
             setError(err.message);
         }
     };
+
+    useTrackPageView('login');
 
     return (
         <div>

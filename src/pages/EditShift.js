@@ -7,6 +7,9 @@ import {
     getShiftPreferencesByShiftId,
     updateShiftPreferences
 } from '../services/shiftService';
+import useTrackPageView from '../hooks/useTrackPageView';
+
+
 
 const EditShift = () => {
     const { id } = useParams();
@@ -15,13 +18,13 @@ const EditShift = () => {
     const [form, setForm] = useState({
         date: '',
         shift_type: '',
-        shift_label: '',
+        //shift_label: '',
         shift_comments: '',
     });
-
     const [preferences, setPreferences] = useState([]);
-
     const [error, setError] = useState(null);
+
+    useTrackPageView('edit-shift');
 
     useEffect(() => {
         async function fetchShift() {
@@ -31,7 +34,7 @@ const EditShift = () => {
                 setForm({
                     date: data.date || '',
                     shift_type: data.shift_type || '',
-                    shift_label: data.shift_label || '',
+                    //shift_label: data.shift_label || '',
                     shift_comments: data.shift_comments || '',
                 });
                 console.log('🧾 Datos del turno:', data);
@@ -95,11 +98,11 @@ const EditShift = () => {
                 </select>
 
                 <label>Etiqueta:</label>
-                <select name="shift_label" value={form.shift_label} onChange={handleChange} required>
+                {/* <select name="shift_label" value={form.shift_label} onChange={handleChange} required>
                     <option value="">Selecciona</option>
                     <option value="regular">Regular</option>
                     <option value="duty">Guardia</option>
-                </select>
+                </select> */}
                 <label>Comentarios:</label>
                 <textarea name="shift_comments" value={form.shift_comments} onChange={handleChange}/>
                 <br />

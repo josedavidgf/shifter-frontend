@@ -3,11 +3,10 @@ import { Navigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
 const PrivateRoute = ({ children }) => {
-  const { currentUser, isWorker, hasCompletedOnboarding, loading } = useAuth();
+  const { currentUser, isWorker, loading } = useAuth();
   const location = useLocation();
 
-  if (loading) return null; // 👈 evita render hasta que esté todo cargado
-
+  if (loading) return null;
 
   if (!currentUser) return <Navigate to="/login" />;
 
@@ -15,21 +14,41 @@ const PrivateRoute = ({ children }) => {
     return <Navigate to="/verify-email" />;
   }
 
-  // No ha hecho el onboarding step 1
-  if (!isWorker && location.pathname !== '/onboarding') {
-    return <Navigate to="/onboarding" />;
+  // Si no tiene worker creado todavía
+  if (!isWorker) {
+    if (location.pathname.startsWith('/onboarding')) return children;
+    return <Navigate to="/onboarding/code" />;
   }
 
-  // Es worker pero no ha completado el step 2
-  if (isWorker && !hasCompletedOnboarding && location.pathname !== '/onboarding/step-2') {
-    return <Navigate to="/onboarding/step-2" />;
+  // Aquí empieza el flujo de pasos de onboarding basados en datos reales
+  if (!isWorker.worker_type_id) {
+    if (location.pathname !== '/onboarding/code') return <Navigate to="/onboarding/code" />;
+    return children;
   }
 
-  // No debe acceder a pasos anteriores si ya ha completado todo
-  if (hasCompletedOnboarding && ['/onboarding', '/onboarding/step-2'].includes(location.pathname)) {
-    return <Navigate to="/dashboard" />;
+  if (!isWorker.workers_specialities || isWorker.workers_specialities.length === 0) {
+    if (location.pathname !== '/onboarding/speciality') return <Navigate to="/onboarding/speciality" />;
+    return children;
   }
 
+  if (!isWorker.name || !isWorker.surname) {
+    if (location.pathname !== '/onboarding/name') return <Navigate to="/onboarding/name" />;
+    return children;
+  }
+
+  // (Teléfono opcional) — podrías poner aquí control extra si quieres forzarlo
+  if (!isWorker.mobile_phone || !isWorker.mobile_country_code) {
+    if (location.pathname !== '/onboarding/phone') return <Navigate to="/onboarding/phone" />;
+    return children;
+  }
+
+  // Si ha completado todo, ya puede entrar al dashboard
+  if (isWorker.onboarding_completed) {
+    if (location.pathname.startsWith('/onboarding')) return <Navigate to="/dashboard" />;
+    return children;
+  }
+
+  // Cualquier otro caso que no contemplemos, lo mandamos a dashboard como fallback
   return children;
 };
 

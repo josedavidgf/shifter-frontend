@@ -3,10 +3,8 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { getSwapById } from '../services/swapService';
 import ChatBox from '../components/ChatBox';
 import { useAuth } from '../context/AuthContext';
-
-import {
-    getMyWorkerProfile,
-} from '../services/workerService';
+import { getMyWorkerProfile } from '../services/workerService';
+import useTrackPageView from '../hooks/useTrackPageView';
 
 const SwapDetail = () => {
     const navigate = useNavigate();
@@ -20,6 +18,7 @@ const SwapDetail = () => {
     const [error, setError] = useState(null);
     const [workerId, setWorkerId] = useState('');
 
+    useTrackPageView('swap-detail');
 
     useEffect(() => {
         async function fetchSwap() {

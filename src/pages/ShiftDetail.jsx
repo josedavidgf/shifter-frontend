@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { getSwapsByShiftId } from '../services/swapService';
 import ChatBox from '../components/ChatBox';
+import useTrackPageView from '../hooks/useTrackPageView';
 
 const ShiftDetail = () => {
     const navigate = useNavigate();
@@ -10,6 +11,8 @@ const ShiftDetail = () => {
     const { getToken } = useAuth(); // asegúrate de tener el workerId
     const [swaps, setSwaps] = useState([]);
     const [error, setError] = useState(null);
+
+    useTrackPageView('shift-detail');
 
     useEffect(() => {
         async function fetchSwaps() {

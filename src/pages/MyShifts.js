@@ -5,6 +5,7 @@ import { getMyShifts, removeShift } from '../services/shiftService';
 import { getSpecialities } from '../services/specialityService';
 import { getReceivedSwaps, respondToSwap } from '../services/swapService';
 import MyShiftsTable from '../components/MyShiftsTable';
+import useTrackPageView from '../hooks/useTrackPageView';
 
 
 const MyShifts = () => {
@@ -43,6 +44,8 @@ const MyShifts = () => {
         }
     }, [getToken]);
 
+    useTrackPageView('my-shifts');
+
 
     useEffect(() => {
         loadShifts();
@@ -80,44 +83,6 @@ const MyShifts = () => {
             <h2>Mis Turnos Publicados</h2>
 
             {error && <p style={{ color: 'red' }}>{error}</p>}
-
-            {/* {shifts.length === 0 ? (
-                <p>No tienes turnos publicados aún.</p>
-            ) : (
-                <ul>
-                    {shifts
-                        .filter((s) => s.state === 'published')
-                        .map((shift) => (
-                            <li key={shift.shift_id} style={{ marginBottom: '1rem' }}>
-                                <strong>{shift.date}</strong> | Tipo: {shift.shift_type} | Etiqueta: {shift.shift_label}<br />
-                                Especialidad: {getSpecialityName(shift.speciality_id)}
-                                <br />
-                                <strong>Preferencias de intercambio:</strong>
-                                <ul>
-                                    {receivedSwaps
-                                        .filter((swap) => swap.shift_id === shift.shift_id)
-                                        .map((swap) => (
-                                            <div key={swap.swap_id} style={{ border: '1px dashed gray', padding: '0.5rem', marginTop: '0.5rem' }}>
-                                                <p>📬 Propuesta recibida:</p>
-                                                <p><strong>Fecha ofrecida:</strong> {swap.offered_date || '—'}</p>
-                                                <p><strong>Tipo:</strong> {swap.offered_type}</p>
-                                                <p><strong>Etiqueta:</strong> {swap.offered_label}</p>
-                                                <p><em>Estado:</em> {swap.status}</p>
-                                                {swap.status === 'proposed' && (
-                                                    <>
-                                                        <button onClick={() => handleSwapAction(swap.swap_id, 'accepted')}>✅ Aceptar</button>
-                                                        <button onClick={() => handleSwapAction(swap.swap_id, 'rejected')}>❌ Rechazar</button>
-                                                    </>
-                                                )}
-                                            </div>
-                                        ))}
-                                </ul>
-                                <button onClick={() => navigate(`/shifts/edit/${shift.shift_id}`)}>✏️ Editar</button>
-                                <button onClick={() => handleDelete(shift.shift_id)}>🗑 Eliminar</button>
-                            </li>
-                        ))}
-                </ul>
-            )} */}
             {shifts.length === 0 ? (
                 <p>No tienes turnos publicados aún.</p>
             ) : (

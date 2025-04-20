@@ -5,9 +5,9 @@ import { getWorkerStats } from '../services/userService';
 import { expireOldShifts } from '../services/shiftService';
 import { getSwapNotifications } from '../services/swapService';
 import { getMyShifts } from '../services/shiftService'; // si ya tienes este servicio
-import {
-    getMyWorkerProfile,
-  } from '../services/workerService';
+import { getMyWorkerProfile } from '../services/workerService';
+import useTrackPageView from '../hooks/useTrackPageView';
+
 
 
 function Dashboard() {
@@ -16,7 +16,11 @@ function Dashboard() {
     const [notifications, setNotifications] = useState({ incomingCount: 0, updatesCount: 0 });
     const [workerId, setWorkerId] = useState('');
 
+
     const navigate = useNavigate();
+
+    useTrackPageView('dashboard');
+
     useEffect(() => {
         async function runExpiry() {
             try {
@@ -47,28 +51,28 @@ function Dashboard() {
 
     useEffect(() => {
         async function fetchNotifications() {
-          try {
-            const token = await getToken();
-      
-            // 1. Obtener mis turnos publicados
-            const shifts = await getMyShifts(token);
-            console.log('Mis turnos:', shifts);
-            const myShiftIds = shifts.map(s => s.shift_id);
-            const worker = await getMyWorkerProfile(token);
-            setWorkerId(worker.worker_id);
-            console.log('IDs de mis turnos:', myShiftIds);
-            console.log('ID del trabajador:', workerId);
-            // 2. Obtener notificaciones
-            const data = await getSwapNotifications(token, workerId, myShiftIds);
-            setNotifications(data);
-            console.log('Notificaciones:', data);
-          } catch (err) {
-            console.error('Error al cargar notificaciones:', err.message);
-          }
+            try {
+                const token = await getToken();
+
+                // 1. Obtener mis turnos publicados
+                const shifts = await getMyShifts(token);
+                console.log('Mis turnos:', shifts);
+                const myShiftIds = shifts.map(s => s.shift_id);
+                const worker = await getMyWorkerProfile(token);
+                setWorkerId(worker.worker_id);
+                console.log('IDs de mis turnos:', myShiftIds);
+                console.log('ID del trabajador:', workerId);
+                // 2. Obtener notificaciones
+                const data = await getSwapNotifications(token, workerId, myShiftIds);
+                setNotifications(data);
+                console.log('Notificaciones:', data);
+            } catch (err) {
+                console.error('Error al cargar notificaciones:', err.message);
+            }
         }
         fetchNotifications();
-      }, [getToken, workerId]);
-      
+    }, [getToken, workerId]);
+
 
     const handleLogout = async () => {
         try {
