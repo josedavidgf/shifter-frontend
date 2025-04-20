@@ -58,7 +58,7 @@ function MonthlyCalendar() {
     const days = eachDayOfInterval({ start, end });
     setMonthDays(days); */
 
-
+// Aquí se obtiene el calendario del mes seleccionado
     const [shiftsForMonth, publishedShifts, acceptedSwaps, preferences] = await Promise.all([
       getShiftsForMonth(workerId),
       getMyShifts(token),
