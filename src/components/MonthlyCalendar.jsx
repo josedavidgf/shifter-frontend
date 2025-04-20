@@ -193,7 +193,7 @@ function MonthlyCalendar() {
             const preferenceCreated = await createSwapPreference({
               worker_id: isWorker.worker_id,
               date: dateStr,
-              shift_type: newTypePreference,
+              preference_type: newTypePreference,
               hospital_id: isWorker.workers_hospitals?.[0]?.hospital_id,
               speciality_id: isWorker.workers_specialities?.[0]?.speciality_id,
             });
