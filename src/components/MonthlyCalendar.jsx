@@ -76,8 +76,22 @@ function MonthlyCalendar() {
       enrichedMap[date] = { shift_type: shift_type, isMyShift: true, isPublished: true };
     });
 
-    (acceptedSwaps || []).forEach(({ offered_date, offered_type }) => {
-      enrichedMap[offered_date] = { shift_type: offered_type, isReceived: true };
+    acceptedSwaps.forEach(({ requester_id, offered_date, offered_type, shift }) => {
+      if (offered_date) {
+        enrichedMap[offered_date] = {
+          ...enrichedMap[offered_date],
+          shift_type: offered_type,
+          isReceived: true
+        };
+      }
+
+      if (shift && shift.date) {
+        enrichedMap[shift.date] = {
+          ...enrichedMap[shift.date],
+          shift_type: shift.shift_type,
+          isSwapped: true
+        };
+      }
     });
 
 
@@ -268,7 +282,7 @@ function MonthlyCalendar() {
                           className="publish-button"
                           onClick={(e) => {
                             e.stopPropagation();
-                            navigate(`/shifts/create?date=${dateStr}&type=${entry.shift_type}`);
+                            navigate(`/shifts/create?date=${dateStr}&shift_type=${entry.shift_type}`);
                           }}
                         >
                           Publicar turno
@@ -292,7 +306,7 @@ function MonthlyCalendar() {
                       </button>
                     </div>
                   )}
-                  {!isBefore(day, new Date()) && !entry.isMyShift && (
+                  {!isBefore(day, new Date()) && !entry.isMyShift && !entry.isSwapped && (
                     <div className="mt-1 text-green-700">
                       <button
                         className="publish-button"

@@ -23,7 +23,7 @@ const CreateShift = () => {
     const [form, setForm] = useState({
         date: '',
         shift_type: '',
-        shift_label: '',
+        //shift_label: '',
         speciality_id: '',
         shift_comments: '',
     });
@@ -96,6 +96,7 @@ const CreateShift = () => {
         e.preventDefault();
         try {
             const token = await getToken();
+            console.log('form',form);
             await createShift({ ...form, preferences }, token);
             setMessage('✅ Turno publicado correctamente');
             setTimeout(() => navigate('/dashboard'), 1500);
@@ -119,10 +120,10 @@ const CreateShift = () => {
                 </select>
 
                 <label>Etiqueta:</label>
-                <select name="shift_label" value={form.shift_label} onChange={handleChange} required>
+                {/* <select name="shift_label" value={form.shift_label} onChange={handleChange} required>
                     <option value="regular">Regular</option>
                     <option value="duty">Guardia</option>
-                </select>
+                </select> */}
 
                 <label>Especialidad:</label>
                 <input
