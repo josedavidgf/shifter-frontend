@@ -1,6 +1,6 @@
 // src/components/MonthlyCalendar.jsx (actualizado)
 import { useEffect, useState } from 'react';
-import { format, startOfMonth, endOfMonth, eachDayOfInterval, isBefore, /* isSameDay, */ parseISO } from 'date-fns';
+import { format, startOfMonth, endOfMonth, eachDayOfInterval, /* isSameDay, */ parseISO } from 'date-fns';
 import { getShiftsForMonth, setShiftForDay, removeShiftForDay, getDayOffset } from '../services/calendarService';
 import { getAcceptedSwaps } from '../services/swapService';
 import { getMyShiftsPublished, removeShift } from '../services/shiftService';
@@ -36,7 +36,7 @@ function MonthlyCalendar() {
   const [isMassiveEditMode, setIsMassiveEditMode] = useState(false);
   const [isLoadingCalendar, setIsLoadingCalendar] = useState(false);
   const [draftShiftMap, setDraftShiftMap] = useState(null);
-  const [selectedDay, setSelectedDay] = useState(null);
+  const [selectedDay, setSelectedDay] = useState(format(new Date(), 'yyyy-MM-dd'));
   const [shiftMap, setShiftMap] = useState({});
   const { isWorker, getToken } = useAuth();
   const [, setToken] = useState(null); // 🆕 Nuevo state para el token
