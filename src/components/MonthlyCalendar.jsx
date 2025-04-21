@@ -43,6 +43,7 @@ function MonthlyCalendar() {
   const [selectedMonth, setSelectedMonth] = useState(format(new Date(), 'yyyy-MM')); // ejemplo: "2025-04"
   const [monthDays, setMonthDays] = useState([]);
   const navigate = useNavigate();
+  const today = format(new Date(), 'yyyy-MM-dd'); // formato '2025-04-22'
   console.log('calendar profile:', isWorker);
   useEffect(() => {
     async function initialize() {
@@ -141,6 +142,8 @@ function MonthlyCalendar() {
   }
 
   function handleDayClick(dateStr) {
+    if (dateStr < today) return;
+
     if (isMassiveEditMode) { // Solo en modo edición
 
       const entry = draftShiftMap[dateStr] || {};
@@ -537,7 +540,7 @@ function MonthlyCalendar() {
             return (
               <div
                 key={dateStr}
-                className={`calendar-day shift-${shiftType} ${isPast ? 'past' : ''}`}
+                className={`calendar-day shift-${shiftType} ${isPast ? 'past' : ''} ${selectedDay === dateStr ? 'selected-day' : ''}`}
                 onClick={() => handleDayClick(dateStr)}
               >
                 <div className="day-number">{format(day, 'd')}{getShiftLabel(shiftType)} {indicator}</div>
