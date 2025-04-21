@@ -32,9 +32,12 @@ function getShiftLabel(shift) {
 
 
 function MonthlyCalendar() {
+
+  const [isMassiveEditMode, setIsMassiveEditMode] = useState(false);
+  const [draftShiftMap, setDraftShiftMap] = useState(null); // Copia de shiftMap mientras editas
+  const [shiftMap, setShiftMap] = useState({});
   const { isWorker, getToken } = useAuth();
   const [, setToken] = useState(null); // 🆕 Nuevo state para el token
-  const [shiftMap, setShiftMap] = useState({});
   const [selectedMonth, setSelectedMonth] = useState(format(new Date(), 'yyyy-MM')); // ejemplo: "2025-04"
   const [monthDays, setMonthDays] = useState([]);
   const navigate = useNavigate();
@@ -66,7 +69,7 @@ function MonthlyCalendar() {
     const days = eachDayOfInterval({ start, end });
     setMonthDays(days); */
 
-// Aquí se obtiene el calendario del mes seleccionado
+    // Aquí se obtiene el calendario del mes seleccionado
     const [shiftsForMonth, publishedShifts, acceptedSwaps, preferences] = await Promise.all([
       getShiftsForMonth(workerId),
       getMyShifts(token),
@@ -128,11 +131,91 @@ function MonthlyCalendar() {
     setSelectedMonth(event.target.value);
   }
 
+  function handleDayClick(dateStr) {
+    if (!isMassiveEditMode) return; // Solo en modo edición
+
+    const entry = draftShiftMap[dateStr] || {};
+
+    // Restricciones:
+    if (entry.isReceived) return; // No puedes modificar turnos recibidos
+    if (entry.isPreference) return; // No puedes añadir turno donde tienes preferencia
+
+    // Lógica de rotar tipo de turno
+    let newType = 'morning'; // Tipo inicial
+
+    switch (entry.shift_type) {
+      case 'morning':
+        newType = 'evening';
+        break;
+      case 'evening':
+        newType = 'night';
+        break;
+      case 'night':
+        newType = 'morning_afternoon';
+        break;
+      case 'morning_afternoon':
+        newType = 'morning_night';
+        break;
+      case 'morning_night':
+        newType = 'afternoon_night';
+        break;
+      case 'afternoon_night':
+        newType = 'reinforcement';
+        break;
+      case 'reinforcement':
+        newType = null;
+        break;
+      default:
+        newType = 'morning';
+    }
+
+    const updatedEntry = { ...entry };
+
+    if (newType) {
+      updatedEntry.isMyShift = true;
+      updatedEntry.shift_type = newType;
+    } else {
+      delete updatedEntry?.isMyShift;
+      delete updatedEntry?.shift_type;
+    }
+
+    setDraftShiftMap(prev => ({
+      ...prev,
+      [dateStr]: updatedEntry,
+    }));
+  }
+
+  async function handleSaveMassiveEdit() {
+    try {
+      const updates = [];
+
+      for (const [date, entry] of Object.entries(draftShiftMap)) {
+        const originalEntry = shiftMap[date] || {};
+
+        if (JSON.stringify(entry) !== JSON.stringify(originalEntry)) {
+          if (entry.isMyShift && entry.shift_type) {
+            updates.push(setShiftForDay(isWorker.worker_id, date, entry.shift_type));
+          } else if (!entry.isMyShift && originalEntry.isMyShift) {
+            updates.push(removeShiftForDay(isWorker.worker_id, date));
+          }
+        }
+      }
+
+      await Promise.all(updates);
+
+      setShiftMap(draftShiftMap); // Actualizamos el calendario real
+      setDraftShiftMap(null);
+      setIsMassiveEditMode(false);
+
+    } catch (error) {
+      console.error('Error guardando cambios:', error.message);
+    }
+  }
 
   async function toggleShift(dateStr) {
     const entry = shiftMap[dateStr] || {};
     let newType = 'morning'; // El tipo inicial
-  
+
     // Rotamos entre los turnos disponibles
     switch (entry.shift_type) {
       case 'morning':
@@ -159,9 +242,9 @@ function MonthlyCalendar() {
       default:
         newType = 'morning'; // Si no tiene tipo, empieza en "morning"
     }
-  
+
     const updatedEntry = { ...entry };
-  
+
     if (newType) {
       updatedEntry.isMyShift = true;
       updatedEntry.shift_type = newType;
@@ -169,12 +252,12 @@ function MonthlyCalendar() {
       delete updatedEntry?.isMyShift;
       delete updatedEntry?.shift_type;
     }
-  
+
     setShiftMap(prev => ({
       ...prev,
       [dateStr]: updatedEntry,
     }));
-  
+
     // Guardar en Supabase (o cualquier base de datos que utilices)
     try {
       if (newType) {
@@ -186,7 +269,6 @@ function MonthlyCalendar() {
       console.error('Error saving shift:', err.message);
     }
   }
-
 
   async function togglePreference(dateStr) {
 
@@ -247,7 +329,6 @@ function MonthlyCalendar() {
     }
   }
 
-
   return (
     <div className="p-4">
       <h2 className="text-xl font-bold mb-4">Calendario de Turnos</h2>
@@ -261,6 +342,37 @@ function MonthlyCalendar() {
         />
       </div>
 
+      {!isMassiveEditMode ? (
+        <button
+          className="btn btn-primary"
+          onClick={() => {
+            setDraftShiftMap({ ...shiftMap }); // Creamos copia
+            setIsMassiveEditMode(true);
+          }}
+        >
+          Generar turnos masivo
+        </button>
+      ) : (
+        <div className="flex gap-4 mb-4 justify-center">
+          <button
+            className="btn btn-success"
+            onClick={handleSaveMassiveEdit}
+          >
+            Guardar cambios
+          </button>
+          <button
+            className="btn btn-danger"
+            onClick={() => {
+              setDraftShiftMap(null);
+              setIsMassiveEditMode(false);
+            }}
+          >
+            Cancelar cambios
+          </button>
+        </div>
+      )}
+
+
       {/* Cabecera de días de la semana */}
       <div className="calendar-container">
         <div className="calendar-grid">
@@ -273,7 +385,8 @@ function MonthlyCalendar() {
           {/* Días reales */}
           {monthDays.map((day) => {
             const dateStr = format(day, 'yyyy-MM-dd');
-            const entry = shiftMap[dateStr] || {};
+            const dataForRender = isMassiveEditMode ? draftShiftMap : shiftMap;
+            const entry = dataForRender[dateStr] || {};
             //const isToday = isSameDay(day, new Date());
             const shiftType = entry.shift_type || '';
             const flags = entry || {};
@@ -292,6 +405,7 @@ function MonthlyCalendar() {
               <div
                 key={dateStr}
                 className={`calendar-day shift-${shiftType} ${isPast ? 'past' : ''}`}
+                onClick={() => handleDayClick(dateStr)}
               >
                 <div className="day-number">{format(day, 'd')}{getShiftLabel(shiftType)} {indicator}</div>
                 <div className="button-container">
