@@ -17,6 +17,17 @@ export const createShift = async (data, token) => {
     console.log('📥 Datos de los turnos:', response.data.data);
     return response.data.data;
   };
+
+  export const getMyShiftsPublished = async (token) => {
+    console.log('AQUI');
+    console.log('AQUI Token;',token);
+    const response = await axios.get(`${API_URL}/api/shifts/mine-published`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    console.log('📥 Datos de los turnos:', response.data.data);
+    return response.data.data;
+  };
+
   export const getShiftById = async (id, token) => {
     const response = await axios.get(`${API_URL}/api/shifts/${id}`, {
       headers: { Authorization: `Bearer ${token}` },
@@ -33,6 +44,7 @@ export const createShift = async (data, token) => {
   };
 
   export const removeShift = async (id, token) => {
+    console.log('shift publicado:', id);
     const response = await axios.patch(`${API_URL}/api/shifts/${id}/remove`, null, {
       headers: { Authorization: `Bearer ${token}` },
     });
