@@ -17,6 +17,14 @@ function getShiftLabel(shift) {
       return 'T';
     case 'night':
       return 'N';
+    case 'morning_afternoon':
+      return 'MT';
+    case 'morning_night':
+      return 'MN';
+    case 'afternoon_night':
+      return 'TN';
+    case 'reinforcement':
+      return 'R';
     default:
       return '';
   }
