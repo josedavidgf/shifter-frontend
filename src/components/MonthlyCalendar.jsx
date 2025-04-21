@@ -541,75 +541,7 @@ function MonthlyCalendar() {
                 onClick={() => handleDayClick(dateStr)}
               >
                 <div className="day-number">{format(day, 'd')}{getShiftLabel(shiftType)} {indicator}</div>
-                <div className="button-container">
-                  {/* Turno propio */}
-                  {!isBefore(day, new Date()) && entry.isMyShift && (
-                    <div className="mt-1 text-green-700">
-                      <button
-                        className="publish-button"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          toggleShift(dateStr);
-                        }}
-                      >
-                        Editar turno
-                      </button>
-                      {!entry.isPublished && (
-                        <button
-                          className="publish-button"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            navigate(`/shifts/create?date=${dateStr}&shift_type=${entry.shift_type}`);
-                          }}
-                        >
-                          Publicar turno
-                        </button>
-                      )}
-                    </div>
-                  )}
-
-                  {/* Preferencia */}
-                  {!isBefore(day, new Date()) && entry.isPreference && (
-                    <div className="mt-1 text-green-700">
-                      Preferencia: {entry.preference_type?.charAt(0).toUpperCase()}
-                      <button
-                        className="publish-button"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          togglePreference(dateStr);
-                        }}
-                      >
-                        Cambiar preferencia
-                      </button>
-                    </div>
-                  )}
-                  {!isBefore(day, new Date()) && !entry.isMyShift && !entry.isSwapped && (
-                    <div className="mt-1 text-green-700">
-                      <button
-                        className="publish-button"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          toggleShift(dateStr);
-                        }}
-                      >
-                        Añadir turno
-                      </button>
-                    </div>
-                  )}
-                  {!isBefore(day, new Date()) && !entry.isPreference && (
-                    <div className="mt-1 text-green-700">
-                      <button
-                        className="publish-button"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          togglePreference(dateStr);
-                        }}
-                      >
-                        Añadir preferencia
-                      </button>
-                    </div>
-                  )}
-                </div>
+                
               </div>
             );
           })}
