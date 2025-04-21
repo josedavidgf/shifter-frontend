@@ -17,6 +17,14 @@ function getShiftLabel(shift) {
       return 'T';
     case 'night':
       return 'N';
+    case 'morning_afternoon':
+      return 'MT';
+    case 'morning_night':
+      return 'MN';
+    case 'afternoon_night':
+      return 'TN';
+    case 'reinforcement':
+      return 'R';
     default:
       return '';
   }
@@ -122,16 +130,38 @@ function MonthlyCalendar() {
 
 
   async function toggleShift(dateStr) {
-
     const entry = shiftMap[dateStr] || {};
-    let newType = 'morning';
-
-    if (entry.shift_type === 'morning') newType = 'evening';
-    else if (entry.shift_type === 'evening') newType = 'night';
-    else if (entry.shift_type === 'night') newType = null; // Borrar turno
-
+    let newType = 'morning'; // El tipo inicial
+  
+    // Rotamos entre los turnos disponibles
+    switch (entry.shift_type) {
+      case 'morning':
+        newType = 'evening';
+        break;
+      case 'evening':
+        newType = 'night';
+        break;
+      case 'night':
+        newType = 'morning_afternoon';
+        break;
+      case 'morning_afternoon':
+        newType = 'morning_night';
+        break;
+      case 'morning_night':
+        newType = 'afternoon_night';
+        break;
+      case 'afternoon_night':
+        newType = 'reinforcement';
+        break;
+      case 'reinforcement':
+        newType = null; // Si ya está en el último tipo, lo eliminamos
+        break;
+      default:
+        newType = 'morning'; // Si no tiene tipo, empieza en "morning"
+    }
+  
     const updatedEntry = { ...entry };
-
+  
     if (newType) {
       updatedEntry.isMyShift = true;
       updatedEntry.shift_type = newType;
@@ -139,13 +169,13 @@ function MonthlyCalendar() {
       delete updatedEntry?.isMyShift;
       delete updatedEntry?.shift_type;
     }
-
+  
     setShiftMap(prev => ({
       ...prev,
       [dateStr]: updatedEntry,
     }));
-
-    // 🛠️ Guardar en Supabase
+  
+    // Guardar en Supabase (o cualquier base de datos que utilices)
     try {
       if (newType) {
         await setShiftForDay(isWorker.worker_id, dateStr, newType);
