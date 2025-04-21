@@ -1,6 +1,14 @@
 import * as amplitude from '@amplitude/analytics-browser';
 
+const AMPLITUDE_ENABLED = process.env.REACT_APP_AMPLITUDE_ENABLED === 'true';
+
+
 export const initAmplitude = () => {
+
+    if (!AMPLITUDE_ENABLED) {
+        console.info('[Amplitude] Deshabilitado');
+        return;
+    }
     amplitude.init('7037b0c2ce30e5b59fb4aa29cb722b22', {
         autocapture: false,
         includeUtm: false,
@@ -24,6 +32,9 @@ export const initAmplitude = () => {
 };
 
 export const identifyUser = (userProfile) => {
+
+    if (!AMPLITUDE_ENABLED) return;
+
     if (!userProfile) {
         console.warn('No user profile provided for Amplitude identification');
         return;
@@ -53,5 +64,10 @@ export const identifyUser = (userProfile) => {
 };
 
 export const logEvent = (eventName, eventProperties) => {
+    if (!AMPLITUDE_ENABLED) {
+        console.info(`[Amplitude - DEV] ${eventName}`, eventProperties);
+        return;
+    }
+
     amplitude.track(eventName, eventProperties);
 };
