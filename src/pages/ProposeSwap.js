@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { proposeSwap } from '../services/swapService';
 import useTrackPageView from '../hooks/useTrackPageView';
 import { useSwapFeedback } from '../hooks/useSwapFeedback';
+import { getShiftById } from '../services/shiftService'; // (ahora te hago el servicio si quieres)
 
 
 const ProposeSwap = () => {
@@ -11,6 +12,7 @@ const ProposeSwap = () => {
   const { getToken } = useAuth();
   const navigate = useNavigate();
   const { showSwapFeedback } = useSwapFeedback();
+  const [preferences, setPreferences] = useState([]);
 
 
   const [form, setForm] = useState({
@@ -28,6 +30,20 @@ const ProposeSwap = () => {
   };
 
   useTrackPageView('propose-swap');
+
+  useEffect(() => {
+    const fetchShiftDetails = async () => {
+      try {
+        const token = await getToken();
+        const shiftDetail = await getShiftById(shift_id, token);
+        setPreferences(shiftDetail.worker.swap_preferences || []);
+      } catch (err) {
+        console.error('Error fetching shift details:', err.message);
+      }
+    };
+
+    fetchShiftDetails();
+  }, [shift_id, getToken]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -48,6 +64,18 @@ const ProposeSwap = () => {
     <div>
       <h2>Proponer intercambio</h2>
       {error && <p style={{ color: 'red' }}>{error}</p>}
+      {preferences.length > 0 && (
+        <div>
+          <h3>Disponibilidad del trabajador</h3>
+          <ul>
+            {preferences.map((pref) => (
+              <li key={pref.preference_id}>
+                {new Date(pref.date).toLocaleDateString()} - {pref.preference_type === 'morning' ? 'Mañana' : pref.preference_type === 'evening' ? 'Tarde' : 'Noche'}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
 
       <form onSubmit={handleSubmit}>
         <label>Fecha que ofreces:</label>
