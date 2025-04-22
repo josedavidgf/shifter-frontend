@@ -12,11 +12,11 @@ import '../index.css';
 function getShiftLabel(shift) {
   switch (shift) {
     case 'morning':
-      return 'M';
+      return '☀️';
     case 'evening':
-      return 'T';
+      return '🌤️';
     case 'night':
-      return 'N';
+      return '🌛';
     case 'morning_afternoon':
       return 'MT';
     case 'morning_night':
@@ -24,11 +24,35 @@ function getShiftLabel(shift) {
     case 'afternoon_night':
       return 'TN';
     case 'reinforcement':
-      return 'R';
+      return '🛡️';
     default:
       return '';
   }
 }
+
+function computeShiftStats(shiftMap, selectedMonth) {
+  const stats = {
+    morning: 0,
+    evening: 0,
+    night: 0,
+    reinforcement: 0,
+    total: 0, // nuevo!
+  };
+
+  for (const [date, entry] of Object.entries(shiftMap)) {
+    if (!date.startsWith(selectedMonth)) continue;
+
+    if ((entry.isMyShift || entry.isReceived) && entry.shift_type) {
+      if (stats.hasOwnProperty(entry.shift_type)) {
+        stats[entry.shift_type]++;
+        stats.total++; // aumentamos el total
+      }
+    }
+  }
+
+  return stats;
+}
+
 
 
 function MonthlyCalendar() {
@@ -44,7 +68,7 @@ function MonthlyCalendar() {
   const [monthDays, setMonthDays] = useState([]);
   const navigate = useNavigate();
   const today = format(new Date(), 'yyyy-MM-dd'); // formato '2025-04-22'
-  console.log('calendar profile:', isWorker);
+  const stats = computeShiftStats(isMassiveEditMode ? draftShiftMap : shiftMap, selectedMonth);
   useEffect(() => {
     async function initialize() {
       if (isWorker) {
@@ -371,8 +395,6 @@ function MonthlyCalendar() {
   }
 
 
-
-
   function renderDayDetails(dateStr) {
     const dataForRender = isMassiveEditMode ? draftShiftMap : shiftMap;
     const entry = dataForRender[dateStr] || {};
@@ -524,6 +546,27 @@ function MonthlyCalendar() {
         </div>
       )}
 
+      <div className="mb-4 p-4 border rounded shadow">
+        <h3 className="font-bold mb-4">Resumen de Turnos</h3>
+        <div className="badge-container">
+          {['morning', 'evening', 'night', 'reinforcement'].map((type) => {
+            const count = stats[type];
+            const labelMap = {
+              morning: 'Mañanas',
+              evening: 'Tardes',
+              night: 'Noches',
+              reinforcement: 'Refuerzos',
+            };
+            return (
+              <div key={type} className="badge">
+                {labelMap[type]}: {count}
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+
       {/* Cabecera de días de la semana */}
       <div className="calendar-container">
         <div className="calendar-grid">
@@ -542,23 +585,23 @@ function MonthlyCalendar() {
             const shiftType = entry.shift_type || '';
             const flags = entry || {};
             const indicator = flags.isReceived
-              ? '✅ Turno recibido'
+              ? '✅'
               : flags.isSwapped
-                ? '🔁 Turno traspasado'
+                ? '🔁'
                 : flags.isPublished
-                  ? '📢 Turno publicado'
+                  ? '📢'
                   : flags.isMyShift
                     ? '✔️'
                     : '';
             const isPast = format(day, 'yyyy-MM-dd') < today;
-            
+
             return (
               <div
                 key={dateStr}
                 className={`calendar-day shift-${shiftType} ${isPast ? 'past' : ''} ${selectedDay === dateStr ? 'selected-day' : ''}`}
                 onClick={() => handleDayClick(dateStr)}
               >
-                <div className="day-number">{format(day, 'd')}{getShiftLabel(shiftType)} {indicator}</div>
+                <div className="day-number">{format(day, 'd')} {getShiftLabel(shiftType)} {indicator}</div>
 
               </div>
             );
