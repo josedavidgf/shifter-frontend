@@ -547,7 +547,8 @@ function MonthlyCalendar() {
                   : flags.isMyShift
                     ? '✔️'
                     : '';
-            const isPast = day < new Date();
+            const isPast = format(day, 'yyyy-MM-dd') < today;
+            
             return (
               <div
                 key={dateStr}
