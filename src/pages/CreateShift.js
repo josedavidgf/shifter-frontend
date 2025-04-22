@@ -5,6 +5,8 @@ import { getFullWorkerProfile } from '../services/userService';
 import { createShift } from '../services/shiftService';
 import { getSpecialities } from '../services/specialityService';
 import useTrackPageView from '../hooks/useTrackPageView';
+import { format, parseISO } from 'date-fns';
+import { translateShiftType } from '../utils/translateShiftType';
 
 
 const CreateShift = () => {
@@ -16,6 +18,7 @@ const CreateShift = () => {
     // eslint-disable-next-line no-unused-vars
     const [specialities, setSpecialities] = useState([]);
     const [selectedSpeciality, setSelectedSpeciality] = useState(null);
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
 
     const { getToken } = useAuth();
@@ -29,10 +32,16 @@ const CreateShift = () => {
     });
     // eslint-disable-next-line no-unused-vars
     const [specialityId, setSpecialityId] = useState('');
-    const [preferences, setPreferences] = useState([]);
     const [message, setMessage] = useState('');
 
     useTrackPageView('create-shift');
+
+    useEffect(() => {
+        if (!prefilDate || !prefilShiftType) {
+            navigate('/shifts/hospital');
+        }
+    }, [prefilDate, prefilShiftType, navigate]);
+
 
     useEffect(() => {
         async function fetchData() {
@@ -73,53 +82,38 @@ const CreateShift = () => {
         const { name, value } = e.target;
         setForm((prev) => ({ ...prev, [name]: value }));
     };
-    const handleAddPreference = () => {
-        if (preferences.length >= 3) return;
-        setPreferences([...preferences, { preferred_date: '', preferred_type: 'morning', preferred_label: 'regular' }]);
-    };
-
-    const handlePreferenceChange = (index, field, value) => {
-        const updated = [...preferences];
-        console.log('🧾 Preferencias actualizadas:', updated);
-        updated[index][field] = value;
-        console.log('🧾 Preferencia actualizada:', updated[index]);
-        setPreferences(updated);
-    };
-
-    const handleRemovePreference = (index) => {
-        setPreferences(preferences.filter((_, i) => i !== index));
-    };
-
 
     const handleSubmit = async (e) => {
         console.log('🧾 Turno a enviar:', form);
         e.preventDefault();
         try {
+            setIsSubmitting(true); // 🛠️ Empezamos envío
             const token = await getToken();
-            console.log('form',form);
-            await createShift({ ...form, preferences }, token);
+            console.log('form', form);
+            await createShift({ ...form }, token);
             setMessage('✅ Turno publicado correctamente');
             setTimeout(() => navigate('/dashboard'), 1500);
         } catch (err) {
             console.error('❌ Error al crear turno:', err.message);
             setMessage('❌ Error al crear turno');
+        } finally {
+            setIsSubmitting(false); // 🛠️ Terminamos envío, éxito o error
         }
     };
+
+
 
     return (
         <div>
             <h2>Crear Turno</h2>
             <form onSubmit={handleSubmit}>
                 <label>Fecha:</label>
-                <input type="date" min={new Date().toISOString().split('T')[0]} name="date" value={form.date} onChange={handleChange} required />
-                <label>Turno:</label>
-                <select name="shift_type" value={form.shift_type} onChange={handleChange} required>
-                    <option value="morning">Mañana</option>
-                    <option value="evening">Tarde</option>
-                    <option value="night">Noche</option>
-                </select>
+                <p>{form.date ? format(parseISO(form.date), 'dd/MM/yyyy') : '-'}</p>
 
-                <label>Etiqueta:</label>
+                <label>Turno:</label>
+                <p>{translateShiftType(form.shift_type)}</p>
+
+                {/* <label>Etiqueta:</label> */}
                 {/* <select name="shift_label" value={form.shift_label} onChange={handleChange} required>
                     <option value="regular">Regular</option>
                     <option value="duty">Guardia</option>
@@ -139,55 +133,17 @@ const CreateShift = () => {
                 <textarea name="shift_comments" value={form.shift_comments} onChange={handleChange} />
                 <br />
 
-                {preferences.map((pref, index) => (
-                    <div key={index} style={{ border: '1px solid #ccc', marginTop: '1rem', padding: '0.5rem' }}>
-                        <strong>Preferencia {index + 1}</strong>
-                        <br />
-                        <label>Fecha preferida:</label>
-                        <input
-                            type="date"
-                            min={new Date().toISOString().split('T')[0]}
-                            value={pref.preferred_date}
-                            onChange={(e) => handlePreferenceChange(index, 'preferred_date', e.target.value)}
-                        />
+                <button
+                    type="submit"
+                    disabled={!form.date || !form.shift_type} // 🔥 Aquí
+                >
+                    {isSubmitting ? 'Publicando...' : 'Publicar Turno'}
+                </button>
 
-                        <label>Tipo:</label>
-                        <select
-                            value={pref.preferred_type}
-                            onChange={(e) => handlePreferenceChange(index, 'preferred_type', e.target.value)}
-                        >
-                            <option value="morning">Mañana</option>
-                            <option value="evening">Tarde</option>
-                            <option value="night">Noche</option>
-                        </select>
-
-                        <label>Etiqueta:</label>
-                        <select
-                            value={pref.preferred_label}
-                            onChange={(e) => handlePreferenceChange(index, 'preferred_label', e.target.value)}
-                        >
-                            <option value="regular">Regular</option>
-                            <option value="duty">Guardia</option>
-                        </select>
-
-                        <button type="button" onClick={() => handleRemovePreference(index)}>🗑 Quitar</button>
-                    </div>
-                ))}
-
-                {preferences.length < 3 && (
-                    <button type="button" onClick={handleAddPreference} style={{ marginTop: '1rem' }}>
-                        ➕ Añadir preferencia
-                    </button>
-                )}
-
-                <br />
-
-
-                <button type="submit">Publicar Turno</button>
             </form>
 
             {message && <p>{message}</p>}
-            <button onClick={() => navigate('/dashboard')}>⬅ Volver al Dashboard</button>
+            <button onClick={() => navigate('/calendar')}>⬅ Volver al Calendario</button>
         </div>
     );
 };
