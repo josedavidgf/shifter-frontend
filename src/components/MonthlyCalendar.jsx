@@ -92,11 +92,13 @@ function MonthlyCalendar() {
         enrichedMap[date] = { shift_id: shift_id, shift_type: shift_type, isMyShift: true, isPublished: true };
       });
 
-      acceptedSwaps.forEach(({ requester_id, offered_date, offered_type, shift }) => {
+      acceptedSwaps.forEach(({ requester, offered_date, offered_type, shift }) => {
         if (offered_date) {
           enrichedMap[offered_date] = {
             ...enrichedMap[offered_date],
             shift_type: offered_type,
+            requester_name: requester?.name || '',
+            requester_surname: requester?.surname || '',
             isReceived: true
           };
         }
@@ -432,6 +434,7 @@ function MonthlyCalendar() {
         <div>
           <h3 className="font-bold mb-2">{dayLabel} - Turno Recibido</h3>
           <p>Tipo: {entry.shift_type}</p>
+          <p>Propietario del turno: {entry.requester_name} {entry.requester_surname}</p>
           <button
             className="btn btn-success m-1"
             onClick={() => navigate(`/shifts/create?date=${dateStr}&shift_type=${entry.shift_type}`)}
