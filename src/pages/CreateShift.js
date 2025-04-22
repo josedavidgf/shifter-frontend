@@ -7,6 +7,7 @@ import { getSpecialities } from '../services/specialityService';
 import useTrackPageView from '../hooks/useTrackPageView';
 import { format, parseISO } from 'date-fns';
 import { translateShiftType } from '../utils/translateShiftType';
+import BackButton from '../components/BackButton';
 
 
 const CreateShift = () => {
@@ -143,7 +144,7 @@ const CreateShift = () => {
             </form>
 
             {message && <p>{message}</p>}
-            <button onClick={() => navigate('/calendar')}>⬅ Volver al Calendario</button>
+            <BackButton />
         </div>
     );
 };
