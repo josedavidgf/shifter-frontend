@@ -377,6 +377,8 @@ function MonthlyCalendar() {
 
     const dayLabel = format(parseISO(dateStr), 'dd/MM/yyyy');
 
+
+    // Es un turno mio. Puedo editarlo, quitarlo o publicarlo. En caso de estar publicado puedo quitarlo.
     if (entry.isMyShift) {
       return (
         <div>
@@ -411,7 +413,7 @@ function MonthlyCalendar() {
         </div>
       );
     }
-
+    // Es una preferencia o disponibilidad
     if (entry.isPreference) {
       return (
         <div>
@@ -423,15 +425,24 @@ function MonthlyCalendar() {
         </div>
       );
     }
+
+    // Es un turno recibido. Sólo puedo publicarlo.
     if (entry.isReceived) {
       return (
         <div>
           <h3 className="font-bold mb-2">{dayLabel} - Turno Recibido</h3>
           <p>Tipo: {entry.shift_type}</p>
-          <p>Sin acciones disponibles.</p>
+          <button
+            className="btn btn-success m-1"
+            onClick={() => navigate(`/shifts/create?date=${dateStr}&shift_type=${entry.shift_type}`)}
+          >
+            Publicar turno
+          </button>
         </div>
       );
     }
+
+    // Es un día que tenía turno pero lo cambié. Ahora puedo añadir turno o disponibilidad.
     if (entry.isSwapped) {
       return (
         <div>
@@ -544,7 +555,7 @@ function MonthlyCalendar() {
                 onClick={() => handleDayClick(dateStr)}
               >
                 <div className="day-number">{format(day, 'd')}{getShiftLabel(shiftType)} {indicator}</div>
-                
+
               </div>
             );
           })}
