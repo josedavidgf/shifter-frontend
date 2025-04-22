@@ -25,6 +25,7 @@ import OnboardingSpeciality from './pages/onboarding/OnboardingSpeciality';
 import OnboardingName from './pages/onboarding/OnboardingName';
 import OnboardingPhone from './pages/onboarding/OnboardingPhone';
 import OnboardingSuccess from './pages/onboarding/OnboardingSuccess';
+import ChatsList from './components/ChatList';
 
 
 
@@ -54,6 +55,8 @@ function App() {
       <Route path="/onboarding/name" element={<PrivateRoute><OnboardingName /></PrivateRoute>} />
       <Route path="/onboarding/phone" element={<PrivateRoute><OnboardingPhone /></PrivateRoute>} />
       <Route path="/onboarding/success" element={<PrivateRoute><OnboardingSuccess /></PrivateRoute>} />
+      <Route path="/chats" element={<PrivateRoute><ChatsList /></PrivateRoute>} />
+
       
     </Routes >
   );

@@ -131,7 +131,8 @@ function Dashboard() {
                     <button onClick={() => navigate('/my-swaps')}>Mis intercambios propuestos</button>
                     <hr />
                     <button onClick={() => navigate('/calendar')}>🗓 Ver mi calendario</button>
-
+                    <hr />
+                    <button onClick={() => navigate('/chats')}>📩 Chats</button>
                 </div>
             ) : (
                 <p>No hay usuario logueado</p>

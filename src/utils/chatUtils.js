@@ -1,0 +1,39 @@
+// src/utils/chatUtils.js
+
+export function capitalize(str) {
+  if (!str) return '';
+  return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+}
+
+export function buildChatContext(swap, workerId) {
+  const iAmRequester = swap.requester_id === workerId;
+
+  const otherPersonName = iAmRequester
+    ? capitalize(swap.shift.worker?.name)
+    : capitalize(swap.requester?.name);
+
+  const otherPersonSurname = iAmRequester
+    ? capitalize(swap.shift.worker?.surname)
+    : capitalize(swap.requester?.surname);
+
+  const myDate = iAmRequester
+    ? swap.offered_date
+    : swap.shift.date;
+
+  const otherDate = iAmRequester
+    ? swap.shift.date
+    : swap.offered_date;
+
+  const otherWorkerId = iAmRequester
+    ? swap.shift.worker_id
+    : swap.requester_id;
+
+  return {
+    iAmRequester,
+    otherPersonName,
+    otherPersonSurname,
+    myDate,
+    otherDate,
+    otherWorkerId,
+  };
+}
