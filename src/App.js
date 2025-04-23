@@ -5,7 +5,8 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import PublicRoute from './components/PublicRoute';
 import PrivateRoute from './components/PrivateRoute';
-import AppLayout from './components/AppLayout'; // 👈 nuevo layout
+import AppLayout from './components/AppLayout';
+import SimpleLayout from './components/AppLayout'; 
 import Calendar from './pages/Calendar/CalendarPage';
 import Dashboard from './pages/Dashboard';
 import MySwaps from './pages/Swaps/MySwaps';
@@ -45,23 +46,24 @@ function App() {
         <Route path="profile" element={<Profile />} />
       </Route>
 
-      {/* Extras (fuera de layout principal) */}
-      <Route path="/shifts/create" element={<PrivateRoute><CreateShift /></PrivateRoute>} />
-      <Route path="/shifts/my" element={<PrivateRoute><MyShifts /></PrivateRoute>} />
-      <Route path="/shifts/edit/:id" element={<PrivateRoute><EditShift /></PrivateRoute>} />
-      <Route path="/propose-swap/:shift_id" element={<PrivateRoute><ProposeSwap /></PrivateRoute>} />
-      <Route path="/verify-email" element={<VerifyEmail />} />
-      <Route path="/preferences" element={<PrivateRoute><CommunicationPreferences /></PrivateRoute>} />
-      <Route path="/verified" element={<Verified />} />
-      <Route path="/dashboard" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
-      <Route path="/swaps/:id" element={<PrivateRoute><SwapDetail /></PrivateRoute>} />
-      <Route path="/shifts/:id" element={<PrivateRoute><ShiftDetail /></PrivateRoute>} />
-      <Route path="/onboarding/code" element={<PrivateRoute><OnboardingCode /></PrivateRoute>} />
-      <Route path="/onboarding/confirm" element={<PrivateRoute><OnboardingConfirm /></PrivateRoute>} />
-      <Route path="/onboarding/speciality" element={<PrivateRoute><OnboardingSpeciality /></PrivateRoute>} />
-      <Route path="/onboarding/name" element={<PrivateRoute><OnboardingName /></PrivateRoute>} />
-      <Route path="/onboarding/phone" element={<PrivateRoute><OnboardingPhone /></PrivateRoute>} />
-      <Route path="/onboarding/success" element={<PrivateRoute><OnboardingSuccess /></PrivateRoute>} />
+      <Route element={<SimpleLayout />}>
+        <Route path="/shifts/create" element={<PrivateRoute><CreateShift /></PrivateRoute>} />
+        <Route path="/shifts/my" element={<PrivateRoute><MyShifts /></PrivateRoute>} />
+        <Route path="/shifts/edit/:id" element={<PrivateRoute><EditShift /></PrivateRoute>} />
+        <Route path="/propose-swap/:shift_id" element={<PrivateRoute><ProposeSwap /></PrivateRoute>} />
+        <Route path="/verify-email" element={<VerifyEmail />} />
+        <Route path="/preferences" element={<PrivateRoute><CommunicationPreferences /></PrivateRoute>} />
+        <Route path="/verified" element={<Verified />} />
+        <Route path="/dashboard" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
+        <Route path="/swaps/:id" element={<PrivateRoute><SwapDetail /></PrivateRoute>} />
+        <Route path="/shifts/:id" element={<PrivateRoute><ShiftDetail /></PrivateRoute>} />
+        <Route path="/onboarding/code" element={<PrivateRoute><OnboardingCode /></PrivateRoute>} />
+        <Route path="/onboarding/confirm" element={<PrivateRoute><OnboardingConfirm /></PrivateRoute>} />
+        <Route path="/onboarding/speciality" element={<PrivateRoute><OnboardingSpeciality /></PrivateRoute>} />
+        <Route path="/onboarding/name" element={<PrivateRoute><OnboardingName /></PrivateRoute>} />
+        <Route path="/onboarding/phone" element={<PrivateRoute><OnboardingPhone /></PrivateRoute>} />
+        <Route path="/onboarding/success" element={<PrivateRoute><OnboardingSuccess /></PrivateRoute>} />
+      </Route>
     </Routes>
   );
 }

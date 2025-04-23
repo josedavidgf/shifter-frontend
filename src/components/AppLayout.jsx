@@ -2,6 +2,7 @@ import { Outlet } from 'react-router-dom';
 import BottomNav from './BottomNav';
 import ProfileButton from './ProfileButton';
 import { motion } from 'framer-motion';
+import '../index.css';
 
 
 export default function AppLayout() {
@@ -15,14 +16,16 @@ export default function AppLayout() {
                 overflowY: 'auto',
                 paddingBottom: '72px', // deja espacio para BottomNav
             }}>
-                <motion.div
-                    initial={{ opacity: 0, x: 50 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    exit={{ opacity: 0, x: -50 }}
-                    transition={{ duration: 0.2 }}
-                >
-                    <Outlet />
-                </motion.div>
+                <div className="container">
+                    <motion.div
+                        initial={{ opacity: 0, x: 50 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        exit={{ opacity: 0, x: -50 }}
+                        transition={{ duration: 0.2 }}
+                    >
+                        <Outlet />
+                    </motion.div>
+                </div>
             </main>
             <footer>
                 <BottomNav />

@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { getSentSwaps, cancelSwap } from '../services/swapService';
+import { getSentSwaps } from '../services/swapService';
 import { useNavigate } from 'react-router-dom';
+import '../index.css';
+
 
 const MySwapsTable = () => {
   const { getToken } = useAuth();
@@ -17,8 +19,9 @@ const MySwapsTable = () => {
       try {
         const token = await getToken();
         const swaps = await getSentSwaps(token);
-        setMySwaps(swaps);
-        setFiltered(swaps);
+        const sorted = swaps.sort((a, b) => new Date(a.shift?.date) - new Date(b.shift?.date));
+        setMySwaps(sorted);
+        setFiltered(sorted);
       } catch (err) {
         console.error('❌ Error al cargar swaps enviados:', err.message);
         setError('Error al cargar swaps');
@@ -45,75 +48,49 @@ const MySwapsTable = () => {
     setFilterDate('');
     setFilterStatus('');
   };
-
-  const handleCancelSwap = async (swapId) => {
-    try {
-      const token = await getToken();
-      await cancelSwap(swapId, token);
-      const updated = await getSentSwaps(token);
-      setMySwaps(updated);
-    } catch (err) {
-      console.error('❌ Error al cancelar swap:', err.message);
-      alert('Error al cancelar el intercambio');
-    }
-  };
-
   return (
     <div>
-      <input
-        type="date"
-        value={filterDate}
-        onChange={(e) => setFilterDate(e.target.value)}
-      />
-      <select
-        value={filterStatus}
-        onChange={(e) => setFilterStatus(e.target.value)}
-      >
-        <option value="">Todos</option>
-        <option value="proposed">Propuesto</option>
-        <option value="accepted">Aceptado</option>
-        <option value="rejected">Rechazado</option>
-        <option value="cancelled">Cancelado</option>
-      </select>
-      <button onClick={clearFilters}>Limpiar filtros</button>
-      <table>
-        <thead>
-          <tr>
-            <th>Fecha objetivo</th>
-            <th>Nombre</th>
-            <th>Apellido</th>
-            <th>Email</th>
-            <th>Tipo objetivo</th>
-            <th>Fecha ofrecida</th>
-            <th>Tipo ofrecido</th>
-            <th>Etiqueta ofrecida</th>
-            <th>Estado</th>
-            <th>Acción</th>
-          </tr>
-        </thead>
-        <tbody>
-          {filtered.map((swap) => (
-            <tr key={swap.swap_id}>
-              <td>{swap.shift?.date}</td>
-              <td>{swap.shift?.worker.name}</td>
-              <td>{swap.shift?.worker.surname}</td>
-              <td>{swap.shift?.worker.email}</td>
-              <td>{swap.shift?.shift_type}</td>
-              <td>{swap.offered_date || '—'}</td>
-              <td>{swap.offered_type}</td>
-              <td>{swap.offered_label}</td>
-              <td>{swap.status}</td>
-              <td>
-                <button onClick={() => navigate(`/swaps/${swap.swap_id}`)}>🔍 Ver detalle</button>
-                {swap.status === 'proposed' && (
-                  <button onClick={() => handleCancelSwap(swap.swap_id)}>❌ Cancelar</button>
-                )}
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
+      <div style={{ display: 'flex', gap: '1rem', marginBottom: '1rem' }}>
+        <input
+          type="date"
+          value={filterDate}
+          onChange={(e) => setFilterDate(e.target.value)}
+        />
+        <select
+          value={filterStatus}
+          onChange={(e) => setFilterStatus(e.target.value)}
+        >
+          <option value="">Todos</option>
+          <option value="proposed">Propuesto</option>
+          <option value="accepted">Aceptado</option>
+          <option value="rejected">Rechazado</option>
+          <option value="cancelled">Cancelado</option>
+        </select>
+        <button onClick={clearFilters}>Limpiar filtros</button>
+      </div>
+      
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+        {filtered.map((swap) => (
+          <div
+            key={swap.swap_id}
+            className="my-swap-card"
+            onClick={() => navigate(`/swaps/${swap.swap_id}`)}
+          >
+            <strong>Turno objetivo: {swap.shift?.date} · {swap.shift?.shift_type}</strong>
+            <div className="my-swap-meta">
+              Con: {swap.shift?.worker?.name} {swap.shift?.worker?.surname}
+            </div>
+            <div className="my-swap-meta">
+              Ofreces: {swap.offered_date || '—'} · {swap.offered_type}
+            </div>
+            <span className={`swap-status ${swap.status}`}>
+              {swap.status.charAt(0).toUpperCase() + swap.status.slice(1)}
+            </span>
+          </div>
+        ))}
+      </div>
+
+    </div >
   );
 };
 

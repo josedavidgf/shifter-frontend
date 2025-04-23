@@ -15,6 +15,16 @@ html, body {
   overscroll-behavior-y: contain;
 }
 
+/* Contenedor general para centrar y limitar el contenido */
+.container {
+  width: 100%;
+  max-width: 768px; /* Ajustable a gusto: 640px, 768px, 1024px... */
+  margin: 0 auto;
+  padding: 0 1rem; /* Espacio lateral para que no pegue a los bordes */
+  box-sizing: border-box;
+}
+
+
 html, body {
   height: 100%;
   overflow-x: hidden;
@@ -194,4 +204,194 @@ code {
   opacity: 1;
   color: #000;
   font-weight: bold;
+}
+
+
+.shift-card {
+  border: 1px solid var(--card-border-color, #007bff);
+  background-color: #fff;
+  padding: 1rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.shift-card.disabled {
+  border-color: #ddd;
+  background-color: #f9f9f9;
+  box-shadow: none;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.shift-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.shift-date {
+  font-weight: bold;
+}
+
+.shift-meta {
+  font-size: 0.9rem;
+  color: #666;
+}
+
+.shift-status {
+  font-size: 0.9rem;
+  color: #999;
+}
+
+
+.chat-card {
+  border: 1px solid #007bff;
+  background-color: #fff;
+  padding: 1rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.chat-card:hover {
+  background-color: #f5faff;
+}
+
+.chat-card strong {
+  font-size: 1rem;
+}
+
+.chat-card small {
+  color: #666;
+}
+
+.my-swap-card {
+  border: 1px solid #007bff;
+  background-color: #fff;
+  padding: 1rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.my-swap-card:hover {
+  background-color: #f5faff;
+}
+
+.my-swap-meta {
+  font-size: 0.9rem;
+  color: #666;
+}
+.swap-status {
+  display: inline-block;
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  font-weight: bold;
+  color: white;
+}
+
+.swap-status.proposed {
+  background-color: #007bff;
+}
+
+.swap-status.accepted {
+  background-color: #28a745;
+}
+
+.swap-status.rejected {
+  background-color: #dc3545;
+}
+
+.swap-status.cancelled {
+  background-color: #6c757d;
+}
+
+.month-selector {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1.5rem;
+  padding: 1rem 0;
+  margin-bottom: 1.5rem;
+}
+
+.arrow-button {
+  font-size: 1.25rem;
+  padding: 0.4rem 0.8rem;
+  border: none;
+  border-radius: 6px;
+  background-color: #e2e8f0;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.arrow-button:hover {
+  background-color: #cbd5e1;
+}
+
+.month-label {
+  font-size: 1.125rem;
+  font-weight: 600;
+}
+
+
+.btn {
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  border: none;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  font-weight: 500;
+}
+
+/* Botón primario (azul) */
+.btn-primary {
+  background-color: #007bff;
+  color: white;
+}
+.btn-primary:hover {
+  background-color: #0069d9;
+}
+
+/* Botón de éxito (verde) */
+.btn-success {
+  background-color: #28a745;
+  color: white;
+}
+.btn-success:hover {
+  background-color: #218838;
+}
+
+/* Botón de peligro (rojo) */
+.btn-danger {
+  background-color: #dc3545;
+  color: white;
+}
+.btn-danger:hover {
+  background-color: #c82333;
+}
+.btn:disabled,
+.btn-disabled {
+  background-color: #e0e0e0;
+  color: #888;
+  cursor: not-allowed;
+  opacity: 0.7;
+  border: none;
+}
+.btn + .btn {
+  margin-left: 0.5rem;
 }
