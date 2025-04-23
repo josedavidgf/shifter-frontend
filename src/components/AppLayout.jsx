@@ -10,7 +10,11 @@ export default function AppLayout() {
             <header>
                 <ProfileButton />
             </header>
-            <main>
+            <main style={{
+                flex: 1,
+                overflowY: 'auto',
+                paddingBottom: '72px', // deja espacio para BottomNav
+            }}>
                 <motion.div
                     initial={{ opacity: 0, x: 50 }}
                     animate={{ opacity: 1, x: 0 }}
