@@ -10,7 +10,7 @@ const ChatBox = ({ swapId, myWorkerId, otherWorkerId, otherPersonName, otherPers
     const inputRef = useRef(null);
     const [inputDisabled, setInputDisabled] = useState(false);
 
-    console.log('otherDate',otherDate);
+    console.log('otherDate', otherDate);
 
     useEffect(() => {
         getMessagesBySwap(swapId).then(setMessages);
@@ -101,47 +101,37 @@ const ChatBox = ({ swapId, myWorkerId, otherWorkerId, otherPersonName, otherPers
 
 
     return (
-        <div>
-            <div style={{ margin: '1rem 0', background: '#f0f0f0', padding: '1rem', borderRadius: '10px' }}>
+        <div className="chatbox-container">
+            <div className="chatbox-header">
                 <p><strong>💬 Estás chateando con {otherPersonName} {otherPersonSurname}</strong></p>
                 <p>📅 {getVerb(myDate)} {formatDate(myDate)}</p>
                 <p>📅 {otherPersonName} {getOtherVerb(otherDate)} {formatDate(otherDate)}</p>
             </div>
-            <div style={{ border: '1px solid #ccc', padding: '1rem', maxHeight: '250px', overflowY: 'scroll' }}>
+
+            <div className="chatbox-messages">
                 {[...messages]
                     .sort((a, b) => new Date(a.created_at) - new Date(b.created_at))
                     .map((msg, index) => (
                         <div key={`${msg.id}-${index}`} style={{ textAlign: msg.sender_id === myWorkerId ? 'right' : 'left' }}>
                             <div
+                                className={`message-bubble ${msg.sender_id === myWorkerId ? 'message-bubble-own' : 'message-bubble-other'}`}
                                 style={{
-                                    background: msg.sender_id === myWorkerId ? '#d0e8ff' : '#ddd',
-                                    display: 'inline-block',
-                                    padding: '0.5rem',
-                                    borderRadius: '10px',
-                                    transition: 'transform 0.3s ease, opacity 0.3s ease',
                                     transform: msg.status === 'sending' ? 'scale(0.95)' : 'scale(1)',
                                     opacity: msg.status === 'sending' ? 0.6 : 1,
-                                    maxWidth: '70%',
                                 }}
                             >
                                 {msg.content}
-                                {msg.status === 'sending' && (
-                                    <span style={{ fontSize: '0.8em', marginLeft: '0.5rem' }}>⏳</span>
-                                )}
-                                {msg.status === 'failed' && (
-                                    <span style={{ fontSize: '0.8em', marginLeft: '0.5rem', color: 'red' }}>❌</span>
-                                )}
+                                {msg.status === 'sending' && <span>⏳</span>}
+                                {msg.status === 'failed' && <span style={{ color: 'red' }}>❌</span>}
                             </div>
                             <br />
                             <small>{new Date(msg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</small>
                         </div>
                     ))}
-
                 <div ref={bottomRef} />
             </div>
 
-
-            <form onSubmit={handleSubmit} style={{ marginTop: '1rem' }}>
+            <form onSubmit={handleSubmit} className="chatbox-form">
                 <input
                     type="text"
                     ref={inputRef}
@@ -150,12 +140,12 @@ const ChatBox = ({ swapId, myWorkerId, otherWorkerId, otherPersonName, otherPers
                     placeholder="Escribe un mensaje..."
                     required
                     disabled={inputDisabled}
+                    className="chatbox-input"
                 />
-
-                <button type="submit" disabled={inputDisabled}>Enviar</button>
-
+                <button type="submit" disabled={inputDisabled} className="chatbox-button">Enviar</button>
             </form>
         </div>
+
     );
 };
 

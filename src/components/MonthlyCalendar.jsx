@@ -542,20 +542,31 @@ function MonthlyCalendar() {
         <div className="badge-container">
           {['morning', 'evening', 'night', 'reinforcement'].map((type) => {
             const count = stats[type];
+            const icons = {
+              morning: '🔆',
+              evening: '🌇',
+              night: '🌙',
+              reinforcement: '🆘',
+            };
+
             const labelMap = {
               morning: 'Mañanas',
               evening: 'Tardes',
               night: 'Noches',
               reinforcement: 'Refuerzos',
             };
+
             return (
-              <div key={type} className="badge">
-                {labelMap[type]}: {count}
+              <div key={type} className="stat-badge">
+                <span className="badge-icon">{icons[type]}</span>
+                <span className="badge-count">{count}</span>
+                <span className="badge-label">{labelMap[type]}</span>
               </div>
             );
           })}
         </div>
       </div>
+
 
 
       {/* Cabecera de días de la semana */}
