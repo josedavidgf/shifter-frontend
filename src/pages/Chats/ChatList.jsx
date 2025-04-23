@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { useAuth } from '../context/AuthContext';
-import { getMyWorkerProfile } from '../services/workerService';
-import { getAcceptedSwaps } from '../services/swapService'; // creamos este servicio
-import ChatBox from './ChatBox';
-import BackButton from '../components/BackButton';
-import { formatDate, getVerb, getOtherVerb } from '../utils/dateUtils';
+import { useAuth } from '../../context/AuthContext';
+import { getMyWorkerProfile } from '../../services/workerService';
+import { getAcceptedSwaps } from '../../services/swapService'; // creamos este servicio
+import ChatBox from '../../components/ChatBox';
+import { formatDate, getVerb, getOtherVerb } from '../../utils/dateUtils';
 
 
 const ChatsList = () => {
@@ -80,8 +79,6 @@ const ChatsList = () => {
                     )}
                 </ul>
             )}
-
-            <BackButton />
         </div>
     );
 

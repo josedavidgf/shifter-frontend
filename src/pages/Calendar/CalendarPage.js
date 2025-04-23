@@ -1,11 +1,9 @@
 import React from 'react';
-import MonthlyCalendar from '../components/MonthlyCalendar';
-import { useNavigate } from 'react-router-dom';
-import useTrackPageView from '../hooks/useTrackPageView';
+import MonthlyCalendar from '../../components/MonthlyCalendar';
+import useTrackPageView from '../../hooks/useTrackPageView';
 
 
 const Calendar = () => {
-    const navigate = useNavigate();
 
     useTrackPageView('calendar');
     
@@ -14,7 +12,6 @@ const Calendar = () => {
             <h1 className="text-2xl font-bold mb-4">Mi calendario</h1>
             <MonthlyCalendar />
             <hr />
-            <button onClick={() => navigate('/dashboard')}>⬅ Volver al Dashboard</button>
         </div>
     );
 };

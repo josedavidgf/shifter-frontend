@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
-import { getHospitalShifts } from '../services/shiftService';
-import { getSpecialities } from '../services/specialityService';
-import { getFullWorkerProfile } from '../services/userService';
-import HospitalShiftsTable from '../components/HospitalShiftsTable';
-import { getSentSwaps } from '../services/swapService';
-import useTrackPageView from '../hooks/useTrackPageView';
+import { useAuth } from '../../context/AuthContext';
+import { getHospitalShifts } from '../../services/shiftService';
+import { getSpecialities } from '../../services/specialityService';
+import { getFullWorkerProfile } from '../../services/userService';
+import HospitalShiftsTable from '../../components/HospitalShiftsTable';
+import { getSentSwaps } from '../../services/swapService';
+import useTrackPageView from '../../hooks/useTrackPageView';
 
 
 const HospitalShifts = () => {
@@ -14,7 +13,6 @@ const HospitalShifts = () => {
     const [shifts, setShifts] = useState([]);
     const [specialities, setSpecialities] = useState([]);
     const [error, setError] = useState(null);
-    const navigate = useNavigate();
     const [workerId, setWorkerId] = useState(null);
     const [sentSwaps, setSentSwaps] = useState([]);
 
@@ -53,7 +51,6 @@ const HospitalShifts = () => {
                     sentSwapShiftIds={sentSwaps}
                 />
             )}
-            <button onClick={() => navigate('/dashboard')}>⬅ Volver al Dashboard</button>
         </div>
     );
 };

@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { getSwapById } from '../services/swapService';
-import ChatBox from '../components/ChatBox';
-import { useAuth } from '../context/AuthContext';
-import { getMyWorkerProfile } from '../services/workerService';
-import useTrackPageView from '../hooks/useTrackPageView';
+import { getSwapById } from '../../services/swapService';
+import ChatBox from '../../components/ChatBox';
+import { useAuth } from '../../context/AuthContext';
+import { getMyWorkerProfile } from '../../services/workerService';
+import useTrackPageView from '../../hooks/useTrackPageView';
 
 const SwapDetail = () => {
     const navigate = useNavigate();
@@ -60,7 +60,7 @@ const SwapDetail = () => {
                 />
             )}
             <hr />
-            <button onClick={() => navigate('/dashboard')}>⬅ Volver al Dashboard</button>
+            <button onClick={() => navigate('/calendar')}>⬅ Volver al Dashboard</button>
         </div>
     );
 };

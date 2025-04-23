@@ -1,18 +1,18 @@
 import React, { useEffect, useState } from 'react';
-import { useAuth } from '../context/AuthContext';
+import { useAuth } from '../../context/AuthContext';
 import {
   getFullWorkerProfile,
   updateWorkerInfo,
   updateWorkerHospital,
   updateWorkerSpeciality,
-} from '../services/userService';
-import { getHospitals } from '../services/hospitalService';
-import { getSpecialities } from '../services/specialityService';
+} from '../../services/userService';
+import { getHospitals } from '../../services/hospitalService';
+import { getSpecialities } from '../../services/specialityService';
 import { useNavigate } from 'react-router-dom';
-import useTrackPageView from '../hooks/useTrackPageView';
+import useTrackPageView from '../../hooks/useTrackPageView';
 
 const Profile = () => {
-  const { getToken } = useAuth();
+  const { getToken, logout } = useAuth();
   const [worker, setWorker] = useState(null);
   const [hospitals, setHospitals] = useState([]);
   const [specialities, setSpecialities] = useState([]);
@@ -50,6 +50,13 @@ const Profile = () => {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
   };
+  const handleLogout = async () => {
+    try {
+        await logout();
+    } catch (error) {
+        console.log('Error al cerrar sesión:', error.message);
+    }
+};
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -111,8 +118,8 @@ const Profile = () => {
       <hr />
       <button onClick={() => navigate('/preferences')}>Preferencias de comunicación</button>
       <hr />
+      <button onClick={handleLogout}>Logout</button>
       {message && <p>{message}</p>}
-      <button onClick={() => navigate('/dashboard')}>⬅ Volver al Dashboard</button>
     </div>
   );
 };

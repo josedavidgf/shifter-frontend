@@ -44,7 +44,7 @@ const PrivateRoute = ({ children }) => {
 
   // Si ha completado todo, ya puede entrar al dashboard
   if (isWorker.onboarding_completed) {
-    if (location.pathname.startsWith('/onboarding')) return <Navigate to="/dashboard" />;
+    if (location.pathname.startsWith('/onboarding')) return <Navigate to="/calendar" />;
     return children;
   }
 

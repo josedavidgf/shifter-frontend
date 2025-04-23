@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
-import { getSwapsByShiftId } from '../services/swapService';
-import ChatBox from '../components/ChatBox';
-import useTrackPageView from '../hooks/useTrackPageView';
+import { useAuth } from '../../context/AuthContext';
+import { getSwapsByShiftId } from '../../services/swapService';
+import ChatBox from '../../components/ChatBox';
+import useTrackPageView from '../../hooks/useTrackPageView';
 
 const ShiftDetail = () => {
     const navigate = useNavigate();
@@ -55,7 +55,7 @@ const ShiftDetail = () => {
                 </div>
             ))}
             <hr />
-            <button onClick={() => navigate('/dashboard')}>⬅ Volver al Dashboard</button>
+            <button onClick={() => navigate('/calendar')}>⬅ Volver al Dashboard</button>
         </div>
     );
 };
