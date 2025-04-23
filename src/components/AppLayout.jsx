@@ -1,6 +1,5 @@
 import { Outlet } from 'react-router-dom';
 import BottomNav from './BottomNav';
-import ProfileButton from './ProfileButton';
 import { motion } from 'framer-motion';
 import '../index.css';
 
@@ -8,9 +7,6 @@ import '../index.css';
 export default function AppLayout() {
     return (
         <div className="app-shell">
-            <header>
-                <ProfileButton />
-            </header>
             <main style={{
                 flex: 1,
                 overflowY: 'auto',

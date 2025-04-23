@@ -1,15 +1,19 @@
 import React from 'react';
 import MonthlyCalendar from '../../components/MonthlyCalendar';
 import useTrackPageView from '../../hooks/useTrackPageView';
+import ProfileButton from '../../components/ProfileButton';
 
 
 const Calendar = () => {
 
     useTrackPageView('calendar');
-    
+
     return (
         <div className="p-4">
-            <h1 className="text-2xl font-bold mb-4">Mi calendario</h1>
+            <div className="calendar-header">
+                <h1>Mi calendario</h1>
+                <ProfileButton />
+            </div>
             <MonthlyCalendar />
             <hr />
         </div>
