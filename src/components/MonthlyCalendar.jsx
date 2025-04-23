@@ -7,7 +7,9 @@ import { getMyShiftsPublished, removeShift } from '../services/shiftService';
 import { getMySwapPreferences, createSwapPreference, deleteSwapPreference, updateSwapPreference } from '../services/swapPreferencesService';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
+import MonthSelector from './MonthSelector';
 import '../index.css';
+import { motion, AnimatePresence } from 'framer-motion';
 
 function getShiftLabel(shift) {
   switch (shift) {
@@ -163,9 +165,6 @@ function MonthlyCalendar() {
     console.log('calendar actualizado:', shiftMap);
   }, [shiftMap]);
 
-  function handleMonthChange(event) {
-    setSelectedMonth(event.target.value);
-  }
 
   function handleDayClick(dateStr) {
     if (dateStr < today) return;
@@ -499,16 +498,9 @@ function MonthlyCalendar() {
 
   return (
     <div className="p-4">
-      <h2 className="text-xl font-bold mb-4">Calendario de Turnos</h2>
       {/* Filtro de mes */}
-      <div className="mb-4 flex justify-center">
-        <input
-          type="month"
-          value={selectedMonth}
-          onChange={handleMonthChange}
-          className="border p-2 rounded"
-        />
-      </div>
+      <MonthSelector selectedMonth={selectedMonth} onChange={setSelectedMonth} />
+
 
       {!isMassiveEditMode ? (
         <button
@@ -547,7 +539,6 @@ function MonthlyCalendar() {
       )}
 
       <div className="mb-4 p-4 border rounded shadow">
-        <h3 className="font-bold mb-4">Resumen de Turnos</h3>
         <div className="badge-container">
           {['morning', 'evening', 'night', 'reinforcement'].map((type) => {
             const count = stats[type];
@@ -568,8 +559,15 @@ function MonthlyCalendar() {
 
 
       {/* Cabecera de días de la semana */}
-      <div className="page calendar-container">
-        <div className="calendar-grid">
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={selectedMonth}
+          initial={{ opacity: 0, x: 30 }}
+          animate={{ opacity: 1, x: 0 }}
+          exit={{ opacity: 0, x: -30 }}
+          transition={{ duration: 0.2 }}
+          className="calendar-grid"
+        >
           {['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'].map((dayName) => (
             <div key={dayName} className="calendar-header">{dayName}</div>
           ))}
@@ -606,8 +604,8 @@ function MonthlyCalendar() {
               </div>
             );
           })}
-        </div>
-      </div>
+        </motion.div>
+      </AnimatePresence>
       {selectedDay && (
         <div className="day-details mt-4 p-4 border rounded shadow">
           {renderDayDetails(selectedDay)}
