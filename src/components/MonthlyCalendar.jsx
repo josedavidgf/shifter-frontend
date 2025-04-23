@@ -568,7 +568,7 @@ function MonthlyCalendar() {
 
 
       {/* Cabecera de días de la semana */}
-      <div className="calendar-container">
+      <div className="page calendar-container">
         <div className="calendar-grid">
           {['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'].map((dayName) => (
             <div key={dayName} className="calendar-header">{dayName}</div>
