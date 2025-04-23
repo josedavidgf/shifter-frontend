@@ -14,7 +14,7 @@ function Login() {
         e.preventDefault();
         try {
             await login(email, password);
-            navigate('/dashboard');  // Redirigir después del login
+            navigate('/calendar');  // Redirigir después del login
         } catch (err) {
             setError(err.message);
         }

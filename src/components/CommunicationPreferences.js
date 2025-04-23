@@ -1,16 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { getUserPreferences, updateUserPreferences } from '../services/userService';
-import { useNavigate } from 'react-router-dom';
+import BackButton from './BackButton';
 
 
 const CommunicationPreferences = () => {
     const [emailNotifications, setEmailNotifications] = useState(true);
     const [status, setStatus] = useState('');
     const { getToken } = useAuth();
-    const navigate = useNavigate();
-
-
 
     useEffect(() => {
         async function fetchPreferences() {
@@ -55,7 +52,7 @@ const CommunicationPreferences = () => {
                 {status && <p>{status}</p>}
             </form>
             <hr />
-            <button onClick={() => navigate('/dashboard')}>⬅ Volver al Dashboard</button>
+            <BackButton />
         </div>
     );
 };

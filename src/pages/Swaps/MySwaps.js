@@ -1,15 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import { useAuth } from '../context/AuthContext';
-import { getSentSwaps } from '../services/swapService';
-import { useNavigate } from 'react-router-dom';
-import MySwapsTable from '../components/MySwapsTable';
-import useTrackPageView from '../hooks/useTrackPageView';
+import { useAuth } from '../../context/AuthContext';
+import { getSentSwaps } from '../../services/swapService';
+import MySwapsTable from '../../components/MySwapsTable';
+import useTrackPageView from '../../hooks/useTrackPageView';
 
 const MySwaps = () => {
   const { getToken } = useAuth();
   const [mySwaps, setMySwaps] = useState([]);
   const [, setError] = useState(null);
-  const navigate = useNavigate();
 
   useTrackPageView('my-swaps');
 
@@ -54,8 +52,6 @@ const MySwaps = () => {
       ) : (
         <MySwapsTable />
       )}
-      <hr />
-      <button onClick={() => navigate('/dashboard')}>⬅ Volver al Dashboard</button>
     </div>
   );
 };

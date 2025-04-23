@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 
-const BackButton = ({ fallbackPath = '/dashboard', label = '⬅ Volver' }) => {
+const BackButton = ({ fallbackPath = '/calendar', label = '⬅ Volver' }) => {
   const navigate = useNavigate();
 
   const handleGoBack = () => {

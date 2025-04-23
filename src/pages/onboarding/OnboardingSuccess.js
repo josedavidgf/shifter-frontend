@@ -15,7 +15,7 @@ export default function OnboardingSuccess() {
         await completeOnboarding(token); // ✅ Ahora puedes completar el onboarding
         // Redirige después de completar
         setTimeout(() => {
-          navigate('/dashboard');
+          navigate('/calendar');
         }, 2000);
       } catch (err) {
         console.error('Error completando el onboarding:', err.message);

@@ -3,50 +3,55 @@ import { Route, Routes } from 'react-router-dom';
 import Home from './pages/Home';
 import Login from './pages/Login';
 import Register from './pages/Register';
-import Dashboard from './pages/Dashboard';
-import PrivateRoute from './components/PrivateRoute';
 import PublicRoute from './components/PublicRoute';
-import Profile from './pages/Profile';
-import CreateShift from './pages/CreateShift';
-import MyShifts from './pages/MyShifts';
-import EditShift from './pages/EditShift';
-import HospitalShifts from './pages/HospitalShifts';
-import ProposeSwap from './pages/ProposeSwap';
-import MySwaps from './pages/MySwaps';
+import PrivateRoute from './components/PrivateRoute';
+import AppLayout from './components/AppLayout'; // 👈 nuevo layout
+import Calendar from './pages/Calendar/CalendarPage';
+import MySwaps from './pages/Swaps/MySwaps';
+import HospitalShifts from './pages/Shifts/HospitalShifts';
+import ChatsList from './pages/Chats/ChatList';
+import Profile from './pages/Profile/ProfilePage';
+import CreateShift from './pages/Shifts/CreateShift';
+import MyShifts from './pages/Shifts/MyShifts';
+import EditShift from './pages/Shifts/EditShift';
+import ProposeSwap from './pages/Swaps/ProposeSwap';
 import VerifyEmail from './pages/VerifyEmail';
 import CommunicationPreferences from './components/CommunicationPreferences';
 import Verified from './components/Verified';
-import SwapDetail from './pages/SwapDetail';
-import ShiftDetail from './pages/ShiftDetail';
-import Calendar from './pages/Calendar';
+import SwapDetail from './pages/Swaps/SwapDetail';
+import ShiftDetail from './pages/Shifts/ShiftDetail';
 import OnboardingCode from './pages/onboarding/OnboardingCode';
 import OnboardingConfirm from './pages/onboarding/OnboardingConfirm';
 import OnboardingSpeciality from './pages/onboarding/OnboardingSpeciality';
 import OnboardingName from './pages/onboarding/OnboardingName';
 import OnboardingPhone from './pages/onboarding/OnboardingPhone';
 import OnboardingSuccess from './pages/onboarding/OnboardingSuccess';
-import ChatsList from './components/ChatList';
-
-
 
 function App() {
   return (
     <Routes>
+      {/* Rutas públicas */}
       <Route path="/" element={<PublicRoute><Home /></PublicRoute>} />
       <Route path="/login" element={<PublicRoute><Login /></PublicRoute>} />
       <Route path="/register" element={<PublicRoute><Register /></PublicRoute>} />
-      <Route path="/dashboard" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
-      <Route path="/profile" element={<PrivateRoute><Profile /></PrivateRoute>} />
+
+      {/* Rutas privadas: agrupadas bajo el nuevo layout */}
+      <Route path="/" element={<PrivateRoute><AppLayout /></PrivateRoute>}>
+        <Route path="calendar" element={<Calendar />} />
+        <Route path="my-swaps" element={<MySwaps />} />
+        <Route path="shifts/hospital" element={<HospitalShifts />} />
+        <Route path="chats" element={<ChatsList />} />
+        <Route path="profile" element={<Profile />} />
+      </Route>
+
+      {/* Extras (fuera de layout principal) */}
       <Route path="/shifts/create" element={<PrivateRoute><CreateShift /></PrivateRoute>} />
       <Route path="/shifts/my" element={<PrivateRoute><MyShifts /></PrivateRoute>} />
-      <Route path="/shifts/edit/:id" element={<EditShift />} />
-      <Route path="/shifts/hospital" element={<PrivateRoute><HospitalShifts /></PrivateRoute>} />
+      <Route path="/shifts/edit/:id" element={<PrivateRoute><EditShift /></PrivateRoute>} />
       <Route path="/propose-swap/:shift_id" element={<PrivateRoute><ProposeSwap /></PrivateRoute>} />
-      <Route path="/my-swaps" element={<PrivateRoute><MySwaps /></PrivateRoute>} />
       <Route path="/verify-email" element={<VerifyEmail />} />
       <Route path="/preferences" element={<PrivateRoute><CommunicationPreferences /></PrivateRoute>} />
       <Route path="/verified" element={<Verified />} />
-      <Route path="/calendar" element={<PrivateRoute><Calendar /></PrivateRoute>} />
       <Route path="/swaps/:id" element={<PrivateRoute><SwapDetail /></PrivateRoute>} />
       <Route path="/shifts/:id" element={<PrivateRoute><ShiftDetail /></PrivateRoute>} />
       <Route path="/onboarding/code" element={<PrivateRoute><OnboardingCode /></PrivateRoute>} />
@@ -55,10 +60,7 @@ function App() {
       <Route path="/onboarding/name" element={<PrivateRoute><OnboardingName /></PrivateRoute>} />
       <Route path="/onboarding/phone" element={<PrivateRoute><OnboardingPhone /></PrivateRoute>} />
       <Route path="/onboarding/success" element={<PrivateRoute><OnboardingSuccess /></PrivateRoute>} />
-      <Route path="/chats" element={<PrivateRoute><ChatsList /></PrivateRoute>} />
-
-      
-    </Routes >
+    </Routes>
   );
 }
 

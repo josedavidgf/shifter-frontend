@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
-import { getFullWorkerProfile } from '../services/userService';
-import { createShift } from '../services/shiftService';
-import { getSpecialities } from '../services/specialityService';
-import useTrackPageView from '../hooks/useTrackPageView';
+import { useAuth } from '../../context/AuthContext';
+import { getFullWorkerProfile } from '../../services/userService';
+import { createShift } from '../../services/shiftService';
+import { getSpecialities } from '../../services/specialityService';
+import useTrackPageView from '../../hooks/useTrackPageView';
 import { format, parseISO } from 'date-fns';
-import { translateShiftType } from '../utils/translateShiftType';
-import BackButton from '../components/BackButton';
+import { translateShiftType } from '../../utils/translateShiftType';
+import BackButton from '../../components/BackButton';
 
 
 const CreateShift = () => {
@@ -93,7 +93,7 @@ const CreateShift = () => {
             console.log('form', form);
             await createShift({ ...form }, token);
             setMessage('✅ Turno publicado correctamente');
-            setTimeout(() => navigate('/dashboard'), 1500);
+            setTimeout(() => navigate('/calendar'), 1500);
         } catch (err) {
             console.error('❌ Error al crear turno:', err.message);
             setMessage('❌ Error al crear turno');

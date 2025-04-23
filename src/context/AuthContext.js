@@ -111,7 +111,7 @@ export function AuthProvider({ children }) {
       } else if (!workerProfile.onboarding_completed) {
         navigate('/onboarding/speciality');
       } else {
-        navigate('/dashboard');
+        navigate('/calendar');
       }
 
       return data;

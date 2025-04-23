@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
-import { proposeSwap } from '../services/swapService';
-import useTrackPageView from '../hooks/useTrackPageView';
-import { useSwapFeedback } from '../hooks/useSwapFeedback';
-import useAvailableShifts from '../hooks/useAvailableShifts';
-import ShiftSelector from '../components/ShiftSelector';
+import { useAuth } from '../../context/AuthContext';
+import { proposeSwap } from '../../services/swapService';
+import useTrackPageView from '../../hooks/useTrackPageView';
+import { useSwapFeedback } from '../../hooks/useSwapFeedback';
+import useAvailableShifts from '../../hooks/useAvailableShifts';
+import ShiftSelector from '../../components/ShiftSelector';
 
 const ProposeSwap = () => {
   const { shift_id } = useParams();
