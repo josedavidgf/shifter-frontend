@@ -20,12 +20,12 @@ import CommunicationPreferences from './components/CommunicationPreferences';
 import Verified from './components/Verified';
 import SwapDetail from './pages/Swaps/SwapDetail';
 import ShiftDetail from './pages/Shifts/ShiftDetail';
-import OnboardingCode from './pages/Onboarding/OnboardingCode';
-import OnboardingConfirm from './pages/Onboarding/OnboardingConfirm';
-import OnboardingSpeciality from './pages/Onboarding/OnboardingSpeciality';
-import OnboardingName from './pages/Onboarding/OnboardingName';
-import OnboardingPhone from './pages/Onboarding/OnboardingPhone';
-import OnboardingSuccess from './pages/Onboarding/OnboardingSuccess';
+import OnboardingCode from './pages/onboarding/OnboardingCode';
+import OnboardingConfirm from './pages/onboarding/OnboardingConfirm';
+import OnboardingSpeciality from './pages/onboarding/OnboardingSpeciality';
+import OnboardingName from './pages/onboarding/OnboardingName';
+import OnboardingPhone from './pages/onboarding/OnboardingPhone';
+import OnboardingSuccess from './pages/onboarding/OnboardingSuccess';
 
 function App() {
   return (
