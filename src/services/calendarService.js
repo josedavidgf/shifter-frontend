@@ -6,7 +6,7 @@ export async function getShiftsForMonth(workerId /*, year, month */) {
     const end = format(endOfMonth(new Date(year, month - 1)), 'yyyy-MM-dd'); */
 
 
-
+    console.log('worker_id getShiftsForMonth:', workerId);
     const { data, error } = await supabase
         .from('monthly_schedules')
         .select('date, shift_type')
