@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+
 const HospitalShiftsTable = ({ shifts, specialities, workerId, sentSwapShiftIds }) => {
   const navigate = useNavigate();
   const [filters, setFilters] = useState({
@@ -39,6 +40,7 @@ const HospitalShiftsTable = ({ shifts, specialities, workerId, sentSwapShiftIds 
       );
     })
     .sort((a, b) => new Date(a.date) - new Date(b.date));
+
 
   return (
     <div>
@@ -84,6 +86,7 @@ const HospitalShiftsTable = ({ shifts, specialities, workerId, sentSwapShiftIds 
             <th>Tipo</th>
             <th>Etiqueta</th>
             <th>Especialidad</th>
+            <th>Intercambios aceptados</th> {/* 👈 nueva columna */}
             <th>Acciones</th>
           </tr>
         </thead>
@@ -96,6 +99,9 @@ const HospitalShiftsTable = ({ shifts, specialities, workerId, sentSwapShiftIds 
               <td>{shift.shift_type}</td>
               <td>{shift.shift_label}</td>
               <td>{getSpecialityName(shift.speciality_id)}</td>
+              <td>
+                {shift.worker?.swapsAcceptedAsPublisher ?? 0}
+              </td>
               <td>
                 {shift.worker_id !== workerId && shift.state === 'published' && (
                   <button

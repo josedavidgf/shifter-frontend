@@ -7,6 +7,7 @@ import PublicRoute from './components/PublicRoute';
 import PrivateRoute from './components/PrivateRoute';
 import AppLayout from './components/AppLayout'; // 👈 nuevo layout
 import Calendar from './pages/Calendar/CalendarPage';
+import Dashboard from './pages/Dashboard';
 import MySwaps from './pages/Swaps/MySwaps';
 import HospitalShifts from './pages/Shifts/HospitalShifts';
 import ChatsList from './pages/Chats/ChatList';
@@ -52,6 +53,7 @@ function App() {
       <Route path="/verify-email" element={<VerifyEmail />} />
       <Route path="/preferences" element={<PrivateRoute><CommunicationPreferences /></PrivateRoute>} />
       <Route path="/verified" element={<Verified />} />
+      <Route path="/dashboard" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
       <Route path="/swaps/:id" element={<PrivateRoute><SwapDetail /></PrivateRoute>} />
       <Route path="/shifts/:id" element={<PrivateRoute><ShiftDetail /></PrivateRoute>} />
       <Route path="/onboarding/code" element={<PrivateRoute><OnboardingCode /></PrivateRoute>} />
