@@ -1,6 +1,6 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import { CalendarDots, Lightning, MagnifyingGlass, ChatCircle } from '@/theme';
+import { CalendarPlus, Lightning, MagnifyingGlass, ChatCircle } from '../theme';
 
 export default function BottomNav() {
   return (
@@ -8,7 +8,7 @@ export default function BottomNav() {
       <NavLink to="/calendar" className="nav-item">
         {({ isActive }) => (
           <div className={`nav-icon ${isActive ? 'active' : ''}`}>
-            <CalendarDots size={12} />
+            <CalendarPlus size={12} />
             <span>Calendario</span>
           </div>
         )}

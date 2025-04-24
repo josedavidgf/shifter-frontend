@@ -3,13 +3,13 @@ export {
     CheckCircle,
     XCircle,
     ArrowRight,
-    lightning,
-    calendarDots,
-    magnifyingGlass,
-    chat,
-    sun,
-    moon,
-    plus,
-    cloudSun,
-    sunHorizon
+    Lightning,
+    CalendarPlus,
+    MagnifyingGlass,
+    ChatCircle,
+    Sun,
+    Moon,
+    Plus,
+    CloudSun,
+    SunHorizon
   } from 'phosphor-react';
