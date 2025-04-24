@@ -10,46 +10,45 @@ export default function OnboardingSpecialityStep() {
   const [selectedSpeciality, setSelectedSpeciality] = useState('');
   const [error, setError] = useState('');
   const navigate = useNavigate();
-  const { getToken } = useAuth();
-  const {refreshWorkerProfile } = useAuth();
+  const { getToken, isWorker, refreshWorkerProfile } = useAuth();
 
 
   useEffect(() => {
     const fetchSpecialities = async () => {
       try {
         const token = await getToken();
-        const hospitalId = sessionStorage.getItem('hospital_id');
-        if (!hospitalId) {
+        console.log('isWorker:', isWorker);
+        console.log('isWorker hospital_id:', isWorker?.workers_hospitals?.[0]?.hospital_id);
+        console.log('isWorker worker_id:', isWorker?.worker_id);
+        console.log('isWorker worker_type_id:', isWorker?.worker_type_id);
+  
+        if (!isWorker?.workers_hospitals?.[0]?.hospital_id) {
           navigate('/onboarding/code');
           return;
         }
-        const data = await getSpecialitiesByHospital(hospitalId, token);
-        console.log('Data from backend:', data);
+  
+        const data = await getSpecialitiesByHospital(isWorker.workers_hospitals?.[0]?.hospital_id, token);
         setSpecialities(data);
-        console.log('Specialities frontend:', data);
       } catch (err) {
         console.error('Error fetching specialities:', err.message);
       }
     };
-
+  
     fetchSpecialities();
-  }, [navigate, getToken]);
-
+  }, [getToken, isWorker, navigate]);
+  
   const handleConfirm = async () => {
     try {
-      const workerId = sessionStorage.getItem('worker_id');
       const token = await getToken();
+      const workerId = isWorker.worker_id;
+  
       if (!workerId || !selectedSpeciality) {
         setError('Debes seleccionar una especialidad.');
         return;
       }
-      console.log('Worker ID:', workerId);
-      console.log('Selected speciality:', selectedSpeciality);
-      console.log('Token:', token);
+  
       await addSpecialityToWorker(workerId, selectedSpeciality, token);
-
       await refreshWorkerProfile();
-
       navigate('/onboarding/name');
     } catch (err) {
       console.error('Error adding speciality to worker:', err.message);
