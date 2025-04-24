@@ -1,6 +1,6 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import { FiCalendar, FiRepeat, FiSearch, FiMessageCircle } from 'react-icons/fi';
+import { CalendarPlus, Lightning, MagnifyingGlass, ChatCircle } from '../theme';
 
 export default function BottomNav() {
   return (
@@ -8,7 +8,7 @@ export default function BottomNav() {
       <NavLink to="/calendar" className="nav-item">
         {({ isActive }) => (
           <div className={`nav-icon ${isActive ? 'active' : ''}`}>
-            <FiCalendar size={12} />
+            <CalendarPlus size={12} />
             <span>Calendario</span>
           </div>
         )}
@@ -17,7 +17,7 @@ export default function BottomNav() {
       <NavLink to="/my-swaps" className="nav-item">
         {({ isActive }) => (
           <div className={`nav-icon ${isActive ? 'active' : ''}`}>
-            <FiRepeat size={12} />
+            <Lightning size={12} />
             <span>Cambios</span>
           </div>
         )}
@@ -26,7 +26,7 @@ export default function BottomNav() {
       <NavLink to="/shifts/hospital" className="nav-item">
         {({ isActive }) => (
           <div className={`nav-icon ${isActive ? 'active' : ''}`}>
-            <FiSearch size={12} />
+            <MagnifyingGlass size={12} />
             <span>Turnos</span>
           </div>
         )}
@@ -35,7 +35,7 @@ export default function BottomNav() {
       <NavLink to="/chats" className="nav-item">
         {({ isActive }) => (
           <div className={`nav-icon ${isActive ? 'active' : ''}`}>
-            <FiMessageCircle size={12} />
+            <ChatCircle size={12} />
             <span>Mensajes</span>
           </div>
         )}
