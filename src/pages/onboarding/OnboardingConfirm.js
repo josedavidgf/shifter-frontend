@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { createWorker, createWorkerHospital } from '../../services/workerService';
 import { useAuth } from '../../context/AuthContext';
 
@@ -13,20 +13,20 @@ export default function OnboardingConfirmStep() {
   const navigate = useNavigate();
   const { setIsWorker, refreshWorkerProfile } = useAuth();
 
+  const location = useLocation();
+  const { hospital_id, worker_type_id, access_code } = location.state || {};
+
   useEffect(() => {
-    const hospital = sessionStorage.getItem('hospital_id');
-    const workerType = sessionStorage.getItem('worker_type_id');
-    const code = sessionStorage.getItem('access_code');
 
 
-    if (!hospital || !workerType) {
+    if (!hospital_id || !worker_type_id) {
       navigate('/onboarding/code');
     } else {
-      setHospitalId(hospital);
-      setWorkerTypeId(workerType);
-      setAccessCode(code);
+      setHospitalId(hospital_id);
+      setWorkerTypeId(worker_type_id);
+      setAccessCode(access_code);
     }
-  }, [navigate]);
+  }, [hospital_id, worker_type_id, access_code, navigate]);
 
   const handleConfirm = async () => {
     const token = await getToken();
@@ -42,9 +42,6 @@ export default function OnboardingConfirmStep() {
       } else {
         throw new Error(response?.message || 'Error al crear el trabajador');
       }
-      // Guardamos el workerId en sessionStorage para pasos siguientes
-      sessionStorage.setItem('worker_id', response.worker.worker_id);
-      sessionStorage.getItem('hospital_id')
 
       await createWorkerHospital(response.worker.worker_id, hospitalId, token);
 

@@ -1,11 +1,22 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Navigate } from 'react-router-dom';
 import { validateAccessCode } from '../../services/accessCodeService';
+import { useAuth } from '../../context/AuthContext';
+
 
 export default function OnboardingCodeStep() {
   const [code, setCode] = useState('');
   const [error, setError] = useState('');
   const navigate = useNavigate();
+  const { loading, isWorker } = useAuth();
+
+  // Protege de render anticipado
+  if (loading) return null;
+
+  // Si el worker ya ha hecho onboarding, no debería ver esto
+  if (isWorker?.onboarding_completed) {
+    return <Navigate to="/calendar" />;
+  }
 
   const handleValidateCode = async (e) => {
     e.preventDefault();
@@ -15,12 +26,13 @@ export default function OnboardingCodeStep() {
       const response = await validateAccessCode(code);
       const { hospital_id, worker_type_id } = response;
 
-      // Guardamos datos en sessionStorage temporalmente para siguiente paso
-      sessionStorage.setItem('hospital_id', hospital_id);
-      sessionStorage.setItem('worker_type_id', worker_type_id);
-      sessionStorage.setItem('access_code', code);
-
-      navigate('/onboarding/confirm');
+      navigate('/onboarding/confirm', {
+        state: {
+          hospital_id,
+          worker_type_id,
+          access_code: code
+        }
+      });
     } catch (err) {
       console.error('Error validando el código:', err.message);
       setError('Código inválido. Por favor verifica y vuelve a intentarlo.');

@@ -15,7 +15,7 @@ export default function OnboardingPhoneStep() {
 
   const handleConfirm = async () => {
     try {
-      const workerId = sessionStorage.getItem('worker_id') || isWorker?.worker_id;
+      const workerId = isWorker?.worker_id;
       const token = await getToken();
       if (!workerId) {
         setError('Error interno: falta worker_id.');

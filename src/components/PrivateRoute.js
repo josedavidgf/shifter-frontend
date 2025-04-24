@@ -1,12 +1,17 @@
 import React from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import AppLoader from './ui/AppLoader';
+
+
 
 const PrivateRoute = ({ children }) => {
-  const { currentUser, isWorker, loading } = useAuth();
+  const { currentUser, isWorker, authReady } = useAuth();
   const location = useLocation();
 
-  if (loading) return null;
+  if (!authReady) {
+    return <AppLoader />;
+  } 
 
   if (!currentUser) return <Navigate to="/login" />;
 

@@ -1,5 +1,4 @@
 import { Outlet } from 'react-router-dom';
-import BottomNav from './BottomNav';
 import { motion } from 'framer-motion';
 import '../index.css';
 
@@ -23,9 +22,6 @@ export default function AppLayout() {
                     </motion.div>
                 </div>
             </main>
-            <footer>
-                <BottomNav />
-            </footer>
         </div>
     );
 }

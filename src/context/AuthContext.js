@@ -34,28 +34,28 @@ export function AuthProvider({ children }) {
         return;
       }
 
-        const token = data.session.access_token;
-        setCurrentUser(data.session.user);
+      const token = data.session.access_token;
+      setCurrentUser(data.session.user);
 
-        if (!isAmplitudeInitialized) {
-          initAmplitude();
-          isAmplitudeInitialized = true;
-        }
+      if (!isAmplitudeInitialized) {
+        initAmplitude();
+        isAmplitudeInitialized = true;
+      }
 
-        try {
-          const workerProfile = await getMyWorkerProfile(token);
-          if (!workerProfile) {
-            setIsWorker(false);
-            return;
-          }
+      try {
+        const workerProfile = await getMyWorkerProfile(token);
+        if (!workerProfile) {
+          setIsWorker(false);
+        } else {
           setIsWorker(workerProfile);
           identifyUser(workerProfile);
-        } catch (err) {
-          console.warn('Worker not found', err);
-          setIsWorker(null);
         }
-
-      setLoading(false);
+      } catch (err) {
+        console.warn('Worker not found', err);
+        setIsWorker(null);
+      } finally {
+        setLoading(false); // ✅ SIEMPRE al final
+      }
     }
 
     rehydrateUser(); // 👈🏻 Este llamado está bien, **dentro del useEffect** pero **fuera** de async function
@@ -106,13 +106,8 @@ export function AuthProvider({ children }) {
       const workerProfile = await getMyWorkerProfile(token);
       setIsWorker(workerProfile);
 
-      if (!workerProfile) {
-        navigate('/onboarding/code');
-      } else if (!workerProfile.onboarding_completed) {
-        navigate('/onboarding/speciality');
-      } else {
-        navigate('/calendar');
-      }
+      navigate('/calendar'); // ⬅️ o cualquier ruta protegida
+
 
       return data;
     } catch (err) {
@@ -138,9 +133,6 @@ export function AuthProvider({ children }) {
   const logout = async () => {
     await supabase.auth.signOut();
 
-    // Borra TODO el sessionStorage
-    sessionStorage.clear();
-
     localStorage.removeItem('token');
     setCurrentUser(null);
     setIsWorker(false);
@@ -165,6 +157,9 @@ export function AuthProvider({ children }) {
     }
   };
 
+  const authReady = !loading && (currentUser === null || (currentUser && (isWorker || isWorker === false)));
+
+
 
   const value = {
     currentUser,
@@ -173,15 +168,21 @@ export function AuthProvider({ children }) {
     logout,
     getToken,
     loginWithGoogle,
-    isWorker, // 👈 nuevo export
+    isWorker,
     loading,
+    authReady, 
     setIsWorker,
     refreshWorkerProfile
   };
 
+  const isReady =
+    !loading &&
+    (currentUser === null || (currentUser && isWorker !== false && isWorker !== null));
+
   return (
     <AuthContext.Provider value={value}>
-      {!loading && children}
+      {isReady ? children : null}
     </AuthContext.Provider>
   );
+
 }

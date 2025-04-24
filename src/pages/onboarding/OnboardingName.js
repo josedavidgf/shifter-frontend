@@ -16,7 +16,7 @@ export default function OnboardingNameStep() {
   const handleConfirm = async () => {
     try {
       const token = await getToken();
-      const workerId = sessionStorage.getItem('worker_id') || isWorker?.worker_id;
+      const workerId = isWorker?.worker_id;
       if (!workerId || !name || !surname) {
         setError('Debes rellenar nombre y apellido.');
         return;
