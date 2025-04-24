@@ -1,0 +1,88 @@
+/* Card Components Styles */
+.shift-card,
+.chat-card,
+.my-swap-card {
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    transition: box-shadow 0.2s ease;
+}
+
+.shift-card:hover,
+.chat-card:hover,
+.my-swap-card:hover {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+
+.card-title {
+    font-size: 1.125rem;
+    font-weight: 600;
+}
+
+.card-subtitle {
+    font-size: 0.875rem;
+    color: #666;
+}
+
+.card-footer {
+    margin-top: 1rem;
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.5rem;
+}
+
+.chat-card {
+    border: 1px solid #007bff;
+    background-color: #fff;
+    padding: 1rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.chat-card:hover {
+    background-color: #f5faff;
+}
+
+.chat-card strong {
+    font-size: 1rem;
+}
+
+.chat-card small {
+    color: #666;
+}
+
+.shift-card {
+    border: 1px solid var(--card-border-color, #007bff);
+    background-color: #fff;
+    padding: 1rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.shift-card.disabled {
+    border-color: #ddd;
+    background-color: #f9f9f9;
+    box-shadow: none;
+    cursor: not-allowed;
+    opacity: 0.6;
+}

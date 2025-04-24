@@ -1,7 +1,6 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
 import { FiCalendar, FiRepeat, FiSearch, FiMessageCircle } from 'react-icons/fi';
-import '../index.css';
 
 export default function BottomNav() {
   return (

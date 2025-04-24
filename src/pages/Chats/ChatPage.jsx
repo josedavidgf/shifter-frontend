@@ -7,7 +7,6 @@ import ChatBox from '../../components/ChatBox';
 import BackButton from '../../components/BackButton';
 import { useAuth } from '../../context/AuthContext';
 import { formatDate, getVerb, getOtherVerb } from '../../utils/dateUtils';
-import '../../index.css';
 
 const ChatPage = () => {
     const { swapId } = useParams();

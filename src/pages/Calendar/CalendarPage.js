@@ -15,7 +15,6 @@ const Calendar = () => {
                 <ProfileButton />
             </div>
             <MonthlyCalendar />
-            <hr />
         </div>
     );
 };

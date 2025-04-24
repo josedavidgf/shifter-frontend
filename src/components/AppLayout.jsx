@@ -1,7 +1,6 @@
 import { Outlet } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import BottomNav from './BottomNav';
-import '../index.css';
 
 
 export default function AppLayout() {

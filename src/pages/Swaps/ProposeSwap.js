@@ -6,7 +6,6 @@ import useTrackPageView from '../../hooks/useTrackPageView';
 import { useSwapFeedback } from '../../hooks/useSwapFeedback';
 import useAvailableShifts from '../../hooks/useAvailableShifts';
 import ShiftSelector from '../../components/ShiftSelector';
-import '../../index.css';
 
 const ProposeSwap = () => {
   const { shift_id } = useParams();

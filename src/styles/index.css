@@ -1,0 +1,27 @@
+/* Index: Importa todos los estilos modulares del DSL */
+
+/* Base */
+@import './base/reset.css';
+@import './base/variables.css';
+@import './base/typography.css';
+
+/* Layout */
+@import './layout/layout.css';
+@import './layout/nav.css';
+
+/* Utilities */
+@import './utilities/spacing.css';
+@import './utilities/effects.css';
+
+/* Components */
+@import './components/button.css';
+@import './components/card.css';
+@import './components/profile-button.css';
+@import './components/chatbox.css';
+@import './components/badge.css';
+@import './components/swap-status.css';
+@import './components/filters.css';
+
+/* Pages */
+@import './pages/calendar.css';
+@import './pages/chat-page.css';

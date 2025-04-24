@@ -101,7 +101,7 @@ const ChatBox = ({ swapId, myWorkerId, otherWorkerId, otherPersonName, otherPers
 
     return (
         <div className="chatbox">
-            <div className="chatbox-messages-wrapper">
+            <div className="chatbox-scroll">
                 <div className="chatbox-messages">
                     {[...messages]
                         .sort((a, b) => new Date(a.created_at) - new Date(b.created_at))

@@ -1,0 +1,86 @@
+
+.chatbox {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  min-height: 0; /* ⚠️ permite que el scroll interno funcione */
+}
+
+
+.chatbox-scroll {
+  overflow-y: auto;
+  max-height: calc(100vh - 140px); /* ajustable según header + input */
+  padding: 1rem;
+}
+@media (max-width: 768px) {
+  .chat-page {
+    height: 100dvh;
+    overflow: hidden;
+  }
+
+  .chatbox-scroll {
+    max-height: unset;
+    flex-grow: 1;
+  }
+}
+
+
+.chatbox-input-area {
+  padding: 0.75rem 1rem calc(0.75rem + env(safe-area-inset-bottom));
+  border-top: 1px solid #ddd;
+  background: #fff;
+}
+
+.chatbox-form {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.chatbox-input {
+  flex: 1;
+  padding: 0.5rem;
+  font-size: 1rem;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+}
+
+.chatbox-button {
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  border-radius: 8px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+}
+.chatbox-button {
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.chatbox-button:hover {
+  background-color: #0056b3;
+}
+
+.chatbox-button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+
+.message-bubble {
+  display: inline-block;
+  padding: 0.5rem;
+  border-radius: 10px;
+  max-width: 70%;
+  transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.message-bubble-own {
+  background: #d0e8ff;
+  text-align: right;
+}
+
+.message-bubble-other {
+  background: #ddd;
+  text-align: left;
+}

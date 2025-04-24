@@ -1,0 +1,44 @@
+
+.profile-button-fixed {
+    position: absolute;
+    background-color: white;
+    border-radius: 50%;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    padding: 0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.2s ease;
+  }
+  
+  .profile-button-fixed:hover {
+    transform: scale(1.05);
+  }
+  
+  @media (max-width: 600px) {
+    .profile-button-fixed {
+      top: 0.5rem;
+      left: 0.5rem;
+      transform: scale(0.9);
+    }
+  }
+  .profile-button {
+    background-color: #eee;
+    border: none;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    font-weight: bold;
+    font-size: 1rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.2s ease, background-color 0.2s ease;
+  }
+  
+  .profile-button:hover {
+    transform: scale(1.05);
+    background-color: #ddd;
+  }
+  

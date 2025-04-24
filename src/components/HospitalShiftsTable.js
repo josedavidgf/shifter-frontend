@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import '../index.css';
 
 
 const HospitalShiftsTable = ({ shifts, workerId, sentSwapShiftIds }) => {
@@ -35,22 +34,25 @@ const HospitalShiftsTable = ({ shifts, workerId, sentSwapShiftIds }) => {
 
   return (
     <div>
-      <div style={{ display: 'flex', gap: '1rem', marginBottom: '1rem' }}>
-        <input
-          type="date"
-          name="date"
-          value={filters.date}
-          onChange={handleFilterChange}
-        />
+      <div className="filters-container">
+        <div className="filters-group">
+          <input
+            type="date"
+            className="filter-input"
+            name="date"
+            value={filters.date}
+            onChange={handleFilterChange}
+          />
 
-        <select name="type" value={filters.type} onChange={handleFilterChange}>
-          <option value="">Todos los tipos</option>
-          <option value="morning">Mañana</option>
-          <option value="evening">Tarde</option>
-          <option value="night">Noche</option>
-        </select>
+          <select className="filter-select" name="type" value={filters.type} onChange={handleFilterChange}>
+            <option value="">Todos los tipos</option>
+            <option value="morning">Mañana</option>
+            <option value="evening">Tarde</option>
+            <option value="night">Noche</option>
+          </select>
 
-        <button onClick={clearFilters}>Limpiar filtros</button>
+          <button className="filter-reset" onClick={clearFilters}>Limpiar filtros</button>
+        </div>
       </div>
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
@@ -82,9 +84,7 @@ const HospitalShiftsTable = ({ shifts, workerId, sentSwapShiftIds }) => {
           );
         })}
       </div>
-
-
-    </div>
+    </div >
   );
 };
 

@@ -3,7 +3,6 @@ import { useAuth } from '../../context/AuthContext';
 import { getSentSwaps } from '../../services/swapService';
 import MySwapsTable from '../../components/MySwapsTable';
 import useTrackPageView from '../../hooks/useTrackPageView';
-import '../../index.css';
 
 const MySwaps = () => {
   const { getToken } = useAuth();
