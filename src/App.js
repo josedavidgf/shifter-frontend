@@ -28,6 +28,7 @@ import OnboardingSpeciality from './pages/onboarding/OnboardingSpeciality';
 import OnboardingName from './pages/onboarding/OnboardingName';
 import OnboardingPhone from './pages/onboarding/OnboardingPhone';
 import OnboardingSuccess from './pages/onboarding/OnboardingSuccess';
+import ChatPage from './pages/Chats/ChatPage';
 
 function App() {
   return (
@@ -47,6 +48,7 @@ function App() {
       </Route>
 
       <Route element={<SimpleLayout />}>
+        <Route path="/chats/:swapId" element={<PrivateRoute><ChatPage /></PrivateRoute>} />
         <Route path="/shifts/create" element={<PrivateRoute><CreateShift /></PrivateRoute>} />
         <Route path="/shifts/my" element={<PrivateRoute><MyShifts /></PrivateRoute>} />
         <Route path="/shifts/edit/:id" element={<PrivateRoute><EditShift /></PrivateRoute>} />

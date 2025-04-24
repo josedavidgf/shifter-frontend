@@ -1,7 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
 import supabase from '../config/supabase';
 import { getMessagesBySwap, sendMessage } from '../services/messagesService';
-import { formatDate, getVerb, getOtherVerb } from '../utils/dateUtils';
 
 const ChatBox = ({ swapId, myWorkerId, otherWorkerId, otherPersonName, otherPersonSurname, myDate, otherDate }) => {
     const [messages, setMessages] = useState([]);
@@ -101,51 +100,48 @@ const ChatBox = ({ swapId, myWorkerId, otherWorkerId, otherPersonName, otherPers
 
 
     return (
-        <div className="chatbox-container">
-            <div className="chatbox-header">
-                <p><strong>💬 Estás chateando con {otherPersonName} {otherPersonSurname}</strong></p>
-                <p>📅 {getVerb(myDate)} {formatDate(myDate)}</p>
-                <p>📅 {otherPersonName} {getOtherVerb(otherDate)} {formatDate(otherDate)}</p>
-            </div>
-
-            <div className="chatbox-messages">
-                {[...messages]
-                    .sort((a, b) => new Date(a.created_at) - new Date(b.created_at))
-                    .map((msg, index) => (
-                        <div key={`${msg.id}-${index}`} style={{ textAlign: msg.sender_id === myWorkerId ? 'right' : 'left' }}>
-                            <div
-                                className={`message-bubble ${msg.sender_id === myWorkerId ? 'message-bubble-own' : 'message-bubble-other'}`}
-                                style={{
-                                    transform: msg.status === 'sending' ? 'scale(0.95)' : 'scale(1)',
-                                    opacity: msg.status === 'sending' ? 0.6 : 1,
-                                }}
-                            >
-                                {msg.content}
-                                {msg.status === 'sending' && <span>⏳</span>}
-                                {msg.status === 'failed' && <span style={{ color: 'red' }}>❌</span>}
+        <div className="chatbox">
+            <div className="chatbox-messages-wrapper">
+                <div className="chatbox-messages">
+                    {[...messages]
+                        .sort((a, b) => new Date(a.created_at) - new Date(b.created_at))
+                        .map((msg, index) => (
+                            <div key={`${msg.id}-${index}`} style={{ textAlign: msg.sender_id === myWorkerId ? 'right' : 'left' }}>
+                                <div
+                                    className={`message-bubble ${msg.sender_id === myWorkerId ? 'message-bubble-own' : 'message-bubble-other'}`}
+                                    style={{
+                                        transform: msg.status === 'sending' ? 'scale(0.95)' : 'scale(1)',
+                                        opacity: msg.status === 'sending' ? 0.6 : 1,
+                                    }}
+                                >
+                                    {msg.content}
+                                    {msg.status === 'sending' && <span>⏳</span>}
+                                    {msg.status === 'failed' && <span style={{ color: 'red' }}>❌</span>}
+                                </div>
+                                <br />
+                                <small>{new Date(msg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</small>
                             </div>
-                            <br />
-                            <small>{new Date(msg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</small>
-                        </div>
-                    ))}
-                <div ref={bottomRef} />
+                        ))}
+                    <div ref={bottomRef} />
+                </div>
             </div>
 
-            <form onSubmit={handleSubmit} className="chatbox-form">
-                <input
-                    type="text"
-                    ref={inputRef}
-                    value={newMessage}
-                    onChange={(e) => setNewMessage(e.target.value)}
-                    placeholder="Escribe un mensaje..."
-                    required
-                    disabled={inputDisabled}
-                    className="chatbox-input"
-                />
-                <button type="submit" disabled={inputDisabled} className="chatbox-button">Enviar</button>
-            </form>
+            <div className="chatbox-input-area">
+                <form onSubmit={handleSubmit} className="chatbox-form">
+                    <input
+                        type="text"
+                        ref={inputRef}
+                        value={newMessage}
+                        onChange={(e) => setNewMessage(e.target.value)}
+                        placeholder="Escribe un mensaje..."
+                        required
+                        disabled={inputDisabled}
+                        className="chatbox-input"
+                    />
+                    <button type="submit" disabled={inputDisabled} className="chatbox-button">Enviar</button>
+                </form>
+            </div>
         </div>
-
     );
 };
 

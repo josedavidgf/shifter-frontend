@@ -5,6 +5,7 @@ import { getAcceptedSwaps } from '../../services/swapService'; // creamos este s
 import ChatBox from '../../components/ChatBox';
 import { formatDate, getVerb, getOtherVerb } from '../../utils/dateUtils';
 import '../../index.css';
+import { useNavigate } from 'react-router-dom';
 
 
 
@@ -12,7 +13,8 @@ const ChatsList = () => {
     const { getToken } = useAuth();
     const [swaps, setSwaps] = useState([]);
     const [workerId, setWorkerId] = useState(null);
-    const [selectedSwap, setSelectedSwap] = useState(null);
+    const [selectedSwap] = useState(null);
+    const navigate = useNavigate();
 
     useEffect(() => {
         async function fetchData() {
@@ -70,7 +72,7 @@ const ChatsList = () => {
                             <div
                                 key={swap.swap_id}
                                 className="chat-card"
-                                onClick={() => setSelectedSwap(swap)}
+                                onClick={() => navigate(`/chats/${swap.swap_id}`)}
                             >
                                 <strong>Intercambio #{swap.swap_id}</strong>
                                 <span>
