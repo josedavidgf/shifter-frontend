@@ -1,7 +1,6 @@
 // src/components/MonthSelector.jsx
 import { format, addMonths, subMonths, parseISO } from 'date-fns';
 import es from 'date-fns/locale/es';
-import '../index.css';
 
 export default function MonthSelector({ selectedMonth, onChange }) {
   function goToPreviousMonth() {

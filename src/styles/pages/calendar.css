@@ -1,0 +1,112 @@
+
+.day-number {
+    position: absolute;
+    top: 4px;
+    left: 6px;
+    background-color: #f0f0f0; /* gris claro */
+    color: #333; /* gris oscuro para el texto */
+    font-size: 0.7rem;
+    padding: 2px 6px;
+    border-radius: 12px; /* redondito */
+    font-weight: 500;
+  }
+  
+  .selected-day {
+    outline: 2px solid #3b82f6;
+    outline-offset: 2px;
+    border-radius: 8px;
+  }
+  
+  .day-details {
+    scroll-margin-bottom: 100px;
+  }
+  
+  .calendar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 1rem;
+    margin-bottom: 1rem;
+  }
+  
+  
+  .calendar-day{
+    width: auto;
+    min-height: 72px; /* más compacto para mobile */
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    border-radius: 6px;
+    position: relative;
+  }
+  @media (min-width: 768px) {
+    .calendar-day {
+      min-height: 100px;
+    }
+  }
+  .calendar-text{
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: #000;
+  }
+  
+  .shift-morning {
+    background-color: #d1fae5;
+  }
+  .shift-evening{
+    background-color: #fde68a;
+  }
+  .shift-night{
+    background-color: #e0e7ff;
+  }
+  .past{
+    opacity: 0.5;
+  }
+  
+  
+  .calendar-container {
+    padding: 1rem;
+  }
+  
+  .calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 10px;
+  }
+  
+  .calendar-header {
+    text-align: center;
+    font-weight: bold;
+    font-size: 0.85rem;
+  }
+  
+  .calendar-day.empty {
+    background: transparent;
+    cursor: default;
+  }
+  
+
+.month-selector {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1.5rem;
+    padding: 1rem 0;
+    margin-bottom: 1.5rem;
+  }
+  
+  .arrow-button {
+    font-size: 1.25rem;
+    padding: 0.4rem 0.8rem;
+    border: none;
+    border-radius: 6px;
+    background-color: #e2e8f0;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+  }
+  .month-label {
+    font-size: 1.125rem;
+    font-weight: 600;
+  }
+  

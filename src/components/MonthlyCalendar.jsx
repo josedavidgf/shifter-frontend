@@ -8,7 +8,6 @@ import { getMySwapPreferences, createSwapPreference, deleteSwapPreference, updat
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import MonthSelector from './MonthSelector';
-import '../index.css';
 import { motion, AnimatePresence } from 'framer-motion';
 
 function getShiftLabel(shift) {
@@ -419,18 +418,20 @@ function MonthlyCalendar() {
             </>
           ) : (
             <>
-              <button onClick={() => toggleShift(dateStr)} className="btn btn-primary m-1">
-                Editar turno
-              </button>
-              <button onClick={() => handleRemoveShiftForDay(dateStr)} className="btn btn-primary m-1">
-                Quitar turno
-              </button>
-              <button
-                className="btn btn-success m-1"
-                onClick={() => navigate(`/shifts/create?date=${dateStr}&shift_type=${entry.shift_type}`)}
-              >
-                Publicar turno
-              </button>
+              <div className='btn-group'>
+                <button onClick={() => toggleShift(dateStr)} className="btn btn-primary m-1">
+                  Editar turno
+                </button>
+                <button onClick={() => handleRemoveShiftForDay(dateStr)} className="btn btn-primary m-1">
+                  Quitar turno
+                </button>
+                <button
+                  className="btn btn-success m-1"
+                  onClick={() => navigate(`/shifts/create?date=${dateStr}&shift_type=${entry.shift_type}`)}
+                >
+                  Publicar turno
+                </button>
+              </div>
             </>
           )}
         </div>
@@ -471,12 +472,14 @@ function MonthlyCalendar() {
       return (
         <div>
           <h3 className="font-bold mb-2">{dayLabel} - Turno Traspasado</h3>
-          <button onClick={() => toggleShift(dateStr)} className="btn btn-primary m-1">
-            Añadir turno
-          </button>
-          <button onClick={() => togglePreference(dateStr)} className="btn btn-secondary m-1">
-            Añadir disponibilidad
-          </button>
+          <div className='btn-group'>
+            <button onClick={() => toggleShift(dateStr)} className="btn btn-primary m-1">
+              Añadir turno
+            </button>
+            <button onClick={() => togglePreference(dateStr)} className="btn btn-secondary m-1">
+              Añadir disponibilidad
+            </button>
+          </div>
         </div>
       );
     }
@@ -485,12 +488,14 @@ function MonthlyCalendar() {
     return (
       <div>
         <h3 className="font-bold mb-2">{dayLabel} - Día libre</h3>
-        <button onClick={() => toggleShift(dateStr)} className="btn btn-primary m-1">
-          Añadir turno
-        </button>
-        <button onClick={() => togglePreference(dateStr)} className="btn btn-secondary m-1">
-          Añadir disponibilidad
-        </button>
+        <div className='btn-group'>
+          <button onClick={() => toggleShift(dateStr)} className="btn btn-primary m-1">
+            Añadir turno
+          </button>
+          <button onClick={() => togglePreference(dateStr)} className="btn btn-secondary m-1">
+            Añadir disponibilidad
+          </button>
+        </div>
       </div>
     );
   }
@@ -513,7 +518,7 @@ function MonthlyCalendar() {
           Generar turnos masivo
         </button>
       ) : (
-        <div className="flex gap-4 mb-4 justify-center">
+        <div className="btn-group">
           <button
             className="btn btn-success"
             onClick={handleSaveMassiveEdit}

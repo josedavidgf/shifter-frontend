@@ -1,0 +1,20 @@
+.shift-info {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .shift-date {
+    font-weight: bold;
+  }
+  
+  .shift-meta {
+    font-size: 0.9rem;
+    color: #666;
+  }
+  
+  .shift-status {
+    font-size: 0.9rem;
+    color: #999;
+  }
+  
+  

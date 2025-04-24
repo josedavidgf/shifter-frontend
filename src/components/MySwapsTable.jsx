@@ -2,8 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { getSentSwaps } from '../services/swapService';
 import { useNavigate } from 'react-router-dom';
-import '../index.css';
-
 
 const MySwapsTable = () => {
   const { getToken } = useAuth();
@@ -50,25 +48,29 @@ const MySwapsTable = () => {
   };
   return (
     <div>
-      <div style={{ display: 'flex', gap: '1rem', marginBottom: '1rem' }}>
-        <input
-          type="date"
-          value={filterDate}
-          onChange={(e) => setFilterDate(e.target.value)}
-        />
-        <select
-          value={filterStatus}
-          onChange={(e) => setFilterStatus(e.target.value)}
-        >
-          <option value="">Todos</option>
-          <option value="proposed">Propuesto</option>
-          <option value="accepted">Aceptado</option>
-          <option value="rejected">Rechazado</option>
-          <option value="cancelled">Cancelado</option>
-        </select>
-        <button onClick={clearFilters}>Limpiar filtros</button>
+      <div className="filters-container">
+        <div className="filters-group">
+          <input
+            type="date"
+            className="filter-input"
+            value={filterDate}
+            onChange={(e) => setFilterDate(e.target.value)}
+          />
+          <select
+            className="filter-select"
+            value={filterStatus}
+            onChange={(e) => setFilterStatus(e.target.value)}
+          >
+            <option value="">Todos</option>
+            <option value="proposed">Propuesto</option>
+            <option value="accepted">Aceptado</option>
+            <option value="rejected">Rechazado</option>
+            <option value="cancelled">Cancelado</option>
+          </select>
+          <button className="filter-reset" onClick={clearFilters}>Limpiar filtros</button>
+        </div>
       </div>
-      
+
       <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
         {filtered.map((swap) => (
           <div

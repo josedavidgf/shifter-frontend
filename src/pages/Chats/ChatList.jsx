@@ -4,7 +4,6 @@ import { getMyWorkerProfile } from '../../services/workerService';
 import { getAcceptedSwaps } from '../../services/swapService'; // creamos este servicio
 import ChatBox from '../../components/ChatBox';
 import { formatDate, getVerb, getOtherVerb } from '../../utils/dateUtils';
-import '../../index.css';
 import { useNavigate } from 'react-router-dom';
 
 
