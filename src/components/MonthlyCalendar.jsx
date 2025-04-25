@@ -1,5 +1,5 @@
 // src/components/MonthlyCalendar.jsx (actualizado)
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { format, startOfMonth, endOfMonth, eachDayOfInterval, /* isSameDay, */ parseISO } from 'date-fns';
 import { getShiftsForMonth, setShiftForDay, removeShiftForDay, getDayOffset } from '../services/calendarService';
 import { getAcceptedSwaps } from '../services/swapService';
@@ -70,6 +70,7 @@ function MonthlyCalendar() {
   const navigate = useNavigate();
   const today = format(new Date(), 'yyyy-MM-dd'); // formato '2025-04-22'
   const stats = computeShiftStats(isMassiveEditMode ? draftShiftMap : shiftMap, selectedMonth);
+  const detailRef = useRef(null);
   useEffect(() => {
     async function initialize() {
       if (isWorker) {
@@ -222,6 +223,9 @@ function MonthlyCalendar() {
     }
     else {
       setSelectedDay(dateStr);
+      setTimeout(() => {
+        detailRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 0);
     }
   }
 
@@ -623,7 +627,9 @@ function MonthlyCalendar() {
         </motion.div>
       </AnimatePresence>
       {selectedDay && (
-        <div className="day-details mt-4 p-4 border rounded shadow">
+        <div
+          ref={detailRef}
+          className="day-details mt-4 p-4 border rounded shadow">
           {renderDayDetails(selectedDay)}
         </div>
       )}
