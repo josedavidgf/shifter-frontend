@@ -11,5 +11,6 @@ export {
     Moon,
     Plus,
     CloudSun,
-    SunHorizon
+    SunHorizon, 
+    UserCircle,
   } from 'phosphor-react';

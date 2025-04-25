@@ -1,0 +1,16 @@
+:root {
+    /* Neutrales */
+    --color-black: #171923;
+    --color-white: #FFFFFF;
+    --color-gray-50: #F7FAFC;
+  
+    /* Turnos */
+    --shift-morning: #FFE681;
+    --shift-afternoon: #FFBCE2;
+    --shift-night: #B9C7FF;
+  
+    /* Roles semánticos */
+    --color-background: var(--color-gray-50);
+    --color-text: var(--color-black);
+    --color-primary: var(--color-black); /* Ej: buttons */
+  }

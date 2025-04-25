@@ -13,21 +13,21 @@
 }
 
 .btn-primary {
-  background-color: #007bff;
-  color: white;
+  background-color: var(--color-primary);
+  color: var(--color-white);
 }
 
 .btn-primary:hover {
-  background-color: #0056b3;
+  background-color: #02080e;
 }
 
 .btn-secondary {
-  background-color: #6c757d;
+  background-color: #553C9A;
   color: white;
 }
 
 .btn-secondary:hover {
-  background-color: #5a6268;
+  background-color: #3b237b;
 }
 
 .btn-success {
@@ -36,16 +36,16 @@
 }
 
 .btn-success:hover {
-  background-color: #218838;
+  background-color: #18692a;
 }
 
 .btn-danger {
-  background-color: #dc3545;
+  background-color: #E53E3E;
   color: white;
 }
 
 .btn-danger:hover {
-  background-color: #c82333;
+  background-color: #b73131;
 }
 
 .btn-disabled,
@@ -59,22 +59,6 @@
   margin-left: 0.5rem;
 }
 
-.publish-button {
-  position: relative;
-  font-size: 0.75rem;
-  background-color: white;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  padding: 2px 6px;
-  cursor: pointer;
-  width: 100%;
-  text-align: center;
-  margin-top: 2px;
-}
-
-.publish-button:hover {
-  background-color: #f0f0f0;
-}
 
 /* Mobile responsive full-width buttons */
 @media (max-width: 600px) {
