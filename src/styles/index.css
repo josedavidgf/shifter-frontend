@@ -1,7 +1,6 @@
 /* Index: Importa todos los estilos modulares del DSL */
 
 /* Base */
-@import './utilities/colors.css';
 @import './base/reset.css';
 @import './base/variables.css';
 @import './base/typography.css';
