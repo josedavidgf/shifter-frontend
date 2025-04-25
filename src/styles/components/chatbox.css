@@ -1,29 +1,16 @@
-
+/* Chatbox Layout */
 .chatbox {
   display: flex;
   flex-direction: column;
+  height: 100%;
+}
+
+.chatbox-messages-wrapper {
   flex-grow: 1;
-  min-height: 0; /* ⚠️ permite que el scroll interno funcione */
-}
-
-
-.chatbox-scroll {
   overflow-y: auto;
-  max-height: calc(100vh - 140px); /* ajustable según header + input */
   padding: 1rem;
+  background-color: #fff;
 }
-@media (max-width: 768px) {
-  .chat-page {
-    height: 100dvh;
-    overflow: hidden;
-  }
-
-  .chatbox-scroll {
-    max-height: unset;
-    flex-grow: 1;
-  }
-}
-
 
 .chatbox-input-area {
   padding: 0.75rem 1rem calc(0.75rem + env(safe-area-inset-bottom));
@@ -51,8 +38,6 @@
   background-color: #007bff;
   color: white;
   border: none;
-}
-.chatbox-button {
   cursor: pointer;
   transition: background-color 0.2s ease;
 }
@@ -65,7 +50,6 @@
   background-color: #ccc;
   cursor: not-allowed;
 }
-
 
 .message-bubble {
   display: inline-block;
@@ -84,3 +68,19 @@
   background: #ddd;
   text-align: left;
 }
+
+/* Mobile optimizations */
+@media (max-width: 600px) {
+  .chatbox-input-area {
+    padding: 1rem env(safe-area-inset-left) calc(1rem + env(safe-area-inset-bottom)) env(safe-area-inset-right);
+  }
+
+  .chatbox-input {
+    font-size: 1rem;
+  }
+
+  .chatbox-button {
+    font-size: 1rem;
+    padding: 0.75rem 1rem;
+  }
+} 

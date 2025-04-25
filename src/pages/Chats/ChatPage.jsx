@@ -51,16 +51,17 @@ const ChatPage = () => {
                     </small>
                 </div>
             </div>
-
-            <ChatBox
-                swapId={swap.swap_id}
-                myWorkerId={workerId}
-                otherWorkerId={otherWorkerId}
-                otherPersonName={otherPersonName}
-                otherPersonSurname={otherPersonSurname}
-                myDate={myDate}
-                otherDate={otherDate}
-            />
+            <div className="chat-page-content">
+                <ChatBox
+                    swapId={swap.swap_id}
+                    myWorkerId={workerId}
+                    otherWorkerId={otherWorkerId}
+                    otherPersonName={otherPersonName}
+                    otherPersonSurname={otherPersonSurname}
+                    myDate={myDate}
+                    otherDate={otherDate}
+                />
+            </div>
         </div>
     );
 };

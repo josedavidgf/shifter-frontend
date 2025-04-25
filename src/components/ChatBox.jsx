@@ -101,29 +101,28 @@ const ChatBox = ({ swapId, myWorkerId, otherWorkerId, otherPersonName, otherPers
 
     return (
         <div className="chatbox">
-            <div className="chatbox-scroll">
-                <div className="chatbox-messages">
-                    {[...messages]
-                        .sort((a, b) => new Date(a.created_at) - new Date(b.created_at))
-                        .map((msg, index) => (
-                            <div key={`${msg.id}-${index}`} style={{ textAlign: msg.sender_id === myWorkerId ? 'right' : 'left' }}>
-                                <div
-                                    className={`message-bubble ${msg.sender_id === myWorkerId ? 'message-bubble-own' : 'message-bubble-other'}`}
-                                    style={{
-                                        transform: msg.status === 'sending' ? 'scale(0.95)' : 'scale(1)',
-                                        opacity: msg.status === 'sending' ? 0.6 : 1,
-                                    }}
-                                >
-                                    {msg.content}
-                                    {msg.status === 'sending' && <span>⏳</span>}
-                                    {msg.status === 'failed' && <span style={{ color: 'red' }}>❌</span>}
-                                </div>
-                                <br />
-                                <small>{new Date(msg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</small>
+            <div className="chatbox-messages-wrapper">
+                {[...messages]
+                    .sort((a, b) => new Date(a.created_at) - new Date(b.created_at))
+                    .map((msg, index) => (
+                        <div key={`${msg.id}-${index}`} style={{ textAlign: msg.sender_id === myWorkerId ? 'right' : 'left' }}>
+                            <div
+                                className={`message-bubble ${msg.sender_id === myWorkerId ? 'message-bubble-own' : 'message-bubble-other'}`}
+                                style={{
+                                    transform: msg.status === 'sending' ? 'scale(0.95)' : 'scale(1)',
+                                    opacity: msg.status === 'sending' ? 0.6 : 1,
+                                }}
+                            >
+                                {msg.content}
+                                {msg.status === 'sending' && <span>⏳</span>}
+                                {msg.status === 'failed' && <span style={{ color: 'red' }}>❌</span>}
                             </div>
-                        ))}
-                    <div ref={bottomRef} />
-                </div>
+                            <br />
+                            <small>{new Date(msg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</small>
+                        </div>
+                    ))}
+                <div ref={bottomRef} />
+
             </div>
 
             <div className="chatbox-input-area">

@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 
 export default function SimpleLayout() {
   return (
-    <main style={{ flex: 1, overflowY: 'auto', paddingBottom: '72px' }}>
+    <main style={{ flex: 1, overflowY: 'auto' }}>
       <div className="container">
         <motion.div
           initial={{ opacity: 0, x: 50 }}
