@@ -11,7 +11,6 @@ export default function OnboardingSuccess() {
     const completeAndRedirect = async () => {
       try {
         const token = await getToken(); // 💥 Aquí obtienes el token
-        console.log('Token:', token);
         await completeOnboarding(token); // ✅ Ahora puedes completar el onboarding
         // Redirige después de completar
         setTimeout(() => {

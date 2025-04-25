@@ -1,7 +1,6 @@
 import supabase from '../config/supabase';
 
 export const getMessagesBySwap = async (swapId) => {
-  console.log('🔍🔍🔍🔍 ID del swap para obtener mensajes:', swapId);
   const { data, error } = await supabase
     .from('messages')
     .select('*')

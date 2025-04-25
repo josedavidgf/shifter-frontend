@@ -10,7 +10,6 @@ export const getReceivedSwaps = async (token) => {
             Authorization: `Bearer ${token}`,
         },
     });
-    console.log('📥 Datos de los swaps recibidos:', response.data.data);
     return response.data.data; // 👈 accede al contenido dentro del payload de axios
 }
 
@@ -58,26 +57,21 @@ export async function cancelSwap(swapId, token) {
   }
 
   export async function getAcceptedSwaps(token) {
-    console.log('token swap accepted:', token);
     const response = await axios.get(`${API_URL}/api/swaps/accepted`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
     });
-    console.log('Get Accepted Swaps:', response.data.data);
     return response.data.data;
   }
   
   // GET /api/swaps/:id
 export async function getSwapById(swapId, token) {
-  console.log('🔍🔍🔍🔍 ID del swap para swap detail:', swapId);
-  console.log('🔑🔑🔑🔑 Token de autenticación:', token);
   const response = await axios.get(`${API_URL}/api/swaps/${swapId}`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
   });
-  console.log('⚠️⚠️⚠️ Datos del swap:', response.data.data);
   return response.data.data;
 }
 

@@ -9,13 +9,11 @@ export async function createSwapPreference(preferenceData) {
         .single();
 
     if (error) throw new Error(error.message);
-    console.log('swap creado:', data);
     return data;
 }
 
 // Borrar preferencia
 export async function deleteSwapPreference(preferenceId) {
-    console.log('preference:',preferenceId ) 
     const { error } = await supabase
         .from('swap_preferences')
         .delete()
@@ -26,7 +24,6 @@ export async function deleteSwapPreference(preferenceId) {
 
 // Obtener preferencias del usuario
 export async function getMySwapPreferences(workerId) {
-    console.log('worker Id get preferences:', workerId);
     const { data, error } = await supabase
         .from('swap_preferences')
         .select('*')
@@ -34,7 +31,6 @@ export async function getMySwapPreferences(workerId) {
         .order('date', { ascending: true });
 
     if (error) throw new Error(error.message);
-    console.log('Swap Preferences:', data)
     return data;
 }
 

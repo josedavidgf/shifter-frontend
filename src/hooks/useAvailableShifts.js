@@ -11,15 +11,11 @@ const useAvailableShifts = () => {
 
   useEffect(() => {
     if (!isWorker) return;
-    console.log('isworker:',isWorker);
     const fetchShifts = async () => {
       try {
         const workerId = isWorker.worker_id;
-        console.log ('workerId',workerId);
         const token = await getToken();
-        console.log('token', token);
         const availableShifts = await getMyAvailableShifts(workerId, token);
-        console.log('availableShifts',availableShifts);
         availableShifts.sort((a, b) => new Date(a.date) - new Date(b.date));
 
         setShifts(availableShifts); // ✅ ya vienen filtrados

@@ -25,7 +25,6 @@ const HospitalShifts = () => {
                 const hospitalShifts = await getHospitalShifts(token);
                 const profile = await getMyWorkerProfile(token);
                 const swaps = await getSentSwaps(token); // 👈 nuevo
-                console.log('profile hospital:', profile);
                 setProfile(profile);
                 setWorkerId(profile.worker_id);
                 setShifts(hospitalShifts);
@@ -39,13 +38,11 @@ const HospitalShifts = () => {
 
     // ⚠️ PROTECCIÓN OBLIGATORIA
     if (!profile) return <p>Cargando perfil...</p>;
-    console.log('profile',profile);
 
     // ✅ YA SE PUEDE ACCEDER
     const hospitalName = profile.workers_hospitals?.[0]?.hospitals?.name;
     const specialityCategory = profile.workers_specialities?.[0]?.specialities?.speciality_category;
     const specialitySubcategory = profile.workers_specialities?.[0]?.specialities?.speciality_subcategory;
-    console.log('profile', profile.workers_hospitals?.[0]?.hospitals?.name);
 
     return (
         <div>

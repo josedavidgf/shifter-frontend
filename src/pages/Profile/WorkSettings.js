@@ -31,7 +31,6 @@ const WorkSettings = () => {
             setError('No tienes permisos para acceder a esta sección.');
             return;
         }
-        console.log('isWorker:', isWorker);
         setWorker(isWorker);
     }, [isWorker]);
 
@@ -74,10 +73,7 @@ const WorkSettings = () => {
         try {
             const token = await getToken();
             await updateWorkerHospital({ hospital_id: hospitalId }, token);
-            console.log('updateHospital:');
-            console.log('speciality:', selectedSpeciality);
             await updateWorkerSpeciality({ speciality_id: selectedSpeciality }, token);
-            console.log('updatespeciality:');
             await refreshWorkerProfile();
             setMessage('✅ Cambios guardados');
             setStep('view');

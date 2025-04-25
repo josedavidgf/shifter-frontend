@@ -26,7 +26,6 @@ function Dashboard() {
             try {
                 const token = await getToken();
                 await expireOldShifts(token);
-                console.log('✔️ Turnos expirados si aplicaba');
             } catch (err) {
                 // Error ya se loguea dentro del service
             }
@@ -56,16 +55,12 @@ function Dashboard() {
 
                 // 1. Obtener mis turnos publicados
                 const shifts = await getMyShifts(token);
-                console.log('Mis turnos:', shifts);
                 const myShiftIds = shifts.map(s => s.shift_id);
                 const worker = await getMyWorkerProfile(token);
                 setWorkerId(worker.worker_id);
-                console.log('IDs de mis turnos:', myShiftIds);
-                console.log('ID del trabajador:', workerId);
                 // 2. Obtener notificaciones
                 const data = await getSwapNotifications(token, workerId, myShiftIds);
                 setNotifications(data);
-                console.log('Notificaciones:', data);
             } catch (err) {
                 console.error('Error al cargar notificaciones:', err.message);
             }

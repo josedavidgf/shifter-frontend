@@ -26,7 +26,6 @@ const ChatsList = () => {
         }
         fetchData();
     }, [getToken]);
-    console.log('selectedSwap:', selectedSwap);
     const isActive = (swap) => {
         const turnoDate = new Date(swap.shift.date);
         const offeredDate = new Date(swap.offered_date);

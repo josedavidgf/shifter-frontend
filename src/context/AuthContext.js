@@ -78,7 +78,6 @@ export function AuthProvider({ children }) {
       }
 
       if (!data.session) {
-        console.log('✅ Usuario registrado, email pendiente de verificación');
         navigate('/verify-email'); // o muestra mensaje si no tienes esa ruta
         return;
       }
@@ -142,7 +141,6 @@ export function AuthProvider({ children }) {
   // Obtener token actual
   const getToken = async () => {
     const { data, error } = await supabase.auth.getSession();
-    console.log('🧪 Token desde getToken:', data?.session?.access_token);
     if (error || !data?.session?.access_token) return null;
     return data.session.access_token;
   };

@@ -62,7 +62,6 @@ const PersonalInfo = () => {
     e.preventDefault();
     const token = await getToken();
     try {
-      console.log('Datos a enviar:', form);
       await updateWorkerInfo(form, token);
       setMessage('✅ Información actualizada');
     } catch (err) {
