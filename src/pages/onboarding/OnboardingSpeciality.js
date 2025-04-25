@@ -17,10 +17,6 @@ export default function OnboardingSpecialityStep() {
     const fetchSpecialities = async () => {
       try {
         const token = await getToken();
-        console.log('isWorker:', isWorker);
-        console.log('isWorker hospital_id:', isWorker?.workers_hospitals?.[0]?.hospital_id);
-        console.log('isWorker worker_id:', isWorker?.worker_id);
-        console.log('isWorker worker_type_id:', isWorker?.worker_type_id);
   
         if (!isWorker?.workers_hospitals?.[0]?.hospital_id) {
           navigate('/onboarding/code');

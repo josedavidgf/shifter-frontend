@@ -54,7 +54,6 @@ const Profile = () => {
     try {
       await logout();
     } catch (error) {
-      console.log('Error al cerrar sesión:', error.message);
     }
   };
 

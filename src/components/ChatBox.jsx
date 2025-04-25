@@ -9,8 +9,6 @@ const ChatBox = ({ swapId, myWorkerId, otherWorkerId, otherPersonName, otherPers
     const inputRef = useRef(null);
     const [inputDisabled, setInputDisabled] = useState(false);
 
-    console.log('otherDate', otherDate);
-
     useEffect(() => {
         getMessagesBySwap(swapId).then(setMessages);
 

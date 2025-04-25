@@ -10,7 +10,6 @@ export default function ProfileButton() {
   const userId = isWorker?.user_id || null;
   const fallbackPicture = isWorker?.user_metadata?.picture || null;
   const avatarUrl = useAvatarUrl(userId, fallbackPicture);
-  console.log('Avatar URL:', avatarUrl);
 
   const initials =
     (isWorker?.name?.[0]?.toUpperCase() || '') +

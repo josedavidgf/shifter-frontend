@@ -22,19 +22,14 @@ export async function getWorkerTypes() {
 }
 
 export async function createWorker(data, token) {
-    console.log('📤 Enviando datos al backend:', data); // 👈
-    console.log('📤 Enviando token al backend:', token); // 👈
     try{
-        //console.log('📤 Datos a enviar:', data,token); // 👈
         const response = await axios.post(`${API_URL}/api/workers`, data, {
             headers: {
                 Authorization: `Bearer ${token}`,
             },
         });
-        console.log('📥 Datos de la respuesta:', response.data);
         return response.data;
     } catch (error) {
-        console.error('Error al crear trabajador:', error.message?.data || error.message);
         throw error;
     }
 }
@@ -43,21 +38,17 @@ export const getMyWorkerProfile = async (token) => {
     const response = await axios.get(`${API_URL}/api/workers/me`, {
       headers: { Authorization: `Bearer ${token}` },
     });
-    console.log('📥 Datos del perfil del trabajador:', response.data);
     return response.data.data;
   };
 
 export const createWorkerHospital = async (workerId, hospitalId, token) => {
     try{
-        console.log('📤 Enviando token al backend para Hospital:', token); // 👈
-        console.log('📤 Datos a enviar:', { worker_id: workerId, hospital_id: hospitalId },token);
         const response = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/workers/hospitals`, {
             workerId,
             hospitalId,
         }, {
             headers: { Authorization: `Bearer ${token}` }
         });
-        console.log('📥 Datos de la respuesta:', response.data);
         return response.data;
     } catch (error) {
         console.error('Error al crear la relación del trabajador con el hospital:', error.message?.data || error.message);
@@ -69,8 +60,6 @@ export const createWorkerHospital = async (workerId, hospitalId, token) => {
 
 export const createWorkerSpeciality = async (workerId, specialityId, qualificationLevel, token) => {
     try{
-        console.log('📤 Enviando token al backend:', token); // 👈
-        console.log('📤 Datos a enviar:', { worker_id: workerId, speciality_id: specialityId, qualification_level: qualificationLevel},token);
         const response = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/workers/specialities`, {
         workerId,
         specialityId,
@@ -87,7 +76,6 @@ export const createWorkerSpeciality = async (workerId, specialityId, qualificati
 };
 
 export async function completeOnboarding(token) {
-    console.log('📤 Enviando token al backend para completar onboarding:', token); // 👈
     await axios.patch(`${API_URL}/api/workers/complete-onboarding`, {}, {
       headers: { Authorization: `Bearer ${token}` }
     });

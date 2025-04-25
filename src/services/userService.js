@@ -9,33 +9,26 @@ export const checkIfWorkerExists = async (token) => {
   });
 
   const worker = response.data.data;
-  console.log('📥 Datos del trabajador:', worker);
   return !!worker; // devuelve true si existe
 };
 
 
 export const checkIfWorkerHasHospitalAndSpeciality = async (token) => {
-  console.log('📤 Enviando token al backend para completion:', token); // 👈
   const response = await axios.get(`${API_URL}/api/workers/me/completion`, {
     headers: { Authorization: `Bearer ${token}` },
   });
-  console.log('📥 Datos de la respuesta completion:', response.data);
   const { hasHospital, hasSpeciality } = response.data.data;
   return hasHospital && hasSpeciality;
 };
 
 export const getFullWorkerProfile = async (token) => {
-  console.log('📤 Enviando token al backend para perfil completo:', token); // 👈
   const response = await axios.get(`${API_URL}/api/workers/me/full`, {
     headers: { Authorization: `Bearer ${token}` },
   });
-  console.log('📥 Datos del perfil completo del trabajador:', response.data);
   return response.data.data;
 };
 
 export const updateWorkerInfo = async (data, token) => {
-  console.log('📤 Enviando token al backend para actualizar info:', token); // 👈
-  console.log('📤 Datos a enviar:', data); // 👈
   const response = await axios.put(`${API_URL}/api/workers/me`, data, {
     headers: { Authorization: `Bearer ${token}` },
   });
@@ -50,7 +43,6 @@ export const updateWorkerHospital = async (data, token) => {
 };
 
 export const updateWorkerSpeciality = async (data, token) => {
-  console.log('datos a enviar:', data); // 👈
   const response = await axios.put(`${API_URL}/api/workers/me/speciality`, data, {
     headers: { Authorization: `Bearer ${token}` },
   });
@@ -70,7 +62,6 @@ export async function getUserPreferences(token) {
   const response = await axios.get(`${API_URL}/api/preferences`, {
     headers: { Authorization: `Bearer ${token}` },
   });
-  console.log('📥 Datos de preferencias:', response.data);
   return response.data.data;
 }
 

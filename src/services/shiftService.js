@@ -16,17 +16,13 @@ export const getMyShifts = async (token) => {
   const response = await axios.get(`${API_URL}/api/shifts/mine`, {
     headers: { Authorization: `Bearer ${token}` },
   });
-  console.log('📥 Datos de los turnos:', response.data.data);
   return response.data.data;
 };
 
 export const getMyShiftsPublished = async (token) => {
-  console.log('AQUI');
-  console.log('AQUI Token;', token);
   const response = await axios.get(`${API_URL}/api/shifts/mine-published`, {
     headers: { Authorization: `Bearer ${token}` },
   });
-  console.log('📥 Datos de los turnos:', response.data.data);
   return response.data.data;
 };
 
@@ -41,12 +37,10 @@ export const updateShift = async (id, updates, token) => {
   const response = await axios.patch(`${API_URL}/api/shifts/${id}`, updates, {
     headers: { Authorization: `Bearer ${token}` },
   });
-  console.log('📤 Datos del turno actualizado:', response.data.data);
   return response.data.data;
 };
 
 export const removeShift = async (id, token) => {
-  console.log('shift publicado:', id);
   const response = await axios.patch(`${API_URL}/api/shifts/${id}/remove`, null, {
     headers: { Authorization: `Bearer ${token}` },
   });
@@ -103,7 +97,6 @@ export async function expireOldShifts(token) {
 }
 
 export async function getMyAvailableShifts(workerId, token) {
-  console.log('workerId getMyAvailableShifts ',workerId)
   const [myShifts, acceptedSwaps] = await Promise.all([
     getShiftsForMonth(workerId), // Esto ya usa worker_id internamente
     getAcceptedSwaps(token)
@@ -120,7 +113,6 @@ export async function getMyAvailableShifts(workerId, token) {
       type: shift.shift_type,
       label: shift.shift_label,
     }));
-  console.log('ownShifts',ownShifts);
 
   const receivedShifts = (acceptedSwaps || [])
     .filter(swap => swap.offered_date && new Date(swap.offered_date) >= now)
@@ -131,7 +123,6 @@ export async function getMyAvailableShifts(workerId, token) {
       label: swap.offered_label,
       indicator: 'received',
     }));
-    console.log('receivedShifts',receivedShifts);
 
   return [...ownShifts, ...receivedShifts];
 }

@@ -11,12 +11,8 @@ import BackButton from '../../components/BackButton';
 const SwapDetail = () => {
     const navigate = useNavigate();
     const { id } = useParams(); // swapId
-    //console.log('🧾 ID del intercambio:', id);
     const { getToken } = useAuth(); // para auth.uid
-    //console.log('🔑 ID del usuario autenticado:', currentUser.id);
-    //console.log('👤 Usuario autenticado:', currentUser);
     const [swap, setSwap] = useState(null);
-    //console.log('🔄 Estado inicial del intercambio:', swap);
     const [error, setError] = useState(null);
     const [workerId, setWorkerId] = useState('');
 
@@ -26,12 +22,9 @@ const SwapDetail = () => {
         async function fetchSwap() {
             try {
                 const token = await getToken();
-                //console.log('🔑 Token de autenticación swap detail:', token);
                 const data = await getSwapById(id, token);
-                //console.log('⚠️⚠️ Datos del intercambio swap detail:', data);
                 setSwap(data);
                 const worker = await getMyWorkerProfile(token);
-                //console.log('👤 Datos del trabajador:', worker);
                 setWorkerId(worker.worker_id);
             } catch (err) {
                 setError('No se pudo cargar el intercambio');

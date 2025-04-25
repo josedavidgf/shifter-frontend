@@ -85,12 +85,10 @@ const CreateShift = () => {
     };
 
     const handleSubmit = async (e) => {
-        console.log('🧾 Turno a enviar:', form);
         e.preventDefault();
         try {
             setIsSubmitting(true); // 🛠️ Empezamos envío
             const token = await getToken();
-            console.log('form', form);
             await createShift({ ...form }, token);
             setMessage('✅ Turno publicado correctamente');
             setTimeout(() => navigate('/calendar'), 1500);

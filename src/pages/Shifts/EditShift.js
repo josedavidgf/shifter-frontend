@@ -37,7 +37,6 @@ const EditShift = () => {
                     //shift_label: data.shift_label || '',
                     shift_comments: data.shift_comments || '',
                 });
-                console.log('🧾 Datos del turno:', data);
                 const prefs = await getShiftPreferencesByShiftId(id, token);
                 setPreferences(prefs);
             } catch (err) {
@@ -78,7 +77,6 @@ const EditShift = () => {
             setError('No se pudo actualizar el turno.');
         }
     };
-    console.log('🧾 Formulario de edición:', form);
     return (
         <div>
             <h2>Editar Turno</h2>

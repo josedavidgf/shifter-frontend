@@ -6,20 +6,17 @@ export async function getShiftsForMonth(workerId /*, year, month */) {
     const end = format(endOfMonth(new Date(year, month - 1)), 'yyyy-MM-dd'); */
 
 
-    console.log('worker_id getShiftsForMonth:', workerId);
     const { data, error } = await supabase
         .from('monthly_schedules')
         .select('date, shift_type')
         .eq('worker_id', workerId)
 /*         .gte('date', start)
         .lte('date', end); */
-    console.log('Data shiftsMonth:', data)
     if (error) {
         console.error('❌ Error en getShiftsForMonth:', error.message);
         return []; // Devuelve array vacío para evitar petadas
     }
 
-    console.log('✅ Turnos del calendario mensual:', data);
     return Array.isArray(data) ? data : [];
 }
 

@@ -19,7 +19,7 @@ const ProfileMenu = () => {
     try {
       await logout();
     } catch (error) {
-      console.log('Error al cerrar sesión:', error.message);
+      console.error('Error during logout:', error);
     }
   };
 

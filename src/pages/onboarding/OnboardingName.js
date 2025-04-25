@@ -21,10 +21,6 @@ export default function OnboardingNameStep() {
         setError('Debes rellenar nombre y apellido.');
         return;
       }
-      console.log('Worker ID:', workerId);
-      console.log('Name:', name);
-      console.log('Surname:', surname);
-      console.log('Token:', token);
       await updateWorkerInfo({ workerId: workerId, name: name, surname: surname }, token);
 
       await refreshWorkerProfile();

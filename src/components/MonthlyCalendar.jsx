@@ -151,7 +151,6 @@ function MonthlyCalendar() {
         };
       });
 
-      console.log('enrichedMap turnos:', enrichedMap);
       // Guardamos sólo lo filtrado
       setShiftMap(enrichedMap);
 
@@ -162,7 +161,6 @@ function MonthlyCalendar() {
     }
   }
   useEffect(() => {
-    console.log('calendar actualizado:', shiftMap);
   }, [shiftMap]);
 
 
@@ -376,7 +374,6 @@ function MonthlyCalendar() {
   async function handleDeletePublication(shiftId, dateStr) {
     try {
       const token = await getToken();
-      console.log('Shift publicado', shiftId)
       await removeShift(shiftId, token); // Esta sería tu función para "despublicar"
       await fetchCalendar(isWorker.worker_id, token);
       setSelectedDay(dateStr);

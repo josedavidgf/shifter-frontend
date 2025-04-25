@@ -32,10 +32,7 @@ export default function OnboardingConfirmStep() {
     const token = await getToken();
 
     try {
-      console.log('Datos a enviar:', workerTypeId);
-      console.log('Token:', token);
       const response = await createWorker({ workerTypeId }, token);
-      console.log('Response:', response);
       if (response?.success) {
         alert('Trabajador creado con éxito');
         setIsWorker(true);
