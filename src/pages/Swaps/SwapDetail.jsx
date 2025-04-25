@@ -65,29 +65,36 @@ const SwapDetail = () => {
     const showChat = ['proposed', 'accepted'].includes(swap.status);
 
     return (
-        <>
-            <h2>Intercambio #{swap.swap_id}</h2>
-            <p>Turno original: {swap.shift.date}</p>
-            <p>Turno ofrecido: {swap.offered_date}</p>
-            <p>Estado: {swap.status}</p>
+        <div className="container page">
+            <h2 className="mb-3">Intercambio #{swap.swap_id}</h2>
+
+            <div className="card mb-3">
+                <p><strong>Turno original:</strong> {swap.shift.date}</p>
+                <p><strong>Turno ofrecido:</strong> {swap.offered_date}</p>
+                <p><strong>Estado:</strong> <span className={`status-badge status-${swap.status}`}>{swap.status}</span></p>
+            </div>
 
             {showChat && (
-                <ChatBox
-                    swapId={swap.swap_id}
-                    myWorkerId={swap.requester_id === workerId ? swap.requester_id : swap.shift.worker_id}
-                    otherWorkerId={swap.requester_id === workerId ? swap.shift.worker_id : swap.requester_id}
-                />
-            )}
-            <hr />
-            {swap.status === 'proposed' && swap.requester_id === workerId && (
-                <button onClick={handleCancelSwap} style={{ color: 'red' }}>
-                    ❌ Cancelar intercambio
-                </button>
+                <div className="mb-3">
+                    <ChatBox
+                        swapId={swap.swap_id}
+                        myWorkerId={swap.requester_id === workerId ? swap.requester_id : swap.shift.worker_id}
+                        otherWorkerId={swap.requester_id === workerId ? swap.shift.worker_id : swap.requester_id}
+                    />
+                </div>
             )}
 
-            <hr />
+            {swap.status === 'proposed' && swap.requester_id === workerId && (
+                <div className="btn-group mb-4">
+                    <button onClick={handleCancelSwap} className="btn btn-danger">
+                        ❌ Cancelar intercambio
+                    </button>
+                </div>
+            )}
+
             <BackButton />
-        </>
+        </div>
+
     );
 };
 

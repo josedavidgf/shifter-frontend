@@ -67,27 +67,32 @@ const ProposeSwap = () => {
   }
 
   return (
-    <div className="page-content">
+    <div className="container page">
+      <h2 className="mb-3">Proponer intercambio</h2>
 
-      <h2>Proponer intercambio</h2>
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} className="propose-form">
         <ShiftSelector shifts={shifts} onSelect={setSelectedShift} />
 
-        <label>Comentarios:</label>
-        <textarea
-          name="swap_comments"
-          value={swapComments}
-          onChange={(e) => setSwapComments(e.target.value)}
-          placeholder="Comentarios adicionales"
-        />
+        <div className="form-group">
+          <label>Comentarios:</label>
+          <textarea
+            name="swap_comments"
+            value={swapComments}
+            onChange={(e) => setSwapComments(e.target.value)}
+            placeholder="Comentarios adicionales"
+          />
+        </div>
 
-        <br />
-        <button type="submit">Enviar propuesta</button>
-        <button type="button" onClick={() => navigate('/shifts/hospital')}>
-          Cancelar
-        </button>
+        <div className="btn-group mt-3">
+          <button type="submit" className="btn btn-primary">Enviar propuesta</button>
+          <button type="button" className="btn btn-secondary" onClick={() => navigate('/shifts/hospital')}>
+            Cancelar
+          </button>
+        </div>
       </form>
     </div>
+
+
   );
 };
 

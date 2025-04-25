@@ -48,7 +48,7 @@ const CommunicationPreferences = () => {
                     Receive email notifications for swap activity
                 </label>
                 <br />
-                <button type="submit">Save</button>
+                <button className="btn btn-primary" type="submit">Save</button>
                 {status && <p>{status}</p>}
             </form>
             <hr />

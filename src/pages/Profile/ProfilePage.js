@@ -30,7 +30,7 @@ const Profile = () => {
 
   useEffect(() => {
     async function fetchData() {
-        const token = await getToken();
+      const token = await getToken();
       const data = await getFullWorkerProfile(token);
       setWorker(data.worker);
       setForm({
@@ -52,11 +52,11 @@ const Profile = () => {
   };
   const handleLogout = async () => {
     try {
-        await logout();
+      await logout();
     } catch (error) {
-        console.log('Error al cerrar sesión:', error.message);
+      console.log('Error al cerrar sesión:', error.message);
     }
-};
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -80,47 +80,65 @@ const Profile = () => {
   if (!worker) return <p>Cargando perfil...</p>;
 
   return (
-    <div>
-      <h2>Editar Perfil</h2>
-      <form onSubmit={handleSubmit}>
-        <label>Nombre:</label>
-        <input name="name" value={form.name} onChange={handleChange} required />
+    <div className="container page">
+      <h2 className="mb-3">Editar Perfil</h2>
 
-        <label>Apellidos:</label>
-        <input name="surname" value={form.surname} onChange={handleChange} required />
+      <div className="profile-card">
+        <form onSubmit={handleSubmit}>
+          <div className="form-group">
+            <label>Nombre:</label>
+            <input name="name" value={form.name} onChange={handleChange} required />
+          </div>
 
-        <label>Hospital:</label>
-        <select name="hospital_id" value={form.hospital_id} onChange={handleChange} required>
-          <option value="">Selecciona un hospital</option>
-          {hospitals.map((h) => (
-            <option key={h.hospital_id} value={h.hospital_id}>{h.name}</option>
-          ))}
-        </select>
+          <div className="form-group">
+            <label>Apellidos:</label>
+            <input name="surname" value={form.surname} onChange={handleChange} required />
+          </div>
 
-        <label>Especialidad:</label>
-        <select name="speciality_id" value={form.speciality_id} onChange={handleChange} required>
-          <option value="">Selecciona una especialidad</option>
-          {specialities.map((s) => (
-            <option key={s.speciality_id} value={s.speciality_id}>
-              {s.speciality_category} - {s.speciality_subcategory}
-            </option>
-          ))}
-        </select>
+          <div className="form-group">
+            <label>Hospital:</label>
+            <select name="hospital_id" value={form.hospital_id} onChange={handleChange} required>
+              <option value="">Selecciona un hospital</option>
+              {hospitals.map((h) => (
+                <option key={h.hospital_id} value={h.hospital_id}>{h.name}</option>
+              ))}
+            </select>
+          </div>
 
-        <label>Nivel:</label>
-        <select name="qualification_level" value={form.qualification_level} onChange={handleChange}>
-          <option value="resident">Residente</option>
-          <option value="specialist">Especialista</option>
-        </select>
+          <div className="form-group">
+            <label>Especialidad:</label>
+            <select name="speciality_id" value={form.speciality_id} onChange={handleChange} required>
+              <option value="">Selecciona una especialidad</option>
+              {specialities.map((s) => (
+                <option key={s.speciality_id} value={s.speciality_id}>
+                  {s.speciality_category} - {s.speciality_subcategory}
+                </option>
+              ))}
+            </select>
+          </div>
 
-        <button type="submit">Guardar cambios</button>
-      </form>
-      <hr />
-      <button onClick={() => navigate('/preferences')}>Preferencias de comunicación</button>
-      <hr />
-      <button onClick={handleLogout}>Logout</button>
-      {message && <p>{message}</p>}
+          <div className="form-group">
+            <label>Nivel:</label>
+            <select name="qualification_level" value={form.qualification_level} onChange={handleChange}>
+              <option value="resident">Residente</option>
+              <option value="specialist">Especialista</option>
+            </select>
+          </div>
+
+          <div className="btn-group mt-3">
+            <button type="submit" className="btn btn-primary">Guardar cambios</button>
+          </div>
+        </form>
+      </div>
+
+      <div className="btn-group mt-4">
+        <button className="btn btn-secondary" onClick={() => navigate('/preferences')}>Preferencias de comunicación</button>
+        <button className="btn btn-danger" onClick={handleLogout}>Cerrar sesión</button>
+      </div>
+
+      {message && <p className="mt-2">{message}</p>}
     </div>
+
   );
 };
 
