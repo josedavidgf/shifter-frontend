@@ -50,6 +50,7 @@ export const updateWorkerHospital = async (data, token) => {
 };
 
 export const updateWorkerSpeciality = async (data, token) => {
+  console.log('datos a enviar:', data); // 👈
   const response = await axios.put(`${API_URL}/api/workers/me/speciality`, data, {
     headers: { Authorization: `Bearer ${token}` },
   });
