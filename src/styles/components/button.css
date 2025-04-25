@@ -91,4 +91,7 @@
     flex-direction: column;
     gap: 0.5rem;
   }
+  .btn + .btn {
+    margin-left: 0rem;
+  }
 } 

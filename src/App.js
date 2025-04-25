@@ -6,7 +6,7 @@ import Register from './pages/Register';
 import PublicRoute from './components/PublicRoute';
 import PrivateRoute from './components/PrivateRoute';
 import AppLayout from './components/AppLayout';
-import SimpleLayout from './components/AppLayout'; 
+import SimpleLayout from './components/SimpleLayout'; 
 import Calendar from './pages/Calendar/CalendarPage';
 import Dashboard from './pages/Dashboard';
 import MySwaps from './pages/Swaps/MySwaps';
