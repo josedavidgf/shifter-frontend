@@ -5,6 +5,8 @@ import { getAcceptedSwaps } from '../../services/swapService'; // creamos este s
 import ChatBox from '../../components/ChatBox';
 import { formatDate, getVerb, getOtherVerb } from '../../utils/dateUtils';
 import { useNavigate } from 'react-router-dom';
+import HeaderFirstLevel from '../../components/ui/Header/HeaderFirstLevel';
+
 
 
 
@@ -38,55 +40,59 @@ const ChatsList = () => {
     const activeSwaps = swaps.filter(isActive);
 
     return (
-        <div>
-            <h2>Chats Activos</h2>
+        <>
+            <HeaderFirstLevel
+                title="Chat activos"
+            />
+            <div className="container page">
 
-            {selectedSwap ? (
-                <>
-                    <ChatBox
-                        swapId={selectedSwap.swap_id}
-                        myWorkerId={workerId}
-                        otherWorkerId={selectedSwap.requester_id === workerId ? selectedSwap.shift.worker_id : selectedSwap.requester_id}
-                        otherPersonName={selectedSwap.requester_id === workerId ? selectedSwap.shift.worker?.name : selectedSwap.requester?.name}
-                        otherPersonSurname={selectedSwap.requester_id === workerId ? selectedSwap.shift.worker?.surname : selectedSwap.requester?.surname}
-                        myDate={selectedSwap.requester_id === workerId ? selectedSwap.offered_date : selectedSwap.shift.date}
-                        otherDate={selectedSwap.requester_id === workerId ? selectedSwap.shift.date : selectedSwap.offered_date}
-                    />
-                </>
-            ) : (
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                    {activeSwaps.map((swap) => {
-                        const iAmRequester = swap.requester_id === workerId;
-                        const myDate = iAmRequester ? swap.offered_date : swap.shift.date;
-                        const myDateType = iAmRequester ? swap.offered_type : swap.shift.shift_type;
-                        const otherDate = iAmRequester ? swap.shift.date : swap.offered_date;
-                        const otherType = iAmRequester ? swap.shift.shift_type : swap.offered_type;
+                {selectedSwap ? (
+                    <>
+                        <ChatBox
+                            swapId={selectedSwap.swap_id}
+                            myWorkerId={workerId}
+                            otherWorkerId={selectedSwap.requester_id === workerId ? selectedSwap.shift.worker_id : selectedSwap.requester_id}
+                            otherPersonName={selectedSwap.requester_id === workerId ? selectedSwap.shift.worker?.name : selectedSwap.requester?.name}
+                            otherPersonSurname={selectedSwap.requester_id === workerId ? selectedSwap.shift.worker?.surname : selectedSwap.requester?.surname}
+                            myDate={selectedSwap.requester_id === workerId ? selectedSwap.offered_date : selectedSwap.shift.date}
+                            otherDate={selectedSwap.requester_id === workerId ? selectedSwap.shift.date : selectedSwap.offered_date}
+                        />
+                    </>
+                ) : (
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                        {activeSwaps.map((swap) => {
+                            const iAmRequester = swap.requester_id === workerId;
+                            const myDate = iAmRequester ? swap.offered_date : swap.shift.date;
+                            const myDateType = iAmRequester ? swap.offered_type : swap.shift.shift_type;
+                            const otherDate = iAmRequester ? swap.shift.date : swap.offered_date;
+                            const otherType = iAmRequester ? swap.shift.shift_type : swap.offered_type;
 
-                        const otherPersonName = iAmRequester
-                            ? `${swap.shift.worker?.name} ${swap.shift.worker?.surname}`
-                            : `${swap.requester?.name} ${swap.requester?.surname}`;
+                            const otherPersonName = iAmRequester
+                                ? `${swap.shift.worker?.name} ${swap.shift.worker?.surname}`
+                                : `${swap.requester?.name} ${swap.requester?.surname}`;
 
-                        return (
-                            <div
-                                key={swap.swap_id}
-                                className="chat-card"
-                                onClick={() => navigate(`/chats/${swap.swap_id}`)}
-                            >
-                                <strong>Intercambio #{swap.swap_id}</strong>
-                                <span>
-                                    {getVerb(myDate)} el {formatDate(myDate)} {myDateType} y {otherPersonName} {getOtherVerb(otherDate)} el {formatDate(otherDate)} {otherType}
-                                </span>
-                            </div>
-                        );
-                    })}
+                            return (
+                                <div
+                                    key={swap.swap_id}
+                                    className="chat-card"
+                                    onClick={() => navigate(`/chats/${swap.swap_id}`)}
+                                >
+                                    <strong>Intercambio #{swap.swap_id}</strong>
+                                    <span>
+                                        {getVerb(myDate)} el {formatDate(myDate)} {myDateType} y {otherPersonName} {getOtherVerb(otherDate)} el {formatDate(otherDate)} {otherType}
+                                    </span>
+                                </div>
+                            );
+                        })}
 
-                    {activeSwaps.length === 0 && (
-                        <p>No tienes chats activos ahora mismo.</p>
-                    )}
-                </div>
+                        {activeSwaps.length === 0 && (
+                            <p>No tienes chats activos ahora mismo.</p>
+                        )}
+                    </div>
 
-            )}
-        </div>
+                )}
+            </div>
+        </>
     );
 
 };

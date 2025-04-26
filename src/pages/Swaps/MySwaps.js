@@ -3,6 +3,7 @@ import { useAuth } from '../../context/AuthContext';
 import { getSentSwaps } from '../../services/swapService';
 import MySwapsTable from '../../components/MySwapsTable';
 import useTrackPageView from '../../hooks/useTrackPageView';
+import HeaderFirstLevel from '../../components/ui/Header/HeaderFirstLevel';
 
 const MySwaps = () => {
   const { getToken } = useAuth();
@@ -28,31 +29,18 @@ const MySwaps = () => {
 
 
   return (
-    <div>
-      <h2>Mis intercambios propuestos</h2>
-      {/* {error && <p style={{ color: 'red' }}>{error}</p>}
-
-      {mySwaps.length === 0 ? (
-        <p>No has propuesto ningún intercambio todavía.</p>
-      ) : (
-        mySwaps.map((swap) => (
-          <div key={swap.swap_id} style={{ border: '1px solid #ccc', marginBottom: '1rem', padding: '1rem' }}>
-            <p><strong>Turno objetivo:</strong> {swap.shift?.date} ({swap.shift?.shift_type})</p>
-            <p><strong>Ofrecido:</strong> {swap.offered_date || '—'} / {swap.offered_type} / {swap.offered_label}</p>
-            <p><strong>Estado:</strong> {swap.status}</p>
-
-            {swap.status === 'proposed' && (
-              <button onClick={() => handleCancelSwap(swap.swap_id)}>❌ Cancelar</button>
-            )}
-          </div>
-        ))
-      )} */}
-      {mySwaps.length === 0 ? (
-        <p>No has propuesto ningún intercambio todavía.</p>
-      ) : (
-        <MySwapsTable />
-      )}
-    </div>
+    <>
+      <HeaderFirstLevel
+        title="Intercambios propuestos"
+      />
+      <div className="container page">
+        {mySwaps.length === 0 ? (
+          <p>No has propuesto ningún intercambio todavía.</p>
+        ) : (
+          <MySwapsTable />
+        )}
+      </div>
+    </>
   );
 };
 
