@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import useTrackPageView from '../hooks/useTrackPageView';
+import InputField from '../components/ui/InputField/InputField';
+
 
 function Login() {
     const { login, loginWithGoogle } = useAuth();
@@ -23,26 +25,32 @@ function Login() {
     useTrackPageView('login');
 
     return (
-        <div>
+        <div className='container'>
             <h2>Iniciar Sesión</h2>
             {error && <p style={{ color: 'red' }}>{error}</p>}
             <form onSubmit={handleSubmit}>
-                <input
-                    type="email"
-                    placeholder="Correo Electrónico"
+                <InputField
+                    name="email"
+                    label="Correo Electrónico"
+                    placeholder="Tu correo"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
+                    type="email"
+                    required
                 />
-                <input
-                    type="password"
-                    placeholder="Contraseña"
+                <InputField
+                    name="password"
+                    label="Contraseña"
+                    placeholder="Tu contraseña"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
+                    type="password"
+                    required
                 />
-                <button type="submit">Iniciar Sesión</button>
+                <button className='btn btn-primary' type="submit">Iniciar Sesión</button>
             </form>
             <hr />
-            <button onClick={loginWithGoogle}>Sign in with Google</button>
+            <button className='btn btn-secondary' onClick={loginWithGoogle}>Sign in with Google</button>
         </div>
     );
 }

@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { updateWorkerInfo } from '../../services/userService';
 import { useAuth } from '../../context/AuthContext';
+import InputField from '../../components/ui/InputField/InputField';
+
 
 
 export default function OnboardingNameStep() {
@@ -10,7 +12,7 @@ export default function OnboardingNameStep() {
   const [error, setError] = useState('');
   const { getToken } = useAuth();
   const navigate = useNavigate();
-  const {isWorker,refreshWorkerProfile} = useAuth();
+  const { isWorker, refreshWorkerProfile } = useAuth();
 
 
   const handleConfirm = async () => {
@@ -36,23 +38,30 @@ export default function OnboardingNameStep() {
     <div>
       <h2>Introduce tu nombre y apellido</h2>
 
-      <input
+      <InputField
+        name="first-name"
+        label="Nombre"
+        placeholder="Introduce tu nombre"
         type="text"
-        placeholder="Nombre"
         value={name}
         onChange={(e) => setFirstName(e.target.value)}
+        required
       />
 
-      <input
+      <InputField
+        name="last-name"
+        label="Apellido"
+        placeholder="Introduce tu apellido"
         type="text"
-        placeholder="Apellido"
         value={surname}
         onChange={(e) => setLastName(e.target.value)}
+        required
       />
+
 
       {error && <p style={{ color: 'red' }}>{error}</p>}
 
-      <button onClick={handleConfirm}>Continuar</button>
+      <button className='btn btn-primary' onClick={handleConfirm}>Continuar</button>
     </div>
   );
 }

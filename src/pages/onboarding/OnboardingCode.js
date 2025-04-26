@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate, Navigate } from 'react-router-dom';
 import { validateAccessCode } from '../../services/accessCodeService';
 import { useAuth } from '../../context/AuthContext';
+import InputField from '../../components/ui/InputField/InputField';
 
 
 export default function OnboardingCodeStep() {
@@ -43,16 +44,20 @@ export default function OnboardingCodeStep() {
     <div>
       <h2>Introduce tu código de acceso</h2>
       <form onSubmit={handleValidateCode}>
-        <input
+        <InputField
+          name="access-code"
+          label="Código de acceso"
+          placeholder="Introduce tu código de acceso"
           type="text"
           value={code}
           onChange={(e) => setCode(e.target.value)}
-          placeholder="Código de acceso"
           maxLength={6}
           required
+          error={error}
+          errorMessage="El código de acceso es obligatorio"
         />
         {error && <p style={{ color: 'red' }}>{error}</p>}
-        <button type="submit">Validar código</button>
+        <button className='btn btn-primary' type="submit">Validar código</button>
       </form>
     </div>
   );

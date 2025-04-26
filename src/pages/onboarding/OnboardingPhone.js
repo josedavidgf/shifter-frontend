@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { updateWorkerInfo } from '../../services/userService';
 import { useAuth } from '../../context/AuthContext';
+import InputField from '../../components/ui/InputField/InputField';
+
 
 
 export default function OnboardingPhoneStep() {
@@ -10,7 +12,7 @@ export default function OnboardingPhoneStep() {
   const [error, setError] = useState('');
   const navigate = useNavigate();
   const { getToken } = useAuth();
-  const {isWorker,refreshWorkerProfile} = useAuth();
+  const { isWorker, refreshWorkerProfile } = useAuth();
 
 
   const handleConfirm = async () => {
@@ -38,22 +40,27 @@ export default function OnboardingPhoneStep() {
   return (
     <div>
       <h2>Introduce tu prefijo y tu teléfono (opcional)</h2>
-      <input
+      <InputField
+        name="prefix"
+        label="Prefijo"
+        placeholder="Introduce tu prefijo"
         type="text"
-        placeholder="Prefijo"
         value={prefix}
         onChange={(e) => setPrefix(e.target.value)}
       />
-      <input
+
+      <InputField
+        name="phone"
+        label="Teléfono"
+        placeholder="Introduce tu teléfono"
         type="tel"
-        placeholder="Teléfono"
         value={phone}
         onChange={(e) => setPhone(e.target.value)}
       />
 
       {error && <p style={{ color: 'red' }}>{error}</p>}
 
-      <button onClick={handleConfirm}>Finalizar</button>
+      <button className='btn btn-primary' onClick={handleConfirm}>Finalizar</button>
     </div>
   );
 }

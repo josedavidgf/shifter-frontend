@@ -1,0 +1,96 @@
+.input-field {
+  display: flex;
+  position: relative;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 20px;
+  position: relative;
+}
+
+.input-field__wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.input-field__input,
+.input-field__textarea {
+  width: 100%;
+  padding: 14px 12px 6px 12px;
+  font-size: 16px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.input-field__input:focus,
+.input-field__textarea:focus {
+  border-color: #0077ff;
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(0, 119, 255, 0.15);
+}
+
+.input-field.error .input-field__input,
+.input-field.error .input-field__textarea {
+  border-color: #e63946;
+}
+
+.input-field.disabled .input-field__input,
+.input-field.disabled .input-field__textarea {
+  background-color: #f5f5f5;
+  cursor: not-allowed;
+}
+
+.input-field__label {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 16px;
+  color: #999;
+  background-color: white;
+  padding: 0 4px;
+  pointer-events: none;
+  transition: all 0.25s ease;
+}
+
+.input-field__label--focused,
+.input-field__label--filled {
+  top: -8px;
+  font-size: 12px;
+  color: #0077ff;
+  transform: translateY(0);
+}
+
+.input-field__label--error {
+  color: #e63946;
+}
+
+.input-field__icon {
+  position: absolute;
+  right: 10px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 18px;
+  color: #666;
+}
+
+.input-field__helper {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 4px;
+  font-size: 12px;
+}
+
+.input-field__helper-text {
+  color: #666;
+}
+
+.input-field__error-text {
+  color: #e63946;
+}
+
+.input-field__char-count {
+  color: #999;
+}
