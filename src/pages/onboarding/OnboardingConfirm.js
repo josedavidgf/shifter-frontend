@@ -60,8 +60,8 @@ export default function OnboardingConfirmStep() {
 
       {error && <p style={{ color: 'red' }}>{error}</p>}
 
-      <button onClick={handleConfirm}>Confirmar y continuar</button>
-      <button onClick={() => navigate('/onboarding/code')}>Cancelar</button>
+      <button className='btn btn-primary' onClick={handleConfirm}>Confirmar y continuar</button>
+      <button className='btn btn-danger' onClick={() => navigate('/onboarding/code')}>Cancelar</button>
     </div>
   );
 }

@@ -8,6 +8,8 @@ import { getSpecialitiesByHospital } from '../../services/specialityService';
 import { getHospitals } from '../../services/hospitalService';
 import { getWorkerTypes } from '../../services/workerService';
 import BackButton from '../../components/BackButton';
+import InputField from '../../components/ui/InputField/InputField';
+
 
 
 const WorkSettings = () => {
@@ -100,7 +102,18 @@ const WorkSettings = () => {
             {step === 'code' && (
                 <form onSubmit={handleValidateCode}>
                     <label>Introduce el nuevo código de acceso:</label>
-                    <input type="text" value={code} onChange={(e) => setCode(e.target.value)} required maxLength={6} />
+                    <InputField
+                        name="access-code"
+                        label="Código de acceso"
+                        placeholder="Introduce tu código de acceso"
+                        type="text"
+                        value={code}
+                        onChange={(e) => setCode(e.target.value)}
+                        maxLength={6}
+                        required
+                        error={error}
+                        errorMessage="El código de acceso es obligatorio"
+                    />
                     {error && <p style={{ color: 'red' }}>{error}</p>}
                     <div className="btn-group">
                         <button type="submit" className="btn btn-primary">Validar</button>
