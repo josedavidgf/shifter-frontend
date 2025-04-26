@@ -41,8 +41,14 @@ const InputField = ({
   };
 
   return (
-    <div className={`input-field ${disabled ? 'disabled' : ''} ${errorText ? 'error' : ''}`}>
-      <InputLabel label={label} focused={isFocused} filled={filled} error={!!errorText} />
+    <div className=
+        {`input-field ${disabled ? 'disabled' : ''} 
+        ${errorText ? 'error' : ''}`}>
+      <InputLabel 
+        label={label} 
+        focused={isFocused} 
+        filled={filled} 
+        error={!!errorText} />
 
       <div className="input-field__wrapper">
         {multiline ? (

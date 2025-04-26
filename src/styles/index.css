@@ -23,6 +23,9 @@
 @import './components/swap-status.css';
 @import './components/filters.css';
 @import './components/forms.css';
+@import './components/input-field.css';
+@import './components/header-first-level.css';
+@import './components/header-second-level.css';
 
 /* Pages */
 @import './pages/calendar.css';

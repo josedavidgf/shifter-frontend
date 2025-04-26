@@ -43,28 +43,39 @@
 
 .input-field__label {
   position: absolute;
-  left: 14px;
   top: 50%;
+  left: 12px;
   transform: translateY(-50%);
   font-size: 16px;
   color: #999;
   background-color: white;
   padding: 0 4px;
   pointer-events: none;
-  transition: all 0.25s ease;
+  transition: all 0.2s ease;
+  z-index: 1;
 }
 
-.input-field__label--focused,
-.input-field__label--filled {
+.input-field__label--focused {
   top: -8px;
   font-size: 12px;
   color: #0077ff;
   transform: translateY(0);
 }
 
-.input-field__label--error {
-  color: #e63946;
+.input-field__label--filled {
+  top: -8px;
+  font-size: 12px;
+  color: #666;
+  transform: translateY(0);
 }
+
+.input-field__label--error {
+  top: -8px;
+  font-size: 12px;
+  color: #e63946;
+  transform: translateY(0);
+}
+
 
 .input-field__icon {
   position: absolute;

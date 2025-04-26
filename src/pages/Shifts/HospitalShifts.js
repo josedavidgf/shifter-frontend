@@ -5,6 +5,8 @@ import { getMyWorkerProfile } from '../../services/workerService';
 import HospitalShiftsTable from '../../components/HospitalShiftsTable';
 import { getSentSwaps } from '../../services/swapService';
 import useTrackPageView from '../../hooks/useTrackPageView';
+import HeaderFirstLevel from '../../components/ui/Header/HeaderFirstLevel';
+
 
 
 const HospitalShifts = () => {
@@ -40,24 +42,28 @@ const HospitalShifts = () => {
     if (!profile) return <p>Cargando perfil...</p>;
 
     // ✅ YA SE PUEDE ACCEDER
-    const hospitalName = profile.workers_hospitals?.[0]?.hospitals?.name;
-    const specialityCategory = profile.workers_specialities?.[0]?.specialities?.speciality_category;
-    const specialitySubcategory = profile.workers_specialities?.[0]?.specialities?.speciality_subcategory;
+    //const hospitalName = profile.workers_hospitals?.[0]?.hospitals?.name;
+    //const specialityCategory = profile.workers_specialities?.[0]?.specialities?.speciality_category;
+    //const specialitySubcategory = profile.workers_specialities?.[0]?.specialities?.speciality_subcategory;
 
     return (
-        <div>
-            <h2>Turnos disponibles en tu {hospitalName} en {specialityCategory}-{specialitySubcategory}</h2>
-            {error && <p style={{ color: 'red' }}>{error}</p>}
-            {shifts.length === 0 ? (
-                <p>No hay turnos disponibles en tu hospital.</p>
-            ) : (
-                <HospitalShiftsTable
-                    shifts={shifts}
-                    workerId={workerId}
-                    sentSwapShiftIds={sentSwaps}
-                />
-            )}
-        </div>
+        <>
+            <HeaderFirstLevel
+                title="Turnos disponibles"
+            />
+            <div className="container page">
+                {error && <p style={{ color: 'red' }}>{error}</p>}
+                {shifts.length === 0 ? (
+                    <p>No hay turnos disponibles en tu hospital.</p>
+                ) : (
+                    <HospitalShiftsTable
+                        shifts={shifts}
+                        workerId={workerId}
+                        sentSwapShiftIds={sentSwaps}
+                    />
+                )}
+            </div>
+        </>
     );
 };
 

@@ -7,9 +7,9 @@ import { validateAccessCode } from '../../services/accessCodeService';
 import { getSpecialitiesByHospital } from '../../services/specialityService';
 import { getHospitals } from '../../services/hospitalService';
 import { getWorkerTypes } from '../../services/workerService';
-import BackButton from '../../components/BackButton';
 import InputField from '../../components/ui/InputField/InputField';
-
+import HeaderSecondLevel from '../../components/ui/Header/HeaderSecondLevel';
+import { useNavigate } from 'react-router-dom';
 
 
 const WorkSettings = () => {
@@ -26,6 +26,7 @@ const WorkSettings = () => {
     const { isWorker } = useAuth();
     const [, setHospitalName] = useState('');
     const [, setWorkerTypeLabel] = useState('');
+    const navigate = useNavigate();
 
 
     useEffect(() => {
@@ -84,77 +85,89 @@ const WorkSettings = () => {
             setError('❌ Error guardando los cambios');
         }
     };
+    const handleBack = () => {
+        if (window.history.length > 1) {
+            navigate(-1);
+        } else {
+            navigate('/calendar');
+        }
+    };
 
     if (!worker) return <p>Cargando datos...</p>;
 
     return (
-        <div className="container page">
-            <h2 className="mb-3">Ajustes profesionales</h2>
+        <>
+            <HeaderSecondLevel
+                title="Situación profesional"
+                showBackButton
+                onBack={handleBack}
+            />
+            <div className="container page">
 
-            {step === 'view' && (
-                <div>
-                    <p><strong>Hospital actual:</strong> {isWorker.workers_hospitals?.[0]?.hospitals?.name}</p>
-                    <p><strong>Especialidad:</strong> {isWorker.workers_specialities?.[0]?.specialities?.speciality_category} - {worker.workers_specialities?.[0]?.specialities?.speciality_subcategory}</p>
-                    <button className="btn btn-primary" onClick={() => setStep('code')}>Cambiar hospital y especialidad</button>
-                </div>
-            )}
-
-            {step === 'code' && (
-                <form onSubmit={handleValidateCode}>
-                    <label>Introduce el nuevo código de acceso:</label>
-                    <InputField
-                        name="access-code"
-                        label="Código de acceso"
-                        placeholder="Introduce tu código de acceso"
-                        type="text"
-                        value={code}
-                        onChange={(e) => setCode(e.target.value)}
-                        maxLength={6}
-                        required
-                        error={error}
-                        errorMessage="El código de acceso es obligatorio"
-                    />
-                    {error && <p style={{ color: 'red' }}>{error}</p>}
-                    <div className="btn-group">
-                        <button type="submit" className="btn btn-primary">Validar</button>
-                        <button type="button" className="btn btn-secondary" onClick={() => setStep('view')}>Cancelar</button>
+                {step === 'view' && (
+                    <div>
+                        <p><strong>Hospital actual:</strong> {isWorker.workers_hospitals?.[0]?.hospitals?.name}</p>
+                        <p><strong>Especialidad:</strong> {isWorker.workers_specialities?.[0]?.specialities?.speciality_category} - {worker.workers_specialities?.[0]?.specialities?.speciality_subcategory}</p>
+                        <button className="btn btn-primary" onClick={() => setStep('code')}>Cambiar hospital y especialidad</button>
                     </div>
-                </form>
-            )}
+                )}
 
-            {step === 'confirm' && (
-                <div>
-                    <p><strong>Nuevo hospital ID:</strong> {hospitalId}</p>
-                    <p><strong>Tipo de trabajador ID:</strong> {workerTypeId}</p>
-                    <div className="btn-group">
-                        <button className="btn btn-primary" onClick={handleLoadSpecialities}>Continuar</button>
-                        <button className="btn btn-secondary" onClick={() => setStep('view')}>Cancelar</button>
+                {step === 'code' && (
+                    <form onSubmit={handleValidateCode}>
+                        <label>Introduce el nuevo código de acceso:</label>
+                        <InputField
+                            name="access-code"
+                            label="Código de acceso"
+                            placeholder="Introduce tu código de acceso"
+                            type="text"
+                            value={code}
+                            onChange={(e) => setCode(e.target.value)}
+                            maxLength={6}
+                            required
+                            error={error}
+                            errorMessage="El código de acceso es obligatorio"
+                        />
+                        {error && <p style={{ color: 'red' }}>{error}</p>}
+                        <div className="btn-group">
+                            <button type="submit" className="btn btn-primary">Validar</button>
+                            <button type="button" className="btn btn-secondary" onClick={() => setStep('view')}>Cancelar</button>
+                        </div>
+                    </form>
+                )}
+
+                {step === 'confirm' && (
+                    <div>
+                        <p><strong>Nuevo hospital ID:</strong> {hospitalId}</p>
+                        <p><strong>Tipo de trabajador ID:</strong> {workerTypeId}</p>
+                        <div className="btn-group">
+                            <button className="btn btn-primary" onClick={handleLoadSpecialities}>Continuar</button>
+                            <button className="btn btn-secondary" onClick={() => setStep('view')}>Cancelar</button>
+                        </div>
                     </div>
-                </div>
-            )}
+                )}
 
-            {step === 'speciality' && (
-                <div>
-                    <label>Selecciona tu especialidad:</label>
-                    <select value={selectedSpeciality} onChange={(e) => setSelectedSpeciality(e.target.value)}>
-                        <option value="">Selecciona una especialidad</option>
-                        {specialities.map((s) => (
-                            <option key={s.speciality_id} value={s.speciality_id}>
-                                {s.speciality_category} - {s.speciality_subcategory}
-                            </option>
-                        ))}
-                    </select>
-                    {error && <p style={{ color: 'red' }}>{error}</p>}
-                    <div className="btn-group mt-3">
-                        <button className="btn btn-success" onClick={handleConfirmChanges}>Guardar cambios</button>
-                        <button className="btn btn-secondary" onClick={() => setStep('view')}>Cancelar</button>
+                {step === 'speciality' && (
+                    <div>
+                        <label>Selecciona tu especialidad:</label>
+                        <select value={selectedSpeciality} onChange={(e) => setSelectedSpeciality(e.target.value)}>
+                            <option value="">Selecciona una especialidad</option>
+                            {specialities.map((s) => (
+                                <option key={s.speciality_id} value={s.speciality_id}>
+                                    {s.speciality_category} - {s.speciality_subcategory}
+                                </option>
+                            ))}
+                        </select>
+                        {error && <p style={{ color: 'red' }}>{error}</p>}
+                        <div className="btn-group mt-3">
+                            <button className="btn btn-success" onClick={handleConfirmChanges}>Guardar cambios</button>
+                            <button className="btn btn-secondary" onClick={() => setStep('view')}>Cancelar</button>
+                        </div>
                     </div>
-                </div>
-            )}
+                )}
 
-            {message && <p className="mt-3">{message}</p>}
-            <BackButton />
-        </div>
+                {message && <p className="mt-3">{message}</p>}
+            </div>
+        </>
     );
 };
 

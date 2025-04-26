@@ -1,18 +1,21 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { getAcceptedSwaps } from '../../services/swapService';
 import { getMyWorkerProfile } from '../../services/workerService';
 import { buildChatContext } from '../../utils/chatUtils';
 import ChatBox from '../../components/ChatBox';
-import BackButton from '../../components/BackButton';
 import { useAuth } from '../../context/AuthContext';
 import { formatDate, getVerb, getOtherVerb } from '../../utils/dateUtils';
+import HeaderSecondLevel from '../../components/ui/Header/HeaderSecondLevel';
+
 
 const ChatPage = () => {
     const { swapId } = useParams();
     const [swap, setSwap] = useState(null);
     const [workerId, setWorkerId] = useState(null);
     const { getToken } = useAuth();
+    const navigate = useNavigate();
+
 
     useEffect(() => {
         const fetchData = async () => {
@@ -40,29 +43,43 @@ const ChatPage = () => {
         otherDate
     } = buildChatContext(swap, workerId);
 
+    const handleBack = () => {
+        if (window.history.length > 1) {
+            navigate(-1);
+        } else {
+            navigate('/calendar');
+        }
+    };
+
     return (
-        <div className="chat-page">
-            <div className="chat-page-header">
-                <BackButton />
-                <div>
-                    <strong>{otherPersonName} {otherPersonSurname}</strong><br />
-                    <small>
-                        {getVerb(myDate)} {formatDate(myDate)} · {otherPersonName} {getOtherVerb(otherDate)} {formatDate(otherDate)}
-                    </small>
+        <>
+            <HeaderSecondLevel
+                title= {`Chat con ${otherPersonName}`}
+                showBackButton
+                onBack={handleBack}
+            />
+            <div className="container page">
+                <div className="chat-page-header">
+                    <div>
+                        <strong>{otherPersonName} {otherPersonSurname}</strong><br />
+                        <small>
+                            {getVerb(myDate)} {formatDate(myDate)} · {otherPersonName} {getOtherVerb(otherDate)} {formatDate(otherDate)}
+                        </small>
+                    </div>
+                </div>
+                <div className="chat-page-content">
+                    <ChatBox
+                        swapId={swap.swap_id}
+                        myWorkerId={workerId}
+                        otherWorkerId={otherWorkerId}
+                        otherPersonName={otherPersonName}
+                        otherPersonSurname={otherPersonSurname}
+                        myDate={myDate}
+                        otherDate={otherDate}
+                    />
                 </div>
             </div>
-            <div className="chat-page-content">
-                <ChatBox
-                    swapId={swap.swap_id}
-                    myWorkerId={workerId}
-                    otherWorkerId={otherWorkerId}
-                    otherPersonName={otherPersonName}
-                    otherPersonSurname={otherPersonSurname}
-                    myDate={myDate}
-                    otherDate={otherDate}
-                />
-            </div>
-        </div>
+        </>
     );
 };
 

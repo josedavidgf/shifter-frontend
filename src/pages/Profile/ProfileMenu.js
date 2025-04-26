@@ -1,6 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import HeaderSecondLevel from '../../components/ui/Header/HeaderSecondLevel';
 
 const ProfileMenu = () => {
   const navigate = useNavigate();
@@ -22,23 +23,37 @@ const ProfileMenu = () => {
       console.error('Error during logout:', error);
     }
   };
+  const handleBack = () => {
+    if (window.history.length > 1) {
+      navigate(-1);
+    } else {
+      navigate('/calendar');
+    }
+  };
 
   return (
-    <div className="container page">
-      <h2 className="mb-4">Mi perfil</h2>
-      <ul className="profile-menu">
-        {items.map(({ label, route, icon, external }) => (
-          <li key={route} className="profile-menu-item" onClick={() => {
-            external ? window.open(route, '_blank') : navigate(route);
-          }}>
-            <span className="icon">{icon}</span>
-            <span className="label">{label}</span>
-            <span className="chevron">›</span>
-          </li>
-        ))}
-      </ul>
-      <button className="btn btn-danger" onClick={handleLogout}>Cerrar sesión</button>
-    </div>
+    <>
+      <HeaderSecondLevel
+        title="Perfil"
+        showBackButton
+        onBack={handleBack}
+      />
+      <div className="container page">
+
+        <ul className="profile-menu">
+          {items.map(({ label, route, icon, external }) => (
+            <li key={route} className="profile-menu-item" onClick={() => {
+              external ? window.open(route, '_blank') : navigate(route);
+            }}>
+              <span className="icon">{icon}</span>
+              <span className="label">{label}</span>
+              <span className="chevron">›</span>
+            </li>
+          ))}
+        </ul>
+        <button className="btn btn-danger" onClick={handleLogout}>Cerrar sesión</button>
+      </div>
+    </>
   );
 };
 

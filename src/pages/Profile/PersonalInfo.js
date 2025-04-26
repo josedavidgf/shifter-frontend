@@ -1,15 +1,16 @@
-// src/pages/profile/PersonalInfo.jsx
-
 import React, { useEffect, useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { getFullWorkerProfile, updateWorkerInfo } from '../../services/userService';
 import supabase from '../../config/supabase';
-import BackButton from '../../components/BackButton';
 import InputField from '../../components/ui/InputField/InputField';
+import { useNavigate } from 'react-router-dom';
+import HeaderSecondLevel from '../../components/ui/Header/HeaderSecondLevel';
 
 
 const PersonalInfo = () => {
   const { getToken } = useAuth();
+  const navigate = useNavigate();
+
   const [form, setForm] = useState({
     name: '',
     surname: '',
@@ -70,58 +71,71 @@ const PersonalInfo = () => {
       setMessage('❌ Error al actualizar la información');
     }
   };
+  const handleBack = () => {
+    if (window.history.length > 1) {
+      navigate(-1);
+    } else {
+      navigate('/calendar');
+    }
+  };
 
   return (
-    <div className="container page">
-      <h2 className="mb-3">Información personal</h2>
-      <form onSubmit={handleSubmit}>
-        <InputField
-          name="name"
-          label="Nombre"
-          placeholder="Introduce tu nombre"
-          value={form.name}
-          onChange={handleChange}
-          required
-        />
-        <InputField
-          name="surname"
-          label="Apellidos"
-          placeholder="Introduce tus apellidos"
-          value={form.surname}
-          onChange={handleChange}
-          required
-        />
-        <InputField
-          name="mobile_country_code"
-          label="Prefijo"
-          placeholder="Ej: +34"
-          value={form.mobile_country_code}
-          onChange={handleChange}
-          type="text"
-        />
-        <InputField
-          name="mobile_phone"
-          label="Teléfono"
-          placeholder="Introduce tu teléfono"
-          value={form.mobile_phone}
-          onChange={handleChange}
-          type="tel"
-        />
+    <>
+      <HeaderSecondLevel
+        title="Datos de contacto"
+        showBackButton
+        onBack={handleBack}
+      />
+      <div className="container page">
 
-        <div className="form-group">
-          <label>Imagen de perfil:</label>
-          <input type="file" accept="image/*" onChange={handleAvatarChange} />
-        </div>
+        <form onSubmit={handleSubmit}>
+          <InputField
+            name="name"
+            label="Nombre"
+            placeholder="Introduce tu nombre"
+            value={form.name}
+            onChange={handleChange}
+            required
+          />
+          <InputField
+            name="surname"
+            label="Apellidos"
+            placeholder="Introduce tus apellidos"
+            value={form.surname}
+            onChange={handleChange}
+            required
+          />
+          <InputField
+            name="mobile_country_code"
+            label="Prefijo"
+            placeholder="Ej: +34"
+            value={form.mobile_country_code}
+            onChange={handleChange}
+            type="text"
+          />
+          <InputField
+            name="mobile_phone"
+            label="Teléfono"
+            placeholder="Introduce tu teléfono"
+            value={form.mobile_phone}
+            onChange={handleChange}
+            type="tel"
+          />
 
-        <button type="submit" className="btn btn-primary mt-3">
-          Guardar
-        </button>
-      </form>
+          <div className="form-group">
+            <label>Imagen de perfil:</label>
+            <input type="file" accept="image/*" onChange={handleAvatarChange} />
+          </div>
+
+          <button type="submit" className="btn btn-primary">
+            Guardar
+          </button>
+        </form>
 
 
-      {message && <p className="mt-2">{message}</p>}
-      <BackButton />
-    </div>
+        {message && <p className="mt-2">{message}</p>}
+      </div>
+    </>
   );
 };
 
