@@ -13,4 +13,9 @@ export {
     CloudSun,
     SunHorizon, 
     UserCircle,
+    Envelope,
+    Bell,
+    Password,
+    NotePencil,
+    Heartbeat
   } from 'phosphor-react';
