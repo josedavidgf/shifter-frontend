@@ -1,16 +1,47 @@
 :root {
-    /* Neutrales */
-    --color-black: #171923;
-    --color-white: #FFFFFF;
-    --color-gray-50: #F7FAFC;
-  
-    /* Turnos */
-    --shift-morning: #FFE681;
-    --shift-afternoon: #FFBCE2;
-    --shift-night: #B9C7FF;
-  
-    /* Roles semánticos */
-    --color-background: var(--color-gray-50);
-    --color-text: var(--color-black);
-    --color-primary: var(--color-black); /* Ej: buttons */
-  }
+  /* 🎨 Neutrales */
+  --color-black: #171923;
+  --color-white: #FFFFFF;
+  --color-gray-50: #F7FAFC;
+
+  /* 🕒 Turnos */
+  --shift-morning: #FFE681;
+  --shift-afternoon: #FFBCE2;
+  --shift-night: #B9C7FF;
+
+  /* 🧱 Roles semánticos */
+  --color-background: var(--color-gray-50);
+  --color-text: var(--color-black);
+  --color-primary: var(--color-black);
+
+  /* 🧩 Colores base para botones */
+  --color-primary-hover: #02080e;
+
+  --color-secondary: #553C9A;
+  --color-secondary-hover: #3b237b;
+
+  --color-success: #28a745;
+  --color-success-hover: #18692a;
+
+  --color-danger: #E53E3E;
+  --color-danger-hover: #b73131;
+
+  --color-disabled-bg: #ccc;
+  --color-disabled-text: #666;
+
+  /* 🔘 Botones (usando colores base) */
+  --btn-primary-bg: var(--color-primary);
+  --btn-primary-hover: var(--color-primary-hover);
+
+  --btn-secondary-bg: var(--color-secondary);
+  --btn-secondary-hover: var(--color-secondary-hover);
+
+  --btn-success-bg: var(--color-success);
+  --btn-success-hover: var(--color-success-hover);
+
+  --btn-danger-bg: var(--color-danger);
+  --btn-danger-hover: var(--color-danger-hover);
+
+  --btn-disabled-bg: var(--color-disabled-bg);
+  --btn-disabled-text: var(--color-disabled-text);
+}
