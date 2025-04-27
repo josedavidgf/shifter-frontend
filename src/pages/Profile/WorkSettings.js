@@ -11,7 +11,10 @@ import InputField from '../../components/ui/InputField/InputField';
 import HeaderSecondLevel from '../../components/ui/Header/HeaderSecondLevel';
 import { useNavigate } from 'react-router-dom';
 import Button from '../../components/ui/Button/Button'; // Ajusta ruta si necesario
-import { Buildings } from '../../theme/icons'; // Icono de ejemplo
+import { Briefcase, Buildings } from '../../theme/icons'; // Icono de ejemplo
+import SelectorInput from '../../components/ui/SelectorInput/SelectorInput'; // Ajusta ruta si necesario
+import SearchSelectInput from '../../components/ui/SearchSelectInput/SearchSelectInput';
+
 
 
 const WorkSettings = () => {
@@ -31,8 +34,8 @@ const WorkSettings = () => {
     const [message, setMessage] = useState('');
     const [error, setError] = useState('');
     const { isWorker } = useAuth();
-    const [, setHospitalName] = useState('');
-    const [, setWorkerTypeLabel] = useState('');
+    const [hospitalName, setHospitalName] = useState('');
+    const [workerTypeName, setWorkerTypeLabel] = useState('');
     const navigate = useNavigate();
 
 
@@ -64,8 +67,6 @@ const WorkSettings = () => {
 
             setHospitalName(hospital?.name || response.hospital_id);
             setWorkerTypeLabel(workerType?.worker_type_name || response.worker_type_id);
-
-            setMessage(`Código validado. Nuevo hospital: ${hospital?.name}, Tipo de trabajador: ${workerType?.worker_type_name}`);
             setStep('confirm');
         } catch (err) {
             console.error('❌ Error en handleValidateCode:', err.message);
@@ -77,9 +78,18 @@ const WorkSettings = () => {
 
     const handleLoadSpecialities = async () => {
         const token = await getToken();
+        const hospital = await getHospitals(token);
+        console.log('hospital', hospital);
+        const hospitalId = hospital?.[0]?.hospital_id;
+        if (!hospitalId) {
+            setError('No se encontró el hospital.');
+            return;
+        }
+
         try {
             const data = await getSpecialitiesByHospital(hospitalId, token);
             setSpecialities(data);
+            console.log('specialities data', data);
             setStep('speciality');
         } catch (error) {
             console.error('❌ Error cargando especialidades:', error.message);
@@ -92,7 +102,7 @@ const WorkSettings = () => {
         try {
             const token = await getToken();
             await updateWorkerHospital({ hospital_id: hospitalId }, token);
-            await updateWorkerSpeciality({ speciality_id: selectedSpeciality }, token);
+            await updateWorkerSpeciality({ speciality_id: selectedSpeciality.value }, token);
             await refreshWorkerProfile();
             setMessage('✅ Cambios guardados');
             setStep('view');
@@ -112,6 +122,15 @@ const WorkSettings = () => {
 
     if (!worker) return <p>Cargando datos...</p>;
 
+    const specialityOptions = specialities.map((s) => ({
+        value: s.speciality_id,
+        label: s.speciality_category,
+    }));
+    console.log('worker', worker);
+    console.log('isWorker', isWorker);
+    console.log('specialities', specialities);
+    console.log('specialities', specialityOptions);
+
     return (
         <>
             <HeaderSecondLevel
@@ -125,11 +144,39 @@ const WorkSettings = () => {
 
                     {step === 'view' && (
                         <div>
-                            <p><strong>Hospital actual:</strong> {isWorker.workers_hospitals?.[0]?.hospitals?.name}</p>
-                            <p><strong>Especialidad:</strong> {isWorker.workers_specialities?.[0]?.specialities?.speciality_category} - {worker.workers_specialities?.[0]?.specialities?.speciality_subcategory}</p>
+                            <InputField
+                                name="hospital"
+                                label="Hospital"
+                                value={isWorker.workers_hospitals?.[0]?.hospitals?.name}
+                                disabled
+                                readOnly
+                            />
+                            <InputField
+                                name="worker-type"
+                                label="Profesión"
+                                value={isWorker.worker_types?.worker_type_name}
+                                disabled
+                                readOnly
+                            />
+                            <InputField
+                                name="speciality"
+                                label="Servicio"
+                                value={isWorker.workers_specialities?.[0]?.specialities?.speciality_category + ' - ' + isWorker.workers_specialities?.[0]?.specialities?.speciality_subcategory}
+                                disabled
+                                readOnly
+                            />
+
+                            <Button
+                                label="Cambiar especialidad"
+                                variant="primary"
+                                leftIcon={<Briefcase size={20} />}
+                                size="lg"
+                                onClick={handleLoadSpecialities}
+                            />
+
                             <Button
                                 label="Cambiar hospital"
-                                variant="primary"
+                                variant="outline"
                                 leftIcon={<Buildings size={20} />}
                                 size="lg"
                                 onClick={() => setStep('code')}
@@ -139,7 +186,6 @@ const WorkSettings = () => {
 
                     {step === 'code' && (
                         <form onSubmit={handleValidateCode}>
-                            <label>Introduce el nuevo código de acceso:</label>
                             <InputField
                                 name="access-code"
                                 label="Código de acceso"
@@ -160,7 +206,7 @@ const WorkSettings = () => {
                                     size="lg"
                                     type="submit"
                                     disabled={loadingAccessCode || loadingHospitals || loadingWorkerTypes}
-                                    isLoading={loadingAccessCode || loadingHospitals || loadingWorkerTypes} 
+                                    isLoading={loadingAccessCode || loadingHospitals || loadingWorkerTypes}
                                 />
                                 <Button
                                     label="Cancelar"
@@ -174,8 +220,11 @@ const WorkSettings = () => {
 
                     {step === 'confirm' && (
                         <div>
-                            <p><strong>Nuevo hospital ID:</strong> {hospitalId}</p>
-                            <p><strong>Tipo de trabajador ID:</strong> {workerTypeId}</p>
+                            <h2 className="register-code__title">
+                                El código que has introducido te habilita Tanda como 
+                                <span className="highlight-purple"> {workerTypeName}</span> en 
+                                <span className="highlight-purple"> {hospitalName}</span>
+                            </h2>
                             <div className="btn-group">
                                 <Button
                                     label="Continuar"
@@ -197,15 +246,16 @@ const WorkSettings = () => {
 
                     {step === 'speciality' && (
                         <div>
-                            <label>Selecciona tu especialidad:</label>
-                            <select value={selectedSpeciality} onChange={(e) => setSelectedSpeciality(e.target.value)}>
-                                <option value="">Selecciona una especialidad</option>
-                                {specialities.map((s) => (
-                                    <option key={s.speciality_id} value={s.speciality_id}>
-                                        {s.speciality_category} - {s.speciality_subcategory}
-                                    </option>
-                                ))}
-                            </select>
+                            <h2>Selecciona el servicio en el que trabajas:</h2>
+
+                            <SearchSelectInput
+                                options={specialityOptions}
+                                onSelect={(option) => setSelectedSpeciality(option)}
+                                placeholder="Busca por categoría"
+                                noResultsText="No encontramos servicios que coincidan"
+                                helperText="Selecciona el servicio en el que trabajas"
+                                errorText={error}
+                            />
                             {error && <p style={{ color: 'red' }}>{error}</p>}
                             <div className="btn-group mt-3">
                                 <Button
@@ -213,7 +263,7 @@ const WorkSettings = () => {
                                     variant="primary"
                                     size="lg"
                                     onClick={handleConfirmChanges}
-                                    disabled={loadingUserUpdate}
+                                    disabled={!selectedSpeciality || loadingUserUpdate}
                                     isLoading={loadingUserUpdate}
                                 />
                                 <Button

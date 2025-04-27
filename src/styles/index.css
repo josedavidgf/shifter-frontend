@@ -27,8 +27,10 @@
 @import './components/header-first-level.css';
 @import './components/header-second-level.css';
 @import './components/input-selector.css';
+@import './components/search-select-input.css';
 
 /* Pages */
 @import './pages/calendar.css';
 @import './pages/chat-page.css';
 @import './pages/profile-menu.css';
+@import './pages/workSettings.css';

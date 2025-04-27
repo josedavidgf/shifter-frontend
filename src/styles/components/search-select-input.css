@@ -1,0 +1,96 @@
+.search-select-input {
+    width: 100%;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs, 8px);
+}
+
+.search-select-input__input {
+    width: 100%;
+    padding: var(--space-sm, 14px) var(--space-md, 12px);
+    font-size: var(--font-md, 16px);
+    border-radius: var(--radius-md, 8px);
+    border: 1px solid var(--color-gray-300, #D1D5DB);
+    background-color: var(--color-background, #FFFFFF);
+    color: var(--color-text, #1A202C);
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    gap: 24px;
+}
+
+.search-select-input__input:focus {
+    border-color: var(--color-primary, #3182CE);
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(49, 130, 206, 0.2);
+}
+
+.search-select-input__list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    background: transparent; /* ✅ SIN fondo */
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  
+
+  .search-select-input__item {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    width: 100%;
+    min-height: 52px;
+    padding: 16px;
+    font-size: var(--font-md, 16px);
+    font-weight: var(--font-medium, 500);
+    color: var(--color-text, #1A202C);
+    background-color: var(--color-gray-50, #F7FAFC); /* ✅ */
+    border-radius: var(--radius-md, 12px);
+    transition: background-color 0.2s ease;
+    cursor: pointer;
+  }
+
+.search-select-input__item:hover {
+    background-color: var(--color-primary-light, #EBF8FF);
+}
+
+.search-select-input__item:active {
+    background-color: var(--color-primary-light, #EBF8FF);
+}
+
+.search-select-input__item:last-child {
+    border-bottom: none;
+}
+
+
+.search-select-input__wrapper {
+    position: relative;
+    width: 100%;
+}
+
+.search-select-input__input {
+    width: 100%;
+    padding: var(--space-sm, 12px) var(--space-lg, 16px);
+    font-size: var(--font-md, 16px);
+    border-radius: var(--radius-md, 8px);
+    border: 1px solid var(--color-gray-300, #D1D5DB);
+    background-color: var(--color-background, #FFFFFF);
+    color: var(--color-text, #1A202C);
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    padding-right: 40px;
+    /* Deja espacio para el icono */
+}
+
+.search-select-input__icon {
+    position: absolute;
+    right: var(--space-md, 16px);
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+    color: var(--color-gray-400, #A0AEC0);
+    font-size: 20px;
+    /* Tamaño de icono lupa */
+    height: 20px;
+    width: 20px;
+}

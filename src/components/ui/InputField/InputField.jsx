@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import InputLabel from './InputLabel';
 import InputIcon from './InputIcon';
-import HelperText from './HelperText';
+import HelperText from '../HelperText/HelperText';
 
 const InputField = ({
   name,

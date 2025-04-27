@@ -27,6 +27,7 @@ export {
     Books,
     Gift,
     Buildings,
-    CaretDown
+    CaretDown,
+    MagnifyingGlassPlus,
 
   } from 'phosphor-react';
