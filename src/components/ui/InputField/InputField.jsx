@@ -1,94 +1,90 @@
 import React, { useState } from 'react';
 import InputLabel from './InputLabel';
-import HelperText from './HelperText';
 import InputIcon from './InputIcon';
+import HelperText from './HelperText';
 
 const InputField = ({
   name,
   label,
-  placeholder,
-  value,
-  icon,
-  helperText,
+  type = 'text',
+  value = '',
+  onChange,
+  onClear,
+  required = false,
+  error = false,
+  disabled = false,
+  placeholder = '',
+  helperText = '',
+  errorText = '',
   showCharacterCount = false,
   maxLength,
-  onFocus,
-  onBlur,
-  onChange,
-  disabled = false,
-  multiline = false,
-  rows = 1,
-  showDeleteButton = false,
-  onDeleteButtonPress,
-  errorText,
-  type = 'text',
+  leftIcon,
+  isClearable = false,
+  clearableIcon,
 }) => {
   const [isFocused, setIsFocused] = useState(false);
+
   const filled = typeof value === 'string' && value.trim().length > 0;
-  //const showIcon = icon || (showDeleteButton && filled);
-  const handleFocus = (e) => {
-    setIsFocused(true);
-    onFocus?.(e);
-  };
 
-  const handleBlur = (e) => {
-    setIsFocused(false);
-    onBlur?.(e);
-  };
+  const handleFocus = () => setIsFocused(true);
+  const handleBlur = () => setIsFocused(false);
 
-  const handleDelete = () => {
-    onDeleteButtonPress?.();
+  const handleClear = () => {
+    if (onClear) onClear();
   };
 
   return (
-    <div className=
-        {`input-field ${disabled ? 'disabled' : ''} 
-        ${errorText ? 'error' : ''}`}>
-      <InputLabel 
-        label={label} 
-        focused={isFocused} 
-        filled={filled} 
-        error={!!errorText} />
-
+    <div className={`input-field ${error ? 'error' : ''} ${disabled ? 'disabled' : ''}`}>
       <div className="input-field__wrapper">
-        {multiline ? (
-          <textarea
-            id={name}
-            name={name}
-            rows={rows}
-            value={value || ''}
-            placeholder={placeholder || label}
-            onFocus={handleFocus}
-            onBlur={handleBlur}
-            onChange={onChange}
-            maxLength={maxLength}
-            disabled={disabled}
-            className="input-field__input"
-          />
-        ) : (
-          <input
-            id={name}
-            name={name}
-            type={type}
-            value={value || ''}
-            placeholder={placeholder || label}
-            onFocus={handleFocus}
-            onBlur={handleBlur}
-            onChange={onChange}
-            maxLength={maxLength}
-            disabled={disabled}
-            className="input-field__input"
-          />
-        )}
+        {leftIcon && <InputIcon icon={leftIcon} />}
 
-        <InputIcon showDelete={showDeleteButton && filled} onClick={handleDelete} icon={icon} />
+        <div className="input-field__container">
+          <InputLabel label={label} focused={isFocused} filled={filled} error={error} />
+
+          {type === 'textarea' ? (
+            <textarea
+              id={name}
+              name={name}
+              className="input-field__textarea"
+              value={value}
+              onChange={onChange}
+              onFocus={handleFocus}
+              onBlur={handleBlur}
+              placeholder={placeholder}
+              disabled={disabled}
+              maxLength={maxLength}
+            />
+          ) : (
+            <input
+              id={name}
+              name={name}
+              className="input-field__input"
+              type={type}
+              value={value}
+              onChange={onChange}
+              onFocus={handleFocus}
+              onBlur={handleBlur}
+              placeholder={placeholder}
+              disabled={disabled}
+              maxLength={maxLength}
+            />
+          )}
+
+          {isClearable && filled && (
+            <InputIcon
+              isClearable
+              onClick={handleClear}
+              clearableIcon={clearableIcon}
+            />
+          )}
+        </div>
       </div>
 
       <HelperText
         helperText={helperText}
         errorText={errorText}
         showCounter={showCharacterCount}
-        valueLength={value?.length}
+        valueLength={value.length}
         maxLength={maxLength}
         focused={isFocused}
       />

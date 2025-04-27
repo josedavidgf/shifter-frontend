@@ -26,6 +26,7 @@
 @import './components/input-field.css';
 @import './components/header-first-level.css';
 @import './components/header-second-level.css';
+@import './components/input-selector.css';
 
 /* Pages */
 @import './pages/calendar.css';
