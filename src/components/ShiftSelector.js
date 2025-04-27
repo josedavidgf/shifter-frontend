@@ -1,29 +1,29 @@
-// src/components/ShiftSelector.js
 import React from 'react';
+import SelectorInput from '../components/ui/SelectorInput/SelectorInput'; // Ajusta ruta si necesario
 
-function ShiftSelector({ shifts, onSelect }) {
-
+function ShiftSelector({ shifts, selectedShiftId, onSelect }) {
   const handleChange = (e) => {
-    const selectedShiftId = e.target.value;
-    const selectedShift = shifts.find(shift => shift.id === selectedShiftId);
+    const selectedId = e.target.value;
+    const selectedShift = shifts.find(shift => shift.id === selectedId);
     if (selectedShift) {
       onSelect(selectedShift);
     }
   };
 
+  const options = shifts.map((shift) => ({
+    value: shift.id,
+    label: `${formatDate(shift.date)} - ${translateType(shift.type)}${shift.indicator === 'received' ? ' ✅' : ''}`,
+  }));
+
   return (
-    <div>
-      <label>Turno que ofreces:</label>
-      <select onChange={handleChange} defaultValue="">
-        <option value="" disabled>Selecciona un turno</option>
-        {shifts.map((shift) => (
-          <option key={shift.id} value={shift.id}>
-            {formatDate(shift.date)} - {translateType(shift.type)}
-            {shift.indicator === 'received' ? ' ✅' : ''}
-          </option>
-        ))}
-      </select>
-    </div>
+      <SelectorInput
+        name="shift"
+        label="Turno que ofreces"
+        value={selectedShiftId}
+        onChange={handleChange}
+        options={options}
+        required
+      />
   );
 }
 

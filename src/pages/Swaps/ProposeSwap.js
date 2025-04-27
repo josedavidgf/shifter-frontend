@@ -18,9 +18,15 @@ const ProposeSwap = () => {
   const { shifts, loading, error } = useAvailableShifts();
 
   const [selectedShift, setSelectedShift] = useState(null);
+  const [selectedShiftId, setSelectedShiftId] = useState('');
   const [swapComments, setSwapComments] = useState('');
 
   useTrackPageView('propose-swap');
+
+  const handleSelectShift = (shift) => {
+    setSelectedShift(shift);
+    setSelectedShiftId(shift.id); // 🔥 Guardamos el ID seleccionado
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -87,8 +93,11 @@ const ProposeSwap = () => {
       <div className="page page-secondary">
         <div className="container">
           <form onSubmit={handleSubmit} className="propose-form">
-            <ShiftSelector shifts={shifts} onSelect={setSelectedShift} />
-
+            <ShiftSelector
+              shifts={shifts}
+              selectedShiftId={selectedShiftId}
+              onSelect={handleSelectShift}
+            />
             <div className="form-group">
               <label>Comentarios:</label>
               <textarea

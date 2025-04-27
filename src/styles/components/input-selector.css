@@ -1,0 +1,98 @@
+.input-selector {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    width: 100%;
+}
+
+.input-selector__wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 100%;
+}
+
+.input-selector__select {
+    width: 100%;
+    padding: 14px 12px 6px 12px;
+    font-size: var(--font-md, 16px);
+    font-weight: 400;
+    border-radius: 8px;
+    border: 1px solid var(--color-gray-300, #D1D5DB);
+    background-color: var(--color-white, #FFFFFF);
+    color: var(--color-gray-900, #1A202C);
+    appearance: none;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    background-size: 16px 16px;
+}
+
+.input-selector__select:focus {
+    border-color: var(--color-primary, #3182CE);
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(49, 130, 206, 0.2);
+}
+
+.input-selector.error .input-selector__select {
+    border-color: var(--color-danger, #E53E3E);
+}
+
+.input-selector.disabled .input-selector__select {
+    background-color: var(--color-gray-100, #F7FAFC);
+    cursor: not-allowed;
+}
+
+.input-selector__label {
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: var(--font-md, 16px);
+    color: var(--color-gray-500, #A0AEC0);
+    background: var(--color-white, #FFFFFF);
+    padding: 0 4px;
+    pointer-events: none;
+    transition: top 0.2s ease, font-size 0.2s ease, color 0.2s ease, transform 0.2s ease;
+    z-index: 1;
+}
+
+.input-selector__label--focused,
+.input-selector__label--filled {
+    top: -8px;
+    font-size: var(--font-xs, 12px);
+    color: var(--color-primary, #3182CE);
+    transform: translateY(0);
+}
+
+.input-selector__label--error {
+    color: var(--color-danger, #E53E3E);
+}
+
+.input-selector__helper {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 4px;
+    font-size: var(--font-xs, 12px);
+}
+
+.input-selector__helper-text {
+    color: var(--color-gray-600, #718096);
+}
+
+.input-selector__error-text {
+    color: var(--color-danger, #E53E3E);
+}
+
+.input-selector__caret {
+    position: absolute;
+    right: 12px;
+    pointer-events: none;
+    color: var(--color-gray-600, #718096);
+    transition: color 0.2s ease;
+}
+
+/* 🔥 Cuando el contenedor tiene la clase disabled */
+.input-selector.disabled .input-selector__caret {
+    color: var(--color-gray-400, #A0AEC0);
+}

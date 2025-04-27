@@ -26,6 +26,7 @@ export {
     File,
     Books,
     Gift,
-    Buildings
+    Buildings,
+    CaretDown
 
   } from 'phosphor-react';
