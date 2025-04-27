@@ -1,34 +1,31 @@
-// src/hooks/useAvailableShifts.js
+// src/api/useAvailableShifts.js
 import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { getMyAvailableShifts } from '../services/shiftService';
+import { useShiftApi } from '../api/useShiftApi'; // ✅ Hook limpio
 
 const useAvailableShifts = () => {
   const { isWorker, getToken } = useAuth();
+  const { getMyAvailableShifts, loading, error } = useShiftApi(); // 🆕
   const [shifts, setShifts] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
 
   useEffect(() => {
     if (!isWorker) return;
-    const fetchShifts = async () => {
+    async function fetchAvailableShifts() {
       try {
-        const workerId = isWorker.worker_id;
         const token = await getToken();
+        const workerId = isWorker.worker_id;
         const availableShifts = await getMyAvailableShifts(workerId, token);
-        availableShifts.sort((a, b) => new Date(a.date) - new Date(b.date));
-
-        setShifts(availableShifts); // ✅ ya vienen filtrados
+        if (availableShifts) {
+          availableShifts.sort((a, b) => new Date(a.date) - new Date(b.date));
+          setShifts(availableShifts);
+        }
       } catch (err) {
-        console.error('Error fetching available shifts:', err.message);
-        setError('No se pudieron cargar los turnos disponibles.');
-      } finally {
-        setLoading(false);
+        console.error('❌ Error fetching available shifts:', err.message);
       }
-    };
+    }
 
-    fetchShifts();
-  }, [getToken,isWorker]);
+    fetchAvailableShifts();
+  }, [getToken, isWorker]); // ✅ Solo dependencias estables
 
   return { shifts, loading, error };
 };

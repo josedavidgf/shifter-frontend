@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { useNavigate, Navigate } from 'react-router-dom';
-import { validateAccessCode } from '../../services/accessCodeService';
+import { useAccessCodeApi } from '../../api/useAccessCodeApi';
+import { useHospitalApi } from '../../api/useHospitalApi';
 import { useAuth } from '../../context/AuthContext';
-import { getHospitals } from '../../services/hospitalService';
-import { getWorkerTypes } from '../../services/workerService';
+import { useWorkerApi } from '../../api/useWorkerApi';
 import InputField from '../../components/ui/InputField/InputField';
 import HeaderSecondLevel from '../../components/ui/Header/HeaderSecondLevel';
 import Button from '../../components/ui/Button/Button'; // Ajusta ruta si necesario
@@ -12,6 +12,10 @@ import Button from '../../components/ui/Button/Button'; // Ajusta ruta si necesa
 export default function OnboardingCodeStep() {
   const [code, setCode] = useState('');
   const { getToken } = useAuth();
+  const { validateAccessCode, loading: loadingAccessCode, error: errorAccessCode } = useAccessCodeApi();
+  const { getHospitals, loading: loadingHospitals, error: errorHospitals } = useHospitalApi();
+  const { getWorkerTypes, loading: loadingWorkerTypes, error: errorWorkerTypes } = useWorkerApi(); // Ya lo tienes
+
   const [error, setError] = useState('');
   const navigate = useNavigate();
   const { loading, isWorker } = useAuth();
@@ -57,6 +61,8 @@ export default function OnboardingCodeStep() {
     }
   };
 
+  
+
   const handleBack = () => {
     if (window.history.length > 1) {
       navigate(-1);
@@ -90,6 +96,11 @@ export default function OnboardingCodeStep() {
               errorMessage="El código de acceso es obligatorio"
             />
             {error && <p style={{ color: 'red' }}>{error}</p>}
+            {errorWorkerTypes && <p style={{ color: 'red' }}>{errorWorkerTypes}</p>}
+            {errorAccessCode && <p style={{ color: 'red' }}>{errorAccessCode}</p>}
+            {errorHospitals && <p style={{ color: 'red' }}>{errorHospitals}</p>}
+            {loadingAccessCode && <p>Cargando...</p>}
+            {loadingHospitals && <p>Cargando hospitales...</p>}
 
             <Button
               label="Validar código"
@@ -97,6 +108,7 @@ export default function OnboardingCodeStep() {
               size="lg"
               type="submit"
               disabled={!code}
+              isLoading={loadingWorkerTypes} // 🆕
             />
           </form>
         </div>

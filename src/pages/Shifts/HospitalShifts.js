@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
-import { getHospitalShifts } from '../../services/shiftService';
-import { getMyWorkerProfile } from '../../services/workerService';
+import { useShiftApi } from '../../api/useShiftApi'; // ✅
+import { useWorkerApi } from '../../api/useWorkerApi';
+import { useSwapApi } from '../../api/useSwapApi';
 import HospitalShiftsTable from '../../components/HospitalShiftsTable';
-import { getSentSwaps } from '../../services/swapService';
 import useTrackPageView from '../../hooks/useTrackPageView';
 import HeaderFirstLevel from '../../components/ui/Header/HeaderFirstLevel';
 
@@ -11,11 +11,14 @@ import HeaderFirstLevel from '../../components/ui/Header/HeaderFirstLevel';
 
 const HospitalShifts = () => {
     const { getToken } = useAuth();
+    const { getHospitalShifts, loading: loadingShifts, error: errorShifts } = useShiftApi(); // 🆕
+    const { getMyWorkerProfile } = useWorkerApi();
+    const { getSentSwaps } = useSwapApi();
     const [shifts, setShifts] = useState([]);
-    const [error, setError] = useState(null);
     const [workerId, setWorkerId] = useState(null);
     const [sentSwaps, setSentSwaps] = useState([]);
     const [profile, setProfile] = useState(null);
+    const [loadingProfile, setLoadingProfile] = useState(false);
 
 
     useTrackPageView('hospital-shifts');
@@ -23,37 +26,46 @@ const HospitalShifts = () => {
     useEffect(() => {
         async function fetchData() {
             try {
+                setLoadingProfile(true);
                 const token = await getToken();
-                const hospitalShifts = await getHospitalShifts(token);
-                const profile = await getMyWorkerProfile(token);
-                const swaps = await getSentSwaps(token); // 👈 nuevo
-                setProfile(profile);
-                setWorkerId(profile.worker_id);
-                setShifts(hospitalShifts);
-                setSentSwaps(swaps.map(s => s.shift_id)); // 👈 solo ids para comparar fácilmente
+                const [hospitalShiftsData, profileData, sentSwapsData] = await Promise.all([
+                    getHospitalShifts(token),
+                    getMyWorkerProfile(token),
+                    getSentSwaps(token),
+                ]);
+
+                setProfile(profileData);
+                setWorkerId(profileData.worker_id);
+                setShifts(hospitalShiftsData);
+                setSentSwaps(sentSwapsData.map(s => s.shift_id));
             } catch (err) {
-                setError('Error al cargar los turnos del hospital');
+                console.error('❌ Error al cargar datos de hospital:', err.message);
+            } finally {
+                setLoadingProfile(false);
             }
         }
+
         fetchData();
-    }, [getToken]);
+    }, [getToken]); // ✅ solo dependemos de getToken, que es estable
 
-    // ⚠️ PROTECCIÓN OBLIGATORIA
-    if (!profile) return <p>Cargando perfil...</p>;
 
-    // ✅ YA SE PUEDE ACCEDER
-    //const hospitalName = profile.workers_hospitals?.[0]?.hospitals?.name;
-    //const specialityCategory = profile.workers_specialities?.[0]?.specialities?.speciality_category;
-    //const specialitySubcategory = profile.workers_specialities?.[0]?.specialities?.speciality_subcategory;
+    if (loadingProfile || loadingShifts) {
+        return <p>Cargando turnos disponibles...</p>;
+    }
+
+    if (errorShifts) {
+        return <p style={{ color: 'red' }}>{errorShifts}</p>;
+    }
+
+    if (!profile) {
+        return <p>No se pudo cargar tu perfil.</p>;
+    }
 
     return (
         <>
-            <HeaderFirstLevel
-                title="Turnos disponibles"
-            />
-            <div className="pag page-primary">
+            <HeaderFirstLevel title="Turnos disponibles" />
+            <div className="page page-primary">
                 <div className="container">
-                    {error && <p style={{ color: 'red' }}>{error}</p>}
                     {shifts.length === 0 ? (
                         <p>No hay turnos disponibles en tu hospital.</p>
                     ) : (

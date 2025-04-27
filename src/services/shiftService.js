@@ -1,128 +1,153 @@
+// src/services/shiftService.js
 import axios from 'axios';
 import { getShiftsForMonth } from './calendarService';
 import { getAcceptedSwaps } from './swapService';
 
 const API_URL = process.env.REACT_APP_BACKEND_URL;
 
+// Utilidad interna para capturar errores
+const handleError = (error, defaultMessage = 'Error en la operación') => {
+  if (axios.isAxiosError(error)) {
+    return error.response?.data?.message || defaultMessage;
+  }
+  return defaultMessage;
+};
 
+const authHeaders = (token) => ({
+  headers: { Authorization: `Bearer ${token}` },
+});
+
+// Crear turno
 export const createShift = async (data, token) => {
-  const response = await axios.post(`${API_URL}/api/shifts`, data, {
-    headers: { Authorization: `Bearer ${token}` },
-  });
-  return response.data;
+  try {
+    const response = await axios.post(`${API_URL}/api/shifts`, data, authHeaders(token));
+    return response.data.data;
+  } catch (error) {
+    throw new Error(handleError(error, 'Error al crear turno'));
+  }
 };
 
+// Obtener mis turnos
 export const getMyShifts = async (token) => {
-  const response = await axios.get(`${API_URL}/api/shifts/mine`, {
-    headers: { Authorization: `Bearer ${token}` },
-  });
-  return response.data.data;
+  try {
+    const response = await axios.get(`${API_URL}/api/shifts/mine`, authHeaders(token));
+    return response.data.data;
+  } catch (error) {
+    throw new Error(handleError(error, 'Error al cargar mis turnos'));
+  }
 };
 
+// Obtener mis turnos publicados
 export const getMyShiftsPublished = async (token) => {
-  const response = await axios.get(`${API_URL}/api/shifts/mine-published`, {
-    headers: { Authorization: `Bearer ${token}` },
-  });
-  return response.data.data;
+  try {
+    const response = await axios.get(`${API_URL}/api/shifts/mine-published`, authHeaders(token));
+    return response.data.data;
+  } catch (error) {
+    throw new Error(handleError(error, 'Error al cargar mis turnos publicados'));
+  }
 };
 
+// Obtener turno por ID -- PUEDE DEPRECARSE
 export const getShiftById = async (id, token) => {
-  const response = await axios.get(`${API_URL}/api/shifts/${id}`, {
-    headers: { Authorization: `Bearer ${token}` },
-  });
-  return response.data.data;
+  try {
+    const response = await axios.get(`${API_URL}/api/shifts/${id}`, authHeaders(token));
+    return response.data.data;
+  } catch (error) {
+    throw new Error(handleError(error, 'Error al cargar el turno'));
+  }
 };
 
+// Actualizar turno --- PUEDE DEPRECARSE
 export const updateShift = async (id, updates, token) => {
-  const response = await axios.patch(`${API_URL}/api/shifts/${id}`, updates, {
-    headers: { Authorization: `Bearer ${token}` },
-  });
-  return response.data.data;
+  try {
+    const response = await axios.patch(`${API_URL}/api/shifts/${id}`, updates, authHeaders(token));
+    return response.data.data;
+  } catch (error) {
+    throw new Error(handleError(error, 'Error al actualizar turno'));
+  }
 };
 
+// Eliminar turno (soft delete)
 export const removeShift = async (id, token) => {
-  const response = await axios.patch(`${API_URL}/api/shifts/${id}/remove`, null, {
-    headers: { Authorization: `Bearer ${token}` },
-  });
-  return response.data.data;
+  try {
+    const response = await axios.patch(`${API_URL}/api/shifts/${id}/remove`, null, authHeaders(token));
+    return response.data.data;
+  } catch (error) {
+    throw new Error(handleError(error, 'Error al eliminar turno'));
+  }
 };
 
+// Obtener turnos del hospital
 export const getHospitalShifts = async (token) => {
-  const response = await axios.get(`${API_URL}/api/shifts/hospital`, {
-    headers: { Authorization: `Bearer ${token}` },
-  });
-  return response.data.data;
-}
-// Obtener las preferencias de un turno
-export async function getShiftPreferencesByShiftId(shiftId, token) {
-  const response = await fetch(`${API_URL}/api/shifts/${shiftId}/preferences`, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
+  try {
+    const response = await axios.get(`${API_URL}/api/shifts/hospital`, authHeaders(token));
+    return response.data.data;
+  } catch (error) {
+    throw new Error(handleError(error, 'Error al cargar turnos de hospital'));
+  }
+};
 
-  const result = await response.json();
-  if (!response.ok) throw new Error(result.message || 'Error al cargar preferencias');
-  return result.data;
-}
+// Obtener preferencias de un turno --- PUEDE DEPRECARSE
+export const getShiftPreferencesByShiftId = async (shiftId, token) => {
+  try {
+    const response = await axios.get(`${API_URL}/api/shifts/${shiftId}/preferences`, authHeaders(token));
+    return response.data.data;
+  } catch (error) {
+    throw new Error(handleError(error, 'Error al cargar preferencias del turno'));
+  }
+};
 
 // Actualizar preferencias de un turno
-export async function updateShiftPreferences(shiftId, preferences, token) {
-  const response = await fetch(`${API_URL}/api/shifts/${shiftId}/preferences`, {
-    method: 'PUT',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`,
-    },
-    body: JSON.stringify({ preferences }),
-  });
-
-  const result = await response.json();
-  if (!response.ok) throw new Error(result.message || 'Error al actualizar preferencias');
-  return result.data;
-}
-
-export async function expireOldShifts(token) {
+export const updateShiftPreferences = async (shiftId, preferences, token) => {
   try {
-    const response = await axios.patch(`${API_URL}/api/shifts/expire-old`, null, {
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
-    });
-    return response.data;
-  } catch (err) {
-    console.error('❌ Error al expirar turnos:', err.message);
-    throw err;
+    const response = await axios.put(`${API_URL}/api/shifts/${shiftId}/preferences`, { preferences }, authHeaders(token));
+    return response.data.data;
+  } catch (error) {
+    throw new Error(handleError(error, 'Error al actualizar preferencias del turno'));
   }
-}
+};
 
-export async function getMyAvailableShifts(workerId, token) {
-  const [myShifts, acceptedSwaps] = await Promise.all([
-    getShiftsForMonth(workerId), // Esto ya usa worker_id internamente
-    getAcceptedSwaps(token)
-  ]);
+// Expirar turnos antiguos
+export const expireOldShifts = async (token) => {
+  try {
+    const response = await axios.patch(`${API_URL}/api/shifts/expire-old`, null, authHeaders(token));
+    return response.data;
+  } catch (error) {
+    throw new Error(handleError(error, 'Error al expirar turnos'));
+  }
+};
 
-  const now = new Date();
+// Obtener turnos disponibles propios y recibidos
+export const getMyAvailableShifts = async (workerId, token) => {
+  try {
+    const [myShifts, acceptedSwaps] = await Promise.all([
+      getShiftsForMonth(workerId),
+      getAcceptedSwaps(token),
+    ]);
 
-  // Mapeamos turnos propios
-  const ownShifts = (myShifts || [])
-    .filter(shift => new Date(shift.date) >= now)
-    .map(shift => ({
-      id: `${shift.date}_${shift.shift_type}`,
-      date: shift.date,
-      type: shift.shift_type,
-      label: shift.shift_label,
-    }));
+    const now = new Date();
 
-  const receivedShifts = (acceptedSwaps || [])
-    .filter(swap => swap.offered_date && new Date(swap.offered_date) >= now)
-    .map(swap => ({
-      id: `${swap.offered_date}_${swap.offered_type}`,
-      date: swap.offered_date,
-      type: swap.offered_type,
-      label: swap.offered_label,
-      indicator: 'received',
-    }));
+    const ownShifts = (myShifts || [])
+      .filter(shift => new Date(shift.date) >= now)
+      .map(shift => ({
+        id: `${shift.date}_${shift.shift_type}`,
+        date: shift.date,
+        type: shift.shift_type,
+        label: shift.shift_label,
+      }));
 
-  return [...ownShifts, ...receivedShifts];
-}
+    const receivedShifts = (acceptedSwaps || [])
+      .filter(swap => swap.offered_date && new Date(swap.offered_date) >= now)
+      .map(swap => ({
+        id: `${swap.offered_date}_${swap.offered_type}`,
+        date: swap.offered_date,
+        type: swap.offered_type,
+        label: swap.offered_label,
+        indicator: 'received',
+      }));
+
+    return [...ownShifts, ...receivedShifts];
+  } catch (error) {
+    throw new Error(handleError(error, 'Error al cargar turnos disponibles'));
+  }
+};

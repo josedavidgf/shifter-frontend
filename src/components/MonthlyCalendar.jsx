@@ -1,16 +1,24 @@
 // src/components/MonthlyCalendar.jsx (actualizado)
 import { useEffect, useState, useRef } from 'react';
 import { format, startOfMonth, endOfMonth, eachDayOfInterval, /* isSameDay, */ parseISO } from 'date-fns';
-import { getShiftsForMonth, setShiftForDay, removeShiftForDay, getDayOffset } from '../services/calendarService';
-import { getAcceptedSwaps } from '../services/swapService';
-import { getMyShiftsPublished, removeShift } from '../services/shiftService';
-import { getMySwapPreferences, createSwapPreference, deleteSwapPreference, updateSwapPreference } from '../services/swapPreferencesService';
+import { useCalendarApi } from '../api/useCalendarApi';
+import { useSwapPreferencesApi } from '../api/useSwapPreferencesApi';
+import { useSwapApi } from '../api/useSwapApi'; // Ya lo tenías
+import { useShiftApi } from '../api/useShiftApi'; // Ya lo tenías
+import { getDayOffset } from '../services/calendarService';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import MonthSelector from './MonthSelector';
 import { motion, AnimatePresence } from 'framer-motion';
 import Button from '../components/ui/Button/Button'; // Ajusta ruta si necesario
-import { Lightning } from '../theme/icons';
+import { buildMassiveUpdates } from '../utils/buildMassiveUpdates'; // ✅ Nuevo import
+import { getNextShiftType } from '../utils/getNextShiftType';
+import { getNextPreferenceType } from '../utils/getNextPreferenceType';
+import DayDetailMyShift from './DayDetails/DayDetailMyShift';
+import DayDetailPreference from './DayDetails/DayDetailPreference';
+import DayDetailReceived from './DayDetails/DayDetailReceived';
+import DayDetailSwapped from './DayDetails/DayDetailSwapped';
+import DayDetailEmpty from './DayDetails/DayDetailEmpty';
 
 
 
@@ -22,12 +30,6 @@ function getShiftLabel(shift) {
       return '🌤️';
     case 'night':
       return '🌛';
-    case 'morning_afternoon':
-      return 'MT';
-    case 'morning_night':
-      return 'MN';
-    case 'afternoon_night':
-      return 'TN';
     case 'reinforcement':
       return '🛡️';
     default:
@@ -75,6 +77,12 @@ function MonthlyCalendar() {
   const today = format(new Date(), 'yyyy-MM-dd'); // formato '2025-04-22'
   const stats = computeShiftStats(isMassiveEditMode ? draftShiftMap : shiftMap, selectedMonth);
   const detailRef = useRef(null);
+  const { getShiftsForMonth, setShiftForDay, removeShiftForDay, loading: loadingCalendar, error: errorCalendar } = useCalendarApi();
+  const { getMySwapPreferences, createSwapPreference, deleteSwapPreference, updateSwapPreference, loading: loadingSwapPreferences, error: errorSwapPreferences } = useSwapPreferencesApi();
+  const { getAcceptedSwaps } = useSwapApi();
+  const { getMyShiftsPublished, removeShift } = useShiftApi();
+
+
   useEffect(() => {
     async function initialize() {
       if (isWorker) {
@@ -97,32 +105,36 @@ function MonthlyCalendar() {
 
   async function fetchCalendar(workerId, token) {
     try {
-      setIsLoadingCalendar(true); // 🛠️ Empezamos carga
-      /* const [year, month] = selectedMonth.split('-');
-      const start = startOfMonth(new Date(year, month - 1));
-      const end = endOfMonth(start);
-      const days = eachDayOfInterval({ start, end });
-      setMonthDays(days); */
-
-      // Aquí se obtiene el calendario del mes seleccionado
-      const [shiftsForMonth, publishedShifts, acceptedSwaps, preferences] = await Promise.all([
-        getShiftsForMonth(workerId),
-        getMyShiftsPublished(token),
-        getAcceptedSwaps(token),
-        getMySwapPreferences(workerId)
+      setIsLoadingCalendar(true);
+  
+      const results = await Promise.allSettled([
+        getShiftsForMonth(workerId),             // ✅ useCalendarApi
+        getMyShiftsPublished(token),              // ✅ useShiftApi
+        getAcceptedSwaps(token),                  // ✅ useSwapApi
+        getMySwapPreferences(workerId),           // ✅ useSwapPreferencesApi
       ]);
-
+  
+      const shiftsForMonth = results[0].status === 'fulfilled' ? results[0].value : [];
+      const publishedShifts = results[1].status === 'fulfilled' ? results[1].value : [];
+      const acceptedSwaps = results[2].status === 'fulfilled' ? results[2].value : [];
+      const preferences = results[3].status === 'fulfilled' ? results[3].value : [];
+  
+      if (results[0].status === 'rejected') console.error('❌ Error cargando turnos del mes:', results[0].reason.message);
+      if (results[1].status === 'rejected') console.error('❌ Error cargando turnos publicados:', results[1].reason.message);
+      if (results[2].status === 'rejected') console.error('❌ Error cargando swaps aceptados:', results[2].reason.message);
+      if (results[3].status === 'rejected') console.error('❌ Error cargando preferencias:', results[3].reason.message);
+  
       const enrichedMap = {};
-
+  
       (shiftsForMonth || []).forEach(({ date, shift_type }) => {
         enrichedMap[date] = { shift_type: shift_type, isMyShift: true };
       });
-
+  
       (publishedShifts || []).forEach(({ date, shift_type, shift_id }) => {
         enrichedMap[date] = { shift_id: shift_id, shift_type: shift_type, isMyShift: true, isPublished: true };
       });
-
-      acceptedSwaps.forEach(({ requester, offered_date, offered_type, shift }) => {
+  
+      (acceptedSwaps || []).forEach(({ requester, offered_date, offered_type, shift }) => {
         if (offered_date) {
           enrichedMap[offered_date] = {
             ...enrichedMap[offered_date],
@@ -132,7 +144,6 @@ function MonthlyCalendar() {
             isReceived: true
           };
         }
-
         if (shift && shift.date) {
           enrichedMap[shift.date] = {
             ...enrichedMap[shift.date],
@@ -141,29 +152,29 @@ function MonthlyCalendar() {
           };
         }
       });
-
-
+  
       (preferences || []).forEach(({ preference_id, date, preference_type }) => {
         if (!enrichedMap[date]) enrichedMap[date] = {};
-
+  
         enrichedMap[date] = {
           ...enrichedMap[date],
           isPreference: true,
           preferenceId: preference_id,
           preference_type: preference_type,
-          // 💥 importante
         };
       });
-
-      // Guardamos sólo lo filtrado
+  
       setShiftMap(enrichedMap);
-
+  
     } catch (error) {
-      console.error('❌ Error en fetchCalendar:', error.message);
+      console.error('❌ Error general en fetchCalendar:', error.message);
     } finally {
-      setIsLoadingCalendar(false); // 🛠️ Finalizamos carga
+      setIsLoadingCalendar(false);
     }
   }
+  
+  
+
   useEffect(() => {
   }, [shiftMap]);
 
@@ -233,100 +244,58 @@ function MonthlyCalendar() {
 
   async function handleSaveMassiveEdit() {
     try {
-      const updates = [];
-
-      for (const [date, entry] of Object.entries(draftShiftMap)) {
-        const originalEntry = shiftMap[date] || {};
-
-        if (JSON.stringify(entry) !== JSON.stringify(originalEntry)) {
-          if (entry.isMyShift && entry.shift_type) {
-            updates.push(setShiftForDay(isWorker.worker_id, date, entry.shift_type));
-          } else if (!entry.isMyShift && originalEntry.isMyShift) {
-            updates.push(removeShiftForDay(isWorker.worker_id, date));
-          }
-        }
-      }
-
+      const updates = buildMassiveUpdates(draftShiftMap, shiftMap, isWorker.worker_id);
+  
       await Promise.all(updates);
-
-      setShiftMap(draftShiftMap); // Actualizamos el calendario real
+  
+      setShiftMap(draftShiftMap);
       setDraftShiftMap(null);
       setIsMassiveEditMode(false);
-
+  
     } catch (error) {
-      console.error('Error guardando cambios:', error.message);
+      console.error('Error guardando cambios masivos:', error.message);
     }
   }
+  
 
   async function toggleShift(dateStr) {
     const entry = shiftMap[dateStr] || {};
-    let newType = 'morning'; // El tipo inicial
-
-    // Rotamos entre los turnos disponibles
-    switch (entry.shift_type) {
-      case 'morning':
-        newType = 'evening';
-        break;
-      case 'evening':
-        newType = 'night';
-        break;
-      case 'night':
-        newType = 'morning_afternoon';
-        break;
-      case 'morning_afternoon':
-        newType = 'morning_night';
-        break;
-      case 'morning_night':
-        newType = 'afternoon_night';
-        break;
-      case 'afternoon_night':
-        newType = 'reinforcement';
-        break;
-      case 'reinforcement':
-        newType = 'morning';
-        break;
-      default:
-        newType = 'morning'; // Si no tiene tipo, empieza en "morning"
-    }
-
+    const newType = getNextShiftType(entry.shift_type);
+  
     const updatedEntry = { ...entry };
-
+  
     if (newType) {
       updatedEntry.isMyShift = true;
       updatedEntry.shift_type = newType;
     } else {
-      delete updatedEntry?.isMyShift;
-      delete updatedEntry?.shift_type;
+      delete updatedEntry.isMyShift;
+      delete updatedEntry.shift_type;
     }
-
+  
     setShiftMap(prev => ({
       ...prev,
       [dateStr]: updatedEntry,
     }));
-
-    // Guardar en Supabase (o cualquier base de datos que utilices)
+  
     try {
       if (newType) {
-        await setShiftForDay(isWorker.worker_id, dateStr, newType);
+        await setShiftForDay(isWorker.worker_id, dateStr, newType); // ✅ Desde useCalendarApi
       } else {
-        await removeShiftForDay(isWorker.worker_id, dateStr);
+        await removeShiftForDay(isWorker.worker_id, dateStr); // ✅ Desde useCalendarApi
       }
-    } catch (err) {
-      console.error('Error saving shift:', err.message);
+    } catch (error) {
+      console.error('❌ Error gestionando turno:', error.message);
     }
   }
+  
+  
 
   async function togglePreference(dateStr) {
-
     const entry = shiftMap[dateStr] || {};
-    let newTypePreference = 'morning';
-
-    if (entry.preference_type === 'morning') newTypePreference = 'evening';
-    else if (entry.preference_type === 'evening') newTypePreference = 'night';
-    else if (entry.preference_type === 'night') newTypePreference = undefined; // Borrar preferencia
-
+    const newTypePreference = getNextPreferenceType(entry.preference_type);
+  
     const updatedEntry = { ...entry };
-
+  
     if (newTypePreference) {
       updatedEntry.isPreference = true;
       updatedEntry.preference_type = newTypePreference;
@@ -334,19 +303,17 @@ function MonthlyCalendar() {
       delete updatedEntry.isPreference;
       delete updatedEntry.preference_type;
     }
-
+  
     setShiftMap(prev => ({
       ...prev,
       [dateStr]: updatedEntry,
-
     }));
-    // Guardar en Supabase
+  
     try {
       if (newTypePreference) {
-        // ✅ Solo guardamos si realmente cambió
         if (entry.preference_type !== newTypePreference) {
           if (entry.preferenceId) {
-            await updateSwapPreference(entry.preferenceId, newTypePreference);
+            await updateSwapPreference(entry.preferenceId, newTypePreference); // ✅ Desde useSwapPreferencesApi
           } else {
             const preferenceCreated = await createSwapPreference({
               worker_id: isWorker.worker_id,
@@ -355,7 +322,7 @@ function MonthlyCalendar() {
               hospital_id: isWorker.workers_hospitals?.[0]?.hospital_id,
               speciality_id: isWorker.workers_specialities?.[0]?.speciality_id,
             });
-
+  
             setShiftMap(prev => ({
               ...prev,
               [dateStr]: {
@@ -367,24 +334,95 @@ function MonthlyCalendar() {
         }
       } else {
         if (entry.preferenceId) {
-          await deleteSwapPreference(entry.preferenceId);
+          await deleteSwapPreference(entry.preferenceId); // ✅ Desde useSwapPreferencesApi
         }
       }
     } catch (error) {
-      console.error('Error gestionando preferencia:', error.message);
+      console.error('❌ Error gestionando preferencia:', error.message);
     }
   }
+  
+  async function handleDeletePreference(dateStr) {
+    const entry = shiftMap[dateStr];
+  
+    if (!entry?.preferenceId) {
+      console.error('No existe preferencia para eliminar.');
+      return;
+    }
+  
+    try {
+      await deleteSwapPreference(entry.preferenceId); // ✅ desde useSwapPreferencesApi
+  
+      const updatedEntry = { ...entry };
+      delete updatedEntry.isPreference;
+      delete updatedEntry.preferenceId;
+      delete updatedEntry.preference_type;
+  
+      setShiftMap(prev => ({
+        ...prev,
+        [dateStr]: updatedEntry,
+      }));
+    } catch (error) {
+      console.error('❌ Error al eliminar preferencia:', error.message);
+    }
+  }
+  
 
   async function handleDeletePublication(shiftId, dateStr) {
     try {
-      const token = await getToken();
-      await removeShift(shiftId, token); // Esta sería tu función para "despublicar"
-      await fetchCalendar(isWorker.worker_id, token);
-      setSelectedDay(dateStr);
+      const success = await removeShift(shiftId); // ✅ usando useShiftApi
+  
+      if (success) {
+        const updatedEntry = { ...shiftMap[dateStr] };
+        delete updatedEntry.isPublished;
+        delete updatedEntry.shift_id;
+  
+        setShiftMap(prev => ({
+          ...prev,
+          [dateStr]: updatedEntry,
+        }));
+      }
     } catch (error) {
-      console.error('Error quitando publicación:', error.message);
+      console.error('❌ Error al eliminar publicación:', error.message);
     }
   }
+
+  // Función para Publicar un turno de un día específico de forma rápida
+/*   async function handlePublishShift(dateStr) {
+    try {
+      const entry = shiftMap[dateStr];
+  
+      if (!entry?.shift_type) {
+        console.error('No se puede publicar turno sin tipo definido.');
+        return;
+      }
+  
+      const payload = {
+        worker_id: isWorker.worker_id,
+        date: dateStr,
+        shift_type: entry.shift_type,
+        status: 'published',
+        source: 'calendar',
+      };
+  
+      const createdShift = await createShift(payload, token); // ✅ usando useShiftApi
+  
+      if (createdShift) {
+        setShiftMap(prev => ({
+          ...prev,
+          [dateStr]: {
+            ...prev[dateStr],
+            shift_id: createdShift.shift_id,
+            isPublished: true,
+          },
+        }));
+      }
+    } catch (error) {
+      console.error('❌ Error al publicar turno:', error.message);
+    }
+  } */
+  
+  
 
   async function handleRemoveShiftForDay(dateStr) {
     try {
@@ -401,144 +439,66 @@ function MonthlyCalendar() {
   function renderDayDetails(dateStr) {
     const dataForRender = isMassiveEditMode ? draftShiftMap : shiftMap;
     const entry = dataForRender[dateStr] || {};
-
     const dayLabel = format(parseISO(dateStr), 'dd/MM/yyyy');
-
-
-    // Es un turno mio. Puedo editarlo, quitarlo o publicarlo. En caso de estar publicado puedo quitarlo.
+  
     if (entry.isMyShift) {
       return (
-        <div>
-          <h3 className="font-bold mb-2">{dayLabel} - Tu turno</h3>
-          <p>Tipo: {entry.shift_type}</p>
-          {entry.isPublished ? (
-            <>
-              <p>Turno publicado</p>
-              <Button
-                label="Quitar publicación"
-                variant="ghost"
-                size="lg"
-                onClick={() => handleDeletePublication(entry.shift_id)}
-              />
-            </>
-          ) : (
-            <>
-              <Button
-                label="Publicar turno"
-                variant="primary"
-                size="lg"
-                leftIcon={<Lightning size={20} />}
-                rightIcon={<Lightning size={20} />}
-                onClick={() => navigate(`/shifts/create?date=${dateStr}&shift_type=${entry.shift_type}`)}
-              />
-
-              <Button
-                label="Eliminar"
-                variant="outline"
-                size="md"
-                onClick={() => handleRemoveShiftForDay(dateStr)}
-              />
-              <Button
-                label="Editar"
-                variant="outline"
-                size="md"
-                onClick={() => toggleShift(dateStr)}
-              />
-
-            </>
-          )
-          }
-        </div >
+        <DayDetailMyShift
+          dateStr={dateStr}
+          entry={entry}
+          dayLabel={dayLabel}
+          onDeletePublication={handleDeletePublication}
+          onRemoveShift={handleRemoveShiftForDay}
+          onEditShift={toggleShift}
+          navigate={navigate}
+        />
       );
     }
-    // Es una preferencia o disponibilidad
+  
     if (entry.isPreference) {
       return (
-        <div>
-          <h3 className="font-bold mb-2">{dayLabel} - Disponibilidad</h3>
-          <p>Tipo: {entry.preference_type}</p>
-          <Button
-            label="Editar"
-            variant="outline"
-            size="md"
-            onClick={() => togglePreference(dateStr)}
-          />
-        </div>
+        <DayDetailPreference
+          dateStr={dateStr}
+          entry={entry}
+          dayLabel={dayLabel}
+          onEditPreference={togglePreference}
+          onDeletePreference={handleDeletePreference}
+        />
       );
     }
-
-    // Es un turno recibido. Sólo puedo publicarlo.
+  
     if (entry.isReceived) {
       return (
-        <div>
-          <h3 className="font-bold mb-2">{dayLabel} - Turno Recibido</h3>
-          <p>Tipo: {entry.shift_type}</p>
-          <p>Propietario del turno: {entry.requester_name} {entry.requester_surname}</p>
-
-          <Button
-            label="Publicar turno"
-            variant="primary"
-            size="lg"
-            leftIcon={<Lightning size={20} />}
-            rightIcon={<Lightning size={20} />}
-            onClick={() => navigate(`/shifts/create?date=${dateStr}&shift_type=${entry.shift_type}`)}
-          />
-        </div>
+        <DayDetailReceived
+          dateStr={dateStr}
+          entry={entry}
+          dayLabel={dayLabel}
+          navigate={navigate}
+        />
       );
     }
-
-    // Es un día que tenía turno pero lo cambié. Ahora puedo añadir turno o disponibilidad.
+  
     if (entry.isSwapped) {
       return (
-        <div>
-          <h3 className="font-bold mb-2">{dayLabel} - Turno Traspasado</h3>
-          <div className='btn-group'>
-            <Button
-              label="Añadir turno"
-              variant="primary"
-              size="lg"
-              leftIcon={<Lightning size={20} />}
-              rightIcon={<Lightning size={20} />}
-              onClick={() => toggleShift(dateStr)}
-            />
-            <Button
-              label="Añadir disponibilidad"
-              variant="secondary"
-              size="lg"
-              leftIcon={<Lightning size={20} />}
-              rightIcon={<Lightning size={20} />}
-              onClick={() => togglePreference(dateStr)}
-            />
-          </div>
-        </div>
+        <DayDetailSwapped
+          dateStr={dateStr}
+          dayLabel={dayLabel}
+          onAddShift={toggleShift}
+          onAddPreference={togglePreference}
+        />
       );
     }
-
-    // Si no hay nada
+  
     return (
-      <div>
-        <h3 className="font-bold mb-2">{dayLabel} - Día libre</h3>
-        <div className='btn-group'>
-          <Button
-            label="Añadir turno"
-            variant="primary"
-            size="lg"
-            leftIcon={<Lightning size={20} />}
-            rightIcon={<Lightning size={20} />}
-            onClick={() => toggleShift(dateStr)}
-          />
-          <Button
-            label="Añadir disponibilidad"
-            variant="secondary"
-            size="lg"
-            leftIcon={<Lightning size={20} />}
-            rightIcon={<Lightning size={20} />}
-            onClick={() => togglePreference(dateStr)}
-          />
-        </div>
-      </div>
+      <DayDetailEmpty
+        dateStr={dateStr}
+        dayLabel={dayLabel}
+        onAddShift={toggleShift}
+        onAddPreference={togglePreference}
+      />
     );
   }
+  
 
 
   return (
@@ -596,10 +556,10 @@ function MonthlyCalendar() {
             };
 
             const labelMap = {
-              morning: 'Mañanas',
-              evening: 'Tardes',
-              night: 'Noches',
-              reinforcement: 'Refuerzos',
+              morning: 'M',
+              evening: 'T',
+              night: 'N',
+              reinforcement: 'R',
             };
 
             return (

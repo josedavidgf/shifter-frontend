@@ -1,15 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { getSentSwaps, getReceivedSwaps } from '../services/swapService';
+import { useSwapApi } from '../api/useSwapApi';
 import { useNavigate } from 'react-router-dom';
 
 const MySwapsTable = () => {
   const { getToken } = useAuth();
+  const { getSentSwaps, getReceivedSwaps, loading, error } = useSwapApi(); // 🆕
   const [mySwaps, setMySwaps] = useState([]);
   const [filtered, setFiltered] = useState([]);
   const [filterStatus, setFilterStatus] = useState('');
   const [filterDate, setFilterDate] = useState('');
-  const [, setError] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -18,10 +18,9 @@ const MySwapsTable = () => {
         const token = await getToken();
         const [sent, received] = await Promise.all([
           getSentSwaps(token),
-          getReceivedSwaps(token)
+          getReceivedSwaps(token),
         ]);
 
-        // Marcar cada swap con el tipo
         const markedSent = sent.map(s => ({ ...s, direction: 'sent' }));
         const markedReceived = received.map(r => ({ ...r, direction: 'received' }));
 
@@ -33,9 +32,9 @@ const MySwapsTable = () => {
         setFiltered(sorted);
       } catch (err) {
         console.error('❌ Error al cargar swaps:', err.message);
-        setError('Error al cargar swaps');
       }
     }
+
     fetchSwaps();
   }, [getToken]);
 
@@ -57,6 +56,15 @@ const MySwapsTable = () => {
     setFilterDate('');
     setFilterStatus('');
   };
+
+  if (loading) {
+    return <p>Cargando intercambios...</p>;
+  }
+
+  if (error) {
+    return <p style={{ color: 'red' }}>{error}</p>;
+  }
+
   return (
     <div>
       <div className="filters-container">

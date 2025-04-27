@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
-import { getMyWorkerProfile } from '../../services/workerService';
-import { getAcceptedSwaps } from '../../services/swapService'; // creamos este servicio
+import { useWorkerApi } from '../../api/useWorkerApi';
+import { useSwapApi } from '../../api/useSwapApi'; // ✅
 import ChatBox from '../../components/ChatBox';
 import { formatDate, getVerb, getOtherVerb } from '../../utils/dateUtils';
 import { useNavigate } from 'react-router-dom';
@@ -12,6 +12,8 @@ import HeaderFirstLevel from '../../components/ui/Header/HeaderFirstLevel';
 
 const ChatsList = () => {
     const { getToken } = useAuth();
+    const { getMyWorkerProfile } = useWorkerApi();
+    const { getAcceptedSwaps, loading, error } = useSwapApi(); // 🆕
     const [swaps, setSwaps] = useState([]);
     const [workerId, setWorkerId] = useState(null);
     const [selectedSwap] = useState(null);
@@ -19,23 +21,38 @@ const ChatsList = () => {
 
     useEffect(() => {
         async function fetchData() {
-            const token = await getToken();
-            const worker = await getMyWorkerProfile(token);
-            setWorkerId(worker.worker_id);
+            try {
+                const token = await getToken();
+                const worker = await getMyWorkerProfile(token);
+                setWorkerId(worker.worker_id);
 
-            const swaps = await getAcceptedSwaps(token);
-            setSwaps(swaps);
+                const swapsData = await getAcceptedSwaps(token);
+                if (swapsData) {
+                    setSwaps(swapsData);
+                }
+            } catch (err) {
+                console.error('❌ Error cargando chats:', err.message);
+            }
         }
+
         fetchData();
     }, [getToken]);
+
     const isActive = (swap) => {
         const turnoDate = new Date(swap.shift.date);
         const offeredDate = new Date(swap.offered_date);
         const maxDate = turnoDate > offeredDate ? turnoDate : offeredDate;
 
-
         return new Date() <= maxDate;
     };
+
+    if (loading) {
+        return <p>Cargando chats...</p>;
+    }
+
+    if (error) {
+        return <p style={{ color: 'red' }}>{error}</p>;
+    }
 
     const activeSwaps = swaps.filter(isActive);
 

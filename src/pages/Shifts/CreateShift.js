@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import { getFullWorkerProfile } from '../../services/userService';
-import { createShift } from '../../services/shiftService';
-import { getSpecialities } from '../../services/specialityService';
+import { useUserApi } from '../../api/useUserApi';
+import { useSpecialityApi } from '../../api/useSpecialityApi';
+import { useShiftApi } from '../../api/useShiftApi';
 import useTrackPageView from '../../hooks/useTrackPageView';
 import { format, parseISO } from 'date-fns';
 import { translateShiftType } from '../../utils/translateShiftType';
@@ -14,17 +14,19 @@ import Button from '../../components/ui/Button/Button'; // Ajusta ruta si necesa
 const CreateShift = () => {
     const navigate = useNavigate();
     const location = useLocation();
+    const { getToken } = useAuth();
+    const { getFullWorkerProfile } = useUserApi();
+    const { getSpecialities } = useSpecialityApi();
+    const { createShift, loading: creatingShift, error: errorCreatingShift } = useShiftApi(); // 🆕
+
     const params = new URLSearchParams(location.search);
     const prefilDate = params.get('date');
     const prefilShiftType = params.get('shift_type');
+
     // eslint-disable-next-line no-unused-vars
     const [specialities, setSpecialities] = useState([]);
     const [selectedSpeciality, setSelectedSpeciality] = useState(null);
-    const [isSubmitting, setIsSubmitting] = useState(false);
-
-
-    const { getToken } = useAuth();
-
+    const [specialityId, setSpecialityId] = useState('');
     const [form, setForm] = useState({
         date: '',
         shift_type: '',
@@ -32,8 +34,7 @@ const CreateShift = () => {
         speciality_id: '',
         shift_comments: '',
     });
-    // eslint-disable-next-line no-unused-vars
-    const [specialityId, setSpecialityId] = useState('');
+
     const [message, setMessage] = useState('');
 
     useTrackPageView('create-shift');
@@ -48,35 +49,28 @@ const CreateShift = () => {
     useEffect(() => {
         async function fetchData() {
             try {
-                const token = await getToken();
-                const profile = await getFullWorkerProfile(token);
-                setSpecialityId(profile.specialityId);
-                const specs = await getSpecialities(token)
-                setSpecialities(specs);
-                const match = specs.find(s => s.speciality_id === profile.specialityId);
-                setSelectedSpeciality(match);
-
-                setForm((prev) => ({
-                    ...prev,
-                    date: prefilDate || prev.date,
-                    shift_type: prefilShiftType || prev.shift_type,
-                    speciality_id: profile.specialityId,
-                }));
-
-                if (prefilDate || prefilShiftType) {
-                    setForm((prev) => ({
-                        ...prev,
-                        date: prefilDate || prev.date,
-                        shift_type: prefilShiftType || prev.shift_type,
-                        speciality_id: profile.specialityId
-                    }));
-                }
+              const token = await getToken();
+              const profile = await getFullWorkerProfile(token); // ✅ Vía hook
+              setSpecialityId(profile.specialityId);
+          
+              const specs = await getSpecialities(token); // ✅ Vía hook
+              setSpecialities(specs);
+          
+              const match = specs.find(s => s.speciality_id === profile.specialityId);
+              setSelectedSpeciality(match);
+          
+              setForm(prev => ({
+                ...prev,
+                date: prefilDate || prev.date,
+                shift_type: prefilShiftType || prev.shift_type,
+                speciality_id: profile.specialityId,
+              }));
             } catch (err) {
-                setMessage('❌ Error al cargar el perfil');
+              console.error('Error loading profile or specialities:', err.message);
+              setMessage('❌ Error al cargar el perfil o especialidad');
             }
+          }          
 
-
-        }
         fetchData();
     }, [getToken, prefilDate, prefilShiftType]);
 
@@ -88,16 +82,17 @@ const CreateShift = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            setIsSubmitting(true); // 🛠️ Empezamos envío
             const token = await getToken();
-            await createShift({ ...form }, token);
-            setMessage('✅ Turno publicado correctamente');
-            setTimeout(() => navigate('/calendar'), 1500);
+            const success = await createShift({ ...form }, token);
+            if (success) {
+                setMessage('✅ Turno publicado correctamente');
+                setTimeout(() => navigate('/calendar'), 1500);
+            } else {
+                setMessage('❌ Error al publicar turno');
+            }
         } catch (err) {
-            console.error('❌ Error al crear turno:', err.message);
-            setMessage('❌ Error al crear turno');
-        } finally {
-            setIsSubmitting(false); // 🛠️ Terminamos envío, éxito o error
+            console.error('Error creating shift:', err.message);
+            setMessage('❌ Error al publicar turno');
         }
     };
 
@@ -111,13 +106,9 @@ const CreateShift = () => {
 
     return (
         <>
-            <HeaderSecondLevel
-                title="Crear turno"
-                showBackButton
-                onBack={handleBack}
-            />
-            <div className='page page-secondary'>
-                <div className='container'>
+            <HeaderSecondLevel title="Crear turno" showBackButton onBack={handleBack} />
+            <div className="page page-secondary">
+                <div className="container">
                     <form onSubmit={handleSubmit}>
                         <label>Fecha:</label>
                         <p>{form.date ? format(parseISO(form.date), 'dd/MM/yyyy') : '-'}</p>
@@ -125,36 +116,37 @@ const CreateShift = () => {
                         <label>Turno:</label>
                         <p>{translateShiftType(form.shift_type)}</p>
 
-                        {/* <label>Etiqueta:</label> */}
-                        {/* <select name="shift_label" value={form.shift_label} onChange={handleChange} required>
-                    <option value="regular">Regular</option>
-                    <option value="duty">Guardia</option>
-                </select> */}
-
                         <label>Especialidad:</label>
-                        <input
-                            type="hidden"
-                            name="speciality_id"
-                            value={form.specialityId}
-                        />
-                        {selectedSpeciality &&
+                        {selectedSpeciality ? (
                             <p>{selectedSpeciality.speciality_category} - {selectedSpeciality.speciality_subcategory}</p>
-                        }
+                        ) : (
+                            <p>Especialidad no disponible</p>
+                        )}
 
                         <label>Comentarios:</label>
-                        <textarea name="shift_comments" value={form.shift_comments} onChange={handleChange} />
+                        <textarea
+                            name="shift_comments"
+                            value={form.shift_comments}
+                            onChange={handleChange}
+                        />
+
                         <br />
                         <Button
                             label="Publicar"
                             variant="primary"
                             size="lg"
                             type="submit"
-                            disabled={!form.date || !form.shift_type}
-                            isLoading={isSubmitting}
+                            disabled={!form.date || !form.shift_type || creatingShift}
+                            isLoading={creatingShift}
                         />
                     </form>
 
-                    {message && <p>{message}</p>}
+                    {message && <p style={{ marginTop: '10px' }}>{message}</p>}
+                    {errorCreatingShift && (
+                        <p style={{ color: 'red', marginTop: '10px' }}>
+                            {errorCreatingShift}
+                        </p>
+                    )}
                 </div>
             </div>
         </>

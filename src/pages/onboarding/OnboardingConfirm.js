@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { createWorker, createWorkerHospital } from '../../services/workerService';
+import { useWorkerApi } from '../../api/useWorkerApi';
 import { useAuth } from '../../context/AuthContext';
 import HeaderSecondLevel from '../../components/ui/Header/HeaderSecondLevel';
 import Button from '../../components/ui/Button/Button'; // Ajusta ruta si necesario
@@ -10,6 +10,7 @@ export default function OnboardingConfirmStep() {
   const [workerTypeId, setWorkerTypeId] = useState('');
   const [error, setError] = useState('');
   const { getToken } = useAuth();
+  const { createWorker, createWorkerHospital, loading, error: workerApiError } = useWorkerApi(); // 🆕
   const navigate = useNavigate();
   const { setIsWorker, refreshWorkerProfile } = useAuth();
 
@@ -68,12 +69,15 @@ export default function OnboardingConfirmStep() {
           <h2>El código que has introducido te habilita Tanda para {workerTypeName} en {hospitalName}</h2>
 
           {error && <p style={{ color: 'red' }}>{error}</p>}
+          {workerApiError && <p style={{ color: 'red' }}>{workerApiError}</p>}
+
 
           <Button
             label="Crear cuenta"
             variant="primary"
             size="lg"
             onClick={handleConfirm}
+            disabled={loading}
           />
 
           <hr />

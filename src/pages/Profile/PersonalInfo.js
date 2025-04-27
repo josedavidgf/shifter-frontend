@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
-import { getFullWorkerProfile, updateWorkerInfo } from '../../services/userService';
+import { useUserApi } from '../../api/useUserApi';
 import supabase from '../../config/supabase';
 import InputField from '../../components/ui/InputField/InputField';
 import { useNavigate } from 'react-router-dom';
@@ -10,6 +10,7 @@ import Button from '../../components/ui/Button/Button'; // Ajusta ruta si necesa
 
 const PersonalInfo = () => {
   const { getToken } = useAuth();
+  const { getFullWorkerProfile, updateWorkerInfo, loading, error: apiError } = useUserApi();
   const navigate = useNavigate();
 
   const [form, setForm] = useState({
@@ -25,14 +26,16 @@ const PersonalInfo = () => {
       const token = await getToken();
       const data = await getFullWorkerProfile(token);
 
-      setForm({
-        name: data.worker.name,
-        surname: data.worker.surname,
-        mobile_country_code: data.worker.mobile_country_code || '',
-        mobile_phone: data.worker.mobile_phone || '',
-      });
-
+      if (data?.worker) {
+        setForm({
+          name: data.worker.name,
+          surname: data.worker.surname,
+          mobile_country_code: data.worker.mobile_country_code || '',
+          mobile_phone: data.worker.mobile_phone || '',
+        });
+      }
     }
+
     fetchData();
   }, [getToken]);
 
@@ -62,16 +65,21 @@ const PersonalInfo = () => {
     setForm((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = async (e) => {
+  async function handleSubmit(e) {
     e.preventDefault();
     const token = await getToken();
     try {
-      await updateWorkerInfo(form, token);
-      setMessage('✅ Información actualizada');
+      const updated = await updateWorkerInfo(form, token);
+      if (updated) {
+        setMessage('✅ Información actualizada');
+      } else {
+        setMessage('❌ No se pudo actualizar la información');
+      }
     } catch (err) {
       setMessage('❌ Error al actualizar la información');
     }
-  };
+  }
+
   const handleBack = () => {
     if (window.history.length > 1) {
       navigate(-1);
@@ -133,10 +141,13 @@ const PersonalInfo = () => {
               variant="primary"
               size="lg"
               type="submit"
+              disabled={!form.name || !form.surname || loading}
+              isLoading={loading} // 🆕
             />
           </form>
 
 
+          {apiError && <p style={{ color: 'red', marginTop: '1rem' }}>{apiError}</p>}
           {message && <p className="mt-2">{message}</p>}
         </div>
       </div>

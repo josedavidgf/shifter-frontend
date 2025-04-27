@@ -1,20 +1,40 @@
+// src/services/messagesService.js
 import supabase from '../config/supabase';
 
+// Obtener mensajes de un swap
 export const getMessagesBySwap = async (swapId) => {
-  const { data, error } = await supabase
-    .from('messages')
-    .select('*')
-    .eq('swap_id', swapId)
-    .order('created_at', { ascending: true });
+  try {
+    const { data, error } = await supabase
+      .from('messages')
+      .select('*')
+      .eq('swap_id', swapId)
+      .order('created_at', { ascending: true });
 
-  if (error) throw new Error(error.message);
-  return data;
+    if (error) {
+      throw new Error(error.message || 'Error al cargar mensajes');
+    }
+
+    return data;
+  } catch (err) {
+    console.error('❌ Error en getMessagesBySwap:', err.message);
+    throw err;
+  }
 };
 
+// Enviar un mensaje en un swap
 export const sendMessage = async ({ swap_id, sender_id, recipient_id, content }) => {
-  const { error } = await supabase.from('messages').insert([
-    { swap_id, sender_id, recipient_id, content },
-  ]);
-  if (error) throw new Error(error.message);
-};
+  try {
+    const { error } = await supabase
+      .from('messages')
+      .insert([
+        { swap_id, sender_id, recipient_id, content },
+      ]);
 
+    if (error) {
+      throw new Error(error.message || 'Error al enviar mensaje');
+    }
+  } catch (err) {
+    console.error('❌ Error en sendMessage:', err.message);
+    throw err;
+  }
+};

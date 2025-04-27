@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { useAuth } from '../context/AuthContext';
-import useTrackPageView from '../hooks/useTrackPageView';
-import InputField from '../components/ui/InputField/InputField';
+import { useAuth } from '../../context/AuthContext';
+import useTrackPageView from '../../hooks/useTrackPageView';
+import InputField from '../../components/ui/InputField/InputField';
 
 
 const Register = () => {

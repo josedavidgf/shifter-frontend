@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { getSwapById, cancelSwap, respondToSwap } from '../../services/swapService';
+import { useSwapApi } from '../../api/useSwapApi';
 import ChatBox from '../../components/ChatBox';
 import { useAuth } from '../../context/AuthContext';
-import { getMyWorkerProfile } from '../../services/workerService';
+import { useWorkerApi } from '../../api/useWorkerApi';
 import useTrackPageView from '../../hooks/useTrackPageView';
 import { useRespondFeedback } from '../../hooks/useRespondFeedback';
 import HeaderSecondLevel from '../../components/ui/Header/HeaderSecondLevel';
@@ -16,15 +16,14 @@ const SwapDetail = () => {
     const navigate = useNavigate();
     const { id } = useParams(); // swapId
     const { getToken } = useAuth(); // para auth.uid
+    const { getMyWorkerProfile } = useWorkerApi();
+    const { getSwapById, cancelSwap, respondToSwap, loading: loadingSwap, error: errorSwap } = useSwapApi(); // 🆕
     const [swap, setSwap] = useState(null);
-    const [error, setError] = useState(null);
     const [workerId, setWorkerId] = useState('');
     const [isAccepting, setIsAccepting] = useState(false);
     const [isRejecting, setIsRejecting] = useState(false);
     const [isCancelling, setIsCancelling] = useState(false);
     const { showSuccess, showError } = useToast();
-
-
     const showRespondFeedback = useRespondFeedback('toast'); // 👈 ahora usamos alert
 
 
@@ -34,79 +33,22 @@ const SwapDetail = () => {
         async function fetchSwap() {
             try {
                 const token = await getToken();
-                const data = await getSwapById(id, token);
-                setSwap(data);
+                const swapData = await getSwapById(id, token);
+                setSwap(swapData);
+
                 const worker = await getMyWorkerProfile(token);
                 setWorkerId(worker.worker_id);
             } catch (err) {
-                setError('No se pudo cargar el intercambio');
-                console.error(err.message);
+                console.error('❌ Error cargando detalle de swap:', err.message);
             }
         }
+
         fetchSwap();
     }, [id, getToken]);
 
-    if (error) return <p style={{ color: 'red' }}>{error}</p>;
-    if (!swap) return <p>Cargando...</p>;
 
-    const handleCancelSwap = async () => {
-        const confirm = window.confirm('¿Estás seguro de que quieres cancelar este intercambio?');
-        if (!confirm) return;
-
-        setIsCancelling(true);
-        try {
-            const token = await getToken();
-            await cancelSwap(swap.swap_id, token);
-            showSuccess('Intercambio cancelado correctamente'); // ✅ Toast de éxito
-
-            navigate('/my-swaps');
-        } catch (err) {
-            console.error('Error al cancelar el intercambio:', err.message);
-            showError('⚠️ No se pudo cancelar el intercambio'); // ❌ Toast de error
-        } finally {
-            setIsCancelling(false);
-        }
-    };
-
-
-    const handleRespond = async (swapId, decision) => {
-        try {
-            const token = await getToken();
-            await respondToSwap(swapId, decision, token);
-
-            showRespondFeedback(decision); // 🔥 Modular
-            navigate('/my-swaps');
-        } catch (err) {
-            console.error('❌ Error al responder al swap:', err.message);
-            showError('⚠️ Error al actualizar el intercambio');
-        }
-    };
-
-    const handleAcceptSwap = async () => {
-        if (!swap) return;
-        setIsAccepting(true);
-        try {
-            await handleRespond(swap.swap_id, 'accepted');
-        } finally {
-            setIsAccepting(false);
-        }
-    };
-
-
-    const handleRejectSwap = async () => {
-        if (!swap) return;
-        setIsRejecting(true);
-        try {
-            await handleRespond(swap.swap_id, 'rejected');
-        } finally {
-            setIsRejecting(false);
-        }
-    };
-
-    // Mostrar chat solo si el estado lo permite
-    const showChat = ['proposed', 'accepted'].includes(swap.status);
-
-
+    if (errorSwap) return <p style={{ color: 'red' }}>{errorSwap}</p>;
+    if (loadingSwap || !swap) return <p>Cargando intercambio...</p>;
 
     const handleBack = () => {
         if (window.history.length > 1) {
@@ -116,10 +58,56 @@ const SwapDetail = () => {
         }
     };
 
-    console.log('Swap:', swap);
-    console.log('Worker ID:', workerId);
-    console.log('Requester ID:', swap.requester_id);
-    console.log('Swap shift worker:', swap.shift.worker_id);
+    const handleCancelSwap = async () => {
+        const confirmCancel = window.confirm('¿Estás seguro de que quieres cancelar este intercambio?');
+        if (!confirmCancel) return;
+
+        setIsCancelling(true);
+        try {
+            const token = await getToken();
+            const success = await cancelSwap(swap.swap_id, token);
+            if (success) {
+                showSuccess('Intercambio cancelado correctamente');
+                navigate('/my-swaps');
+            } else {
+                showError('Error al cancelar el intercambio');
+            }
+        } catch (err) {
+            console.error('❌ Error cancelando swap:', err.message);
+            showError('Error inesperado al cancelar el intercambio');
+        } finally {
+            setIsCancelling(false);
+        }
+    };
+
+
+    const handleRespond = async (decision) => {
+        setIsAccepting(decision === 'accepted');
+        setIsRejecting(decision === 'rejected');
+        try {
+          const token = await getToken();
+          const success = await respondToSwap(swap.swap_id, decision, token);
+          if (success) {
+            showRespondFeedback(decision);
+            navigate('/my-swaps');
+          } else {
+            showError('Error al actualizar el intercambio');
+          }
+        } catch (err) {
+          console.error('❌ Error respondiendo swap:', err.message);
+          showError('Error inesperado al actualizar el intercambio');
+        } finally {
+          setIsAccepting(false);
+          setIsRejecting(false);
+        }
+      };
+
+      const handleAcceptSwap = () => handleRespond('accepted');
+      const handleRejectSwap = () => handleRespond('rejected');
+
+    // Mostrar chat solo si el estado lo permite
+    const showChat = ['proposed', 'accepted'].includes(swap.status);
+
 
     return (
         <>
