@@ -27,6 +27,7 @@ const Register = () => {
     };
 
     return (
+        <div className="page page-primary">
         <div className='container' >
             <h2>Registro</h2>
             <p>Por favor, completa el formulario para registrarte.</p>
@@ -62,6 +63,7 @@ const Register = () => {
                 <button className='btn btn-primary' type="submit">Registrarse</button>
             </form>
         </div >
+        </div>
     );
 };
 

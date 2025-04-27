@@ -27,39 +27,64 @@ export function AuthProvider({ children }) {
   // Recuperar usuario al iniciar app
   useEffect(() => {
     async function rehydrateUser() {
-      const { data } = await supabase.auth.getSession();
-
-      if (!data?.session) {
-        setLoading(false);
-        return;
-      }
-
-      const token = data.session.access_token;
-      setCurrentUser(data.session.user);
-
-      if (!isAmplitudeInitialized) {
-        initAmplitude();
-        isAmplitudeInitialized = true;
-      }
-
       try {
-        const workerProfile = await getMyWorkerProfile(token);
-        if (!workerProfile) {
+        const { data, error } = await supabase.auth.getSession();
+  
+        // 1. Error o sin sesión válida
+        if (error || !data?.session) {
+          console.warn('No active session detected.');
+          setCurrentUser(null);
           setIsWorker(false);
-        } else {
-          setIsWorker(workerProfile);
-          identifyUser(workerProfile);
+          setLoading(false);
+          return;
         }
-      } catch (err) {
-        console.warn('Worker not found', err);
-        setIsWorker(null);
+  
+        const { session } = data;
+  
+        // 2. Validar token de sesión
+        if (!session.access_token || !session.user) {
+          console.warn('Invalid session structure detected.');
+          setCurrentUser(null);
+          setIsWorker(false);
+          setLoading(false);
+          return;
+        }
+  
+        const token = session.access_token;
+        setCurrentUser(session.user);
+  
+        // 3. Inicializar Amplitude solo si no estaba
+        if (!isAmplitudeInitialized) {
+          initAmplitude();
+          isAmplitudeInitialized = true;
+        }
+  
+        // 4. Obtener perfil de Worker
+        try {
+          const workerProfile = await getMyWorkerProfile(token);
+          if (workerProfile) {
+            setIsWorker(workerProfile);
+            identifyUser(workerProfile);
+          } else {
+            setIsWorker(false);
+          }
+        } catch (err) {
+          console.warn('Worker profile fetch error:', err);
+          setIsWorker(false);
+        }
+  
+      } catch (globalError) {
+        console.error('Error during rehydrateUser:', globalError);
+        setCurrentUser(null);
+        setIsWorker(false);
       } finally {
-        setLoading(false); // ✅ SIEMPRE al final
+        setLoading(false); // Siempre al final
       }
     }
-
-    rehydrateUser(); // 👈🏻 Este llamado está bien, **dentro del useEffect** pero **fuera** de async function
+  
+    rehydrateUser();
   }, []);
+  
 
 
 
@@ -131,17 +156,27 @@ export function AuthProvider({ children }) {
   // Logout
   const logout = async () => {
     await supabase.auth.signOut();
-
+    
+    // Después de signOut, también limpias manualmente el estado
     localStorage.removeItem('token');
     setCurrentUser(null);
     setIsWorker(false);
-    amplitude.reset()
+    amplitude.reset();
+  
+    // Nueva línea extra para rehidratar supabase internamente
+    await supabase.auth.getSession(); // <-- importante: forzamos actualizar la sesión en local
+    
   };
+  
 
   // Obtener token actual
   const getToken = async () => {
     const { data, error } = await supabase.auth.getSession();
     if (error || !data?.session?.access_token) return null;
+    
+    // Validación extra
+    if (!data.session.user) return null;
+  
     return data.session.access_token;
   };
 

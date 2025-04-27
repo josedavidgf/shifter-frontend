@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { updateWorkerInfo } from '../../services/userService';
 import { useAuth } from '../../context/AuthContext';
 import InputField from '../../components/ui/InputField/InputField';
-
+import HeaderSecondLevel from '../../components/ui/Header/HeaderSecondLevel';
 
 
 export default function OnboardingNameStep() {
@@ -33,35 +33,57 @@ export default function OnboardingNameStep() {
       setError('Error guardando el nombre.');
     }
   };
+  const handleBack = () => {
+    if (window.history.length > 1) {
+      navigate(-1);
+    } else {
+      navigate('/calendar');
+    }
+  };
 
   return (
-    <div>
-      <h2>Introduce tu nombre y apellido</h2>
-
-      <InputField
-        name="first-name"
-        label="Nombre"
-        placeholder="Introduce tu nombre"
-        type="text"
-        value={name}
-        onChange={(e) => setFirstName(e.target.value)}
-        required
+    <>
+      <HeaderSecondLevel
+        showBackButton
+        onBack={handleBack}
       />
+      <div className="page page-secondary">
+        <div className="container">
+          <h2>Añade tu nombre y apellidos</h2>
 
-      <InputField
-        name="last-name"
-        label="Apellido"
-        placeholder="Introduce tu apellido"
-        type="text"
-        value={surname}
-        onChange={(e) => setLastName(e.target.value)}
-        required
-      />
+          <InputField
+            name="first-name"
+            label="Nombre"
+            placeholder="Introduce tu nombre"
+            type="text"
+            value={name}
+            onChange={(e) => setFirstName(e.target.value)}
+            required
+          />
+
+          <InputField
+            name="last-name"
+            label="Apellido"
+            placeholder="Introduce tu apellido"
+            type="text"
+            value={surname}
+            onChange={(e) => setLastName(e.target.value)}
+            required
+          />
 
 
-      {error && <p style={{ color: 'red' }}>{error}</p>}
+          {error && <p style={{ color: 'red' }}>{error}</p>}
 
-      <button className='btn btn-primary' onClick={handleConfirm}>Continuar</button>
-    </div>
+          <button
+            className='btn btn-primary'
+            onClick={handleConfirm}
+            disabled={!name || !surname}
+          >
+            Continuar
+          </button>
+
+        </div>
+      </div>
+    </>
   );
 }

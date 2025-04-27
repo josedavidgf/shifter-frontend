@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getSpecialitiesByHospital, addSpecialityToWorker } from '../../services/specialityService';
 import { useAuth } from '../../context/AuthContext';
+import HeaderSecondLevel from '../../components/ui/Header/HeaderSecondLevel';
 
 
 
@@ -17,32 +18,32 @@ export default function OnboardingSpecialityStep() {
     const fetchSpecialities = async () => {
       try {
         const token = await getToken();
-  
+
         if (!isWorker?.workers_hospitals?.[0]?.hospital_id) {
           navigate('/onboarding/code');
           return;
         }
-  
+
         const data = await getSpecialitiesByHospital(isWorker.workers_hospitals?.[0]?.hospital_id, token);
         setSpecialities(data);
       } catch (err) {
         console.error('Error fetching specialities:', err.message);
       }
     };
-  
+
     fetchSpecialities();
   }, [getToken, isWorker, navigate]);
-  
+
   const handleConfirm = async () => {
     try {
       const token = await getToken();
       const workerId = isWorker.worker_id;
-  
+
       if (!workerId || !selectedSpeciality) {
         setError('Debes seleccionar una especialidad.');
         return;
       }
-  
+
       await addSpecialityToWorker(workerId, selectedSpeciality, token);
       await refreshWorkerProfile();
       navigate('/onboarding/name');
@@ -51,26 +52,47 @@ export default function OnboardingSpecialityStep() {
       setError('Error guardando la especialidad.');
     }
   };
-
+  const handleBack = () => {
+    if (window.history.length > 1) {
+      navigate(-1);
+    } else {
+      navigate('/calendar');
+    }
+  };
   return (
-    <div>
-      <h2>Selecciona tu especialidad</h2>
+    <>
+      <HeaderSecondLevel
+        showBackButton
+        onBack={handleBack}
+      />
+      <div className="page page-secondary">
+        <div className="container">
+          <h2>Selecciona el servicio en el que trabajas</h2>
 
-      <select
-        value={selectedSpeciality}
-        onChange={(e) => setSelectedSpeciality(e.target.value)}
-      >
-        <option value="">Selecciona una especialidad</option>
-        {specialities.map((spec) => (
-          <option key={spec.speciality_id} value={spec.speciality_id}>
-            {spec.speciality_category} - {spec.speciality_subcategory}
-          </option>
-        ))}
-      </select>
+          <select
+            value={selectedSpeciality}
+            onChange={(e) => setSelectedSpeciality(e.target.value)}
+          >
+            <option value="">Selecciona una especialidad</option>
+            {specialities.map((spec) => (
+              <option key={spec.speciality_id} value={spec.speciality_id}>
+                {spec.speciality_category} - {spec.speciality_subcategory}
+              </option>
+            ))}
+          </select>
 
-      {error && <p style={{ color: 'red' }}>{error}</p>}
+          {error && <p style={{ color: 'red' }}>{error}</p>}
 
-      <button onClick={handleConfirm}>Confirmar especialidad</button>
-    </div>
+          <button
+            className='btn btn-primary'
+            onClick={handleConfirm}
+            disabled={!selectedSpeciality}
+          >
+            Continuar
+          </button>
+
+        </div>
+      </div>
+    </>
   );
 }

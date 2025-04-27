@@ -1,37 +1,25 @@
 /* General Layout Styles */
 .container {
-    max-width: 768px;
-    margin: 0 auto;
-    padding: 1rem;
-    width: 100%;
-  }
-  
-  .page {
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
-    background-color: #fff;
-  }
-  
-  .page-section {
-    padding: 1rem 0;
-  }
-  
-  .page-header {
-    padding: 1.25rem 1rem;
-    border-bottom: 1px solid #eee;
-    background-color: #fff;
-    position: sticky;
-    top: 0;
-    z-index: 10;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-  
-  .page-header h1 {
-    font-size: 1.25rem;
-    font-weight: 600;
-    margin: 0;
-  }
-  
+  max-width: 768px;
+  margin: 0 auto;
+  padding: 1rem;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.page {
+  display: flex;
+  flex-direction: column;
+  padding-top: 1rem; /* Añadido */
+}
+.page-primary {
+  min-height: calc(100vh - 56px); /* Ajuste para BottomNav */
+}
+
+.page-secondary {
+  min-height: 100%;
+}
+
+.page-section {
+  padding: 1rem 0;
+}

@@ -29,9 +29,11 @@ const Calendar = () => {
                     onClick: handleProfileClick,
                 }}
             />
-            <div className="container page">
-                <div className="calendar-container">
-                    <MonthlyCalendar />
+            <div className="page page-primary">
+                <div className="container ">
+                    <div className="calendar-container">
+                        <MonthlyCalendar />
+                    </div>
                 </div>
             </div>
         </>

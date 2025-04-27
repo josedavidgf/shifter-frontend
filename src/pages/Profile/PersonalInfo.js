@@ -86,54 +86,56 @@ const PersonalInfo = () => {
         showBackButton
         onBack={handleBack}
       />
-      <div className="container page">
+      <div className="page page-secondary">
+        <div className="container">
 
-        <form onSubmit={handleSubmit}>
-          <InputField
-            name="name"
-            label="Nombre"
-            placeholder="Introduce tu nombre"
-            value={form.name}
-            onChange={handleChange}
-            required
-          />
-          <InputField
-            name="surname"
-            label="Apellidos"
-            placeholder="Introduce tus apellidos"
-            value={form.surname}
-            onChange={handleChange}
-            required
-          />
-          <InputField
-            name="mobile_country_code"
-            label="Prefijo"
-            placeholder="Ej: +34"
-            value={form.mobile_country_code}
-            onChange={handleChange}
-            type="text"
-          />
-          <InputField
-            name="mobile_phone"
-            label="Teléfono"
-            placeholder="Introduce tu teléfono"
-            value={form.mobile_phone}
-            onChange={handleChange}
-            type="tel"
-          />
+          <form onSubmit={handleSubmit}>
+            <InputField
+              name="name"
+              label="Nombre"
+              placeholder="Introduce tu nombre"
+              value={form.name}
+              onChange={handleChange}
+              required
+            />
+            <InputField
+              name="surname"
+              label="Apellidos"
+              placeholder="Introduce tus apellidos"
+              value={form.surname}
+              onChange={handleChange}
+              required
+            />
+            <InputField
+              name="mobile_country_code"
+              label="Prefijo"
+              placeholder="Ej: +34"
+              value={form.mobile_country_code}
+              onChange={handleChange}
+              type="text"
+            />
+            <InputField
+              name="mobile_phone"
+              label="Teléfono"
+              placeholder="Introduce tu teléfono"
+              value={form.mobile_phone}
+              onChange={handleChange}
+              type="tel"
+            />
 
-          <div className="form-group">
-            <label>Imagen de perfil:</label>
-            <input type="file" accept="image/*" onChange={handleAvatarChange} />
-          </div>
+            <div className="form-group">
+              <label>Imagen de perfil:</label>
+              <input type="file" accept="image/*" onChange={handleAvatarChange} />
+            </div>
 
-          <button type="submit" className="btn btn-primary">
-            Guardar
-          </button>
-        </form>
+            <button type="submit" className="btn btn-primary">
+              Guardar
+            </button>
+          </form>
 
 
-        {message && <p className="mt-2">{message}</p>}
+          {message && <p className="mt-2">{message}</p>}
+        </div>
       </div>
     </>
   );

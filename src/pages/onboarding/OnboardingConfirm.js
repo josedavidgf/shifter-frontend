@@ -2,31 +2,30 @@ import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { createWorker, createWorkerHospital } from '../../services/workerService';
 import { useAuth } from '../../context/AuthContext';
+import HeaderSecondLevel from '../../components/ui/Header/HeaderSecondLevel';
 
 
 export default function OnboardingConfirmStep() {
   const [hospitalId, setHospitalId] = useState('');
   const [workerTypeId, setWorkerTypeId] = useState('');
-  const [accessCode, setAccessCode] = useState('');
   const [error, setError] = useState('');
   const { getToken } = useAuth();
   const navigate = useNavigate();
   const { setIsWorker, refreshWorkerProfile } = useAuth();
 
   const location = useLocation();
-  const { hospital_id, worker_type_id, access_code } = location.state || {};
+  const { hospital_id, worker_type_id, hospitalName, workerTypeName } = location.state || {};
 
   useEffect(() => {
-
 
     if (!hospital_id || !worker_type_id) {
       navigate('/onboarding/code');
     } else {
       setHospitalId(hospital_id);
       setWorkerTypeId(worker_type_id);
-      setAccessCode(access_code);
     }
-  }, [hospital_id, worker_type_id, access_code, navigate]);
+  }, [hospital_id, worker_type_id, navigate]);
+  
 
   const handleConfirm = async () => {
     const token = await getToken();
@@ -50,18 +49,31 @@ export default function OnboardingConfirmStep() {
       setError('Error creando el perfil. Por favor inténtalo de nuevo.');
     }
   };
+  const handleBack = () => {
+    if (window.history.length > 1) {
+      navigate(-1);
+    } else {
+      navigate('/calendar');
+    }
+  };
 
   return (
-    <div>
-      <h2>Confirmar hospital y rol</h2>
-      <p><strong>Hospital ID:</strong> {hospitalId}</p>
-      <p><strong>Tipo de trabajador ID:</strong> {workerTypeId}</p>
-      <p><strong>Código:</strong> {accessCode}</p>
+    <>
+      <HeaderSecondLevel
+        showBackButton
+        onBack={handleBack}
+      />
+      <div className='page page-primary'>
+        <div className='container'>
+          <h2>El código que has introducido te habilita Tanda para {workerTypeName} en {hospitalName}</h2>
 
-      {error && <p style={{ color: 'red' }}>{error}</p>}
+          {error && <p style={{ color: 'red' }}>{error}</p>}
 
-      <button className='btn btn-primary' onClick={handleConfirm}>Confirmar y continuar</button>
-      <button className='btn btn-danger' onClick={() => navigate('/onboarding/code')}>Cancelar</button>
-    </div>
+          <button className='btn btn-primary' onClick={handleConfirm}>Crear cuenta</button>
+          <hr />
+          <button className='btn btn-danger' onClick={() => navigate('/onboarding/code')}>Contactar con Tanda</button>
+        </div>
+      </div>
+    </>
   );
 }
