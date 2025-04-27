@@ -1,0 +1,11 @@
+.register-code__title {
+    font-size: var(--font-lg, 20px);
+    font-weight: var(--font-bold, 800);
+    line-height: 30px;
+    color: var(--color-text, #171923);
+  }
+  
+  .highlight-purple {
+    color: var(--color-purple-500, #805AD5);
+  }
+  

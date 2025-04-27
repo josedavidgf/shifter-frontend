@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import InputLabel from '../InputField/InputLabel';
-import HelperText from '../InputField/HelperText';
+import HelperText from '../HelperText/HelperText';
 import { CaretDown } from '../../../theme/icons';
 
 
