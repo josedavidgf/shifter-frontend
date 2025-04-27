@@ -25,6 +25,7 @@ export {
     MessengerLogo,
     File,
     Books,
-    Gift
+    Gift,
+    Buildings
 
   } from 'phosphor-react';

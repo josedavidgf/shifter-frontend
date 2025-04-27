@@ -1,6 +1,6 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import { CalendarPlus, Lightning, MagnifyingGlass, ChatCircle } from '../theme';
+import { CalendarPlus, Lightning, MagnifyingGlass, ChatCircle } from '../theme/icons';
 
 export default function BottomNav() {
   return (

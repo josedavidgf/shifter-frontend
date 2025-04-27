@@ -7,6 +7,8 @@ import { useSwapFeedback } from '../../hooks/useSwapFeedback';
 import useAvailableShifts from '../../hooks/useAvailableShifts';
 import ShiftSelector from '../../components/ShiftSelector';
 import HeaderSecondLevel from '../../components/ui/Header/HeaderSecondLevel';
+import Button from '../../components/ui/Button/Button'; // Ajusta ruta si necesario
+
 
 const ProposeSwap = () => {
   const { shift_id } = useParams();
@@ -98,7 +100,13 @@ const ProposeSwap = () => {
             </div>
 
             <div className="btn-group mt-3">
-              <button type="submit" className="btn btn-primary">Enviar propuesta</button>
+              <Button
+                label="Enviar propuesta"
+                variant="primary"
+                size="lg"
+                type="submit"
+                disabled={!selectedShift} // Deshabilitar si no hay turno seleccionado
+              />
             </div>
           </form>
         </div>

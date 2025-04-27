@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { getSpecialitiesByHospital, addSpecialityToWorker } from '../../services/specialityService';
 import { useAuth } from '../../context/AuthContext';
 import HeaderSecondLevel from '../../components/ui/Header/HeaderSecondLevel';
+import Button from '../../components/ui/Button/Button'; // Ajusta ruta si necesario
 
 
 
@@ -83,13 +84,13 @@ export default function OnboardingSpecialityStep() {
 
           {error && <p style={{ color: 'red' }}>{error}</p>}
 
-          <button
-            className='btn btn-primary'
-            onClick={handleConfirm}
-            disabled={!selectedSpeciality}
-          >
-            Continuar
-          </button>
+          <Button
+              label="Continuar"
+              variant="primary"
+              size="lg"
+              onClick={handleConfirm}
+              disabled={!selectedSpeciality} // Deshabilitar si no hay especialidad seleccionada
+              />
 
         </div>
       </div>

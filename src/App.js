@@ -28,6 +28,7 @@ import ProfileMenu from './pages/Profile/ProfileMenu';
 import PersonalInfo from './pages/Profile/PersonalInfo';
 import WorkSettings from './pages/Profile/WorkSettings';
 import ProfilePreferences from './pages/Profile/ProfilePreferences';
+import ButtonDemo from './components/ui/Button/ButtonDemo';
 
 
 function App() {
@@ -37,6 +38,7 @@ function App() {
       <Route path="/" element={<PublicRoute><Home /></PublicRoute>} />
       <Route path="/login" element={<PublicRoute><Login /></PublicRoute>} />
       <Route path="/register" element={<PublicRoute><Register /></PublicRoute>} />
+      <Route path="/button-demo" element={<ButtonDemo />} />
 
       {/* Rutas privadas: agrupadas bajo el nuevo layout */}
       <Route path="/" element={<PrivateRoute><AppLayout /></PrivateRoute>}>

@@ -9,6 +9,10 @@ import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import MonthSelector from './MonthSelector';
 import { motion, AnimatePresence } from 'framer-motion';
+import Button from '../components/ui/Button/Button'; // Ajusta ruta si necesario
+import { Lightning } from '../theme/icons';
+
+
 
 function getShiftLabel(shift) {
   switch (shift) {
@@ -410,32 +414,41 @@ function MonthlyCalendar() {
           {entry.isPublished ? (
             <>
               <p>Turno publicado</p>
-              <button
-                className="btn btn-danger m-1"
+              <Button
+                label="Quitar publicación"
+                variant="ghost"
+                size="lg"
                 onClick={() => handleDeletePublication(entry.shift_id)}
-              >
-                Quitar publicación
-              </button>
+              />
             </>
           ) : (
             <>
-              <div className='btn-group'>
-                <button onClick={() => toggleShift(dateStr)} className="btn btn-primary m-1">
-                  Editar turno
-                </button>
-                <button onClick={() => handleRemoveShiftForDay(dateStr)} className="btn btn-primary m-1">
-                  Quitar turno
-                </button>
-                <button
-                  className="btn btn-success m-1"
-                  onClick={() => navigate(`/shifts/create?date=${dateStr}&shift_type=${entry.shift_type}`)}
-                >
-                  Publicar turno
-                </button>
-              </div>
+              <Button
+                label="Publicar turno"
+                variant="primary"
+                size="lg"
+                leftIcon={<Lightning size={20} />}
+                rightIcon={<Lightning size={20} />}
+                onClick={() => navigate(`/shifts/create?date=${dateStr}&shift_type=${entry.shift_type}`)}
+              />
+
+              <Button
+                label="Eliminar"
+                variant="outline"
+                size="md"
+                onClick={() => handleRemoveShiftForDay(dateStr)}
+              />
+              <Button
+                label="Editar"
+                variant="outline"
+                size="md"
+                onClick={() => toggleShift(dateStr)}
+              />
+
             </>
-          )}
-        </div>
+          )
+          }
+        </div >
       );
     }
     // Es una preferencia o disponibilidad
@@ -444,9 +457,12 @@ function MonthlyCalendar() {
         <div>
           <h3 className="font-bold mb-2">{dayLabel} - Disponibilidad</h3>
           <p>Tipo: {entry.preference_type}</p>
-          <button onClick={() => togglePreference(dateStr)} className="btn btn-primary m-1">
-            Editar disponibilidad
-          </button>
+          <Button
+            label="Editar"
+            variant="outline"
+            size="md"
+            onClick={() => togglePreference(dateStr)}
+          />
         </div>
       );
     }
@@ -458,12 +474,15 @@ function MonthlyCalendar() {
           <h3 className="font-bold mb-2">{dayLabel} - Turno Recibido</h3>
           <p>Tipo: {entry.shift_type}</p>
           <p>Propietario del turno: {entry.requester_name} {entry.requester_surname}</p>
-          <button
-            className="btn btn-success m-1"
+
+          <Button
+            label="Publicar turno"
+            variant="primary"
+            size="lg"
+            leftIcon={<Lightning size={20} />}
+            rightIcon={<Lightning size={20} />}
             onClick={() => navigate(`/shifts/create?date=${dateStr}&shift_type=${entry.shift_type}`)}
-          >
-            Publicar turno
-          </button>
+          />
         </div>
       );
     }
@@ -474,12 +493,22 @@ function MonthlyCalendar() {
         <div>
           <h3 className="font-bold mb-2">{dayLabel} - Turno Traspasado</h3>
           <div className='btn-group'>
-            <button onClick={() => toggleShift(dateStr)} className="btn btn-primary m-1">
-              Añadir turno
-            </button>
-            <button onClick={() => togglePreference(dateStr)} className="btn btn-secondary m-1">
-              Añadir disponibilidad
-            </button>
+            <Button
+              label="Añadir turno"
+              variant="primary"
+              size="lg"
+              leftIcon={<Lightning size={20} />}
+              rightIcon={<Lightning size={20} />}
+              onClick={() => toggleShift(dateStr)}
+            />
+            <Button
+              label="Añadir disponibilidad"
+              variant="secondary"
+              size="lg"
+              leftIcon={<Lightning size={20} />}
+              rightIcon={<Lightning size={20} />}
+              onClick={() => togglePreference(dateStr)}
+            />
           </div>
         </div>
       );
@@ -490,12 +519,22 @@ function MonthlyCalendar() {
       <div>
         <h3 className="font-bold mb-2">{dayLabel} - Día libre</h3>
         <div className='btn-group'>
-          <button onClick={() => toggleShift(dateStr)} className="btn btn-primary m-1">
-            Añadir turno
-          </button>
-          <button onClick={() => togglePreference(dateStr)} className="btn btn-secondary m-1">
-            Añadir disponibilidad
-          </button>
+          <Button
+            label="Añadir turno"
+            variant="primary"
+            size="lg"
+            leftIcon={<Lightning size={20} />}
+            rightIcon={<Lightning size={20} />}
+            onClick={() => toggleShift(dateStr)}
+          />
+          <Button
+            label="Añadir disponibilidad"
+            variant="secondary"
+            size="lg"
+            leftIcon={<Lightning size={20} />}
+            rightIcon={<Lightning size={20} />}
+            onClick={() => togglePreference(dateStr)}
+          />
         </div>
       </div>
     );
@@ -509,32 +548,33 @@ function MonthlyCalendar() {
 
 
       {!isMassiveEditMode ? (
-        <button
-          className="btn btn-primary"
+        <Button
+          label="Generar turnos masivo"
+          variant="primary"
+          size="lg"
           onClick={() => {
             setDraftShiftMap({ ...shiftMap }); // Creamos copia
             setIsMassiveEditMode(true);
           }}
-        >
-          Generar turnos masivo
-        </button>
+        />
+
       ) : (
         <div className="btn-group">
-          <button
-            className="btn btn-success"
+          <Button
+            label="Guardar cambios"
+            variant="primary"
+            size="md"
             onClick={handleSaveMassiveEdit}
-          >
-            Guardar cambios
-          </button>
-          <button
-            className="btn btn-danger"
+          />
+          <Button
+            label="Descartar cambios"
+            variant="danger"
+            size="md"
             onClick={() => {
               setDraftShiftMap(null);
               setIsMassiveEditMode(false);
             }}
-          >
-            Cancelar cambios
-          </button>
+          />
         </div>
       )}
 

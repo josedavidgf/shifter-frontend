@@ -3,7 +3,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { createWorker, createWorkerHospital } from '../../services/workerService';
 import { useAuth } from '../../context/AuthContext';
 import HeaderSecondLevel from '../../components/ui/Header/HeaderSecondLevel';
-
+import Button from '../../components/ui/Button/Button'; // Ajusta ruta si necesario
 
 export default function OnboardingConfirmStep() {
   const [hospitalId, setHospitalId] = useState('');
@@ -69,9 +69,20 @@ export default function OnboardingConfirmStep() {
 
           {error && <p style={{ color: 'red' }}>{error}</p>}
 
-          <button className='btn btn-primary' onClick={handleConfirm}>Crear cuenta</button>
+          <Button
+            label="Crear cuenta"
+            variant="primary"
+            size="lg"
+            onClick={handleConfirm}
+          />
+
           <hr />
-          <button className='btn btn-danger' onClick={() => navigate('/onboarding/code')}>Contactar con Tanda</button>
+          <Button
+            label="Contactar con Tanda"
+            variant="outline"
+            size="lg"
+            onClick={() => navigate('/onboarding/code')}
+          />
         </div>
       </div>
     </>

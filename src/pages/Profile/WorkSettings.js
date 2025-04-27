@@ -10,6 +10,8 @@ import { getWorkerTypes } from '../../services/workerService';
 import InputField from '../../components/ui/InputField/InputField';
 import HeaderSecondLevel from '../../components/ui/Header/HeaderSecondLevel';
 import { useNavigate } from 'react-router-dom';
+import Button from '../../components/ui/Button/Button'; // Ajusta ruta si necesario
+import { Buildings } from '../../theme/icons'; // Icono de ejemplo
 
 
 const WorkSettings = () => {
@@ -110,7 +112,13 @@ const WorkSettings = () => {
                         <div>
                             <p><strong>Hospital actual:</strong> {isWorker.workers_hospitals?.[0]?.hospitals?.name}</p>
                             <p><strong>Especialidad:</strong> {isWorker.workers_specialities?.[0]?.specialities?.speciality_category} - {worker.workers_specialities?.[0]?.specialities?.speciality_subcategory}</p>
-                            <button className="btn btn-primary" onClick={() => setStep('code')}>Cambiar hospital y especialidad</button>
+                            <Button
+                                label="Cambiar hospital"
+                                variant="primary"
+                                leftIcon={<Buildings size={20} />}
+                                size="lg"
+                                onClick={() => setStep('code')}
+                            />
                         </div>
                     )}
 
@@ -131,8 +139,18 @@ const WorkSettings = () => {
                             />
                             {error && <p style={{ color: 'red' }}>{error}</p>}
                             <div className="btn-group">
-                                <button type="submit" className="btn btn-primary">Validar</button>
-                                <button type="button" className="btn btn-secondary" onClick={() => setStep('view')}>Cancelar</button>
+                                <Button
+                                    label="Validar"
+                                    variant="primary"
+                                    size="lg"
+                                    type="submit"
+                                />
+                                <Button
+                                    label="Cancelar"
+                                    variant="outline"
+                                    size="lg"
+                                    onClick={() => setStep('view')}
+                                />
                             </div>
                         </form>
                     )}
@@ -142,8 +160,18 @@ const WorkSettings = () => {
                             <p><strong>Nuevo hospital ID:</strong> {hospitalId}</p>
                             <p><strong>Tipo de trabajador ID:</strong> {workerTypeId}</p>
                             <div className="btn-group">
-                                <button className="btn btn-primary" onClick={handleLoadSpecialities}>Continuar</button>
-                                <button className="btn btn-secondary" onClick={() => setStep('view')}>Cancelar</button>
+                                <Button
+                                    label="Continuar"
+                                    variant="primary"
+                                    size="lg"
+                                    onClick={handleLoadSpecialities}
+                                />
+                                <Button
+                                    label="Cancelar"
+                                    variant="outline"
+                                    size="lg"
+                                    onClick={() => setStep('view')}
+                                />
                             </div>
                         </div>
                     )}
@@ -161,8 +189,18 @@ const WorkSettings = () => {
                             </select>
                             {error && <p style={{ color: 'red' }}>{error}</p>}
                             <div className="btn-group mt-3">
-                                <button className="btn btn-success" onClick={handleConfirmChanges}>Guardar cambios</button>
-                                <button className="btn btn-secondary" onClick={() => setStep('view')}>Cancelar</button>
+                                <Button
+                                    label="Guardar cambios"
+                                    variant="primary"
+                                    size="lg"
+                                    onClick={handleConfirmChanges}
+                                />
+                                <Button
+                                    label="Cancelar"
+                                    variant="outline"
+                                    size="lg"
+                                    onClick={() => setStep('view')}
+                                />
                             </div>
                         </div>
                     )}

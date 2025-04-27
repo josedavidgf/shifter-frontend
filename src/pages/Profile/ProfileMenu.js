@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import HeaderSecondLevel from '../../components/ui/Header/HeaderSecondLevel';
 import { AddressBook, Briefcase, Notification, Gift, MessengerLogo, File, Books } from '../../theme/icons';
+import Button from '../../components/ui/Button/Button'; // Ajusta ruta si necesario
+
 
 
 const ProfileMenu = () => {
@@ -57,9 +59,12 @@ const ProfileMenu = () => {
             ))}
           </ul>
           <div className="logout-button-wrapper mt-8">
-            <button className="btn btn-danger" onClick={handleLogout}>
-              Cerrar sesión
-            </button>
+            <Button
+              label="Cerrar sesión"
+              variant="danger"
+              size="lg"
+              onClick={handleLogout}
+              />
           </div>
         </div>
       </div>

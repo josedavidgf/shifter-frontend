@@ -4,7 +4,7 @@ import { updateWorkerInfo } from '../../services/userService';
 import { useAuth } from '../../context/AuthContext';
 import InputField from '../../components/ui/InputField/InputField';
 import HeaderSecondLevel from '../../components/ui/Header/HeaderSecondLevel';
-
+import Button from '../../components/ui/Button/Button'; // Ajusta ruta si necesario
 
 
 export default function OnboardingPhoneStep() {
@@ -74,14 +74,13 @@ export default function OnboardingPhoneStep() {
           />
 
           {error && <p style={{ color: 'red' }}>{error}</p>}
-
-          <button 
-            className='btn btn-primary' 
+          <Button
+            label="Finizar registro"
+            variant="primary"
+            size="lg"
             onClick={handleConfirm}
             disabled={!prefix || !phone}
-            >
-              Finalizar registro
-            </button>
+          />
         </div>
       </div>
     </>

@@ -3,6 +3,7 @@ import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import useTrackPageView from '../hooks/useTrackPageView';
 import InputField from '../components/ui/InputField/InputField';
+import Button from '../components/ui/Button/Button'; // Ajusta ruta si necesario
 
 
 function Login() {
@@ -47,7 +48,13 @@ function Login() {
                     type="password"
                     required
                 />
-                <button className='btn btn-primary' type="submit">Iniciar Sesión</button>
+                <Button
+                    label="Iniciar Sesión"
+                    variant="primary"
+                    size="lg"
+                    type="submit"
+                    disabled={!email || !password} // Deshabilitar si email o password están vacíos
+                />
             </form>
             <hr />
             <button className='btn btn-secondary' onClick={loginWithGoogle}>Sign in with Google</button>
