@@ -5,9 +5,11 @@ import ChatBox from '../../components/ChatBox';
 import { useAuth } from '../../context/AuthContext';
 import { getMyWorkerProfile } from '../../services/workerService';
 import useTrackPageView from '../../hooks/useTrackPageView';
-import {useRespondFeedback} from '../../hooks/useRespondFeedback';
+import { useRespondFeedback } from '../../hooks/useRespondFeedback';
 import HeaderSecondLevel from '../../components/ui/Header/HeaderSecondLevel';
 import Button from '../../components/ui/Button/Button'; // Ajusta ruta si necesario
+import { useToast } from '../../hooks/useToast'; // Ajusta ruta
+
 
 
 const SwapDetail = () => {
@@ -17,7 +19,13 @@ const SwapDetail = () => {
     const [swap, setSwap] = useState(null);
     const [error, setError] = useState(null);
     const [workerId, setWorkerId] = useState('');
-    const showRespondFeedback = useRespondFeedback();
+    const [isAccepting, setIsAccepting] = useState(false);
+    const [isRejecting, setIsRejecting] = useState(false);
+    const [isCancelling, setIsCancelling] = useState(false);
+    const { showSuccess, showError } = useToast();
+
+
+    const showRespondFeedback = useRespondFeedback('toast'); // 👈 ahora usamos alert
 
 
     useTrackPageView('swap-detail');
@@ -45,39 +53,56 @@ const SwapDetail = () => {
         const confirm = window.confirm('¿Estás seguro de que quieres cancelar este intercambio?');
         if (!confirm) return;
 
+        setIsCancelling(true);
         try {
             const token = await getToken();
             await cancelSwap(swap.swap_id, token);
-            alert('Intercambio cancelado correctamente');
-            navigate('/my-swaps'); // ✅ Redirige a la lista de intercambios propuestos
+            showSuccess('Intercambio cancelado correctamente'); // ✅ Toast de éxito
+
+            navigate('/my-swaps');
         } catch (err) {
             console.error('Error al cancelar el intercambio:', err.message);
-            alert('No se pudo cancelar el intercambio');
+            showError('⚠️ No se pudo cancelar el intercambio'); // ❌ Toast de error
+        } finally {
+            setIsCancelling(false);
         }
     };
+
 
     const handleRespond = async (swapId, decision) => {
         try {
             const token = await getToken();
             await respondToSwap(swapId, decision, token);
-            showRespondFeedback(decision); // 👈 Usamos el hook para mostrar el feedback
 
+            showRespondFeedback(decision); // 🔥 Modular
             navigate('/my-swaps');
         } catch (err) {
             console.error('❌ Error al responder al swap:', err.message);
-            alert('Error al actualizar estado');
+            showError('⚠️ Error al actualizar el intercambio');
         }
     };
 
     const handleAcceptSwap = async () => {
         if (!swap) return;
-        await handleRespond(swap.swap_id, 'accepted');
+        setIsAccepting(true);
+        try {
+            await handleRespond(swap.swap_id, 'accepted');
+        } finally {
+            setIsAccepting(false);
+        }
     };
+
 
     const handleRejectSwap = async () => {
         if (!swap) return;
-        await handleRespond(swap.swap_id, 'rejected');
+        setIsRejecting(true);
+        try {
+            await handleRespond(swap.swap_id, 'rejected');
+        } finally {
+            setIsRejecting(false);
+        }
     };
+
     // Mostrar chat solo si el estado lo permite
     const showChat = ['proposed', 'accepted'].includes(swap.status);
 
@@ -129,12 +154,14 @@ const SwapDetail = () => {
                                 variant="primary"
                                 size="lg"
                                 onClick={handleAcceptSwap}
+                                isLoading={isAccepting}
                             />
                             <Button
                                 label="Rechazar intercambio"
                                 variant="danger"
                                 size="lg"
                                 onClick={handleRejectSwap}
+                                isLoading={isRejecting}
                             />
                         </div>
                     )}
@@ -146,6 +173,7 @@ const SwapDetail = () => {
                                 variant="danger"
                                 size="lg"
                                 onClick={handleCancelSwap}
+                                isLoading={isCancelling}
                             />
                         </div>
                     )}

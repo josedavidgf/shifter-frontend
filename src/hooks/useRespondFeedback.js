@@ -1,21 +1,22 @@
 import { useCallback } from 'react';
-
-/**
- * Hook que muestra feedback según la decisión del intercambio
- */
+import { toast } from 'react-hot-toast';
 
 export function useRespondFeedback() {
   const showRespondFeedback = useCallback((decision) => {
-    switch (decision) {
-      case 'accepted':
-        alert('✅ Intercambio aceptado');
-        break;
-      case 'rejected':
-        alert('❌ Intercambio rechazado');
-        break;
-      default:
-        alert('ℹ️ Estado desconocido del intercambio');
-        break;
+    const messages = {
+      accepted: 'Intercambio aceptado',
+      rejected: 'Intercambio rechazado',
+      unknown: 'Estado desconocido del intercambio',
+    };
+
+    const message = messages[decision] || messages['unknown'];
+
+    if (decision === 'accepted') {
+      toast.success(message, { duration: 2500, icon: '✅', className: 'toast-success' });
+    } else if (decision === 'rejected') {
+      toast.success(message, { duration: 2500, icon: '❌', className: 'toast-success' });
+    } else {
+      toast(message, { duration: 2500, icon: 'ℹ️', className: 'toast-info' });
     }
   }, []);
 
