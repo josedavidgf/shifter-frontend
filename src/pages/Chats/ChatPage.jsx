@@ -54,29 +54,32 @@ const ChatPage = () => {
     return (
         <>
             <HeaderSecondLevel
-                title= {`Chat con ${otherPersonName}`}
+                title={`Chat con ${otherPersonName}`}
                 showBackButton
                 onBack={handleBack}
             />
-            <div className="container page">
-                <div className="chat-page-header">
-                    <div>
-                        <strong>{otherPersonName} {otherPersonSurname}</strong><br />
-                        <small>
-                            {getVerb(myDate)} {formatDate(myDate)} · {otherPersonName} {getOtherVerb(otherDate)} {formatDate(otherDate)}
-                        </small>
+            <div className="page page-secondary">
+                <div className="container">
+
+                    <div className="chat-page-header">
+                        <div>
+                            <strong>{otherPersonName} {otherPersonSurname}</strong><br />
+                            <small>
+                                {getVerb(myDate)} {formatDate(myDate)} · {otherPersonName} {getOtherVerb(otherDate)} {formatDate(otherDate)}
+                            </small>
+                        </div>
                     </div>
-                </div>
-                <div className="chat-page-content">
-                    <ChatBox
-                        swapId={swap.swap_id}
-                        myWorkerId={workerId}
-                        otherWorkerId={otherWorkerId}
-                        otherPersonName={otherPersonName}
-                        otherPersonSurname={otherPersonSurname}
-                        myDate={myDate}
-                        otherDate={otherDate}
-                    />
+                    <div className="chat-page-content">
+                        <ChatBox
+                            swapId={swap.swap_id}
+                            myWorkerId={workerId}
+                            otherWorkerId={otherWorkerId}
+                            otherPersonName={otherPersonName}
+                            otherPersonSurname={otherPersonSurname}
+                            myDate={myDate}
+                            otherDate={otherDate}
+                        />
+                    </div>
                 </div>
             </div>
         </>

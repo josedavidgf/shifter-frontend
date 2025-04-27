@@ -2,27 +2,31 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import HeaderSecondLevel from '../../components/ui/Header/HeaderSecondLevel';
+import { AddressBook, Briefcase, Notification, Gift, MessengerLogo, File, Books } from '../../theme/icons';
+
 
 const ProfileMenu = () => {
   const navigate = useNavigate();
   const { logout } = useAuth();
 
   const items = [
-    { label: 'Información personal', route: '/profile/personal', icon: '👤' },
-    { label: 'Ajustes profesionales', route: '/profile/work', icon: '🏥' },
-    { label: 'Preferencias de comunicación', route: '/preferences', icon: '📩' },
-    { label: 'Referir', route: '/profile/referral', icon: '🎁' },
-    { label: 'Contacto', route: '/profile/contact', icon: '📣' },
-    { label: 'Términos y condiciones', route: 'https://tanda-app/legal/terms', icon: '📄', external: true },
-    { label: 'Política de privacidad', route: 'https://tanda-app/legal/privacy', icon: '🔒', external: true },
+    { label: 'Información personal', route: '/profile/personal', Icon: AddressBook },
+    { label: 'Ajustes profesionales', route: '/profile/work', Icon: Briefcase },
+    { label: 'Preferencias de comunicación', route: '/profile/preferences', Icon: Notification },
+    { label: 'Referir', route: '/profile/referral', Icon: Gift },
+    { label: 'Contacto', route: '/profile/contact', Icon: MessengerLogo },
+    { label: 'Términos y condiciones', route: 'https://tanda-app/legal/terms', Icon: File, external: true },
+    { label: 'Política de privacidad', route: 'https://tanda-app/legal/privacy', Icon: Books, external: true },
   ];
   const handleLogout = async () => {
     try {
       await logout();
+      navigate('/login'); // <--- AÑADE ESTO
     } catch (error) {
       console.error('Error during logout:', error);
     }
   };
+
   const handleBack = () => {
     if (window.history.length > 1) {
       navigate(-1);
@@ -38,20 +42,26 @@ const ProfileMenu = () => {
         showBackButton
         onBack={handleBack}
       />
-      <div className="container page">
+      <div className="page page-secondary">
+        <div className="container">
 
-        <ul className="profile-menu">
-          {items.map(({ label, route, icon, external }) => (
-            <li key={route} className="profile-menu-item" onClick={() => {
-              external ? window.open(route, '_blank') : navigate(route);
-            }}>
-              <span className="icon">{icon}</span>
-              <span className="label">{label}</span>
-              <span className="chevron">›</span>
-            </li>
-          ))}
-        </ul>
-        <button className="btn btn-danger" onClick={handleLogout}>Cerrar sesión</button>
+          <ul className="menu-list">
+            {items.map(({ label, route, Icon }) => (
+              <li key={label} className="menu-item" onClick={() => navigate(route)}>
+                <div className="menu-item-left">
+                  <Icon width={24} height={24} />
+                  <span>{label}</span>
+                </div>
+                <span className="menu-item-chevron">{'›'}</span>
+              </li>
+            ))}
+          </ul>
+          <div className="logout-button-wrapper mt-8">
+            <button className="btn btn-danger" onClick={handleLogout}>
+              Cerrar sesión
+            </button>
+          </div>
+        </div>
       </div>
     </>
   );

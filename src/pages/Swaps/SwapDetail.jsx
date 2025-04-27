@@ -5,7 +5,7 @@ import ChatBox from '../../components/ChatBox';
 import { useAuth } from '../../context/AuthContext';
 import { getMyWorkerProfile } from '../../services/workerService';
 import useTrackPageView from '../../hooks/useTrackPageView';
-import BackButton from '../../components/BackButton';
+import HeaderSecondLevel from '../../components/ui/Header/HeaderSecondLevel';
 
 
 const SwapDetail = () => {
@@ -57,37 +57,51 @@ const SwapDetail = () => {
     // Mostrar chat solo si el estado lo permite
     const showChat = ['proposed', 'accepted'].includes(swap.status);
 
+    const handleBack = () => {
+        if (window.history.length > 1) {
+            navigate(-1);
+        } else {
+            navigate('/calendar');
+        }
+    };
+
     return (
-        <div className="container page">
-            <h2 className="mb-3">Intercambio #{swap.swap_id}</h2>
+        <>
+            <HeaderSecondLevel
+                title="Detalle del intercambio"
+                showBackButton
+                onBack={handleBack}
+            />
 
-            <div className="card mb-3">
-                <p><strong>Turno original:</strong> {swap.shift.date}</p>
-                <p><strong>Turno ofrecido:</strong> {swap.offered_date}</p>
-                <p><strong>Estado:</strong> <span className={`status-badge status-${swap.status}`}>{swap.status}</span></p>
+            <div className="page">
+                <div className="container">
+                    <div className="card mb-3">
+                        <p><strong>Intercambio #{swap.swap_id}</strong></p>
+                        <p><strong>Turno original:</strong> {swap.shift.date}</p>
+                        <p><strong>Turno ofrecido:</strong> {swap.offered_date}</p>
+                        <p><strong>Estado:</strong> <span className={`status-badge status-${swap.status}`}>{swap.status}</span></p>
+                    </div>
+
+                    {showChat && (
+                        <div className="mb-3">
+                            <ChatBox
+                                swapId={swap.swap_id}
+                                myWorkerId={swap.requester_id === workerId ? swap.requester_id : swap.shift.worker_id}
+                                otherWorkerId={swap.requester_id === workerId ? swap.shift.worker_id : swap.requester_id}
+                            />
+                        </div>
+                    )}
+
+                    {swap.status === 'proposed' && swap.requester_id === workerId && (
+                        <div className="btn-group mb-4">
+                            <button onClick={handleCancelSwap} className="btn btn-danger">
+                                ❌ Cancelar intercambio
+                            </button>
+                        </div>
+                    )}
+                </div>
             </div>
-
-            {showChat && (
-                <div className="mb-3">
-                    <ChatBox
-                        swapId={swap.swap_id}
-                        myWorkerId={swap.requester_id === workerId ? swap.requester_id : swap.shift.worker_id}
-                        otherWorkerId={swap.requester_id === workerId ? swap.shift.worker_id : swap.requester_id}
-                    />
-                </div>
-            )}
-
-            {swap.status === 'proposed' && swap.requester_id === workerId && (
-                <div className="btn-group mb-4">
-                    <button onClick={handleCancelSwap} className="btn btn-danger">
-                        ❌ Cancelar intercambio
-                    </button>
-                </div>
-            )}
-
-            <BackButton />
-        </div>
-
+        </>
     );
 };
 

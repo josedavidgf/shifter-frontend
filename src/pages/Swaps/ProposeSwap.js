@@ -6,6 +6,7 @@ import useTrackPageView from '../../hooks/useTrackPageView';
 import { useSwapFeedback } from '../../hooks/useSwapFeedback';
 import useAvailableShifts from '../../hooks/useAvailableShifts';
 import ShiftSelector from '../../components/ShiftSelector';
+import HeaderSecondLevel from '../../components/ui/Header/HeaderSecondLevel';
 
 const ProposeSwap = () => {
   const { shift_id } = useParams();
@@ -66,32 +67,43 @@ const ProposeSwap = () => {
     );
   }
 
+  const handleBack = () => {
+    if (window.history.length > 1) {
+      navigate(-1);
+    } else {
+      navigate('/calendar');
+    }
+  };
+
   return (
-    <div className="container page">
-      <h2 className="mb-3">Proponer intercambio</h2>
+    <>
+      <HeaderSecondLevel
+        title="Proponer intercambio"
+        showBackButton
+        onBack={handleBack}
+      />
+      <div className="page page-secondary">
+        <div className="container">
+          <form onSubmit={handleSubmit} className="propose-form">
+            <ShiftSelector shifts={shifts} onSelect={setSelectedShift} />
 
-      <form onSubmit={handleSubmit} className="propose-form">
-        <ShiftSelector shifts={shifts} onSelect={setSelectedShift} />
+            <div className="form-group">
+              <label>Comentarios:</label>
+              <textarea
+                name="swap_comments"
+                value={swapComments}
+                onChange={(e) => setSwapComments(e.target.value)}
+                placeholder="Comentarios adicionales"
+              />
+            </div>
 
-        <div className="form-group">
-          <label>Comentarios:</label>
-          <textarea
-            name="swap_comments"
-            value={swapComments}
-            onChange={(e) => setSwapComments(e.target.value)}
-            placeholder="Comentarios adicionales"
-          />
+            <div className="btn-group mt-3">
+              <button type="submit" className="btn btn-primary">Enviar propuesta</button>
+            </div>
+          </form>
         </div>
-
-        <div className="btn-group mt-3">
-          <button type="submit" className="btn btn-primary">Enviar propuesta</button>
-          <button type="button" className="btn btn-secondary" onClick={() => navigate('/shifts/hospital')}>
-            Cancelar
-          </button>
-        </div>
-      </form>
-    </div>
-
+      </div>
+    </>
 
   );
 };

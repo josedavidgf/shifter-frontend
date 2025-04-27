@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { getUserPreferences, updateUserPreferences } from '../services/userService';
-import BackButton from './BackButton';
 
 
 const CommunicationPreferences = () => {
@@ -51,8 +50,6 @@ const CommunicationPreferences = () => {
                 <button className="btn btn-primary" type="submit">Save</button>
                 {status && <p>{status}</p>}
             </form>
-            <hr />
-            <BackButton />
         </div>
     );
 };

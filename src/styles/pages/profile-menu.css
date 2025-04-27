@@ -1,0 +1,42 @@
+.menu-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .menu-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 0;
+    border-bottom: 1px solid var(--border-light); /* usa un color claro */
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+  }
+  
+  .menu-item:hover {
+    background-color: var(--hover-light); /* opcional: para feedback de hover */
+  }
+  
+  .menu-item-left {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem; /* espacio entre icono y texto */
+  }
+  
+  .menu-item-left span {
+    font-size: 1rem;
+    font-weight: 500;
+  }
+  
+  .menu-item-chevron {
+    font-size: 1.25rem;
+    color: var(--color-gray); /* un gris claro para la flecha */
+  }
+  
+  .logout-button-wrapper {
+    margin-top: 2rem;
+    display: flex;
+    justify-content: center;
+  }
+  

@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { updateWorkerInfo } from '../../services/userService';
 import { useAuth } from '../../context/AuthContext';
 import InputField from '../../components/ui/InputField/InputField';
+import HeaderSecondLevel from '../../components/ui/Header/HeaderSecondLevel';
 
 
 
@@ -36,31 +37,53 @@ export default function OnboardingPhoneStep() {
       setError('Error guardando el teléfono.');
     }
   };
+  const handleBack = () => {
+    if (window.history.length > 1) {
+      navigate(-1);
+    } else {
+      navigate('/calendar');
+    }
+  };
 
   return (
-    <div>
-      <h2>Introduce tu prefijo y tu teléfono (opcional)</h2>
-      <InputField
-        name="prefix"
-        label="Prefijo"
-        placeholder="Introduce tu prefijo"
-        type="text"
-        value={prefix}
-        onChange={(e) => setPrefix(e.target.value)}
+    <>
+      <HeaderSecondLevel
+        showBackButton
+        onBack={handleBack}
       />
+      <div className="page page-secondary">
+        <div className="container">
+          <h2>Por último, añade tu número de teléfono</h2>
+          <p>En Tanda ya tienes un chat para hablar con cualquiera de tus compañeros y gestionar los cambios. Si lo prefieres, añade tu número para facilitar la comunicación en caso de urgencia.</p>
+          <InputField
+            name="prefix"
+            label="Prefijo"
+            placeholder="Introduce tu prefijo"
+            type="text"
+            value={prefix}
+            onChange={(e) => setPrefix(e.target.value)}
+          />
 
-      <InputField
-        name="phone"
-        label="Teléfono"
-        placeholder="Introduce tu teléfono"
-        type="tel"
-        value={phone}
-        onChange={(e) => setPhone(e.target.value)}
-      />
+          <InputField
+            name="phone"
+            label="Teléfono"
+            placeholder="Introduce tu teléfono"
+            type="tel"
+            value={phone}
+            onChange={(e) => setPhone(e.target.value)}
+          />
 
-      {error && <p style={{ color: 'red' }}>{error}</p>}
+          {error && <p style={{ color: 'red' }}>{error}</p>}
 
-      <button className='btn btn-primary' onClick={handleConfirm}>Finalizar</button>
-    </div>
+          <button 
+            className='btn btn-primary' 
+            onClick={handleConfirm}
+            disabled={!prefix || !phone}
+            >
+              Finalizar registro
+            </button>
+        </div>
+      </div>
+    </>
   );
 }

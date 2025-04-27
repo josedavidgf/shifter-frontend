@@ -51,17 +51,19 @@ const HospitalShifts = () => {
             <HeaderFirstLevel
                 title="Turnos disponibles"
             />
-            <div className="container page">
-                {error && <p style={{ color: 'red' }}>{error}</p>}
-                {shifts.length === 0 ? (
-                    <p>No hay turnos disponibles en tu hospital.</p>
-                ) : (
-                    <HospitalShiftsTable
-                        shifts={shifts}
-                        workerId={workerId}
-                        sentSwapShiftIds={sentSwaps}
-                    />
-                )}
+            <div className="pag page-primary">
+                <div className="container">
+                    {error && <p style={{ color: 'red' }}>{error}</p>}
+                    {shifts.length === 0 ? (
+                        <p>No hay turnos disponibles en tu hospital.</p>
+                    ) : (
+                        <HospitalShiftsTable
+                            shifts={shifts}
+                            workerId={workerId}
+                            sentSwapShiftIds={sentSwaps}
+                        />
+                    )}
+                </div>
             </div>
         </>
     );

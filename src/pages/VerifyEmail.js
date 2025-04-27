@@ -20,13 +20,17 @@ const VerifyEmail = () => {
   };
 
   return (
-    <div style={{ padding: '2rem' }}>
-      <h2>Verifica tu correo electrónico</h2>
-      <p>Para continuar, revisa el email que te hemos enviado y haz clic en el enlace de verificación.</p>
-      <p>¿No lo has recibido?</p>
+    <div className="page page-primary">
+      <div className="container">
+        <div style={{ padding: '2rem' }}>
+          <h2>Verifica tu correo electrónico</h2>
+          <p>Para continuar, revisa el email que te hemos enviado y haz clic en el enlace de verificación.</p>
+          <p>¿No lo has recibido?</p>
 
-      <button onClick={handleResend}>Reenviar email de verificación</button>
-      {status && <p style={{ marginTop: '1rem' }}>{status}</p>}
+          <button onClick={handleResend}>Reenviar email de verificación</button>
+          {status && <p style={{ marginTop: '1rem' }}>{status}</p>}
+        </div>
+      </div>
     </div>
   );
 };

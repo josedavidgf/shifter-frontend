@@ -33,12 +33,14 @@ const MySwaps = () => {
       <HeaderFirstLevel
         title="Intercambios propuestos"
       />
-      <div className="container page">
-        {mySwaps.length === 0 ? (
-          <p>No has propuesto ningún intercambio todavía.</p>
-        ) : (
-          <MySwapsTable />
-        )}
+      <div className="page page-primary">
+        <div className="container">
+          {mySwaps.length === 0 ? (
+            <p>No has propuesto ningún intercambio todavía.</p>
+          ) : (
+            <MySwapsTable />
+          )}
+        </div>
       </div>
     </>
   );

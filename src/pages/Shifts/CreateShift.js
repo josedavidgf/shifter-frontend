@@ -7,7 +7,7 @@ import { getSpecialities } from '../../services/specialityService';
 import useTrackPageView from '../../hooks/useTrackPageView';
 import { format, parseISO } from 'date-fns';
 import { translateShiftType } from '../../utils/translateShiftType';
-import BackButton from '../../components/BackButton';
+import HeaderSecondLevel from '../../components/ui/Header/HeaderSecondLevel';
 
 
 const CreateShift = () => {
@@ -100,50 +100,64 @@ const CreateShift = () => {
         }
     };
 
-
+    const handleBack = () => {
+        if (window.history.length > 1) {
+            navigate(-1);
+        } else {
+            navigate('/calendar');
+        }
+    };
 
     return (
-        <div>
-            <h2>Crear Turno</h2>
-            <form onSubmit={handleSubmit}>
-                <label>Fecha:</label>
-                <p>{form.date ? format(parseISO(form.date), 'dd/MM/yyyy') : '-'}</p>
+        <>
+            <HeaderSecondLevel
+                title="Crear turno"
+                showBackButton
+                onBack={handleBack}
+            />
+            <div className='page page-secondary'>
+                <div className='container'>
+                    <form onSubmit={handleSubmit}>
+                        <label>Fecha:</label>
+                        <p>{form.date ? format(parseISO(form.date), 'dd/MM/yyyy') : '-'}</p>
 
-                <label>Turno:</label>
-                <p>{translateShiftType(form.shift_type)}</p>
+                        <label>Turno:</label>
+                        <p>{translateShiftType(form.shift_type)}</p>
 
-                {/* <label>Etiqueta:</label> */}
-                {/* <select name="shift_label" value={form.shift_label} onChange={handleChange} required>
+                        {/* <label>Etiqueta:</label> */}
+                        {/* <select name="shift_label" value={form.shift_label} onChange={handleChange} required>
                     <option value="regular">Regular</option>
                     <option value="duty">Guardia</option>
                 </select> */}
 
-                <label>Especialidad:</label>
-                <input
-                    type="hidden"
-                    name="speciality_id"
-                    value={form.specialityId}
-                />
-                {selectedSpeciality &&
-                    <p>{selectedSpeciality.speciality_category} - {selectedSpeciality.speciality_subcategory}</p>
-                }
+                        <label>Especialidad:</label>
+                        <input
+                            type="hidden"
+                            name="speciality_id"
+                            value={form.specialityId}
+                        />
+                        {selectedSpeciality &&
+                            <p>{selectedSpeciality.speciality_category} - {selectedSpeciality.speciality_subcategory}</p>
+                        }
 
-                <label>Comentarios:</label>
-                <textarea name="shift_comments" value={form.shift_comments} onChange={handleChange} />
-                <br />
+                        <label>Comentarios:</label>
+                        <textarea name="shift_comments" value={form.shift_comments} onChange={handleChange} />
+                        <br />
 
-                <button
-                    type="submit"
-                    disabled={!form.date || !form.shift_type} // 🔥 Aquí
-                >
-                    {isSubmitting ? 'Publicando...' : 'Publicar Turno'}
-                </button>
+                        <button
+                            className="btn btn-primary"
+                            type="submit"
+                            disabled={!form.date || !form.shift_type} // 🔥 Aquí
+                        >
+                            {isSubmitting ? 'Publicando...' : 'Publicar Turno'}
+                        </button>
 
-            </form>
+                    </form>
 
-            {message && <p>{message}</p>}
-            <BackButton />
-        </div>
+                    {message && <p>{message}</p>}
+                </div>
+            </div>
+        </>
     );
 };
 

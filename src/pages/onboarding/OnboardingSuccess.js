@@ -26,7 +26,7 @@ export default function OnboardingSuccess() {
 
   return (
     <div>
-      <h2>✅ Onboarding completado!</h2>
+      <h2>Onboarding completado!</h2>
       <p>Redirigiendo a tu panel de control...</p>
     </div>
   );

@@ -18,5 +18,13 @@ export {
     Bell,
     Password,
     NotePencil,
-    Heartbeat
+    Heartbeat,
+    AddressBook,
+    Briefcase,
+    Notification,
+    MessengerLogo,
+    File,
+    Books,
+    Gift
+
   } from 'phosphor-react';
