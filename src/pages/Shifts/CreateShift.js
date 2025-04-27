@@ -8,6 +8,7 @@ import useTrackPageView from '../../hooks/useTrackPageView';
 import { format, parseISO } from 'date-fns';
 import { translateShiftType } from '../../utils/translateShiftType';
 import HeaderSecondLevel from '../../components/ui/Header/HeaderSecondLevel';
+import Button from '../../components/ui/Button/Button'; // Ajusta ruta si necesario
 
 
 const CreateShift = () => {
@@ -143,15 +144,14 @@ const CreateShift = () => {
                         <label>Comentarios:</label>
                         <textarea name="shift_comments" value={form.shift_comments} onChange={handleChange} />
                         <br />
-
-                        <button
-                            className="btn btn-primary"
+                        <Button
+                            label="Publicar"
+                            variant="primary"
+                            size="lg"
                             type="submit"
-                            disabled={!form.date || !form.shift_type} // 🔥 Aquí
-                        >
-                            {isSubmitting ? 'Publicando...' : 'Publicar Turno'}
-                        </button>
-
+                            disabled={!form.date || !form.shift_type}
+                            isLoading={isSubmitting}
+                        />
                     </form>
 
                     {message && <p>{message}</p>}

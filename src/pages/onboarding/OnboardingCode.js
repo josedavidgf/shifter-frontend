@@ -6,6 +6,7 @@ import { getHospitals } from '../../services/hospitalService';
 import { getWorkerTypes } from '../../services/workerService';
 import InputField from '../../components/ui/InputField/InputField';
 import HeaderSecondLevel from '../../components/ui/Header/HeaderSecondLevel';
+import Button from '../../components/ui/Button/Button'; // Ajusta ruta si necesario
 
 
 export default function OnboardingCodeStep() {
@@ -26,21 +27,21 @@ export default function OnboardingCodeStep() {
   const handleValidateCode = async (e) => {
     e.preventDefault();
     setError('');
-  
+
     try {
       const response = await validateAccessCode(code);
       const { hospital_id, worker_type_id } = response;
-  
+
       const token = await getToken();
       const hospitals = await getHospitals(token);
       const workerTypes = await getWorkerTypes(token);
-  
+
       const hospital = hospitals.find(h => h.hospital_id === hospital_id);
       const workerType = workerTypes.find(w => w.worker_type_id === worker_type_id);
-  
+
       const hospitalName = hospital?.name || '';
       const workerTypeName = workerType?.worker_type_name || '';
-  
+
       navigate('/onboarding/confirm', {
         state: {
           hospital_id,
@@ -55,7 +56,7 @@ export default function OnboardingCodeStep() {
       setError('Código inválido. Por favor verifica y vuelve a intentarlo.');
     }
   };
-  
+
   const handleBack = () => {
     if (window.history.length > 1) {
       navigate(-1);
@@ -89,12 +90,14 @@ export default function OnboardingCodeStep() {
               errorMessage="El código de acceso es obligatorio"
             />
             {error && <p style={{ color: 'red' }}>{error}</p>}
-            <button 
-              className='btn btn-primary' 
+
+            <Button
+              label="Validar código"
+              variant="primary"
+              size="lg"
               type="submit"
-              disabled={!code}>
-                Validar código
-              </button>
+              disabled={!code}
+            />
           </form>
         </div>
       </div >

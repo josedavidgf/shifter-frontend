@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { getSentSwaps } from '../services/swapService';
+import { getSentSwaps, getReceivedSwaps } from '../services/swapService';
 import { useNavigate } from 'react-router-dom';
 
 const MySwapsTable = () => {
@@ -16,12 +16,23 @@ const MySwapsTable = () => {
     async function fetchSwaps() {
       try {
         const token = await getToken();
-        const swaps = await getSentSwaps(token);
-        const sorted = swaps.sort((a, b) => new Date(a.shift?.date) - new Date(b.shift?.date));
+        const [sent, received] = await Promise.all([
+          getSentSwaps(token),
+          getReceivedSwaps(token)
+        ]);
+
+        // Marcar cada swap con el tipo
+        const markedSent = sent.map(s => ({ ...s, direction: 'sent' }));
+        const markedReceived = received.map(r => ({ ...r, direction: 'received' }));
+
+        const all = [...markedSent, ...markedReceived];
+
+        const sorted = all.sort((a, b) => new Date(a.shift?.date) - new Date(b.shift?.date));
+
         setMySwaps(sorted);
         setFiltered(sorted);
       } catch (err) {
-        console.error('❌ Error al cargar swaps enviados:', err.message);
+        console.error('❌ Error al cargar swaps:', err.message);
         setError('Error al cargar swaps');
       }
     }
@@ -78,6 +89,9 @@ const MySwapsTable = () => {
             className="my-swap-card"
             onClick={() => navigate(`/swaps/${swap.swap_id}`)}
           >
+            <div className="my-swap-meta">
+              {swap.direction === 'sent' ? 'Propuesto por ti' : 'Propuesta recibida'}
+            </div>
             <strong>Turno objetivo: {swap.shift?.date} · {swap.shift?.shift_type}</strong>
             <div className="my-swap-meta">
               Con: {swap.shift?.worker?.name} {swap.shift?.worker?.surname}

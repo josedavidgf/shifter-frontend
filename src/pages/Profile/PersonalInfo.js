@@ -5,6 +5,7 @@ import supabase from '../../config/supabase';
 import InputField from '../../components/ui/InputField/InputField';
 import { useNavigate } from 'react-router-dom';
 import HeaderSecondLevel from '../../components/ui/Header/HeaderSecondLevel';
+import Button from '../../components/ui/Button/Button'; // Ajusta ruta si necesario
 
 
 const PersonalInfo = () => {
@@ -127,10 +128,12 @@ const PersonalInfo = () => {
               <label>Imagen de perfil:</label>
               <input type="file" accept="image/*" onChange={handleAvatarChange} />
             </div>
-
-            <button type="submit" className="btn btn-primary">
-              Guardar
-            </button>
+            <Button
+              label="Guardar"
+              variant="primary"
+              size="lg"
+              type="submit"
+            />
           </form>
 
 

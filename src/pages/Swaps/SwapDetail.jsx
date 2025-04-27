@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { getSwapById, cancelSwap } from '../../services/swapService';
+import { getSwapById, cancelSwap, respondToSwap } from '../../services/swapService';
 import ChatBox from '../../components/ChatBox';
 import { useAuth } from '../../context/AuthContext';
 import { getMyWorkerProfile } from '../../services/workerService';
 import useTrackPageView from '../../hooks/useTrackPageView';
+import {useRespondFeedback} from '../../hooks/useRespondFeedback';
 import HeaderSecondLevel from '../../components/ui/Header/HeaderSecondLevel';
+import Button from '../../components/ui/Button/Button'; // Ajusta ruta si necesario
 
 
 const SwapDetail = () => {
@@ -15,6 +17,8 @@ const SwapDetail = () => {
     const [swap, setSwap] = useState(null);
     const [error, setError] = useState(null);
     const [workerId, setWorkerId] = useState('');
+    const showRespondFeedback = useRespondFeedback();
+
 
     useTrackPageView('swap-detail');
 
@@ -52,10 +56,32 @@ const SwapDetail = () => {
         }
     };
 
+    const handleRespond = async (swapId, decision) => {
+        try {
+            const token = await getToken();
+            await respondToSwap(swapId, decision, token);
+            showRespondFeedback(decision); // 👈 Usamos el hook para mostrar el feedback
 
+            navigate('/my-swaps');
+        } catch (err) {
+            console.error('❌ Error al responder al swap:', err.message);
+            alert('Error al actualizar estado');
+        }
+    };
 
+    const handleAcceptSwap = async () => {
+        if (!swap) return;
+        await handleRespond(swap.swap_id, 'accepted');
+    };
+
+    const handleRejectSwap = async () => {
+        if (!swap) return;
+        await handleRespond(swap.swap_id, 'rejected');
+    };
     // Mostrar chat solo si el estado lo permite
     const showChat = ['proposed', 'accepted'].includes(swap.status);
+
+
 
     const handleBack = () => {
         if (window.history.length > 1) {
@@ -64,6 +90,11 @@ const SwapDetail = () => {
             navigate('/calendar');
         }
     };
+
+    console.log('Swap:', swap);
+    console.log('Worker ID:', workerId);
+    console.log('Requester ID:', swap.requester_id);
+    console.log('Swap shift worker:', swap.shift.worker_id);
 
     return (
         <>
@@ -91,12 +122,31 @@ const SwapDetail = () => {
                             />
                         </div>
                     )}
+                    {swap.status === 'proposed' && swap.shift.worker_id === workerId && (
+                        <div className="btn-group mb-4">
+                            <Button
+                                label="Aceptar intercambio"
+                                variant="primary"
+                                size="lg"
+                                onClick={handleAcceptSwap}
+                            />
+                            <Button
+                                label="Rechazar intercambio"
+                                variant="danger"
+                                size="lg"
+                                onClick={handleRejectSwap}
+                            />
+                        </div>
+                    )}
 
                     {swap.status === 'proposed' && swap.requester_id === workerId && (
                         <div className="btn-group mb-4">
-                            <button onClick={handleCancelSwap} className="btn btn-danger">
-                                ❌ Cancelar intercambio
-                            </button>
+                            <Button
+                                label="Cancelar intercambio"
+                                variant="danger"
+                                size="lg"
+                                onClick={handleCancelSwap}
+                            />
                         </div>
                     )}
                 </div>
