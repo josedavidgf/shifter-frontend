@@ -1,30 +1,48 @@
+// src/services/specialityService.js
 import axios from 'axios';
 
 const API_URL = process.env.REACT_APP_BACKEND_URL;
 
+// Obtener todas las especialidades
 export const getSpecialities = async (token) => {
-  const response = await axios.get(`${API_URL}/api/specialities`, {
-    headers: { Authorization: `Bearer ${token}` }
-  });
-  return response.data.data;
+  try {
+    const response = await axios.get(`${API_URL}/api/specialities`, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    return response.data.data;
+  } catch (error) {
+    console.error('❌ Error en getSpecialities:', error.message);
+    throw new Error('Error al cargar especialidades');
+  }
 };
 
-export const addSpecialityToWorker = async (workerId, specialityId,token) => {
-  const response = await axios.post(`${API_URL}/api/workers/specialities`, {
-    workerId,
-    specialityId,
-    qualificationLevel: 'resident', // o el nivel que decidas
-    experienceYears: 1,
-  }, {
-    headers: { Authorization: `Bearer ${token}` },
-  });
-
-  return response.data;
+// Asignar una especialidad a un worker
+export const addSpecialityToWorker = async (workerId, specialityId, token) => {
+  try {
+    const response = await axios.post(`${API_URL}/api/workers/specialities`, {
+      workerId,
+      specialityId,
+      qualificationLevel: 'resident', // Ajustable si quieres
+      experienceYears: 1,
+    }, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    return response.data;
+  } catch (error) {
+    console.error('❌ Error en addSpecialityToWorker:', error.message);
+    throw new Error('Error al asignar especialidad');
+  }
 };
 
+// Obtener especialidades por hospital
 export async function getSpecialitiesByHospital(hospitalId, token) {
-  const response = await axios.get(`${API_URL}/api/specialities/by-hospital/${hospitalId}`, {
-    headers: {Authorization: `Bearer ${token}`}
-  });
-  return response.data.data; // Ajusta si tu respuesta cambia
+  try {
+    const response = await axios.get(`${API_URL}/api/specialities/by-hospital/${hospitalId}`, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    return response.data.data;
+  } catch (error) {
+    console.error('❌ Error en getSpecialitiesByHospital:', error.message);
+    throw new Error('Error al cargar especialidades del hospital');
+  }
 }

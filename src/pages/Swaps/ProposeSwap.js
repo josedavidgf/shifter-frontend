@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import { proposeSwap } from '../../services/swapService';
+import { useSwapApi } from '../../api/useSwapApi';
 import useTrackPageView from '../../hooks/useTrackPageView';
 import { useSwapFeedback } from '../../hooks/useSwapFeedback';
 import useAvailableShifts from '../../hooks/useAvailableShifts';
@@ -15,7 +15,9 @@ const ProposeSwap = () => {
   const { getToken } = useAuth();
   const navigate = useNavigate();
   const { showSwapFeedback } = useSwapFeedback();
-  const { shifts, loading, error } = useAvailableShifts();
+  const { shifts, loading: loadingShifts, error: errorShifts } = useAvailableShifts();
+  const { proposeSwap, loading: loadingPropose, error: errorPropose } = useSwapApi(); // 🆕
+
 
   const [selectedShift, setSelectedShift] = useState(null);
   const [selectedShiftId, setSelectedShiftId] = useState('');
@@ -38,7 +40,6 @@ const ProposeSwap = () => {
 
     try {
       const token = await getToken();
-
       const form = {
         offered_date: selectedShift.date,
         offered_type: selectedShift.type,
@@ -46,22 +47,33 @@ const ProposeSwap = () => {
         swap_comments: swapComments,
       };
 
-      const swap = await proposeSwap(shift_id, form, token);
-      showSwapFeedback(swap);
-
-      navigate('/shifts/hospital');
+      const result = await proposeSwap(shift_id, form, token);
+      if (result) {
+        showSwapFeedback(result);
+        navigate('/shifts/hospital');
+      } else {
+        alert('No se pudo enviar la propuesta de intercambio.');
+      }
     } catch (err) {
       console.error('❌ Error al proponer intercambio:', err.message);
-      alert('Error al proponer intercambio.');
+      alert('Error inesperado al proponer intercambio.');
     }
   };
 
-  if (loading) {
+  const handleBack = () => {
+    if (window.history.length > 1) {
+      navigate(-1);
+    } else {
+      navigate('/calendar');
+    }
+  };
+
+  if (loadingShifts) {
     return <p>Cargando turnos disponibles...</p>;
   }
 
-  if (error) {
-    return <p style={{ color: 'red' }}>{error}</p>;
+  if (errorShifts) {
+    return <p style={{ color: 'red' }}>{errorShifts}</p>;
   }
 
   if (shifts.length === 0) {
@@ -74,14 +86,6 @@ const ProposeSwap = () => {
       </div>
     );
   }
-
-  const handleBack = () => {
-    if (window.history.length > 1) {
-      navigate(-1);
-    } else {
-      navigate('/calendar');
-    }
-  };
 
   return (
     <>
@@ -108,6 +112,12 @@ const ProposeSwap = () => {
               />
             </div>
 
+            {errorPropose && (
+              <p style={{ color: 'red', marginTop: '10px' }}>
+                {errorPropose}
+              </p>
+            )}
+
             <div className="btn-group mt-3">
               <Button
                 label="Enviar propuesta"
@@ -115,6 +125,7 @@ const ProposeSwap = () => {
                 size="lg"
                 type="submit"
                 disabled={!selectedShift} // Deshabilitar si no hay turno seleccionado
+                isLoading={loadingPropose}
               />
             </div>
           </form>

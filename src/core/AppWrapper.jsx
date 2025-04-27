@@ -1,7 +1,7 @@
 import React from 'react';
-import { useAuth } from '../../context/AuthContext';
-import AppLoader from '../ui/AppLoader';
-import App from '../../App';
+import { useAuth } from '../context/AuthContext';
+import AppLoader from '../components/ui/AppLoader';
+import App from '../App';
 
 
 const AppWrapper = () => {

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { updateWorkerInfo } from '../../services/userService';
+import { useUserApi } from '../../api/useUserApi';
 import { useAuth } from '../../context/AuthContext';
 import InputField from '../../components/ui/InputField/InputField';
 import HeaderSecondLevel from '../../components/ui/Header/HeaderSecondLevel';
@@ -13,6 +13,7 @@ export default function OnboardingPhoneStep() {
   const [error, setError] = useState('');
   const navigate = useNavigate();
   const { getToken } = useAuth();
+  const { updateWorkerInfo, loading, error: apiError } = useUserApi();
   const { isWorker, refreshWorkerProfile } = useAuth();
 
 
@@ -73,13 +74,14 @@ export default function OnboardingPhoneStep() {
             onChange={(e) => setPhone(e.target.value)}
           />
 
-          {error && <p style={{ color: 'red' }}>{error}</p>}
+          {(error || apiError) && <p style={{ color: 'red' }}>{error || apiError}</p>}
           <Button
             label="Finizar registro"
             variant="primary"
             size="lg"
             onClick={handleConfirm}
             disabled={!prefix || !phone}
+            isLoading={loading}
           />
         </div>
       </div>

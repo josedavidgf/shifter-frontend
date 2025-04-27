@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { getAcceptedSwaps } from '../../services/swapService';
-import { getMyWorkerProfile } from '../../services/workerService';
+import { useSwapApi } from '../../api/useSwapApi';
+import { useWorkerApi } from '../../api/useWorkerApi';
 import { buildChatContext } from '../../utils/chatUtils';
 import ChatBox from '../../components/ChatBox';
 import { useAuth } from '../../context/AuthContext';
@@ -11,25 +11,40 @@ import HeaderSecondLevel from '../../components/ui/Header/HeaderSecondLevel';
 
 const ChatPage = () => {
     const { swapId } = useParams();
+    const { getToken } = useAuth();
+    const { getMyWorkerProfile } = useWorkerApi();
+    const { getAcceptedSwaps, loading, error } = useSwapApi(); // 🆕
     const [swap, setSwap] = useState(null);
     const [workerId, setWorkerId] = useState(null);
-    const { getToken } = useAuth();
     const navigate = useNavigate();
 
 
-    useEffect(() => {
-        const fetchData = async () => {
-            const token = await getToken();
-            const worker = await getMyWorkerProfile(token);
-            setWorkerId(worker.worker_id);
 
-            const swaps = await getAcceptedSwaps(token);
-            const selected = swaps.find(s => s.swap_id === swapId);
-            setSwap(selected || null);
-        };
+    useEffect(() => {
+        async function fetchData() {
+            try {
+                const token = await getToken();
+                const worker = await getMyWorkerProfile(token);
+                setWorkerId(worker.worker_id);
+
+                const swapsData = await getAcceptedSwaps(token);
+                const selected = swapsData.find(s => s.swap_id === swapId);
+                setSwap(selected || null);
+            } catch (err) {
+                console.error('❌ Error cargando chat:', err.message);
+            }
+        }
 
         fetchData();
     }, [swapId, getToken]);
+
+    if (loading) {
+        return <p>Cargando conversación...</p>;
+    }
+
+    if (error) {
+        return <p style={{ color: 'red' }}>{error}</p>;
+    }
 
     if (!swap || !workerId) {
         return <p style={{ padding: '1rem' }}>Cargando conversación...</p>;

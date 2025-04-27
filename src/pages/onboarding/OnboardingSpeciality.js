@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { getSpecialitiesByHospital, addSpecialityToWorker } from '../../services/specialityService';
+import { useSpecialityApi } from '../../api/useSpecialityApi';
 import { useAuth } from '../../context/AuthContext';
 import HeaderSecondLevel from '../../components/ui/Header/HeaderSecondLevel';
 import Button from '../../components/ui/Button/Button'; // Ajusta ruta si necesario
@@ -13,6 +13,7 @@ export default function OnboardingSpecialityStep() {
   const [error, setError] = useState('');
   const navigate = useNavigate();
   const { getToken, isWorker, refreshWorkerProfile } = useAuth();
+  const { getSpecialitiesByHospital, addSpecialityToWorker, loading, error: apiError } = useSpecialityApi();
 
 
   useEffect(() => {
@@ -82,7 +83,7 @@ export default function OnboardingSpecialityStep() {
             ))}
           </select>
 
-          {error && <p style={{ color: 'red' }}>{error}</p>}
+          {(error || apiError) && <p style={{ color: 'red' }}>{error || apiError}</p>}
 
           <Button
               label="Continuar"

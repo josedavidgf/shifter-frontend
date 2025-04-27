@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import { useAuth } from '../context/AuthContext';
+import { useAuth } from '../../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
-import useTrackPageView from '../hooks/useTrackPageView';
-import InputField from '../components/ui/InputField/InputField';
-import Button from '../components/ui/Button/Button'; // Ajusta ruta si necesario
+import useTrackPageView from '../../hooks/useTrackPageView';
+import InputField from '../../components/ui/InputField/InputField';
+import Button from '../../components/ui/Button/Button'; // Ajusta ruta si necesario
 
 
 function Login() {

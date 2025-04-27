@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
-import { getSentSwaps } from '../../services/swapService';
+import { useSwapApi } from '../../api/useSwapApi';
 import MySwapsTable from '../../components/MySwapsTable';
 import useTrackPageView from '../../hooks/useTrackPageView';
 import HeaderFirstLevel from '../../components/ui/Header/HeaderFirstLevel';
 
 const MySwaps = () => {
   const { getToken } = useAuth();
+  const { getSentSwaps } = useSwapApi();
   const [mySwaps, setMySwaps] = useState([]);
   const [, setError] = useState(null);
 

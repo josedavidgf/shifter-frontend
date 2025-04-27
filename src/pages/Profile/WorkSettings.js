@@ -2,11 +2,11 @@
 
 import React, { useEffect, useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
-import { updateWorkerHospital, updateWorkerSpeciality } from '../../services/userService';
-import { validateAccessCode } from '../../services/accessCodeService';
-import { getSpecialitiesByHospital } from '../../services/specialityService';
-import { getHospitals } from '../../services/hospitalService';
-import { getWorkerTypes } from '../../services/workerService';
+import { useAccessCodeApi } from '../../api/useAccessCodeApi';
+import { useHospitalApi } from '../../api/useHospitalApi';
+import { useWorkerApi } from '../../api/useWorkerApi';
+import { useSpecialityApi } from '../../api/useSpecialityApi';
+import { useUserApi } from '../../api/useUserApi';
 import InputField from '../../components/ui/InputField/InputField';
 import HeaderSecondLevel from '../../components/ui/Header/HeaderSecondLevel';
 import { useNavigate } from 'react-router-dom';
@@ -16,6 +16,11 @@ import { Buildings } from '../../theme/icons'; // Icono de ejemplo
 
 const WorkSettings = () => {
     const { getToken, refreshWorkerProfile } = useAuth();
+    const { validateAccessCode, loading: loadingAccessCode, error: errorAccessCode } = useAccessCodeApi();
+    const { getHospitals, loading: loadingHospitals, error: errorHospitals } = useHospitalApi();
+    const { getWorkerTypes, loading: loadingWorkerTypes, error: errorWorkerTypes } = useWorkerApi();
+    const { getSpecialitiesByHospital, loading: loadingSpecialities, error: errorSpecialities } = useSpecialityApi();
+    const { updateWorkerHospital, updateWorkerSpeciality, loading: loadingUserUpdate, error: errorUserUpdate } = useUserApi();
     const [worker, setWorker] = useState(null);
     const [step, setStep] = useState('view');
     const [code, setCode] = useState('');
@@ -45,6 +50,7 @@ const WorkSettings = () => {
         setError('');
         try {
             const response = await validateAccessCode(code);
+
             setHospitalId(response.hospital_id);
             setWorkerTypeId(response.worker_type_id);
 
@@ -62,17 +68,25 @@ const WorkSettings = () => {
             setMessage(`Código validado. Nuevo hospital: ${hospital?.name}, Tipo de trabajador: ${workerType?.worker_type_name}`);
             setStep('confirm');
         } catch (err) {
+            console.error('❌ Error en handleValidateCode:', err.message);
             setError('Código inválido. Por favor verifica y vuelve a intentarlo.');
         }
     };
 
 
+
     const handleLoadSpecialities = async () => {
         const token = await getToken();
-        const data = await getSpecialitiesByHospital(hospitalId, token);
-        setSpecialities(data);
-        setStep('speciality');
+        try {
+            const data = await getSpecialitiesByHospital(hospitalId, token);
+            setSpecialities(data);
+            setStep('speciality');
+        } catch (error) {
+            console.error('❌ Error cargando especialidades:', error.message);
+            setError('Error cargando especialidades.');
+        }
     };
+
 
     const handleConfirmChanges = async () => {
         try {
@@ -83,10 +97,11 @@ const WorkSettings = () => {
             setMessage('✅ Cambios guardados');
             setStep('view');
         } catch (err) {
-            console.error('Error guardando cambios:', err.message);
+            console.error('❌ Error guardando cambios:', err.message);
             setError('❌ Error guardando los cambios');
         }
     };
+
     const handleBack = () => {
         if (window.history.length > 1) {
             navigate(-1);
@@ -144,6 +159,8 @@ const WorkSettings = () => {
                                     variant="primary"
                                     size="lg"
                                     type="submit"
+                                    disabled={loadingAccessCode || loadingHospitals || loadingWorkerTypes}
+                                    isLoading={loadingAccessCode || loadingHospitals || loadingWorkerTypes} 
                                 />
                                 <Button
                                     label="Cancelar"
@@ -165,6 +182,8 @@ const WorkSettings = () => {
                                     variant="primary"
                                     size="lg"
                                     onClick={handleLoadSpecialities}
+                                    disabled={loadingSpecialities}
+                                    isLoading={loadingSpecialities}
                                 />
                                 <Button
                                     label="Cancelar"
@@ -194,6 +213,8 @@ const WorkSettings = () => {
                                     variant="primary"
                                     size="lg"
                                     onClick={handleConfirmChanges}
+                                    disabled={loadingUserUpdate}
+                                    isLoading={loadingUserUpdate}
                                 />
                                 <Button
                                     label="Cancelar"
