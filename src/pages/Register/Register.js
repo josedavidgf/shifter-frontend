@@ -1,13 +1,17 @@
 import React, { useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
+import { useNavigate } from 'react-router-dom';
 import useTrackPageView from '../../hooks/useTrackPageView';
 import InputField from '../../components/ui/InputField/InputField';
+import Button from '../../components/ui/Button/Button';
+import DividerText from '../../components/ui/DividerText/DividerText';
 
-
-const Register = () => {
-    const { register } = useAuth();
+function Register() {
+    const { register, loginWithGoogle } = useAuth();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [error, setError] = useState('');
+    const navigate = useNavigate();
 
     useTrackPageView('register');
 
@@ -16,55 +20,77 @@ const Register = () => {
         try {
             const response = await register(email, password);
             if (response) {
-                alert('Registro exitoso');
+                navigate('/verify-email');
             } else {
-                alert('Error en el registro');
+                setError('Error en el registro');
             }
-        } catch (error) {
-            console.error('Error en el registro:', error.message);
-            alert('Error al registrar el usuario');
+        } catch (err) {
+            setError(err.message);
         }
     };
 
     return (
-        <div className="page page-primary">
-        <div className='container' >
-            <h2>Registro</h2>
-            <p>Por favor, completa el formulario para registrarte.</p>
-            <p>Recibirás un correo de confirmación una vez que tu cuenta esté activa.</p>
-            <p>Si ya tienes una cuenta, puedes iniciar sesión <a href="/login">aquí</a>.</p>
-            <form onSubmit={handleSubmit}>
-                <InputField
-                    name="email"
-                    label="Correo Electrónico"
-                    placeholder="Tu correo"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    type="email"
-                    required
-                    maxLength={50}
-                    showCharacterCount={true}
-                    helperText="Por favor, introduce un correo electrónico válido."
-                    errorText={email && !/\S+@\S+\.\S+/.test(email) ? 'Correo electrónico inválido' : ''}
+        <div className="container auth-container">
+            <div className="auth-content">
+                <div className="auth-logo-container">
+                    <img src={'assets/logo-tanda-light.png'} alt="Tanda Logo" className="auth-logo" />
+                </div>
+                <div className="auth-body">
+                    <form className="auth-form" onSubmit={handleSubmit}>
+                        {error && <p style={{ color: 'var(--color-danger)', marginBottom: '1rem' }}>{error}</p>}
+                        <InputField
+                            name="email"
+                            label="Email"
+                            placeholder="Email"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            type="email"
+                            required
+                        />
+                        <InputField
+                            name="password"
+                            label="Contraseña"
+                            placeholder="Contraseña"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            type="password"
+                            required
+                        />
+                        <Button
+                            label="Registrarme"
+                            variant="primary"
+                            size="lg"
+                            type="submit"
+                            disabled={!email || !password}
+                        />
+                    </form>
+
+                    <div className="auth-divider">
+                        <DividerText text="O" />
+                    </div>
+
+                    <Button
+                        label="Registro con Google"
+                        variant="outline"
+                        size="lg"
+                        leftIcon={<img src={'assets/google-icon.svg'} alt="Google" width="20" height="20" />}
+                        onClick={loginWithGoogle}
+                    />
+                </div>
+            </div>
+            <div className="auth-footer">
+                <p style={{ textAlign: 'center' }}>
+                    ¿Ya tienes cuenta?
+                </p>
+                <Button
+                    label="Iniciar sesión"
+                    variant="secondary"
+                    size="lg"
+                    onClick={() => navigate('/login')}
                 />
-                <InputField
-                    name="password"
-                    label="Contraseña"
-                    placeholder="Tu contraseña"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    type="password"
-                    required
-                    maxLength={20}
-                    showCharacterCount={true}
-                    helperText="La contraseña debe tener al menos 6 caracteres."
-                    errorText={password && password.length < 6 ? 'La contraseña es demasiado corta' : ''}
-                />
-                <button className='btn btn-primary' type="submit">Registrarse</button>
-            </form>
-        </div >
+            </div>
         </div>
     );
-};
+}
 
 export default Register;

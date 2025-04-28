@@ -29,5 +29,6 @@ export {
     Buildings,
     CaretDown,
     MagnifyingGlassPlus,
+    GoogleLogo
 
   } from 'phosphor-react';

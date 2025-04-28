@@ -29,9 +29,11 @@
 @import './components/input-selector.css';
 @import './components/search-select-input.css';
 @import './components/loader.css';
+@import './components/divider-text.css';
 
 /* Pages */
 @import './pages/calendar.css';
 @import './pages/chat-page.css';
 @import './pages/profile-menu.css';
 @import './pages/workSettings.css';
+@import './pages/auth.css'; 

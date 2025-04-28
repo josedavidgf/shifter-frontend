@@ -166,3 +166,12 @@
   gap: 8px;
   transition: opacity 0.2s ease;
 }
+
+/* Icon inside outline button */
+.btn--outline .btn__icon img {
+  width: 20px;
+  height: 20px;
+}
+.btn--outline .btn__content {
+  gap: 6px; /* en vez de 8px genérico */
+}
