@@ -19,6 +19,7 @@ import DayDetailPreference from './DayDetails/DayDetailPreference';
 import DayDetailReceived from './DayDetails/DayDetailReceived';
 import DayDetailSwapped from './DayDetails/DayDetailSwapped';
 import DayDetailEmpty from './DayDetails/DayDetailEmpty';
+import Loader from '../components/ui/Loader/Loader'; // ✅
 
 
 
@@ -65,7 +66,7 @@ function computeShiftStats(shiftMap, selectedMonth) {
 function MonthlyCalendar() {
 
   const [isMassiveEditMode, setIsMassiveEditMode] = useState(false);
-  const [isLoadingCalendar, setIsLoadingCalendar] = useState(false);
+  const [isLoadingCalendar, setIsLoadingCalendar] = useState(true);
   const [draftShiftMap, setDraftShiftMap] = useState(null);
   const [selectedDay, setSelectedDay] = useState(format(new Date(), 'yyyy-MM-dd'));
   const [shiftMap, setShiftMap] = useState({});
@@ -106,34 +107,34 @@ function MonthlyCalendar() {
   async function fetchCalendar(workerId, token) {
     try {
       setIsLoadingCalendar(true);
-  
+
       const results = await Promise.allSettled([
         getShiftsForMonth(workerId),             // ✅ useCalendarApi
         getMyShiftsPublished(token),              // ✅ useShiftApi
         getAcceptedSwaps(token),                  // ✅ useSwapApi
         getMySwapPreferences(workerId),           // ✅ useSwapPreferencesApi
       ]);
-  
+
       const shiftsForMonth = results[0].status === 'fulfilled' ? results[0].value : [];
       const publishedShifts = results[1].status === 'fulfilled' ? results[1].value : [];
       const acceptedSwaps = results[2].status === 'fulfilled' ? results[2].value : [];
       const preferences = results[3].status === 'fulfilled' ? results[3].value : [];
-  
+
       if (results[0].status === 'rejected') console.error('❌ Error cargando turnos del mes:', results[0].reason.message);
       if (results[1].status === 'rejected') console.error('❌ Error cargando turnos publicados:', results[1].reason.message);
       if (results[2].status === 'rejected') console.error('❌ Error cargando swaps aceptados:', results[2].reason.message);
       if (results[3].status === 'rejected') console.error('❌ Error cargando preferencias:', results[3].reason.message);
-  
+
       const enrichedMap = {};
-  
+
       (shiftsForMonth || []).forEach(({ date, shift_type }) => {
         enrichedMap[date] = { shift_type: shift_type, isMyShift: true };
       });
-  
+
       (publishedShifts || []).forEach(({ date, shift_type, shift_id }) => {
         enrichedMap[date] = { shift_id: shift_id, shift_type: shift_type, isMyShift: true, isPublished: true };
       });
-  
+
       (acceptedSwaps || []).forEach(({ requester, offered_date, offered_type, shift }) => {
         if (offered_date) {
           enrichedMap[offered_date] = {
@@ -152,10 +153,10 @@ function MonthlyCalendar() {
           };
         }
       });
-  
+
       (preferences || []).forEach(({ preference_id, date, preference_type }) => {
         if (!enrichedMap[date]) enrichedMap[date] = {};
-  
+
         enrichedMap[date] = {
           ...enrichedMap[date],
           isPreference: true,
@@ -163,17 +164,17 @@ function MonthlyCalendar() {
           preference_type: preference_type,
         };
       });
-  
+
       setShiftMap(enrichedMap);
-  
+
     } catch (error) {
       console.error('❌ Error general en fetchCalendar:', error.message);
     } finally {
       setIsLoadingCalendar(false);
     }
   }
-  
-  
+
+
 
   useEffect(() => {
   }, [shiftMap]);
@@ -245,25 +246,25 @@ function MonthlyCalendar() {
   async function handleSaveMassiveEdit() {
     try {
       const updates = buildMassiveUpdates(draftShiftMap, shiftMap, isWorker.worker_id);
-  
+
       await Promise.all(updates);
-  
+
       setShiftMap(draftShiftMap);
       setDraftShiftMap(null);
       setIsMassiveEditMode(false);
-  
+
     } catch (error) {
       console.error('Error guardando cambios masivos:', error.message);
     }
   }
-  
+
 
   async function toggleShift(dateStr) {
     const entry = shiftMap[dateStr] || {};
     const newType = getNextShiftType(entry.shift_type);
-  
+
     const updatedEntry = { ...entry };
-  
+
     if (newType) {
       updatedEntry.isMyShift = true;
       updatedEntry.shift_type = newType;
@@ -271,12 +272,12 @@ function MonthlyCalendar() {
       delete updatedEntry.isMyShift;
       delete updatedEntry.shift_type;
     }
-  
+
     setShiftMap(prev => ({
       ...prev,
       [dateStr]: updatedEntry,
     }));
-  
+
     try {
       if (newType) {
         await setShiftForDay(isWorker.worker_id, dateStr, newType); // ✅ Desde useCalendarApi
@@ -287,15 +288,15 @@ function MonthlyCalendar() {
       console.error('❌ Error gestionando turno:', error.message);
     }
   }
-  
-  
+
+
 
   async function togglePreference(dateStr) {
     const entry = shiftMap[dateStr] || {};
     const newTypePreference = getNextPreferenceType(entry.preference_type);
-  
+
     const updatedEntry = { ...entry };
-  
+
     if (newTypePreference) {
       updatedEntry.isPreference = true;
       updatedEntry.preference_type = newTypePreference;
@@ -303,12 +304,12 @@ function MonthlyCalendar() {
       delete updatedEntry.isPreference;
       delete updatedEntry.preference_type;
     }
-  
+
     setShiftMap(prev => ({
       ...prev,
       [dateStr]: updatedEntry,
     }));
-  
+
     try {
       if (newTypePreference) {
         if (entry.preference_type !== newTypePreference) {
@@ -322,7 +323,7 @@ function MonthlyCalendar() {
               hospital_id: isWorker.workers_hospitals?.[0]?.hospital_id,
               speciality_id: isWorker.workers_specialities?.[0]?.speciality_id,
             });
-  
+
             setShiftMap(prev => ({
               ...prev,
               [dateStr]: {
@@ -341,23 +342,23 @@ function MonthlyCalendar() {
       console.error('❌ Error gestionando preferencia:', error.message);
     }
   }
-  
+
   async function handleDeletePreference(dateStr) {
     const entry = shiftMap[dateStr];
-  
+
     if (!entry?.preferenceId) {
       console.error('No existe preferencia para eliminar.');
       return;
     }
-  
+
     try {
       await deleteSwapPreference(entry.preferenceId); // ✅ desde useSwapPreferencesApi
-  
+
       const updatedEntry = { ...entry };
       delete updatedEntry.isPreference;
       delete updatedEntry.preferenceId;
       delete updatedEntry.preference_type;
-  
+
       setShiftMap(prev => ({
         ...prev,
         [dateStr]: updatedEntry,
@@ -366,17 +367,17 @@ function MonthlyCalendar() {
       console.error('❌ Error al eliminar preferencia:', error.message);
     }
   }
-  
+
 
   async function handleDeletePublication(shiftId, dateStr) {
     try {
       const success = await removeShift(shiftId); // ✅ usando useShiftApi
-  
+
       if (success) {
         const updatedEntry = { ...shiftMap[dateStr] };
         delete updatedEntry.isPublished;
         delete updatedEntry.shift_id;
-  
+
         setShiftMap(prev => ({
           ...prev,
           [dateStr]: updatedEntry,
@@ -388,41 +389,41 @@ function MonthlyCalendar() {
   }
 
   // Función para Publicar un turno de un día específico de forma rápida
-/*   async function handlePublishShift(dateStr) {
-    try {
-      const entry = shiftMap[dateStr];
-  
-      if (!entry?.shift_type) {
-        console.error('No se puede publicar turno sin tipo definido.');
-        return;
+  /*   async function handlePublishShift(dateStr) {
+      try {
+        const entry = shiftMap[dateStr];
+    
+        if (!entry?.shift_type) {
+          console.error('No se puede publicar turno sin tipo definido.');
+          return;
+        }
+    
+        const payload = {
+          worker_id: isWorker.worker_id,
+          date: dateStr,
+          shift_type: entry.shift_type,
+          status: 'published',
+          source: 'calendar',
+        };
+    
+        const createdShift = await createShift(payload, token); // ✅ usando useShiftApi
+    
+        if (createdShift) {
+          setShiftMap(prev => ({
+            ...prev,
+            [dateStr]: {
+              ...prev[dateStr],
+              shift_id: createdShift.shift_id,
+              isPublished: true,
+            },
+          }));
+        }
+      } catch (error) {
+        console.error('❌ Error al publicar turno:', error.message);
       }
-  
-      const payload = {
-        worker_id: isWorker.worker_id,
-        date: dateStr,
-        shift_type: entry.shift_type,
-        status: 'published',
-        source: 'calendar',
-      };
-  
-      const createdShift = await createShift(payload, token); // ✅ usando useShiftApi
-  
-      if (createdShift) {
-        setShiftMap(prev => ({
-          ...prev,
-          [dateStr]: {
-            ...prev[dateStr],
-            shift_id: createdShift.shift_id,
-            isPublished: true,
-          },
-        }));
-      }
-    } catch (error) {
-      console.error('❌ Error al publicar turno:', error.message);
-    }
-  } */
-  
-  
+    } */
+
+
 
   async function handleRemoveShiftForDay(dateStr) {
     try {
@@ -440,7 +441,7 @@ function MonthlyCalendar() {
     const dataForRender = isMassiveEditMode ? draftShiftMap : shiftMap;
     const entry = dataForRender[dateStr] || {};
     const dayLabel = format(parseISO(dateStr), 'dd/MM/yyyy');
-  
+
     if (entry.isMyShift) {
       return (
         <DayDetailMyShift
@@ -454,7 +455,7 @@ function MonthlyCalendar() {
         />
       );
     }
-  
+
     if (entry.isPreference) {
       return (
         <DayDetailPreference
@@ -466,7 +467,7 @@ function MonthlyCalendar() {
         />
       );
     }
-  
+
     if (entry.isReceived) {
       return (
         <DayDetailReceived
@@ -477,7 +478,7 @@ function MonthlyCalendar() {
         />
       );
     }
-  
+
     if (entry.isSwapped) {
       return (
         <DayDetailSwapped
@@ -488,7 +489,7 @@ function MonthlyCalendar() {
         />
       );
     }
-  
+
     return (
       <DayDetailEmpty
         dateStr={dateStr}
@@ -496,6 +497,22 @@ function MonthlyCalendar() {
         onAddShift={toggleShift}
         onAddPreference={togglePreference}
       />
+    );
+  }
+
+  if (isLoadingCalendar) {
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <Loader text="Cargando tu calendario..." />
+      </div>
+    );
+  }
+
+  if (errorCalendar || errorSwapPreferences) {
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <p className="text-red-500">Error al cargar tu calendario.</p>
+      </div>
     );
   }
   
@@ -535,12 +552,6 @@ function MonthlyCalendar() {
               setIsMassiveEditMode(false);
             }}
           />
-        </div>
-      )}
-
-      {isLoadingCalendar && (
-        <div className="flex justify-center my-4">
-          <div className="loader"></div> {/* O texto "Cargando turnos..." si quieres más simple */}
         </div>
       )}
 

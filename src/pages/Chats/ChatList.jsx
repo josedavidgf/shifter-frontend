@@ -1,26 +1,30 @@
 import React, { useEffect, useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { useWorkerApi } from '../../api/useWorkerApi';
-import { useSwapApi } from '../../api/useSwapApi'; // ✅
+import { useSwapApi } from '../../api/useSwapApi';
 import ChatBox from '../../components/ChatBox';
 import { formatDate, getVerb, getOtherVerb } from '../../utils/dateUtils';
 import { useNavigate } from 'react-router-dom';
 import HeaderFirstLevel from '../../components/ui/Header/HeaderFirstLevel';
-
-
-
+import Loader from '../../components/ui/Loader/Loader';
 
 const ChatsList = () => {
     const { getToken } = useAuth();
     const { getMyWorkerProfile } = useWorkerApi();
-    const { getAcceptedSwaps, loading, error } = useSwapApi(); // 🆕
+    const { getAcceptedSwaps } = useSwapApi();
     const [swaps, setSwaps] = useState([]);
     const [workerId, setWorkerId] = useState(null);
-    const [selectedSwap] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
     const navigate = useNavigate();
 
     useEffect(() => {
         async function fetchData() {
+            setLoading(true);
+            setError(null);
+
+            const startTime = Date.now();
+
             try {
                 const token = await getToken();
                 const worker = await getMyWorkerProfile(token);
@@ -32,6 +36,13 @@ const ChatsList = () => {
                 }
             } catch (err) {
                 console.error('❌ Error cargando chats:', err.message);
+                setError('Error al cargar chats activos.');
+            } finally {
+                const elapsed = Date.now() - startTime;
+                const delay = Math.max(0, 600 - elapsed);
+                setTimeout(() => {
+                    setLoading(false);
+                }, delay);
             }
         }
 
@@ -47,43 +58,30 @@ const ChatsList = () => {
     };
 
     if (loading) {
-        return <p>Cargando chats...</p>;
+        return <Loader text="Cargando chats activos..." />;
     }
 
     if (error) {
-        return <p style={{ color: 'red' }}>{error}</p>;
+        return <p style={{ textAlign: 'center', marginTop: '2rem', color: 'red' }}>{error}</p>;
     }
 
     const activeSwaps = swaps.filter(isActive);
 
     return (
         <>
-            <HeaderFirstLevel
-                title="Chat activos"
-            />
+            <HeaderFirstLevel title="Chats activos" />
             <div className="page page-secondary">
                 <div className="container">
-                    {selectedSwap ? (
-                        <>
-                            <ChatBox
-                                swapId={selectedSwap.swap_id}
-                                myWorkerId={workerId}
-                                otherWorkerId={selectedSwap.requester_id === workerId ? selectedSwap.shift.worker_id : selectedSwap.requester_id}
-                                otherPersonName={selectedSwap.requester_id === workerId ? selectedSwap.shift.worker?.name : selectedSwap.requester?.name}
-                                otherPersonSurname={selectedSwap.requester_id === workerId ? selectedSwap.shift.worker?.surname : selectedSwap.requester?.surname}
-                                myDate={selectedSwap.requester_id === workerId ? selectedSwap.offered_date : selectedSwap.shift.date}
-                                otherDate={selectedSwap.requester_id === workerId ? selectedSwap.shift.date : selectedSwap.offered_date}
-                            />
-                        </>
+                    {activeSwaps.length === 0 ? (
+                        <p style={{ textAlign: 'center', marginTop: '2rem' }}>No tienes chats activos ahora mismo.</p>
                     ) : (
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                        <div className="chat-list">
                             {activeSwaps.map((swap) => {
                                 const iAmRequester = swap.requester_id === workerId;
                                 const myDate = iAmRequester ? swap.offered_date : swap.shift.date;
                                 const myDateType = iAmRequester ? swap.offered_type : swap.shift.shift_type;
                                 const otherDate = iAmRequester ? swap.shift.date : swap.offered_date;
                                 const otherType = iAmRequester ? swap.shift.shift_type : swap.offered_type;
-
                                 const otherPersonName = iAmRequester
                                     ? `${swap.shift.worker?.name} ${swap.shift.worker?.surname}`
                                     : `${swap.requester?.name} ${swap.requester?.surname}`;
@@ -101,18 +99,12 @@ const ChatsList = () => {
                                     </div>
                                 );
                             })}
-
-                            {activeSwaps.length === 0 && (
-                                <p>No tienes chats activos ahora mismo.</p>
-                            )}
                         </div>
-
                     )}
                 </div>
             </div>
         </>
     );
-
 };
 
 export default ChatsList;

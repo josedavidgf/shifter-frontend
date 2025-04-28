@@ -6,7 +6,7 @@ import { useSwapApi } from '../../api/useSwapApi';
 import HospitalShiftsTable from '../../components/HospitalShiftsTable';
 import useTrackPageView from '../../hooks/useTrackPageView';
 import HeaderFirstLevel from '../../components/ui/Header/HeaderFirstLevel';
-
+import Loader from '../../components/ui/Loader/Loader'; // ✅
 
 
 const HospitalShifts = () => {
@@ -18,15 +18,20 @@ const HospitalShifts = () => {
     const [workerId, setWorkerId] = useState(null);
     const [sentSwaps, setSentSwaps] = useState([]);
     const [profile, setProfile] = useState(null);
-    const [loadingProfile, setLoadingProfile] = useState(false);
+    const [loading, setLoading] = useState(true); // ✅ UNIFICADO
+    const [error, setError] = useState(null); // ✅
 
 
     useTrackPageView('hospital-shifts');
 
     useEffect(() => {
-        async function fetchData() {
+        async function fetchHospitalShifts() {
+            setLoading(true);
+            setError(null);
+
+            const startTime = Date.now();
+
             try {
-                setLoadingProfile(true);
                 const token = await getToken();
                 const [hospitalShiftsData, profileData, sentSwapsData] = await Promise.all([
                     getHospitalShifts(token),
@@ -40,21 +45,26 @@ const HospitalShifts = () => {
                 setSentSwaps(sentSwapsData.map(s => s.shift_id));
             } catch (err) {
                 console.error('❌ Error al cargar datos de hospital:', err.message);
+                setError('Error al cargar los turnos.');
             } finally {
-                setLoadingProfile(false);
+                const elapsed = Date.now() - startTime;
+                const delay = Math.max(0, 600 - elapsed); // ✅ delay mínimo para suavizar UX
+                setTimeout(() => {
+                    setLoading(false);
+                }, delay);
             }
         }
 
-        fetchData();
-    }, [getToken]); // ✅ solo dependemos de getToken, que es estable
+        fetchHospitalShifts();
+    }, [getToken]);
 
 
-    if (loadingProfile || loadingShifts) {
-        return <p>Cargando turnos disponibles...</p>;
+    if (loading) {
+        return <Loader text="Cargando turnos de tu servicio en tu hospital..." />;
     }
 
-    if (errorShifts) {
-        return <p style={{ color: 'red' }}>{errorShifts}</p>;
+    if (error) {
+        return <p style={{ textAlign: 'center', marginTop: '2rem', color: 'red' }}>{error}</p>;
     }
 
     if (!profile) {

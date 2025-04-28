@@ -1,45 +1,14 @@
-import React, { useEffect, useState } from 'react';
-import { useAuth } from '../context/AuthContext';
-import { useSwapApi } from '../api/useSwapApi';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-const MySwapsTable = () => {
-  const { getToken } = useAuth();
-  const { getSentSwaps, getReceivedSwaps, loading, error } = useSwapApi(); // 🆕
-  const [mySwaps, setMySwaps] = useState([]);
+const MySwapsTable = ({ swaps = [] }) => {
   const [filtered, setFiltered] = useState([]);
   const [filterStatus, setFilterStatus] = useState('');
   const [filterDate, setFilterDate] = useState('');
   const navigate = useNavigate();
 
   useEffect(() => {
-    async function fetchSwaps() {
-      try {
-        const token = await getToken();
-        const [sent, received] = await Promise.all([
-          getSentSwaps(token),
-          getReceivedSwaps(token),
-        ]);
-
-        const markedSent = sent.map(s => ({ ...s, direction: 'sent' }));
-        const markedReceived = received.map(r => ({ ...r, direction: 'received' }));
-
-        const all = [...markedSent, ...markedReceived];
-
-        const sorted = all.sort((a, b) => new Date(a.shift?.date) - new Date(b.shift?.date));
-
-        setMySwaps(sorted);
-        setFiltered(sorted);
-      } catch (err) {
-        console.error('❌ Error al cargar swaps:', err.message);
-      }
-    }
-
-    fetchSwaps();
-  }, [getToken]);
-
-  useEffect(() => {
-    let result = mySwaps;
+    let result = swaps;
 
     if (filterStatus) {
       result = result.filter(s => s.status === filterStatus);
@@ -50,20 +19,12 @@ const MySwapsTable = () => {
     }
 
     setFiltered(result);
-  }, [filterStatus, filterDate, mySwaps]);
+  }, [filterStatus, filterDate, swaps]);
 
   const clearFilters = () => {
     setFilterDate('');
     setFilterStatus('');
   };
-
-  if (loading) {
-    return <p>Cargando intercambios...</p>;
-  }
-
-  if (error) {
-    return <p style={{ color: 'red' }}>{error}</p>;
-  }
 
   return (
     <div>
@@ -90,31 +51,38 @@ const MySwapsTable = () => {
         </div>
       </div>
 
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-        {filtered.map((swap) => (
-          <div
-            key={swap.swap_id}
-            className="my-swap-card"
-            onClick={() => navigate(`/swaps/${swap.swap_id}`)}
-          >
-            <div className="my-swap-meta">
-              {swap.direction === 'sent' ? 'Propuesto por ti' : 'Propuesta recibida'}
+      {/* Ahora sí: no loading aquí, solo empty si de verdad no hay resultados */}
+      {filtered.length === 0 ? (
+        <p style={{ textAlign: 'center', marginTop: '2rem' }}>
+          No tienes intercambios activos.
+        </p>
+      ) : (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+          {filtered.map((swap) => (
+            <div
+              key={swap.swap_id}
+              className="my-swap-card"
+              onClick={() => navigate(`/swaps/${swap.swap_id}`)}
+            >
+              {/* Card del swap */}
+              <div className="my-swap-meta">
+                {swap.direction === 'sent' ? 'Propuesto por ti' : 'Propuesta recibida'}
+              </div>
+              <strong>Turno objetivo: {swap.shift?.date} · {swap.shift?.shift_type}</strong>
+              <div className="my-swap-meta">
+                Con: {swap.shift?.worker?.name} {swap.shift?.worker?.surname}
+              </div>
+              <div className="my-swap-meta">
+                Ofreces: {swap.offered_date || '—'} · {swap.offered_type}
+              </div>
+              <span className={`swap-status ${swap.status}`}>
+                {swap.status.charAt(0).toUpperCase() + swap.status.slice(1)}
+              </span>
             </div>
-            <strong>Turno objetivo: {swap.shift?.date} · {swap.shift?.shift_type}</strong>
-            <div className="my-swap-meta">
-              Con: {swap.shift?.worker?.name} {swap.shift?.worker?.surname}
-            </div>
-            <div className="my-swap-meta">
-              Ofreces: {swap.offered_date || '—'} · {swap.offered_type}
-            </div>
-            <span className={`swap-status ${swap.status}`}>
-              {swap.status.charAt(0).toUpperCase() + swap.status.slice(1)}
-            </span>
-          </div>
-        ))}
-      </div>
-
-    </div >
+          ))}
+        </div>
+      )}
+    </div>
   );
 };
 

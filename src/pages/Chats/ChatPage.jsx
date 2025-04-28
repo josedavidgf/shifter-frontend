@@ -7,47 +7,63 @@ import ChatBox from '../../components/ChatBox';
 import { useAuth } from '../../context/AuthContext';
 import { formatDate, getVerb, getOtherVerb } from '../../utils/dateUtils';
 import HeaderSecondLevel from '../../components/ui/Header/HeaderSecondLevel';
+import Loader from '../../components/ui/Loader/Loader'; // ✅
 
 
 const ChatPage = () => {
     const { swapId } = useParams();
     const { getToken } = useAuth();
     const { getMyWorkerProfile } = useWorkerApi();
-    const { getAcceptedSwaps, loading, error } = useSwapApi(); // 🆕
+    const { getAcceptedSwaps } = useSwapApi();
     const [swap, setSwap] = useState(null);
     const [workerId, setWorkerId] = useState(null);
+    const [loading, setLoading] = useState(true); // ✅
+    const [error, setError] = useState(null); // ✅
     const navigate = useNavigate();
 
 
 
     useEffect(() => {
         async function fetchData() {
+            setLoading(true);
+            setError(null);
+
+            const startTime = Date.now();
+
             try {
                 const token = await getToken();
                 const worker = await getMyWorkerProfile(token);
                 setWorkerId(worker.worker_id);
 
                 const swapsData = await getAcceptedSwaps(token);
-                const selected = swapsData.find(s => s.swap_id === swapId);
-                setSwap(selected || null);
+                const selectedSwap = swapsData.find(s => s.swap_id === swapId);
+                setSwap(selectedSwap || null);
             } catch (err) {
                 console.error('❌ Error cargando chat:', err.message);
+                setError('Error al cargar la conversación.');
+            } finally {
+                const elapsed = Date.now() - startTime;
+                const delay = Math.max(0, 600 - elapsed);
+                setTimeout(() => {
+                    setLoading(false);
+                }, delay);
             }
         }
 
         fetchData();
     }, [swapId, getToken]);
 
+
     if (loading) {
-        return <p>Cargando conversación...</p>;
+        return <Loader text="Cargando conversación..." />;
     }
 
     if (error) {
-        return <p style={{ color: 'red' }}>{error}</p>;
+        return <p style={{ color: 'red', textAlign: 'center' }}>{error}</p>;
     }
 
     if (!swap || !workerId) {
-        return <p style={{ padding: '1rem' }}>Cargando conversación...</p>;
+        return <Loader text="Cargando conversación..." />;
     }
 
     const {
