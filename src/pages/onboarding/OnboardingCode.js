@@ -7,6 +7,7 @@ import { useWorkerApi } from '../../api/useWorkerApi';
 import InputField from '../../components/ui/InputField/InputField';
 import HeaderSecondLevel from '../../components/ui/Header/HeaderSecondLevel';
 import Button from '../../components/ui/Button/Button'; // Ajusta ruta si necesario
+import AccessCodeInput from '../../components/ui/AccessCodeInput/AccessCodeInput';
 
 
 export default function OnboardingCodeStep() {
@@ -61,7 +62,7 @@ export default function OnboardingCodeStep() {
     }
   };
 
-  
+
 
   const handleBack = () => {
     if (window.history.length > 1) {
@@ -83,19 +84,13 @@ export default function OnboardingCodeStep() {
           <p>Para completar tu registro, por favor introduce el código de acceso que te ha sido proporcionado.</p>
           <p>Si no tienes un código, contacta con tu administrador.</p>
           <form onSubmit={handleValidateCode}>
-            <InputField
-              name="access-code"
-              label="Código de acceso"
-              placeholder="Introduce tu código de acceso"
-              type="text"
-              value={code}
-              onChange={(e) => setCode(e.target.value)}
-              maxLength={6}
-              required
-              error={error}
-              errorMessage="El código de acceso es obligatorio"
-            />
-            {error && <p style={{ color: 'red' }}>{error}</p>}
+            <div className="access-code__container">
+              <AccessCodeInput
+                code={code}
+                setCode={setCode}
+                error={error}
+              />
+            </div>
             {errorWorkerTypes && <p style={{ color: 'red' }}>{errorWorkerTypes}</p>}
             {errorAccessCode && <p style={{ color: 'red' }}>{errorAccessCode}</p>}
             {errorHospitals && <p style={{ color: 'red' }}>{errorHospitals}</p>}

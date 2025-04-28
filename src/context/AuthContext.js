@@ -184,6 +184,7 @@ export function AuthProvider({ children }) {
     try {
       const token = await getToken();
       const workerProfile = await getMyWorkerProfile(token);
+      console.log('Worker profile refreshed:', workerProfile);
       setIsWorker(workerProfile);
     } catch (err) {
       console.error('Error refreshing worker profile:', err.message);

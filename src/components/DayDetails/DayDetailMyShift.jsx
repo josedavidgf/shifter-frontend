@@ -30,28 +30,30 @@ export default function DayDetailMyShift({
         </>
       ) : (
         <>
-          <Button
-            label="Publicar turno"
-            variant="primary"
-            size="lg"
-            leftIcon={<Lightning size={20} />}
-            rightIcon={<Lightning size={20} />}
-            onClick={() => navigate(`/shifts/create?date=${dateStr}&shift_type=${entry.shift_type}`)}
-          />
+          <div className="btn-group">
+            <Button
+              label="Publicar turno"
+              variant="primary"
+              size="lg"
+              leftIcon={<Lightning size={20} />}
+              rightIcon={<Lightning size={20} />}
+              onClick={() => navigate(`/shifts/create?date=${dateStr}&shift_type=${entry.shift_type}`)}
+              />
 
-          <Button
-            label="Eliminar turno"
-            variant="outline"
-            size="md"
-            onClick={() => onRemoveShift(dateStr)}
-          />
+            <Button
+              label="Eliminar turno"
+              variant="outline"
+              size="md"
+              onClick={() => onRemoveShift(dateStr)}
+            />
 
-          <Button
-            label="Editar turno"
-            variant="outline"
-            size="md"
-            onClick={() => onEditShift(dateStr)}
-          />
+            <Button
+              label="Editar turno"
+              variant="outline"
+              size="md"
+              onClick={() => onEditShift(dateStr)}
+            />
+          </div>
         </>
       )}
     </div>

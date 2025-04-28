@@ -5,8 +5,7 @@ import useTrackPageView from '../../hooks/useTrackPageView';
 import { UserCircle } from '../../theme/icons';
 import { useNavigate } from 'react-router-dom';
 import HeaderFirstLevel from '../../components/ui/Header/HeaderFirstLevel';
-
-
+import { useAuth } from '../../context/AuthContext';
 
 
 
@@ -14,6 +13,8 @@ const Calendar = () => {
 
     useTrackPageView('calendar');
     const navigate = useNavigate();
+    const { isWorker } = useAuth();
+
 
 
     const handleProfileClick = () => {
@@ -23,7 +24,7 @@ const Calendar = () => {
     return (
         <>
             <HeaderFirstLevel
-                title="Hola"
+                title={`Hola ${isWorker?.name || ''}`}
                 rightAction={{
                     icon: <UserCircle size={24} />,
                     onClick: handleProfileClick,
@@ -31,9 +32,7 @@ const Calendar = () => {
             />
             <div className="page page-primary">
                 <div className="container ">
-                    <div className="calendar-container">
-                        <MonthlyCalendar />
-                    </div>
+                    <MonthlyCalendar />
                 </div>
             </div>
         </>
