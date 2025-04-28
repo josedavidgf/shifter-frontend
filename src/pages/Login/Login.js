@@ -63,7 +63,7 @@ function Login() {
                     </form>
 
                     <div className="auth-divider">
-                        <DividerText text="O" />
+                        <DividerText text="o" />
                     </div>
 
                     <Button
@@ -77,9 +77,10 @@ function Login() {
             </div>
 
             <div className="auth-footer">
-                <p style={{ textAlign: 'center' }}>
-                    ¿Aún no tienes cuenta?
-                </p>
+                <div className="auth-divider">
+                    <DividerText text="¿Aún no tienes cuenta?" />
+                </div>
+
                 <Button
                     label="Registrarme"
                     variant="secondary"
