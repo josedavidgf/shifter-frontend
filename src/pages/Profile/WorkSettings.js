@@ -10,10 +10,11 @@ import { useUserApi } from '../../api/useUserApi';
 import InputField from '../../components/ui/InputField/InputField';
 import HeaderSecondLevel from '../../components/ui/Header/HeaderSecondLevel';
 import { useNavigate } from 'react-router-dom';
-import Button from '../../components/ui/Button/Button'; // Ajusta ruta si necesario
-import { Briefcase, Buildings } from '../../theme/icons'; // Icono de ejemplo
-import SelectorInput from '../../components/ui/SelectorInput/SelectorInput'; // Ajusta ruta si necesario
+import Button from '../../components/ui/Button/Button';
+import { Briefcase, Buildings, CheckCircle, CheckSquare } from '../../theme/icons';
 import SearchSelectInput from '../../components/ui/SearchSelectInput/SearchSelectInput';
+import AccessCodeInput from '../../components/ui/AccessCodeInput/AccessCodeInput';
+
 
 
 
@@ -101,6 +102,7 @@ const WorkSettings = () => {
     const handleConfirmChanges = async () => {
         try {
             const token = await getToken();
+
             await updateWorkerHospital({ hospital_id: hospitalId }, token);
             await updateWorkerSpeciality({ speciality_id: selectedSpeciality.value }, token);
             await refreshWorkerProfile();
@@ -165,80 +167,68 @@ const WorkSettings = () => {
                                 disabled
                                 readOnly
                             />
+                            <div className="btn-group">
+                                <Button
+                                    label="Cambiar especialidad"
+                                    variant="primary"
+                                    leftIcon={<Briefcase size={20} />}
+                                    size="lg"
+                                    onClick={handleLoadSpecialities}
+                                />
 
-                            <Button
-                                label="Cambiar especialidad"
-                                variant="primary"
-                                leftIcon={<Briefcase size={20} />}
-                                size="lg"
-                                onClick={handleLoadSpecialities}
-                            />
-
-                            <Button
-                                label="Cambiar hospital"
-                                variant="outline"
-                                leftIcon={<Buildings size={20} />}
-                                size="lg"
-                                onClick={() => setStep('code')}
-                            />
+                                <Button
+                                    label="Cambiar hospital"
+                                    variant="outline"
+                                    leftIcon={<Buildings size={20} />}
+                                    size="lg"
+                                    onClick={() => setStep('code')}
+                                />
+                            </div>
                         </div>
                     )}
 
                     {step === 'code' && (
-                        <form onSubmit={handleValidateCode}>
-                            <InputField
-                                name="access-code"
-                                label="Código de acceso"
-                                placeholder="Introduce tu código de acceso"
-                                type="text"
-                                value={code}
-                                onChange={(e) => setCode(e.target.value)}
-                                maxLength={6}
-                                required
-                                error={error}
-                                errorMessage="El código de acceso es obligatorio"
-                            />
-                            {error && <p style={{ color: 'red' }}>{error}</p>}
-                            <div className="btn-group">
-                                <Button
-                                    label="Validar"
-                                    variant="primary"
-                                    size="lg"
-                                    type="submit"
-                                    disabled={loadingAccessCode || loadingHospitals || loadingWorkerTypes}
-                                    isLoading={loadingAccessCode || loadingHospitals || loadingWorkerTypes}
-                                />
-                                <Button
-                                    label="Cancelar"
-                                    variant="outline"
-                                    size="lg"
-                                    onClick={() => setStep('view')}
-                                />
-                            </div>
-                        </form>
+                        <div>
+                            <h2>Introduce el código de invitación</h2>
+                            <p>Pregunta a tus compañeros por el código de invitación. De esta manera, aseguramos más privacidad en tu experiencia.</p>
+                            <form onSubmit={handleValidateCode}>
+                                <div className="access-code__container">
+                                    <AccessCodeInput
+                                        code={code}
+                                        setCode={setCode}
+                                        error={error}
+                                    />
+                                </div>
+                                <div className="btn-group">
+                                    <Button
+                                        label="Validar"
+                                        variant="primary"
+                                        size="lg"
+                                        type="submit"
+                                        disabled={loadingAccessCode || loadingHospitals || loadingWorkerTypes || !code}
+                                        isLoading={loadingAccessCode || loadingHospitals || loadingWorkerTypes}
+                                    />
+                                </div>
+                            </form>
+                        </div>
                     )}
 
                     {step === 'confirm' && (
                         <div>
                             <h2 className="register-code__title">
-                                El código que has introducido te habilita Tanda como 
-                                <span className="highlight-purple"> {workerTypeName}</span> en 
+                                El código que has introducido te habilita Tanda como
+                                <span className="highlight-purple"> {workerTypeName}</span> en
                                 <span className="highlight-purple"> {hospitalName}</span>
                             </h2>
                             <div className="btn-group">
                                 <Button
-                                    label="Continuar"
+                                    label="Confirmar cambio"
+                                    leftIcon={<CheckCircle size={20} />}
                                     variant="primary"
                                     size="lg"
                                     onClick={handleLoadSpecialities}
                                     disabled={loadingSpecialities}
                                     isLoading={loadingSpecialities}
-                                />
-                                <Button
-                                    label="Cancelar"
-                                    variant="outline"
-                                    size="lg"
-                                    onClick={() => setStep('view')}
                                 />
                             </div>
                         </div>
@@ -256,7 +246,6 @@ const WorkSettings = () => {
                                 helperText="Selecciona el servicio en el que trabajas"
                                 errorText={error}
                             />
-                            {error && <p style={{ color: 'red' }}>{error}</p>}
                             <div className="btn-group mt-3">
                                 <Button
                                     label="Guardar cambios"
@@ -267,7 +256,7 @@ const WorkSettings = () => {
                                     isLoading={loadingUserUpdate}
                                 />
                                 <Button
-                                    label="Cancelar"
+                                    label="Descartar cambios"
                                     variant="outline"
                                     size="lg"
                                     onClick={() => setStep('view')}

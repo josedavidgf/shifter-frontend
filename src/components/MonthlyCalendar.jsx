@@ -516,10 +516,10 @@ function MonthlyCalendar() {
     );
   }
   
-
+  console.log('ShiftMap:', shiftMap);
 
   return (
-    <div className="p-4">
+    <>
       {/* Filtro de mes */}
       <MonthSelector selectedMonth={selectedMonth} onChange={setSelectedMonth} />
 
@@ -641,7 +641,7 @@ function MonthlyCalendar() {
           {renderDayDetails(selectedDay)}
         </div>
       )}
-    </div>
+    </>
   );
 }
 

@@ -73,47 +73,29 @@
     border: 1px solid #ccc;
 }
 
-@media (max-width: 600px) {
-    .profile-card {
-        padding: 1.25rem;
-    }
 
-    .form-group input,
-    .form-group select {
-        font-size: 1rem;
-    }
-
-    .btn-group {
-        flex-direction: column;
-        gap: 0.5rem;
-    }
-
-    .btn-group .btn {
-        width: 100%;
-    }
-}
 
 /* Estilos para la vista de propuesta de intercambio */
 .propose-form {
     display: flex;
     flex-direction: column;
     gap: 1.25rem;
-  }
-  
-  .form-group {
+}
+
+.form-group {
     display: flex;
     flex-direction: column;
     gap: 0.25rem;
-  }
-  
-  .form-group label {
+}
+
+.form-group label {
     font-weight: 500;
-  }
-  
-  .form-group textarea,
-  .form-group input,
-  .form-group select,
-  .swap_comments {
+}
+
+.form-group textarea,
+.form-group input,
+.form-group select,
+.swap_comments {
     padding: 0.5rem;
     font-size: 1rem;
     border-radius: 6px;
@@ -121,20 +103,33 @@
     resize: vertical;
     min-height: 100px;
     font-family: inherit;
-  }
-  
-  .btn-group {
+}
+
+/* Grupo de botones (Desktop) */
+.btn-group {
     display: flex;
     flex-direction: row;
-    gap: 0.5rem;
+    gap: 0.5rem; /* 8px */
   }
   
+  /* Responsivo Mobile */
   @media (max-width: 600px) {
     .btn-group {
       flex-direction: column;
+      gap: 0.5rem;
     }
   
     .btn-group .btn {
       width: 100%;
     }
+  
+    .profile-card {
+      padding: 1.25rem; /* 20px */
+    }
+  
+    .form-group input,
+    .form-group select {
+      font-size: 1rem; /* 16px */
+    }
   }
+  

@@ -1,6 +1,6 @@
 // src/api/useUserApi.js
 import { useState } from 'react';
-import { getFullWorkerProfile, updateWorkerInfo } from '../services/userService'; // ✅ Importar ambas funciones
+import { getFullWorkerProfile, updateWorkerInfo, updateWorkerHospital,updateWorkerSpeciality  } from '../services/userService'; // ✅ Importar ambas funciones
 
 export function useUserApi() {
   const [loading, setLoading] = useState(false);
@@ -21,8 +21,10 @@ export function useUserApi() {
   };
 
   return {
-    getFullWorkerProfile: (token) => callApi(getFullWorkerProfile, token), // ✅ Añadido
+    getFullWorkerProfile: (token) => callApi(getFullWorkerProfile, token), 
     updateWorkerInfo: (data, token) => callApi(updateWorkerInfo, data, token),
+    updateWorkerHospital: (data, token) => callApi(updateWorkerHospital, data, token),
+    updateWorkerSpeciality: (data, token) => callApi(updateWorkerSpeciality, data, token),
     loading,
     error,
   };
