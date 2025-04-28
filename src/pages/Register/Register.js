@@ -66,7 +66,7 @@ function Register() {
                     </form>
 
                     <div className="auth-divider">
-                        <DividerText text="O" />
+                        <DividerText text="o" />
                     </div>
 
                     <Button
@@ -79,9 +79,9 @@ function Register() {
                 </div>
             </div>
             <div className="auth-footer">
-                <p style={{ textAlign: 'center' }}>
-                    ¿Ya tienes cuenta?
-                </p>
+                <div className="auth-divider">
+                    <DividerText text="¿Ya tienes cuenta?" />
+                </div>
                 <Button
                     label="Iniciar sesión"
                     variant="secondary"
