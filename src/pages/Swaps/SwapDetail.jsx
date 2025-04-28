@@ -9,7 +9,7 @@ import { useRespondFeedback } from '../../hooks/useRespondFeedback';
 import HeaderSecondLevel from '../../components/ui/Header/HeaderSecondLevel';
 import Button from '../../components/ui/Button/Button'; // Ajusta ruta si necesario
 import { useToast } from '../../hooks/useToast'; // Ajusta ruta
-
+import Loader from '../../components/ui/Loader/Loader';
 
 
 const SwapDetail = () => {
@@ -47,8 +47,21 @@ const SwapDetail = () => {
     }, [id, getToken]);
 
 
-    if (errorSwap) return <p style={{ color: 'red' }}>{errorSwap}</p>;
-    if (loadingSwap || !swap) return <p>Cargando intercambio...</p>;
+    if (loadingSwap || !swap || !workerId) {
+        return (
+          <div className="flex justify-center items-center min-h-screen">
+            <Loader text="Cargando detalle del intercambio..." />
+          </div>
+        );
+      }
+      
+      if (errorSwap) {
+        return (
+          <div className="flex justify-center items-center min-h-screen">
+            <p className="text-red-500">{errorSwap}</p>
+          </div>
+        );
+      }
 
     const handleBack = () => {
         if (window.history.length > 1) {

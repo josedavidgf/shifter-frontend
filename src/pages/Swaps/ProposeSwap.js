@@ -7,7 +7,8 @@ import { useSwapFeedback } from '../../hooks/useSwapFeedback';
 import useAvailableShifts from '../../hooks/useAvailableShifts';
 import ShiftSelector from '../../components/ShiftSelector';
 import HeaderSecondLevel from '../../components/ui/Header/HeaderSecondLevel';
-import Button from '../../components/ui/Button/Button'; // Ajusta ruta si necesario
+import Button from '../../components/ui/Button/Button';
+import Loader from '../../components/ui/Loader/Loader';
 
 
 const ProposeSwap = () => {
@@ -69,7 +70,11 @@ const ProposeSwap = () => {
   };
 
   if (loadingShifts) {
-    return <p>Cargando turnos disponibles...</p>;
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <Loader text="Cargando turnos disponibles..." />
+      </div>
+    );
   }
 
   if (errorShifts) {
