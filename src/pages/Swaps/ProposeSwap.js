@@ -85,9 +85,6 @@ const ProposeSwap = () => {
     return (
       <div>
         <p>No tienes turnos disponibles para ofrecer.</p>
-        <button type="button" onClick={() => navigate('/shifts/hospital')}>
-          Volver
-        </button>
       </div>
     );
   }

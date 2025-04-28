@@ -1,0 +1,23 @@
+.divider-text {
+    display: flex;
+    align-items: center;
+    margin-top: var(--space-lg);
+    margin-bottom: var(--space-md);
+    width: 100%;
+    max-width: 343px;
+  }
+  
+  .divider-text::before,
+  .divider-text::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background-color: var(--color-border);
+  }
+  
+  .divider-text span {
+    margin: 0 var(--space-sm);
+    color: var(--color-muted);
+    font-size: var(--font-sm);
+  }
+  

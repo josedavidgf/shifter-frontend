@@ -3,8 +3,8 @@ import { useAuth } from '../../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import useTrackPageView from '../../hooks/useTrackPageView';
 import InputField from '../../components/ui/InputField/InputField';
-import Button from '../../components/ui/Button/Button'; // Ajusta ruta si necesario
-
+import Button from '../../components/ui/Button/Button';
+import DividerText from '../../components/ui/DividerText/DividerText';
 
 function Login() {
     const { login, loginWithGoogle } = useAuth();
@@ -13,51 +13,80 @@ function Login() {
     const [error, setError] = useState('');
     const navigate = useNavigate();
 
+    useTrackPageView('login');
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
             await login(email, password);
-            navigate('/calendar');  // Redirigir después del login
+            navigate('/calendar');
         } catch (err) {
             setError(err.message);
         }
     };
 
-    useTrackPageView('login');
-
     return (
-        <div className='container'>
-            <h2>Iniciar Sesión</h2>
-            {error && <p style={{ color: 'red' }}>{error}</p>}
-            <form onSubmit={handleSubmit}>
-                <InputField
-                    name="email"
-                    label="Correo Electrónico"
-                    placeholder="Tu correo"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    type="email"
-                    required
-                />
-                <InputField
-                    name="password"
-                    label="Contraseña"
-                    placeholder="Tu contraseña"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    type="password"
-                    required
-                />
+        <div className="container auth-container">
+            <div className="auth-content">
+                <div className="auth-logo-container">
+                    <img src={'/assets/logo-tanda-light.png'} alt="Tanda Logo" className="auth-logo" />
+                </div>
+
+                <div className="auth-body">
+                    {error && <p style={{ color: 'var(--color-danger)' }}>{error}</p>}
+                    <form className="auth-form" onSubmit={handleSubmit}>
+                        <InputField
+                            name="email"
+                            label="Email"
+                            placeholder="Email"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            type="email"
+                            required
+                        />
+                        <InputField
+                            name="password"
+                            label="Contraseña"
+                            placeholder="Contraseña"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            type="password"
+                            required
+                        />
+                        <Button
+                            label="Iniciar sesión"
+                            variant="primary"
+                            size="lg"
+                            type="submit"
+                            disabled={!email || !password}
+                        />
+                    </form>
+
+                    <div className="auth-divider">
+                        <DividerText text="O" />
+                    </div>
+
+                    <Button
+                        label="Iniciar sesión con Google"
+                        variant="outline"
+                        size="lg"
+                        leftIcon={<img src={'/assets/google-icon.svg'} alt="Google" width="20" height="20" />}
+                        onClick={loginWithGoogle}
+                    />
+                </div>
+            </div>
+
+            <div className="auth-footer">
+                <p style={{ textAlign: 'center' }}>
+                    ¿Aún no tienes cuenta?
+                </p>
                 <Button
-                    label="Iniciar Sesión"
-                    variant="primary"
+                    label="Registrarme"
+                    variant="secondary"
                     size="lg"
-                    type="submit"
-                    disabled={!email || !password} // Deshabilitar si email o password están vacíos
+                    onClick={() => navigate('/register')}
                 />
-            </form>
-            <hr />
-            <button className='btn btn-secondary' onClick={loginWithGoogle}>Sign in with Google</button>
+            </div>
         </div>
     );
 }
