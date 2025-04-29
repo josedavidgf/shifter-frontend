@@ -105,24 +105,11 @@
     font-family: inherit;
 }
 
-/* Grupo de botones (Desktop) */
-.btn-group {
-    display: flex;
-    flex-direction: row;
-    gap: 0.5rem; /* 8px */
-  }
+
   
   /* Responsivo Mobile */
   @media (max-width: 600px) {
-    .btn-group {
-      flex-direction: column;
-      gap: 0.5rem;
-    }
-  
-    .btn-group .btn {
-      width: 100%;
-    }
-  
+
     .profile-card {
       padding: 1.25rem; /* 20px */
     }

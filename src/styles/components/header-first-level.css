@@ -38,11 +38,10 @@
   position: absolute;
   right: var(--space-md);
   top: var(--space-xs);
-  font-size: var(--font-md, 1rem);
+  font-size: var(--font-md, 16px);
 }
 
 .header-first__divider {
   height: 1px;
-  background-color: var(--color-border, #E2E8F0);
   width: 100%;
 }

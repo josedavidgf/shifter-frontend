@@ -36,7 +36,7 @@
   cursor: pointer;
   display: flex;
   align-items: center;
-  font-size: var(--font-md, 1rem);
+  font-size: var(--font-md, 16px);
   font-weight: 500;
   font-family: var(--font-family, 'Host Grotesk', sans-serif);
   border-radius: var(--radius-sm, 4px);
@@ -58,8 +58,8 @@
   position: absolute;
   left: 50%;
   transform: translateX(-50%);
-  font-size: var(--font-md, 1rem);
-  font-weight: 600;
+  font-size: var(--font-md, 16px);
+  font-weight: 500;
   color: var(--color-text, #333);
   margin: 0;
   text-align: center;

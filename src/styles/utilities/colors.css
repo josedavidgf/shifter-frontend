@@ -17,6 +17,7 @@
   --shift-morning: #FFE681;
   --shift-afternoon: #FFBCE2;
   --shift-night: #B9C7FF;
+  --shift-reinforcement: #FFC6C6;
 
   /* 🧱 Roles semánticos */
   --color-background: var(--color-gray-50);

@@ -10,6 +10,9 @@ import HeaderSecondLevel from '../../components/ui/Header/HeaderSecondLevel';
 import Button from '../../components/ui/Button/Button'; // Ajusta ruta si necesario
 import { useToast } from '../../hooks/useToast'; // Ajusta ruta
 import Loader from '../../components/ui/Loader/Loader';
+import InputField from '../../components/ui/InputField/InputField';
+import { format, parseISO } from 'date-fns';
+
 
 
 const SwapDetail = () => {
@@ -49,19 +52,19 @@ const SwapDetail = () => {
 
     if (loadingSwap || !swap || !workerId) {
         return (
-          <div className="flex justify-center items-center min-h-screen">
-            <Loader text="Cargando detalle del intercambio..." />
-          </div>
+            <div className="flex justify-center items-center min-h-screen">
+                <Loader text="Cargando detalle del intercambio..." />
+            </div>
         );
-      }
-      
-      if (errorSwap) {
+    }
+
+    if (errorSwap) {
         return (
-          <div className="flex justify-center items-center min-h-screen">
-            <p className="text-red-500">{errorSwap}</p>
-          </div>
+            <div className="flex justify-center items-center min-h-screen">
+                <p className="text-red-500">{errorSwap}</p>
+            </div>
         );
-      }
+    }
 
     const handleBack = () => {
         if (window.history.length > 1) {
@@ -98,25 +101,25 @@ const SwapDetail = () => {
         setIsAccepting(decision === 'accepted');
         setIsRejecting(decision === 'rejected');
         try {
-          const token = await getToken();
-          const success = await respondToSwap(swap.swap_id, decision, token);
-          if (success) {
-            showRespondFeedback(decision);
-            navigate('/my-swaps');
-          } else {
-            showError('Error al actualizar el intercambio');
-          }
+            const token = await getToken();
+            const success = await respondToSwap(swap.swap_id, decision, token);
+            if (success) {
+                showRespondFeedback(decision);
+                navigate('/my-swaps');
+            } else {
+                showError('Error al actualizar el intercambio');
+            }
         } catch (err) {
-          console.error('❌ Error respondiendo swap:', err.message);
-          showError('Error inesperado al actualizar el intercambio');
+            console.error('❌ Error respondiendo swap:', err.message);
+            showError('Error inesperado al actualizar el intercambio');
         } finally {
-          setIsAccepting(false);
-          setIsRejecting(false);
+            setIsAccepting(false);
+            setIsRejecting(false);
         }
-      };
+    };
 
-      const handleAcceptSwap = () => handleRespond('accepted');
-      const handleRejectSwap = () => handleRespond('rejected');
+    const handleAcceptSwap = () => handleRespond('accepted');
+    const handleRejectSwap = () => handleRespond('rejected');
 
     // Mostrar chat solo si el estado lo permite
     const showChat = ['proposed', 'accepted'].includes(swap.status);
@@ -133,12 +136,29 @@ const SwapDetail = () => {
             <div className="page">
                 <div className="container">
                     <div className="card mb-3">
-                        <p><strong>Intercambio #{swap.swap_id}</strong></p>
-                        <p><strong>Turno original:</strong> {swap.shift.date}</p>
-                        <p><strong>Turno ofrecido:</strong> {swap.offered_date}</p>
-                        <p><strong>Estado:</strong> <span className={`status-badge status-${swap.status}`}>{swap.status}</span></p>
+                        <InputField
+                            name="original_shift_date"
+                            label="Turno original"
+                            value={swap.shift?.date ? format(parseISO(swap.shift.date), 'dd/MM/yyyy') : '-'}
+                            disabled
+                            readOnly
+                        />
+                        <InputField
+                            name="offered_swap_date"
+                            label="Turno ofrecido"
+                            value={swap.offered_date ? format(parseISO(swap.offered_date), 'dd/MM/yyyy') : '-'}
+                            disabled
+                            readOnly
+                        />
+                        <InputField
+                            name="status"
+                            label="Estado"
+                            value={swap.status}
+                            disabled
+                            readOnly
+                        />
                     </div>
-
+{/* 
                     {showChat && (
                         <div className="mb-3">
                             <ChatBox
@@ -147,7 +167,7 @@ const SwapDetail = () => {
                                 otherWorkerId={swap.requester_id === workerId ? swap.shift.worker_id : swap.requester_id}
                             />
                         </div>
-                    )}
+                    )} */}
                     {swap.status === 'proposed' && swap.shift.worker_id === workerId && (
                         <div className="btn-group mb-4">
                             <Button

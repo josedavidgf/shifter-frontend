@@ -31,5 +31,11 @@ export {
     MagnifyingGlassPlus,
     GoogleLogo,
     CheckSquare,
+    ArrowCircleLeft,
+    ArrowCircleRight,
+  ShieldCheck,
+  Trash,
+  PencilSimple
+
 
   } from 'phosphor-react';

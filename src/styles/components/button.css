@@ -7,7 +7,7 @@
   padding: 0.5rem 1rem;
   font-family: inherit;
   font-weight: 600;
-  font-size: var(--font-md, 1rem);
+  font-size: var(--font-md, 16px);
   border-radius: 12px;
   border: none;
   cursor: pointer;
@@ -101,17 +101,17 @@
 
 /* Sizes */
 .btn--md {
-  height: 40px;
-  width: 170px;
+  height: 48px;
+  width: 50%;
   font-size: var(--font-md, 1rem);
-  padding: 0 16px;
+  padding: 12px 32px;
 }
 
 .btn--lg {
   height: 48px;
   width: 100%;
   font-size: var(--font-lg, 1.25rem);
-  padding: 0 20px;
+  padding: 12px 32px;
 }
 
 /* Icon positioning */
@@ -174,4 +174,58 @@
 }
 .btn--outline .btn__content {
   gap: 6px; /* en vez de 8px genérico */
+}
+
+.btn-group {
+  display: flex;
+  flex-direction: column; /* mobile-first */
+  gap: 0.5rem;
+  width: 100%;
+}
+
+.btn-group .btn {
+  width: 100%;
+}
+
+.btn-group-row {
+  display: flex;
+  flex-direction: row; /* mobile-first */
+  gap: 0.5rem;
+  width: 100%;
+}
+
+.btn-group-row .btn {
+  width: 100%;
+}
+
+/* Desktop: inline buttons */
+@media (min-width: 600px) {
+  .btn-group {
+    flex-direction: row;
+    justify-content: center; /* opcional: centrado horizontal */
+  }
+
+  .btn-group .btn {
+    width: auto;
+    flex: 1 1 0; /* reparte espacio equitativo si hay espacio */
+  }
+  .btn-group-row {
+    display: flex;
+    flex-direction: row;
+    gap: 0.5rem;
+    width: 100%;
+  }
+  
+  .btn-group-row .btn {
+    flex: 1 1 0;
+    width: auto;
+  }
+  
+}
+
+.btn-sticky-footer {
+  position: sticky;
+  bottom: 0;
+  display: flex;
+  z-index: 10;
 }

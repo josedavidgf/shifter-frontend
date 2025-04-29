@@ -9,6 +9,9 @@ import { format, parseISO } from 'date-fns';
 import { translateShiftType } from '../../utils/translateShiftType';
 import HeaderSecondLevel from '../../components/ui/Header/HeaderSecondLevel';
 import Button from '../../components/ui/Button/Button'; // Ajusta ruta si necesario
+import InputField from '../../components/ui/InputField/InputField';
+import Loader from '../../components/ui/Loader/Loader';
+import { useToast } from '../../hooks/useToast';
 
 
 const CreateShift = () => {
@@ -18,6 +21,9 @@ const CreateShift = () => {
     const { getFullWorkerProfile } = useUserApi();
     const { getSpecialities } = useSpecialityApi();
     const { createShift, loading: creatingShift, error: errorCreatingShift } = useShiftApi(); // 🆕
+    const [loadingShift, setShiftProfile] = useState(true);
+    const { showSuccess, showError } = useToast();
+
 
     const params = new URLSearchParams(location.search);
     const prefilDate = params.get('date');
@@ -49,30 +55,38 @@ const CreateShift = () => {
     useEffect(() => {
         async function fetchData() {
             try {
-              const token = await getToken();
-              const profile = await getFullWorkerProfile(token); // ✅ Vía hook
-              setSpecialityId(profile.specialityId);
-          
-              const specs = await getSpecialities(token); // ✅ Vía hook
-              setSpecialities(specs);
-          
-              const match = specs.find(s => s.speciality_id === profile.specialityId);
-              setSelectedSpeciality(match);
-          
-              setForm(prev => ({
-                ...prev,
-                date: prefilDate || prev.date,
-                shift_type: prefilShiftType || prev.shift_type,
-                speciality_id: profile.specialityId,
-              }));
+                setShiftProfile(true);
+                const token = await getToken();
+                const profile = await getFullWorkerProfile(token); // ✅ Vía hook
+                setSpecialityId(profile.specialityId);
+
+                const specs = await getSpecialities(token); // ✅ Vía hook
+                setSpecialities(specs);
+
+                const match = specs.find(s => s.speciality_id === profile.specialityId);
+                setSelectedSpeciality(match);
+
+                setForm(prev => ({
+                    ...prev,
+                    date: prefilDate || prev.date,
+                    shift_type: prefilShiftType || prev.shift_type,
+                    speciality_id: profile.specialityId,
+                }));
             } catch (err) {
-              console.error('Error loading profile or specialities:', err.message);
-              setMessage('❌ Error al cargar el perfil o especialidad');
+                console.error('Error loading profile or specialities:', err.message);
+                setMessage('❌ Error al cargar el perfil o especialidad');
+            } finally {
+                setShiftProfile(false);
             }
-          }          
+        }
 
         fetchData();
     }, [getToken, prefilDate, prefilShiftType]);
+
+    if (loadingShift) {
+        return <Loader text="Cargando información del turno..." />;
+      }
+      
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -85,14 +99,14 @@ const CreateShift = () => {
             const token = await getToken();
             const success = await createShift({ ...form }, token);
             if (success) {
-                setMessage('✅ Turno publicado correctamente');
-                setTimeout(() => navigate('/calendar'), 1500);
-            } else {
-                setMessage('❌ Error al publicar turno');
+                showSuccess('Turno publicado correctamente');
+                setTimeout(() => navigate('/calendar'), 1000);
+              } else {
+                showError('Error al publicar turno');
             }
         } catch (err) {
             console.error('Error creating shift:', err.message);
-            setMessage('❌ Error al publicar turno');
+            showError('Error al publicar turno');
         }
     };
 
@@ -107,40 +121,47 @@ const CreateShift = () => {
     return (
         <>
             <HeaderSecondLevel title="Crear turno" showBackButton onBack={handleBack} />
-            <div className="page page-secondary">
+            <div className="page">
                 <div className="container">
-                    <form onSubmit={handleSubmit}>
-                        <label>Fecha:</label>
-                        <p>{form.date ? format(parseISO(form.date), 'dd/MM/yyyy') : '-'}</p>
+                    <div className="create-shift-container">
+                        <InputField
+                            name="Date"
+                            label="Fecha"
+                            value={form.date ? format(parseISO(form.date), 'dd/MM/yyyy') : '-'}
+                            disabled
+                            readOnly
+                        />
+                        <InputField
+                            name="shift_type"
+                            label="Turno"
+                            value={translateShiftType(form.shift_type)}
+                            disabled
+                            readOnly
+                        />
+                        <InputField
+                            name="speciality"
+                            label="Servicio"
+                            value={selectedSpeciality ? `${selectedSpeciality.speciality_category} - ${selectedSpeciality.speciality_subcategory}` : 'No disponible'}
+                            disabled
+                            readOnly
+                        />
 
-                        <label>Turno:</label>
-                        <p>{translateShiftType(form.shift_type)}</p>
-
-                        <label>Especialidad:</label>
-                        {selectedSpeciality ? (
-                            <p>{selectedSpeciality.speciality_category} - {selectedSpeciality.speciality_subcategory}</p>
-                        ) : (
-                            <p>Especialidad no disponible</p>
-                        )}
-
-                        <label>Comentarios:</label>
-                        <textarea
-                            name="shift_comments"
+                        <InputField
+                            name="Comentarios"
+                            label="Comentarios"
                             value={form.shift_comments}
-                            onChange={handleChange}
+                            placeholder="Añade comentarios si lo deseas"
                         />
-
-                        <br />
-                        <Button
-                            label="Publicar"
-                            variant="primary"
-                            size="lg"
-                            type="submit"
-                            disabled={!form.date || !form.shift_type || creatingShift}
-                            isLoading={creatingShift}
-                        />
-                    </form>
-
+                    </div>
+                    <Button
+                        label="Publicar"
+                        variant="primary"
+                        size="lg"
+                        type="submit"
+                        onClick={handleSubmit}
+                        disabled={!form.date || !form.shift_type || creatingShift}
+                        isLoading={creatingShift}
+                    />
                     {message && <p style={{ marginTop: '10px' }}>{message}</p>}
                     {errorCreatingShift && (
                         <p style={{ color: 'red', marginTop: '10px' }}>
@@ -148,7 +169,7 @@ const CreateShift = () => {
                         </p>
                     )}
                 </div>
-            </div>
+            </div >
         </>
     );
 };
