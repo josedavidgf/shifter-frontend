@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import Button from '../components/ui/Button/Button';
+
 
 const MySwapsTable = ({ swaps = [] }) => {
   const [filtered, setFiltered] = useState([]);
-  const [filterStatus, setFilterStatus] = useState('');
-  const [filterDate, setFilterDate] = useState('');
+  const currentMonth = new Date().toISOString().slice(0, 7); // YYYY-MM
+  const [filterStatus, setFilterStatus] = useState('proposed'); // ⬅️ Default
+  const [filterDate, setFilterDate] = useState(currentMonth);   // ⬅️ Default
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -15,8 +18,12 @@ const MySwapsTable = ({ swaps = [] }) => {
     }
 
     if (filterDate) {
-      result = result.filter(s => s.shift?.date === filterDate);
+      result = result.filter(s => {
+        const shiftMonth = s.shift?.date?.slice(0, 7); // YYYY-MM
+        return shiftMonth === filterDate;
+      });
     }
+    
 
     setFiltered(result);
   }, [filterStatus, filterDate, swaps]);
@@ -31,7 +38,7 @@ const MySwapsTable = ({ swaps = [] }) => {
       <div className="filters-container">
         <div className="filters-group">
           <input
-            type="date"
+            type="month"
             className="filter-input"
             value={filterDate}
             onChange={(e) => setFilterDate(e.target.value)}
@@ -47,14 +54,19 @@ const MySwapsTable = ({ swaps = [] }) => {
             <option value="rejected">Rechazado</option>
             <option value="cancelled">Cancelado</option>
           </select>
-          <button className="filter-reset" onClick={clearFilters}>Limpiar filtros</button>
+          <Button
+            label="Limpiar filtros"
+            variant="outline"
+            size="lg"
+            onClick={clearFilters}
+          />
         </div>
       </div>
 
       {/* Ahora sí: no loading aquí, solo empty si de verdad no hay resultados */}
       {filtered.length === 0 ? (
         <p style={{ textAlign: 'center', marginTop: '2rem' }}>
-          No tienes intercambios activos.
+          No tienes intercambios en esta búsqueda.
         </p>
       ) : (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>

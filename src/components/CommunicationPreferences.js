@@ -1,12 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { getUserPreferences, updateUserPreferences } from '../services/userService';
+import ToggleSwitch from '../components/ui/ToogleSwitch/ToogleSwitch';
+import { useToast } from '../hooks/useToast';
+
 
 
 const CommunicationPreferences = () => {
     const [emailNotifications, setEmailNotifications] = useState(true);
     const [status, setStatus] = useState('');
     const { getToken } = useAuth();
+    const { showSuccess, showError } = useToast();
+
 
     useEffect(() => {
         async function fetchPreferences() {
@@ -22,34 +27,28 @@ const CommunicationPreferences = () => {
         fetchPreferences();
     }, [getToken]);
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
+    const handleToggleChange = async (newValue) => {
         try {
+            setEmailNotifications(newValue);
             const token = await getToken();
-            await updateUserPreferences({ email_notifications: emailNotifications }, token);
-            setStatus('✅ Preferences updated successfully');
+            await updateUserPreferences({ email_notifications: newValue }, token);
+            showSuccess('Preferencias actualizadas correctamente');
         } catch (err) {
             console.error('Error updating preferences:', err.message);
-            setStatus('❌ Failed to update preferences');
+            showError('Error actualizando preferencias');
         }
     };
+
 
     return (
         <div>
             <h2>Communication Preferences</h2>
-            <form onSubmit={handleSubmit}>
-                <label>
-                    <input
-                        type="checkbox"
-                        checked={emailNotifications}
-                        onChange={(e) => setEmailNotifications(e.target.checked)}
-                    />
-                    Receive email notifications for swap activity
-                </label>
-                <br />
-                <button className="btn btn-primary" type="submit">Save</button>
-                {status && <p>{status}</p>}
-            </form>
+            <ToggleSwitch
+                label="Recibir notificaciones por email para actividad de swaps"
+                checked={emailNotifications}
+                onChange={handleToggleChange}
+            />
+
         </div>
     );
 };

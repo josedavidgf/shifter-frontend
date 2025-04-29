@@ -7,7 +7,7 @@ export default function GlobalUI() {
         position="top-center"
         reverseOrder={false}
         toastOptions={{
-          duration: 3000,
+          duration: 2000,
           className: '', // ← Aquí dejamos vacío porque aplicaremos por llamada
         }}
       />

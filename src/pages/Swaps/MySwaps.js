@@ -4,7 +4,9 @@ import { useSwapApi } from '../../api/useSwapApi';
 import MySwapsTable from '../../components/MySwapsTable';
 import useTrackPageView from '../../hooks/useTrackPageView';
 import HeaderFirstLevel from '../../components/ui/Header/HeaderFirstLevel';
-import Loader from '../../components/ui/Loader/Loader'; // ✅
+import Loader from '../../components/ui/Loader/Loader';
+import EmptyState from '../../components/ui/EmptyState/EmptyState';
+import { useNavigate } from 'react-router-dom';
 
 const MySwaps = () => {
   const { getToken } = useAuth();
@@ -12,6 +14,8 @@ const MySwaps = () => {
   const [swaps, setSwaps] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const navigate = useNavigate();
+
 
   useTrackPageView('my-swaps');
 
@@ -64,7 +68,12 @@ const MySwaps = () => {
       <div className="page page-primary">
         <div className="container">
           {swaps.length === 0 ? (
-            <p>No tienes intercambios aún.</p>
+            <EmptyState
+              title="No tienes intercambios activos"
+              description="Cuando propongas o aceptes un intercambio, aparecerán aquí."
+              ctaLabel="Buscar turnos"
+              onCtaClick={() => navigate('/shifts/hospital')}
+            />
           ) : (
             <MySwapsTable swaps={swaps} />
           )}

@@ -1,30 +1,46 @@
-/* Toast Success */
-.toast-success {
-    background-color: var(--color-success, #38A169);
-    color: var(--color-white, #FFFFFF);
-    font-weight: 600;
-    border-radius: 12px;
-    padding: 12px 16px;
-    font-size: 16px;
-  }
-  
-  /* Toast Error */
-  .toast-error {
-    background-color: var(--color-danger, #E53E3E);
-    color: var(--color-white, #FFFFFF);
-    font-weight: 600;
-    border-radius: 12px;
-    padding: 12px 16px;
-    font-size: 16px;
-  }
-  
-  /* Toast Info */
-  .toast-info {
-    background-color: var(--color-info, #4299E1);
-    color: var(--color-white, #FFFFFF);
-    font-weight: 600;
-    border-radius: 12px;
-    padding: 12px 16px;
-    font-size: 16px;
-  }
-  
+/* toast.css */
+
+.toast {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  border-radius: 12px;
+  width: fit-content;
+  min-width: 343px;
+  max-width: 90vw;
+  font-family: var(--font-family, 'Host Grotesk');
+  font-size: 14px;
+  font-weight: 500;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.12);
+  color: white;
+}
+
+.toast--success {
+  background-color: var(--green-600, #2AC769);
+}
+
+.toast--error {
+  background-color: var(--red-500, #E53E3E);
+}
+
+.toast--info {
+  background-color: var(--gray-900, #171923);
+}
+
+.toast--warning {
+  background-color: var(--yellow-500, #ECC94B);
+  color: black;
+}
+
+/* Position handled by react-hot-toast; styling overrides here */
+.__toast-container {
+  bottom: 1rem;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+/* Optional: override react-hot-toast default padding if needed */
+.react-hot-toast {
+  padding: 0;
+}

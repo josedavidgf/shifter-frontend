@@ -31,6 +31,8 @@
 @import './components/loader.css';
 @import './components/divider-text.css';
 @import './components/access-code-input.css';
+@import './components/toogle-switch.css';
+@import './components/search-filter-input.css';
 
 /* Pages */
 @import './pages/calendar.css';

@@ -7,6 +7,8 @@ import HospitalShiftsTable from '../../components/HospitalShiftsTable';
 import useTrackPageView from '../../hooks/useTrackPageView';
 import HeaderFirstLevel from '../../components/ui/Header/HeaderFirstLevel';
 import Loader from '../../components/ui/Loader/Loader'; // ✅
+import EmptyState from '../../components/ui/EmptyState/EmptyState';
+import { useNavigate } from 'react-router-dom';
 
 
 const HospitalShifts = () => {
@@ -20,6 +22,8 @@ const HospitalShifts = () => {
     const [profile, setProfile] = useState(null);
     const [loading, setLoading] = useState(true); // ✅ UNIFICADO
     const [error, setError] = useState(null); // ✅
+    const navigate = useNavigate();
+
 
 
     useTrackPageView('hospital-shifts');
@@ -77,7 +81,12 @@ const HospitalShifts = () => {
             <div className="page page-primary">
                 <div className="container">
                     {shifts.length === 0 ? (
-                        <p>No hay turnos disponibles en tu hospital.</p>
+                        <EmptyState
+                            title="No hay turnos disponibles"
+                            description="Actualmente no hay turnos publicados en tu hospital."
+                            ctaLabel="Ir al calendario"
+                            onCtaClick={() => navigate('/calendar')}
+                        />
                     ) : (
                         <HospitalShiftsTable
                             shifts={shifts}
@@ -85,6 +94,7 @@ const HospitalShifts = () => {
                             sentSwapShiftIds={sentSwaps}
                         />
                     )}
+
                 </div>
             </div>
         </>
