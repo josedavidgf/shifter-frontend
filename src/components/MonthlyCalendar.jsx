@@ -371,12 +371,12 @@ function MonthlyCalendar() {
     try {
       const token = await getToken(); // ✅ Obtener token antes
       const success = await removeShift(shiftId, token); // ✅ Pasar token
-  
+
       if (success) {
         const updatedEntry = { ...shiftMap[dateStr] };
         delete updatedEntry.isPublished;
         delete updatedEntry.shift_id;
-  
+
         setShiftMap(prev => ({
           ...prev,
           [dateStr]: updatedEntry,
@@ -386,7 +386,7 @@ function MonthlyCalendar() {
       console.error('❌ Error al eliminar publicación:', error.message);
     }
   }
-  
+
 
   // Función para Publicar un turno de un día específico de forma rápida
   /*   async function handlePublishShift(dateStr) {
@@ -607,18 +607,17 @@ function MonthlyCalendar() {
             const dateStr = format(day, 'yyyy-MM-dd');
             const dataForRender = isMassiveEditMode ? draftShiftMap : shiftMap;
             const entry = dataForRender[dateStr] || {};
-            //const isToday = isSameDay(day, new Date());
             const shiftType = entry.shift_type || '';
             const flags = entry || {};
-            const indicator = flags.isReceived
-              ? '✅'
-              : flags.isSwapped
-                ? '🔁'
-                : flags.isPublished
-                  ? '📢'
-                  : flags.isMyShift
-                    ? '✔️'
-                    : '';
+
+            let indicator = '';
+
+            if (flags.isReceived) indicator += '✅';
+            if (flags.isSwapped) indicator += '🔁';
+            if (flags.isPublished) indicator += '📢';
+            if (flags.isMyShift) indicator += '✔️';
+            if (!flags.isMyShift && flags.isPreference) indicator += '🟢'; // ✅ Aquí controlamos tu caso
+
             const isPast = format(day, 'yyyy-MM-dd') < today;
 
             return (
@@ -627,10 +626,12 @@ function MonthlyCalendar() {
                 className={`calendar-day shift-${shiftType} ${isPast ? 'past' : ''} ${selectedDay === dateStr ? 'selected-day' : ''}`}
                 onClick={() => handleDayClick(dateStr)}
               >
-                <div className="day-number">{format(day, 'd')} {getShiftLabel(shiftType)} {indicator}</div>
-
+                <div className="day-number">
+                  {format(day, 'd')} {getShiftLabel(shiftType)} {indicator}
+                </div>
               </div>
             );
+
           })}
         </motion.div>
       </AnimatePresence>
