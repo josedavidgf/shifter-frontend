@@ -6,12 +6,16 @@ import InputField from '../../components/ui/InputField/InputField';
 import { useNavigate } from 'react-router-dom';
 import HeaderSecondLevel from '../../components/ui/Header/HeaderSecondLevel';
 import Button from '../../components/ui/Button/Button'; // Ajusta ruta si necesario
+import { useToast } from '../../hooks/useToast';
 
 
 const PersonalInfo = () => {
   const { getToken } = useAuth();
   const { getFullWorkerProfile, updateWorkerInfo, loading, error: apiError } = useUserApi();
   const navigate = useNavigate();
+  const { showSuccess, showError, showWarning } = useToast();
+  const [initialForm, setInitialForm] = useState(null);
+
 
   const [form, setForm] = useState({
     name: '',
@@ -27,15 +31,16 @@ const PersonalInfo = () => {
       const data = await getFullWorkerProfile(token);
 
       if (data?.worker) {
-        setForm({
+        const fetchedForm = {
           name: data.worker.name,
           surname: data.worker.surname,
           mobile_country_code: data.worker.mobile_country_code || '',
           mobile_phone: data.worker.mobile_phone || '',
-        });
+        };
+        setForm(fetchedForm);
+        setInitialForm(fetchedForm); // ⬅️ Guarda copia inicial
       }
     }
-
     fetchData();
   }, [getToken]);
 
@@ -67,18 +72,24 @@ const PersonalInfo = () => {
 
   async function handleSubmit(e) {
     e.preventDefault();
+    if (JSON.stringify(form) === JSON.stringify(initialForm)) {
+      showWarning('No se han hecho cambios');
+      return;
+    }
+
     const token = await getToken();
     try {
       const updated = await updateWorkerInfo(form, token);
       if (updated) {
-        setMessage('✅ Información actualizada');
+        showSuccess('Información actualizada');
       } else {
-        setMessage('❌ No se pudo actualizar la información');
+        showWarning('No se pudo actualizar la información');
       }
     } catch (err) {
-      setMessage('❌ Error al actualizar la información');
+      showError('Error al actualizar la información');
     }
   }
+
 
   const handleBack = () => {
     if (window.history.length > 1) {

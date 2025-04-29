@@ -1,21 +1,34 @@
-import { toast } from 'react-hot-toast';
+import toast, { Toaster } from 'react-hot-toast';
 
 export function useToast() {
-  const showSuccess = (message) => {
-    toast.success(message, { duration: 2500, icon: '✅', className: 'toast-success' });
-  };
-
-  const showError = (message) => {
-    toast.error(message, { duration: 3500, icon: '❌', className: 'toast-error' });
-  };
-
-  const showInfo = (message) => {
-    toast(message, { duration: 2500, icon: 'ℹ️', className: 'toast-info' });
+  const showToast = (message, type = 'success') => {
+    toast(message, {
+      duration: 2500,
+      icon: type === 'success'
+        ? '✅'
+        : type === 'error'
+        ? '❌'
+        : type === 'warning'
+        ? '⚠️'
+        : 'ℹ️',
+      className:
+        type === 'success'
+          ? 'toast toast--success'
+          : type === 'error'
+          ? 'toast toast--error'
+          : type === 'warning'
+          ? 'toast toast--warning'
+          : 'toast toast--info',
+      position: 'bottom-center',
+    });
   };
 
   return {
-    showSuccess,
-    showError,
-    showInfo,
+    showSuccess: (msg) => showToast(msg, 'success'),
+    showError: (msg) => showToast(msg, 'error'),
+    showInfo: (msg) => showToast(msg, 'info'),
+    showWarning: (msg) => showToast(msg, 'warning'),
   };
 }
+
+export const ToastUI = () => <Toaster />;

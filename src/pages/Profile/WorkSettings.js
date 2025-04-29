@@ -12,9 +12,9 @@ import HeaderSecondLevel from '../../components/ui/Header/HeaderSecondLevel';
 import { useNavigate } from 'react-router-dom';
 import Button from '../../components/ui/Button/Button';
 import { Briefcase, Buildings, CheckCircle, CheckSquare } from '../../theme/icons';
-import SearchSelectInput from '../../components/ui/SearchSelectInput/SearchSelectInput';
 import AccessCodeInput from '../../components/ui/AccessCodeInput/AccessCodeInput';
-
+import { useToast } from '../../hooks/useToast';
+import SpecialitiesTable from '../../components/SpecialitiesTable';
 
 
 
@@ -38,6 +38,8 @@ const WorkSettings = () => {
     const [hospitalName, setHospitalName] = useState('');
     const [workerTypeName, setWorkerTypeLabel] = useState('');
     const navigate = useNavigate();
+    const { showSuccess, showError } = useToast();
+
 
 
     useEffect(() => {
@@ -78,19 +80,17 @@ const WorkSettings = () => {
 
 
     const handleLoadSpecialities = async () => {
-        const token = await getToken();
-        const hospital = await getHospitals(token);
-        console.log('hospital', hospital);
-        const hospitalId = hospital?.[0]?.hospital_id;
-        if (!hospitalId) {
-            setError('No se encontró el hospital.');
-            return;
-        }
-
         try {
-            const data = await getSpecialitiesByHospital(hospitalId, token);
+            const token = await getToken();
+            const effectiveHospitalId = hospitalId || isWorker?.workers_hospitals?.[0]?.hospital_id;
+
+            if (!effectiveHospitalId) {
+                setError('No se encontró el hospital.');
+                return;
+            }
+
+            const data = await getSpecialitiesByHospital(effectiveHospitalId, token);
             setSpecialities(data);
-            console.log('specialities data', data);
             setStep('speciality');
         } catch (error) {
             console.error('❌ Error cargando especialidades:', error.message);
@@ -99,20 +99,32 @@ const WorkSettings = () => {
     };
 
 
+
+
     const handleConfirmChanges = async () => {
         try {
             const token = await getToken();
 
-            await updateWorkerHospital({ hospital_id: hospitalId }, token);
-            await updateWorkerSpeciality({ speciality_id: selectedSpeciality.value }, token);
+            const effectiveHospitalId = hospitalId || isWorker?.workers_hospitals?.[0]?.hospital_id;
+
+            if (!effectiveHospitalId || !selectedSpeciality) {
+                setError('Debes seleccionar un hospital y una especialidad.');
+                return;
+            }
+
+            await updateWorkerHospital({ hospital_id: effectiveHospitalId }, token);
+            await updateWorkerSpeciality({ speciality_id: selectedSpeciality }, token);
+
             await refreshWorkerProfile();
-            setMessage('✅ Cambios guardados');
+            showSuccess('Cambios guardados');
             setStep('view');
         } catch (err) {
             console.error('❌ Error guardando cambios:', err.message);
-            setError('❌ Error guardando los cambios');
+            showError(err.message || 'Error guardando los cambios');
         }
     };
+
+
 
     const handleBack = () => {
         if (window.history.length > 1) {
@@ -238,13 +250,10 @@ const WorkSettings = () => {
                         <div>
                             <h2>Selecciona el servicio en el que trabajas:</h2>
 
-                            <SearchSelectInput
-                                options={specialityOptions}
-                                onSelect={(option) => setSelectedSpeciality(option)}
-                                placeholder="Busca por categoría"
-                                noResultsText="No encontramos servicios que coincidan"
-                                helperText="Selecciona el servicio en el que trabajas"
-                                errorText={error}
+                            <SpecialitiesTable
+                                specialities={specialities}
+                                selectedSpeciality={selectedSpeciality}
+                                setSelectedSpeciality={setSelectedSpeciality}
                             />
                             <div className="btn-group mt-3">
                                 <Button
