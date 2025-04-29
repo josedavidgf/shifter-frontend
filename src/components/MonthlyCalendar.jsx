@@ -183,16 +183,12 @@ function MonthlyCalendar() {
   function handleDayClick(dateStr) {
     if (dateStr < today) return;
 
-    if (isMassiveEditMode) { // Solo en modo edición
-
+    if (isMassiveEditMode) {
       const entry = draftShiftMap[dateStr] || {};
 
-      // Restricciones:
-      if (entry.isReceived) return; // No puedes modificar turnos recibidos
-      if (entry.isPreference) return; // No puedes añadir turno donde tienes preferencia
+      if (entry.isReceived || entry.isPreference) return;
 
-      // Lógica de rotar tipo de turno
-      let newType = 'morning'; // Tipo inicial
+      let newType = 'morning';
 
       switch (entry.shift_type) {
         case 'morning':
@@ -202,15 +198,6 @@ function MonthlyCalendar() {
           newType = 'night';
           break;
         case 'night':
-          newType = 'morning_afternoon';
-          break;
-        case 'morning_afternoon':
-          newType = 'morning_night';
-          break;
-        case 'morning_night':
-          newType = 'afternoon_night';
-          break;
-        case 'afternoon_night':
           newType = 'reinforcement';
           break;
         case 'reinforcement':
@@ -220,22 +207,25 @@ function MonthlyCalendar() {
           newType = 'morning';
       }
 
-      const updatedEntry = { ...entry };
-
-      if (newType) {
-        updatedEntry.isMyShift = true;
-        updatedEntry.shift_type = newType;
+      if (!newType) {
+        // Eliminar el día del draft si ya no hay shift_type
+        const updatedDraft = { ...draftShiftMap };
+        delete updatedDraft[dateStr];
+        setDraftShiftMap(updatedDraft);
       } else {
-        delete updatedEntry?.isMyShift;
-        delete updatedEntry?.shift_type;
+        const updatedEntry = {
+          ...entry,
+          isMyShift: true,
+          shift_type: newType,
+        };
+
+        setDraftShiftMap(prev => ({
+          ...prev,
+          [dateStr]: updatedEntry,
+        }));
       }
 
-      setDraftShiftMap(prev => ({
-        ...prev,
-        [dateStr]: updatedEntry,
-      }));
-    }
-    else {
+    } else {
       setSelectedDay(dateStr);
       setTimeout(() => {
         detailRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -243,18 +233,26 @@ function MonthlyCalendar() {
     }
   }
 
+
   async function handleSaveMassiveEdit() {
     try {
-      const updates = buildMassiveUpdates(draftShiftMap, shiftMap, isWorker.worker_id);
+      const VALID_SHIFT_TYPES = ['morning', 'evening', 'night', 'reinforcement'];
+
+      const updates = Object.entries(draftShiftMap)
+        .filter(([dateStr, entry]) => {
+          return entry.shift_type && VALID_SHIFT_TYPES.includes(entry.shift_type);
+        })
+        .map(([dateStr, entry]) => {
+          return setShiftForDay(isWorker.worker_id, dateStr, entry.shift_type);
+        });
 
       await Promise.all(updates);
 
       setShiftMap(draftShiftMap);
       setDraftShiftMap(null);
       setIsMassiveEditMode(false);
-
     } catch (error) {
-      console.error('Error guardando cambios masivos:', error.message);
+      console.error('❌ Error guardando cambios masivos:', error.message);
     }
   }
 
@@ -515,7 +513,7 @@ function MonthlyCalendar() {
       </div>
     );
   }
-  
+
   console.log('ShiftMap:', shiftMap);
 
   return (
