@@ -23,7 +23,6 @@ const MySwapsTable = ({ swaps = [] }) => {
         return shiftMonth === filterDate;
       });
     }
-    
 
     setFiltered(result);
   }, [filterStatus, filterDate, swaps]);

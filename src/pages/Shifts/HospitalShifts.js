@@ -78,7 +78,7 @@ const HospitalShifts = () => {
     return (
         <>
             <HeaderFirstLevel title="Turnos disponibles" />
-            <div className="page page-primary">
+            <div className="page">
                 <div className="container">
                     {shifts.length === 0 ? (
                         <EmptyState

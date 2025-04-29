@@ -11,7 +11,7 @@ import { useNavigate } from 'react-router-dom';
 import MonthSelector from './MonthSelector';
 import { motion, AnimatePresence } from 'framer-motion';
 import Button from '../components/ui/Button/Button'; // Ajusta ruta si necesario
-import { buildMassiveUpdates } from '../utils/buildMassiveUpdates'; // ✅ Nuevo import
+import { buildMassiveUpdates } from '../utils/buildMassiveUpdates'; //
 import { getNextShiftType } from '../utils/getNextShiftType';
 import { getNextPreferenceType } from '../utils/getNextPreferenceType';
 import DayDetailMyShift from './DayDetails/DayDetailMyShift';
@@ -19,24 +19,26 @@ import DayDetailPreference from './DayDetails/DayDetailPreference';
 import DayDetailReceived from './DayDetails/DayDetailReceived';
 import DayDetailSwapped from './DayDetails/DayDetailSwapped';
 import DayDetailEmpty from './DayDetails/DayDetailEmpty';
-import Loader from '../components/ui/Loader/Loader'; // ✅
+import Loader from '../components/ui/Loader/Loader';
+import { Sun, SunHorizon, Moon, ShieldCheck } from '../theme/icons';
 
 
 
-function getShiftLabel(shift) {
+function renderShiftIcon(shift) {
   switch (shift) {
     case 'morning':
-      return '☀️';
+      return <Sun size={16} />;
     case 'evening':
-      return '🌤️';
+      return <SunHorizon size={16} />;
     case 'night':
-      return '🌛';
+      return <Moon size={16} />;
     case 'reinforcement':
-      return '🛡️';
+      return <ShieldCheck size={16} />;
     default:
-      return '';
+      return null;
   }
 }
+
 
 function computeShiftStats(shiftMap, selectedMonth) {
   const stats = {
@@ -520,9 +522,6 @@ function MonthlyCalendar() {
 
   return (
     <>
-      {/* Filtro de mes */}
-      <MonthSelector selectedMonth={selectedMonth} onChange={setSelectedMonth} />
-
 
       {!isMassiveEditMode ? (
         <Button
@@ -555,7 +554,7 @@ function MonthlyCalendar() {
         </div>
       )}
 
-      <div className="mb-4 p-4 border rounded shadow">
+<div className="mb-4 p-4 border rounded shadow">
         <div className="badge-container">
           {['morning', 'evening', 'night', 'reinforcement'].map((type) => {
             const count = stats[type];
@@ -585,56 +584,72 @@ function MonthlyCalendar() {
       </div>
 
 
+      <MonthSelector selectedMonth={selectedMonth} onChange={setSelectedMonth} />
 
-      {/* Cabecera de días de la semana */}
-      <AnimatePresence mode="wait">
-        <motion.div
-          key={selectedMonth}
-          initial={{ opacity: 0, x: 30 }}
-          animate={{ opacity: 1, x: 0 }}
-          exit={{ opacity: 0, x: -30 }}
-          transition={{ duration: 0.2 }}
-          className="calendar-grid"
-        >
-          {['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'].map((dayName) => (
-            <div key={dayName} className="calendar-header">{dayName}</div>
+      <div className="calendar-grid-container">
+        <div className="calendar-header-container">
+          {['L', 'M', 'X', 'J', 'V', 'S', 'D'].map((day) => (
+            <div className="calendar-header-day" key={day}>
+              <span className="calendar-header-day-text">{day}</span>
+            </div>
           ))}
-          {Array.from({ length: getDayOffset(monthDays[0]) }).map((_, i) => (
-            <div key={`empty-${i}`} className="calendar-day empty" />
-          ))}
-          {/* Días reales */}
-          {monthDays.map((day) => {
-            const dateStr = format(day, 'yyyy-MM-dd');
-            const dataForRender = isMassiveEditMode ? draftShiftMap : shiftMap;
-            const entry = dataForRender[dateStr] || {};
-            const shiftType = entry.shift_type || '';
-            const flags = entry || {};
+        </div>
 
-            let indicator = '';
+        <div className="calendar-month-container">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={selectedMonth}
+              initial={{ opacity: 0, x: 30 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -30 }}
+              transition={{ duration: 0.2 }}
+              style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: '4px' }}
+            >
+              {Array.from({ length: getDayOffset(monthDays[0]) }).map((_, i) => (
+                <div key={`empty-${i}`} className="calendar-day-container empty" />
+              ))}
+              {monthDays.map((day) => {
+                const dateStr = format(day, 'yyyy-MM-dd');
+                const dataForRender = isMassiveEditMode ? draftShiftMap : shiftMap;
+                const entry = dataForRender[dateStr] || {};
+                const shiftType = entry.shift_type || '';
+                const flags = entry || {};
+                const isPast = format(day, 'yyyy-MM-dd') < today;
+                const isSelected = selectedDay === dateStr;
 
-            if (flags.isReceived) indicator += '✅';
-            if (flags.isSwapped) indicator += '🔁';
-            if (flags.isPublished) indicator += '📢';
-            if (flags.isMyShift) indicator += '✔️';
-            if (!flags.isMyShift && flags.isPreference) indicator += '🟢'; // ✅ Aquí controlamos tu caso
 
-            const isPast = format(day, 'yyyy-MM-dd') < today;
+                /*Por ahora descartamos el indicador de estado, pero lo dejamos comentado para el futuro*/
+                /* let indicator = '';
 
-            return (
-              <div
-                key={dateStr}
-                className={`calendar-day shift-${shiftType} ${isPast ? 'past' : ''} ${selectedDay === dateStr ? 'selected-day' : ''}`}
-                onClick={() => handleDayClick(dateStr)}
-              >
-                <div className="day-number">
-                  {format(day, 'd')} {getShiftLabel(shiftType)} {indicator}
-                </div>
-              </div>
-            );
+                if (flags.isReceived) indicator += '✅';
+                if (flags.isSwapped) indicator += '🔁';
+                if (flags.isPublished) indicator += '📢';
+                if (flags.isMyShift) indicator += '✔️';
+                if (!flags.isMyShift && flags.isPreference) indicator += '🟢'; // ✅ Aquí controlamos tu caso
+ */
+                const showAvailability = !flags.isMyShift && flags.isPreference;
 
-          })}
-        </motion.div>
-      </AnimatePresence>
+                return (
+                  <div
+                    key={dateStr}
+                    className={`calendar-day-container shift-${shiftType} ${isPast ? 'past' : ''} ${isSelected ? 'selected-day' : ''}`}
+                    onClick={() => handleDayClick(dateStr)}
+                  >
+                    <div className="calendar-day-number">{format(day, 'd')}{/* {getShiftLabel(shiftType)} {indicator} */}</div>
+                    <div className="calendar-shift-icon">
+                      {renderShiftIcon(shiftType)}
+                    </div>
+                    {showAvailability && (
+                      <div className="calendar-availability-dot" />
+                    )}
+
+                  </div>
+                );
+              })}
+            </motion.div>
+          </AnimatePresence>
+        </div>
+      </div>
       {selectedDay && (
         <div
           ref={detailRef}

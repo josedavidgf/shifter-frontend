@@ -1,7 +1,7 @@
 // src/components/DayDetails/DayDetailMyShift.jsx
 import React from 'react';
 import Button from '../ui/Button/Button'; // Ajusta si tu path varía
-import { Lightning } from '../../theme/icons';
+import { Lightning, PencilSimple, Trash } from '../../theme/icons';
 
 
 export default function DayDetailMyShift({
@@ -15,7 +15,7 @@ export default function DayDetailMyShift({
 }) {
   return (
     <div>
-      <h3 className="font-bold mb-2">{dayLabel} - Tu turno</h3>
+      <h3 className="mb-2">{dayLabel} - Tu turno</h3>
       <p>Tipo: {entry.shift_type}</p>
 
       {entry.isPublished ? (
@@ -23,7 +23,8 @@ export default function DayDetailMyShift({
           <p>Turno publicado</p>
           <Button
             label="Quitar publicación"
-            variant="ghost"
+            variant="outline"
+            leftIcon={<Trash size={20} />}
             size="lg"
             onClick={() => onDeletePublication(entry.shift_id, dateStr)} // ✅ pasamos dateStr
           />
@@ -38,21 +39,23 @@ export default function DayDetailMyShift({
               leftIcon={<Lightning size={20} />}
               rightIcon={<Lightning size={20} />}
               onClick={() => navigate(`/shifts/create?date=${dateStr}&shift_type=${entry.shift_type}`)}
+            />
+            <div className="btn-group-row">
+              <Button
+                label="Editar"
+                variant="outline"
+                size="md"
+                leftIcon={<PencilSimple size={20} />}
+                onClick={() => onEditShift(dateStr)}
               />
-
-            <Button
-              label="Eliminar turno"
-              variant="outline"
-              size="md"
-              onClick={() => onRemoveShift(dateStr)}
-            />
-
-            <Button
-              label="Editar turno"
-              variant="outline"
-              size="md"
-              onClick={() => onEditShift(dateStr)}
-            />
+              <Button
+                label="Eliminar"
+                variant="outline"
+                size="md"
+                leftIcon={<Trash size={20} />}
+                onClick={() => onRemoveShift(dateStr)}
+              />
+            </div>
           </div>
         </>
       )}

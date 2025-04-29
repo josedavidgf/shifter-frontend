@@ -52,15 +52,29 @@ const ChatBox = ({ swapId, myWorkerId, otherWorkerId, otherPersonName, otherPers
         inputRef.current?.focus();
     }, []);
 
+    // Helper function to check if the user is near the bottom of the chat
+    function isUserNearBottom(container, threshold = 100) {
+        if (!container) return false;
+        const { scrollTop, scrollHeight, clientHeight } = container;
+        return scrollHeight - scrollTop - clientHeight < threshold;
+    }
 
     useEffect(() => {
-        bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
+        const container = bottomRef.current?.parentElement;
+        if (!container) return;
+
+        if (isUserNearBottom(container)) {
+            bottomRef.current.scrollIntoView({ behavior: 'smooth' });
+        }
     }, [messages]);
+
 
     useEffect(() => {
         const hasSending = messages.some((msg) => msg.status === 'sending');
         setInputDisabled(hasSending);
     }, [messages]);
+
+
 
 
     const handleSubmit = async (e) => {

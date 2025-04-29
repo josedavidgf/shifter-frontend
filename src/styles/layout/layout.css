@@ -1,17 +1,23 @@
 /* General Layout Styles */
 .container {
-  max-width: 768px;
+  max-width: auto;
   margin: 0 auto;
-  padding: 1rem;
+  padding: var(--space-md);
   width: 100%;
   box-sizing: border-box;
-}
+  flex: 1;
+  }
 
 .page {
   display: flex;
   flex-direction: column;
-  padding-top: 1rem; /* Añadido */
+  min-height: 100vh - 56px; /* Ajuste para BottomNav */
 }
+
+.page, .container {
+  overflow: visible;
+}
+
 .page-primary {
   min-height: calc(100vh - 56px); /* Ajuste para BottomNav */
 }

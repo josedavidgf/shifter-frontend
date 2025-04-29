@@ -7,128 +7,138 @@
 
 /* Cabecera del calendario (selector de mes) */
 .month-selector {
-  display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 1.5rem;
-  padding: 1rem 0;
-  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  align-self: stretch;
+
 }
 
 .month-label {
-  font-size: 1.125rem;
-  font-weight: 600;
+  color: var(--gray-900, #171923);
+  font-family: "Host Grotesk";
+  font-size: 20px;
+  font-style: normal;
+  font-weight: 800;
+  line-height: 30px;
+  /* 150% */
 }
 
 .arrow-button {
-  font-size: 1.25rem;
-  padding: 0.4rem 0.8rem;
+  background: none;
   border: none;
-  border-radius: 6px;
-  background-color: #e2e8f0;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
-}
-
-/* Grid de días */
-.calendar-grid {
-  display: grid;
-  grid-template-columns: repeat(7, minmax(0, 1fr));
-  gap: 4px;
-  margin-top: 1rem;
-  max-width: 100%;
-  overflow-x: auto;
-}
-
-.calendar-grid::-webkit-scrollbar {
-  height: 6px;
-}
-
-.calendar-grid::-webkit-scrollbar-thumb {
-  background: var(--color-gray-400, #A0AEC0);
-  border-radius: 8px;
-}
-
-/* Cabecera de días (Lun, Mar, Mié...) */
-.calendar-header {
+  padding: 0;
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  text-align: center;
-  font-weight: bold;
-  font-size: 0.85rem;
-  padding: 0 1rem;
-  margin-bottom: 1rem;
+  justify-content: center;
+  cursor: pointer;
+  transition: transform 0.2s ease;
 }
 
-/* Día individual */
-.calendar-day {
+.arrow-button:hover {
+  transform: scale(1.05);
+}
+
+.calendar-grid-container {
   display: flex;
+  padding: 8px 0;
   flex-direction: column;
+  gap: 10px;
+  width: 100%;
+}
+
+.calendar-header-container {
+  display: flex;
+  gap: 4px;
+  width: 100%;
+}
+
+.calendar-header-day {
+  display: flex;
+  padding: 4px 12px;
   justify-content: center;
   align-items: center;
-  position: relative;
-  min-width: 40px;
-  min-height: 72px;
+  flex: 1 0 0;
+}
+
+.calendar-header-day-text {
+  color: var(--black, #000);
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 24px;
+}
+
+.calendar-month-container {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
   width: 100%;
-  aspect-ratio: 1/1;
-  border-radius: 6px;
-  background-color: transparent;
 }
 
-.calendar-day.empty {
-  background: transparent;
-  cursor: default;
+.calendar-day-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 4px 25.571px 32.5px 4px;
+  flex: 1 0 0;
+  border-radius: 4px;
+  background: #F3F4F6;
+  opacity: 0.65;
+  position: relative;
+
 }
 
-@media (min-width: 768px) {
-  .calendar-day {
-    min-height: 100px;
-  }
+.calendar-day-number {
+  color: var(--black, #000);
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 16px;
+  width: 16px;
+}
+.calendar-shift-icon {
+  position: absolute;
+  bottom: 4px;
+  right: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
 }
 
-/* Número del día (esquina superior izquierda) */
-.day-number {
+.calendar-availability-dot {
   position: absolute;
   top: 4px;
-  left: 6px;
-  background-color: #f0f0f0; /* gris claro */
-  color: #333; /* gris oscuro */
-  font-size: 0.7rem;
-  padding: 2px 6px;
-  border-radius: 12px;
-  font-weight: 500;
+  right: 4px;
+  width: 8px;
+  height: 8px;
+  background-color: #00c853; /* verde Tanda, puedes ajustar */
+  border-radius: 50%;
 }
 
-/* Textos de turnos o eventos */
-.calendar-text {
-  font-size: 0.75rem;
-  font-weight: 500;
-  color: #000;
-}
-
-/* Estilos para días especiales */
-.today {
-  background-color: var(--color-primary-light, #EBF8FF);
-  border-radius: 8px;
-}
 
 .selected-day {
-  outline: 2px solid #3b82f6;
-  outline-offset: 2px;
-  border-radius: 8px;
+  border: 1px solid var(--black, #000);
+  border-radius: 4px;
 }
 
+
+
 .shift-morning {
-  background-color: #d1fae5;
+  background-color: var(--shift-morning, #FFE681);
 }
 
 .shift-evening {
-  background-color: #fde68a;
+  background-color: var(--shift-evening, #FFBCE2);
 }
 
 .shift-night {
-  background-color: #e0e7ff;
+  background-color: var(--shift-night, #B9C7FF);
+}
+
+.shift-reinforcement {
+  background-color: var(--shift-reinforcement, #FFB4B4);  
 }
 
 .past {

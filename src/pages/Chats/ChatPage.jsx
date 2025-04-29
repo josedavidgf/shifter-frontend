@@ -89,16 +89,14 @@ const ChatPage = () => {
                 showBackButton
                 onBack={handleBack}
             />
-            <div className="page page-secondary">
+            <div className="page">
                 <div className="container">
 
                     <div className="chat-page-header">
-                        <div>
-                            <strong>{otherPersonName} {otherPersonSurname}</strong><br />
-                            <small>
-                                {getVerb(myDate)} {formatDate(myDate)} · {otherPersonName} {getOtherVerb(otherDate)} {formatDate(otherDate)}
-                            </small>
-                        </div>
+{/*                             <strong>{otherPersonName} {otherPersonSurname}</strong><br />
+ */}                            <p>
+                                {getVerb(myDate)} {formatDate(myDate)} y {otherPersonName} {getOtherVerb(otherDate)} {formatDate(otherDate)}
+                            </p>
                     </div>
                     <div className="chat-page-content">
                         <ChatBox
