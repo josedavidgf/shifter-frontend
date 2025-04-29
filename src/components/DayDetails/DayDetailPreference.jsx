@@ -13,20 +13,21 @@ export default function DayDetailPreference({
     <div>
       <h3 className="font-bold mb-2">{dayLabel} - Disponibilidad</h3>
       <p>Tipo de disponibilidad: {entry.preference_type}</p>
-
-      <Button
-        label="Editar disponibilidad"
-        variant="outline"
-        size="md"
-        onClick={() => onEditPreference(dateStr)}
-      />
-      <Button
-        label="Eliminar disponibilidad"
-        variant="danger"
-        size="md"
-        onClick={() => onDeletePreference(dateStr)}
-        style={{ marginTop: '1rem' }}
-      />
+      <div className="btn-group">
+        <Button
+          label="Editar disponibilidad"
+          variant="outline"
+          size="md"
+          onClick={() => onEditPreference(dateStr)}
+        />
+        <Button
+          label="Eliminar disponibilidad"
+          variant="danger"
+          size="md"
+          onClick={() => onDeletePreference(dateStr)}
+          style={{ marginTop: '1rem' }}
+        />
+      </div>
     </div>
   );
 }
