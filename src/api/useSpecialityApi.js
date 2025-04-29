@@ -1,6 +1,5 @@
-// src/api/useSpecialityApi.js
 import { useState } from 'react';
-import { getSpecialitiesByHospital, addSpecialityToWorker } from '../services/specialityService';
+import { getSpecialities, getSpecialitiesByHospital, addSpecialityToWorker } from '../services/specialityService'; // ✅ Importa también getSpecialities
 
 export function useSpecialityApi() {
   const [loading, setLoading] = useState(false);
@@ -21,6 +20,7 @@ export function useSpecialityApi() {
   };
 
   return {
+    getSpecialities: (token) => apiCall(getSpecialities, token), // ✅ Añadido
     getSpecialitiesByHospital: (hospitalId, token) => apiCall(getSpecialitiesByHospital, hospitalId, token),
     addSpecialityToWorker: (workerId, specialityId, token) => apiCall(addSpecialityToWorker, workerId, specialityId, token),
     loading,
