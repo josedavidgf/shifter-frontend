@@ -369,13 +369,14 @@ function MonthlyCalendar() {
 
   async function handleDeletePublication(shiftId, dateStr) {
     try {
-      const success = await removeShift(shiftId); // ✅ usando useShiftApi
-
+      const token = await getToken(); // ✅ Obtener token antes
+      const success = await removeShift(shiftId, token); // ✅ Pasar token
+  
       if (success) {
         const updatedEntry = { ...shiftMap[dateStr] };
         delete updatedEntry.isPublished;
         delete updatedEntry.shift_id;
-
+  
         setShiftMap(prev => ({
           ...prev,
           [dateStr]: updatedEntry,
@@ -385,6 +386,7 @@ function MonthlyCalendar() {
       console.error('❌ Error al eliminar publicación:', error.message);
     }
   }
+  
 
   // Función para Publicar un turno de un día específico de forma rápida
   /*   async function handlePublishShift(dateStr) {
