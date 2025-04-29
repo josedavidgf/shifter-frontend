@@ -148,7 +148,7 @@ function MonthlyCalendar() {
         if (shift && shift.date) {
           enrichedMap[shift.date] = {
             ...enrichedMap[shift.date],
-            shift_type: '',
+            shift_type: enrichedMap[shift.date]?.shift_type || '', // 👈 solo si no hay
             isSwapped: true
           };
         }
