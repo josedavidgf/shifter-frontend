@@ -35,7 +35,11 @@ export {
     ArrowCircleRight,
   ShieldCheck,
   Trash,
-  PencilSimple
-
+  PencilSimple,
+  Eraser,
+  SquaresFour,
+  CirclesThree,
+  Stack,
+  FloppyDisk,
 
   } from 'phosphor-react';
