@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Button from '../components/ui/Button/Button';
+import { shiftTypeLabels,swapStatusLabels,shiftStatusLabels } from '../utils/labelMaps';
 
 
 const HospitalShiftsTable = ({ shifts, workerId, sentSwapShiftIds }) => {
@@ -83,7 +84,7 @@ const HospitalShiftsTable = ({ shifts, workerId, sentSwapShiftIds }) => {
                 }}
               >
                 <div className="shift-info">
-                  <div className="shift-date">{shift.date} · {shift.shift_type}</div>
+                  <div className="shift-date">{shift.date} de {shiftTypeLabels[shift.shift_type]}</div>
                   <div>{shift.worker?.name} {shift.worker?.surname}</div>
                   <div className="shift-meta">
                     Intercambios aceptados: {shift.worker?.swapsAcceptedAsPublisher ?? 0}

@@ -11,7 +11,7 @@ export default function DayDetailSwapped({
 }) {
   return (
     <div>
-      <h3 className="font-bold mb-2">{dayLabel} - Turno traspasado</h3>
+      <h3 className="font-bold mb-2">Turno traspasado</h3>
 
       <div className="btn-group">
         <Button

@@ -2,6 +2,7 @@
 import React from 'react';
 import Button from '../ui/Button/Button'; // Ajusta si tu path varía
 import { Lightning } from '../../theme/icons';
+import { shiftTypeLabels } from '../../utils/labelMaps';
 
 export default function DayDetailReceived({
   dateStr,
@@ -11,8 +12,8 @@ export default function DayDetailReceived({
 }) {
   return (
     <div>
-      <h3 className="font-bold mb-2">{dayLabel} - Turno recibido</h3>
-      <p>Tipo de turno: {entry.shift_type}</p>
+      <h3 className="font-bold mb-2">Turno recibido</h3>
+      <p>Turno: {dayLabel} de {shiftTypeLabels[entry.shift_type]}</p>
       <p>Propietario original: {entry.requester_name} {entry.requester_surname}</p>
 
       <Button

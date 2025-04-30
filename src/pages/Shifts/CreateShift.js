@@ -6,7 +6,7 @@ import { useSpecialityApi } from '../../api/useSpecialityApi';
 import { useShiftApi } from '../../api/useShiftApi';
 import useTrackPageView from '../../hooks/useTrackPageView';
 import { format, parseISO } from 'date-fns';
-import { translateShiftType } from '../../utils/translateShiftType';
+import { shiftTypeLabels } from '../../utils/labelMaps';
 import HeaderSecondLevel from '../../components/ui/Header/HeaderSecondLevel';
 import Button from '../../components/ui/Button/Button'; // Ajusta ruta si necesario
 import InputField from '../../components/ui/InputField/InputField';
@@ -125,19 +125,19 @@ const CreateShift = () => {
                 <div className="container">
                     <div className="create-shift-container">
                         <InputField
-                            name="Date"
-                            label="Fecha"
-                            value={form.date ? format(parseISO(form.date), 'dd/MM/yyyy') : '-'}
+                            name="Shift"
+                            label="Turno"
+                            value={`${form.date ? format(parseISO(form.date), 'dd/MM/yyyy') : '-'} de ${shiftTypeLabels[form.shift_type]}`}
                             disabled
                             readOnly
                         />
-                        <InputField
+{/*                         <InputField
                             name="shift_type"
                             label="Turno"
                             value={translateShiftType(form.shift_type)}
                             disabled
                             readOnly
-                        />
+                        /> */}
                         <InputField
                             name="speciality"
                             label="Servicio"

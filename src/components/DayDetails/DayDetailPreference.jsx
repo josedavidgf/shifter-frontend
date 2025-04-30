@@ -1,6 +1,7 @@
 // src/components/DayDetails/DayDetailPreference.jsx
 import React from 'react';
 import Button from '../ui/Button/Button'; // Ajusta si tu path varía
+import { shiftTypeLabels } from '../../utils/labelMaps';
 
 export default function DayDetailPreference({
   dateStr,
@@ -11,8 +12,8 @@ export default function DayDetailPreference({
 }) {
   return (
     <div>
-      <h3 className="font-bold mb-2">{dayLabel} - Disponibilidad</h3>
-      <p>Tipo de disponibilidad: {entry.preference_type}</p>
+      <h3 className="font-bold mb-2">Día disponible</h3>
+      <p>Disponibilidad: {dayLabel} de {shiftTypeLabels[entry.preference_type]}</p>
       <div className="btn-group">
         <Button
           label="Editar disponibilidad"
