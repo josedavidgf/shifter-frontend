@@ -12,6 +12,7 @@ import { useToast } from '../../hooks/useToast'; // Ajusta ruta
 import Loader from '../../components/ui/Loader/Loader';
 import InputField from '../../components/ui/InputField/InputField';
 import { format, parseISO } from 'date-fns';
+import { shiftTypeLabels,swapStatusLabels,shiftStatusLabels } from '../../utils/labelMaps';
 
 
 
@@ -139,21 +140,21 @@ const SwapDetail = () => {
                         <InputField
                             name="original_shift_date"
                             label="Turno original"
-                            value={swap.shift?.date ? format(parseISO(swap.shift.date), 'dd/MM/yyyy') : '-'}
+                            value={`${swap.shift?.date ? format(parseISO(swap.shift.date), 'dd/MM/yyyy') : '-'} de ${shiftTypeLabels[swap.shift?.shift_type]}`}
                             disabled
                             readOnly
                         />
                         <InputField
                             name="offered_swap_date"
                             label="Turno ofrecido"
-                            value={swap.offered_date ? format(parseISO(swap.offered_date), 'dd/MM/yyyy') : '-'}
+                            value={`${swap.offered_date ? format(parseISO(swap.offered_date), 'dd/MM/yyyy') : '-'} de ${shiftTypeLabels[swap.offered_type]}`}
                             disabled
                             readOnly
                         />
                         <InputField
                             name="status"
                             label="Estado"
-                            value={swap.status}
+                            value={swapStatusLabels[swap.status]}
                             disabled
                             readOnly
                         />

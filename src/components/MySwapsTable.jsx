@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Button from '../components/ui/Button/Button';
+import { shiftTypeLabels,swapStatusLabels,shiftStatusLabels } from '../utils/labelMaps';
 
 
 const MySwapsTable = ({ swaps = [] }) => {
@@ -79,15 +80,15 @@ const MySwapsTable = ({ swaps = [] }) => {
               <div className="my-swap-meta">
                 {swap.direction === 'sent' ? 'Propuesto por ti' : 'Propuesta recibida'}
               </div>
-              <strong>Turno objetivo: {swap.shift?.date} · {swap.shift?.shift_type}</strong>
+              <strong>Turno objetivo:</strong> {swap.shift?.date} de {shiftTypeLabels[swap.shift?.shift_type]}
               <div className="my-swap-meta">
-                Con: {swap.shift?.worker?.name} {swap.shift?.worker?.surname}
+                <strong>Con:</strong> {swap.shift?.worker?.name} {swap.shift?.worker?.surname}
               </div>
               <div className="my-swap-meta">
-                Ofreces: {swap.offered_date || '—'} · {swap.offered_type}
+                <strong>Ofreces:</strong> {swap.offered_date || '—'} de {shiftTypeLabels[swap.offered_type]}
               </div>
               <span className={`swap-status ${swap.status}`}>
-                {swap.status.charAt(0).toUpperCase() + swap.status.slice(1)}
+                {swapStatusLabels[swap.status]}
               </span>
             </div>
           ))}

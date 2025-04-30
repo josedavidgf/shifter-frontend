@@ -11,7 +11,7 @@ export default function DayDetailEmpty({
 }) {
   return (
     <div>
-      <h3 className="font-bold mb-2">{dayLabel} - Día libre</h3>
+      <h3 className="font-bold mb-2">Día libre</h3>
 
 
       <div className="btn-group">

@@ -2,6 +2,7 @@
 import React from 'react';
 import Button from '../ui/Button/Button'; // Ajusta si tu path varía
 import { Lightning, PencilSimple, Trash } from '../../theme/icons';
+import { shiftTypeLabels } from '../../utils/labelMaps';
 
 
 export default function DayDetailMyShift({
@@ -15,9 +16,8 @@ export default function DayDetailMyShift({
 }) {
   return (
     <div>
-      <h3 className="mb-2">{dayLabel} - Tu turno</h3>
-      <p>Tipo: {entry.shift_type}</p>
-
+      <h3 className="mb-2">Turno propio</h3>
+      <p>Turno: {dayLabel} de {shiftTypeLabels[entry.shift_type]}</p>
       {entry.isPublished ? (
         <>
           <p>Turno publicado</p>

@@ -558,25 +558,11 @@ function MonthlyCalendar() {
         <div className="badge-container">
           {['morning', 'evening', 'night', 'reinforcement'].map((type) => {
             const count = stats[type];
-            const icons = {
-              morning: '🔆',
-              evening: '🌇',
-              night: '🌙',
-              reinforcement: '🆘',
-            };
-
-            const labelMap = {
-              morning: 'M',
-              evening: 'T',
-              night: 'N',
-              reinforcement: 'R',
-            };
 
             return (
               <div key={type} className="stat-badge">
-                <span className="badge-icon">{icons[type]}</span>
+                <span className="badge-icon">{renderShiftIcon(type)}</span>
                 <span className="badge-count">{count}</span>
-                <span className="badge-label">{labelMap[type]}</span>
               </div>
             );
           })}
