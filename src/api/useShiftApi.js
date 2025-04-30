@@ -10,7 +10,6 @@ import {
   getHospitalShifts,
   getShiftPreferencesByShiftId,
   updateShiftPreferences,
-  expireOldShifts,
   getMyAvailableShifts,
 } from '../services/shiftService';
 
@@ -42,7 +41,6 @@ export function useShiftApi() {
     getHospitalShifts: (token) => apiCall(getHospitalShifts, token),
     getShiftPreferencesByShiftId: (shiftId, token) => apiCall(getShiftPreferencesByShiftId, shiftId, token),
     updateShiftPreferences: (shiftId, preferences, token) => apiCall(updateShiftPreferences, shiftId, preferences, token),
-    expireOldShifts: (token) => apiCall(expireOldShifts, token),
     getMyAvailableShifts: (workerId, token) => apiCall(getMyAvailableShifts, workerId, token),
     loading,
     error,

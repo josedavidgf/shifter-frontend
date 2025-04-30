@@ -7,17 +7,13 @@
 
 /* Cabecera del calendario (selector de mes) */
 .month-selector {
-  align-items: center;
   display: flex;
-  align-items: flex-start;
-  gap: 8px;
-  align-self: stretch;
-
+  align-items: center;
+  gap: 0.5rem;
 }
 
 .month-label {
   color: var(--gray-900, #171923);
-  font-family: "Host Grotesk";
   font-size: 20px;
   font-style: normal;
   font-weight: 800;
@@ -27,11 +23,9 @@
 
 .arrow-button {
   background: none;
+  color: var(--gray-900, #171923);
+  font-size: 1.25rem;
   border: none;
-  padding: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
   cursor: pointer;
   transition: transform 0.2s ease;
 }
@@ -148,4 +142,21 @@
 /* Scroll de detalle (por si tienes lista de eventos dentro de día) */
 .day-details {
   scroll-margin-bottom: 100px;
+}
+
+.month-selector-group {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+@media (max-width: 600px) {
+  .month-selector-group {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
 }

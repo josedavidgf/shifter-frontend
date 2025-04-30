@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Button from '../components/ui/Button/Button';
-import { shiftTypeLabels,swapStatusLabels,shiftStatusLabels } from '../utils/labelMaps';
+import { shiftTypeLabels, swapStatusLabels } from '../utils/labelMaps';
+import { Eraser } from '../theme/icons';
+import SelectorInput from '../components/ui/SelectorInput/SelectorInput';
+
 
 
 const MySwapsTable = ({ swaps = [] }) => {
@@ -27,6 +30,12 @@ const MySwapsTable = ({ swaps = [] }) => {
 
     setFiltered(result);
   }, [filterStatus, filterDate, swaps]);
+  const swapStatusOptions = [
+    { value: 'proposed', label: 'Propuesto' },
+    { value: 'accepted', label: 'Aceptado' },
+    { value: 'rejected', label: 'Rechazado' },
+    { value: 'cancelled', label: 'Cancelado' },
+  ];
 
   const clearFilters = () => {
     setFilterDate('');
@@ -43,21 +52,19 @@ const MySwapsTable = ({ swaps = [] }) => {
             value={filterDate}
             onChange={(e) => setFilterDate(e.target.value)}
           />
-          <select
-            className="filter-select"
+          <SelectorInput
+            name="swap_status"
+            label="Estado del intercambio"
             value={filterStatus}
             onChange={(e) => setFilterStatus(e.target.value)}
-          >
-            <option value="">Todos</option>
-            <option value="proposed">Propuesto</option>
-            <option value="accepted">Aceptado</option>
-            <option value="rejected">Rechazado</option>
-            <option value="cancelled">Cancelado</option>
-          </select>
+            options={swapStatusOptions}
+            required
+          />
           <Button
             label="Limpiar filtros"
             variant="outline"
             size="lg"
+            leftIcon={<Eraser size={16} />}
             onClick={clearFilters}
           />
         </div>

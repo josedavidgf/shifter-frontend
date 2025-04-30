@@ -20,7 +20,7 @@ import DayDetailReceived from './DayDetails/DayDetailReceived';
 import DayDetailSwapped from './DayDetails/DayDetailSwapped';
 import DayDetailEmpty from './DayDetails/DayDetailEmpty';
 import Loader from '../components/ui/Loader/Loader';
-import { Sun, SunHorizon, Moon, ShieldCheck } from '../theme/icons';
+import { Sun, SunHorizon, Moon, ShieldCheck, CirclesThree, SquaresFour, Stack, Trash, FloppyDisk, CalendarPlus } from '../theme/icons';
 
 
 
@@ -34,6 +34,8 @@ function renderShiftIcon(shift) {
       return <Moon size={16} />;
     case 'reinforcement':
       return <ShieldCheck size={16} />;
+    case 'total':
+      return <Stack size={16} />;
     default:
       return null;
   }
@@ -429,14 +431,23 @@ function MonthlyCalendar() {
 
   async function handleRemoveShiftForDay(dateStr) {
     try {
-      const token = await getToken(); // Aunque para calendarService no uses token explícito
       await removeShiftForDay(isWorker.worker_id, dateStr);
-      await fetchCalendar(isWorker.worker_id, token); // Recarga el calendario
+
+      const updatedEntry = { ...shiftMap[dateStr] };
+      delete updatedEntry.isMyShift;
+      delete updatedEntry.shift_type;
+
+      setShiftMap(prev => ({
+        ...prev,
+        [dateStr]: updatedEntry,
+      }));
+
       setSelectedDay(dateStr);
     } catch (error) {
       console.error('Error eliminando turno del día:', error.message);
     }
   }
+
 
 
   function renderDayDetails(dateStr) {
@@ -522,41 +533,27 @@ function MonthlyCalendar() {
 
   return (
     <>
+      <div className="month-selector-group">
+        <MonthSelector selectedMonth={selectedMonth} onChange={setSelectedMonth} />
 
-      {!isMassiveEditMode ? (
-        <Button
-          label="Generar turnos masivo"
-          variant="primary"
-          size="lg"
-          onClick={() => {
-            setDraftShiftMap({ ...shiftMap }); // Creamos copia
-            setIsMassiveEditMode(true);
-          }}
-        />
-
-      ) : (
-        <div className="btn-group">
+        {!isMassiveEditMode && (
           <Button
-            label="Guardar cambios"
-            variant="primary"
-            size="md"
-            onClick={handleSaveMassiveEdit}
-          />
-          <Button
-            label="Descartar cambios"
-            variant="danger"
-            size="md"
+            variant="outline"
+            leftIcon={<CalendarPlus size={20} />}
+            size="sm"
             onClick={() => {
-              setDraftShiftMap(null);
-              setIsMassiveEditMode(false);
+              setDraftShiftMap({ ...shiftMap }); // Creamos copia
+              setIsMassiveEditMode(true);
+              setSelectedDay(null); // 👈 aseguramos que se oculte
             }}
           />
-        </div>
-      )}
+        )}
 
-<div className="mb-4 p-4 border rounded shadow">
+
+      </div>
+      <div className="mb-4 p-4 border rounded shadow">
         <div className="badge-container">
-          {['morning', 'evening', 'night', 'reinforcement'].map((type) => {
+          {['total', 'morning', 'evening', 'night', 'reinforcement'].map((type) => {
             const count = stats[type];
 
             return (
@@ -568,9 +565,6 @@ function MonthlyCalendar() {
           })}
         </div>
       </div>
-
-
-      <MonthSelector selectedMonth={selectedMonth} onChange={setSelectedMonth} />
 
       <div className="calendar-grid-container">
         <div className="calendar-header-container">
@@ -636,13 +630,37 @@ function MonthlyCalendar() {
           </AnimatePresence>
         </div>
       </div>
-      {selectedDay && (
+      {!isMassiveEditMode && selectedDay && (
         <div
           ref={detailRef}
-          className="day-details mt-4 p-4 border rounded shadow">
+          className="day-details mt-4 p-4 border rounded shadow"
+        >
           {renderDayDetails(selectedDay)}
         </div>
       )}
+      {isMassiveEditMode && (
+
+        <div className="btn-group-row">
+          <Button
+            label="Guardar"
+            variant="primary"
+            leftIcon={<FloppyDisk size={16} />}
+            size="md"
+            onClick={handleSaveMassiveEdit}
+          />
+          <Button
+            label="Descartar"
+            variant="danger"
+            size="md"
+            leftIcon={<Trash size={16} />}
+            onClick={() => {
+              setDraftShiftMap(null);
+              setIsMassiveEditMode(false);
+            }}
+          />
+        </div>
+      )}
+
     </>
   );
 }

@@ -107,15 +107,6 @@ export const updateShiftPreferences = async (shiftId, preferences, token) => {
   }
 };
 
-// Expirar turnos antiguos
-export const expireOldShifts = async (token) => {
-  try {
-    const response = await axios.patch(`${API_URL}/api/shifts/expire-old`, null, authHeaders(token));
-    return response.data;
-  } catch (error) {
-    throw new Error(handleError(error, 'Error al expirar turnos'));
-  }
-};
 
 // Obtener turnos disponibles propios y recibidos
 export const getMyAvailableShifts = async (workerId, token) => {

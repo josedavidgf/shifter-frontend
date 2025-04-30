@@ -24,7 +24,7 @@ export default function MonthSelector({ selectedMonth, onChange }) {
         <ArrowCircleLeft size={24} /> {/* Icono izquierdo */}
       </button>
       <span className="month-label">
-        Tus turnos de {capitalize(format(parseISO(selectedMonth + '-01'), 'MMMM', { locale: es }))}
+        Turnos de {capitalize(format(parseISO(selectedMonth + '-01'), 'MMMM', { locale: es }))}
 
       </span>
       <button onClick={goToNextMonth} className="arrow-button">

@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Button from '../components/ui/Button/Button';
-import { shiftTypeLabels,swapStatusLabels,shiftStatusLabels } from '../utils/labelMaps';
+import { shiftTypeLabels, swapStatusLabels, shiftStatusLabels } from '../utils/labelMaps';
+import SelectorInput from '../components/ui/SelectorInput/SelectorInput';
+import { Eraser } from '../theme/icons';
 
 
 const HospitalShiftsTable = ({ shifts, workerId, sentSwapShiftIds }) => {
@@ -13,10 +15,14 @@ const HospitalShiftsTable = ({ shifts, workerId, sentSwapShiftIds }) => {
     type: ''
   });
 
-  const handleFilterChange = (e) => {
+  const handleFilterDateChange = (e) => {
     const { name, value } = e.target;
     setFilters((prev) => ({ ...prev, [name]: value }));
   };
+  const handleSelectorChange = (name, value) => {
+    setFilters((prev) => ({ ...prev, [name]: value }));
+  };
+  
 
   const clearFilters = () => {
     setFilters({
@@ -24,7 +30,12 @@ const HospitalShiftsTable = ({ shifts, workerId, sentSwapShiftIds }) => {
       type: ''
     });
   };
-
+  const shiftTypeOptions = [
+    { value: 'morning', label: 'Mañana' },
+    { value: 'evening', label: 'Tarde' },
+    { value: 'night', label: 'Noche' },
+    { value: 'reinforcement', label: 'Refuerzo' },
+  ];
 
   const filteredShifts = shifts
     .filter((shift) => {
@@ -46,20 +57,21 @@ const HospitalShiftsTable = ({ shifts, workerId, sentSwapShiftIds }) => {
             className="filter-input"
             name="date"
             value={filters.date}
-            onChange={handleFilterChange}
+            onChange={handleFilterDateChange}
           />
-
-          <select className="filter-select" name="type" value={filters.type} onChange={handleFilterChange}>
-            <option value="">Todos los tipos</option>
-            <option value="morning">Mañana</option>
-            <option value="evening">Tarde</option>
-            <option value="night">Noche</option>
-          </select>
-
+          <SelectorInput
+            name="shift_type"
+            label="Tipo de turno"
+            value={filters.type}
+            onChange={(e) => handleSelectorChange('type', e.target.value)}
+            options={shiftTypeOptions}
+            required
+          />
           <Button
             label="Limpiar filtros"
             variant="outline"
             size="lg"
+            leftIcon={<Eraser size={16} />}
             onClick={clearFilters}
           />
         </div>
