@@ -28,6 +28,8 @@ function Register() {
             setError(err.message);
         }
     };
+    localStorage.setItem('lastRegisteredEmail', email);
+
 
     return (
         <div className="container auth-container">

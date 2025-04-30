@@ -82,9 +82,9 @@ const HospitalShifts = () => {
                 <div className="container">
                     {shifts.length === 0 ? (
                         <EmptyState
-                            title="No hay turnos disponibles"
-                            description="Actualmente no hay turnos publicados en tu hospital."
-                            ctaLabel="Ir al calendario"
+                            title="No hay turnos publicados"
+                            description="Actualmente no hay turnos publicados en este servicio."
+                            ctaLabel="Ir al Calendario"
                             onCtaClick={() => navigate('/calendar')}
                         />
                     ) : (

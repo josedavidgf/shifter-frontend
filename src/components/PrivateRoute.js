@@ -47,13 +47,13 @@ const PrivateRoute = ({ children }) => {
     return children;
   }
 
-  // Si ha completado todo, ya puede entrar al dashboard
+  // Si ha completado todo, ya puede entrar al calendar
   if (isWorker.onboarding_completed) {
     if (location.pathname.startsWith('/onboarding')) return <Navigate to="/calendar" />;
     return children;
   }
 
-  // Cualquier otro caso que no contemplemos, lo mandamos a dashboard como fallback
+  // Cualquier otro caso que no contemplemos, lo mandamos a Calendar como fallback
   return children;
 };
 

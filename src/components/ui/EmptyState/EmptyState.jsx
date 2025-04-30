@@ -10,7 +10,7 @@ const EmptyState = ({
   return (
     <div className="empty-state-container">
       <img
-        src='assets/tanda-logo-light.svg'
+        src='assets/logo-tanda-light.png'
         alt="Tanda Logo"
         className="empty-state-logo"
       />

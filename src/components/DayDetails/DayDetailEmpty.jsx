@@ -1,6 +1,6 @@
 // src/components/DayDetails/DayDetailEmpty.jsx
 import React from 'react';
-import Button from '../../components/ui/Button/Button'; // Ajusta si tu path varía
+import Button from '../../components/ui/Button/Button';
 import { Lightning } from '../../theme/icons';
 
 export default function DayDetailEmpty({
@@ -11,8 +11,8 @@ export default function DayDetailEmpty({
 }) {
   return (
     <div>
-      <h3 className="font-bold mb-2">Día libre</h3>
-
+      <h3 className="font-bold mb-2">{dayLabel} - Día libre</h3>
+      <p className="mb-4">Actualmente no tienes ningún turno ni disponibilidad registrada para este día.</p>
 
       <div className="btn-group">
         <Button

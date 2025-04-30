@@ -7,7 +7,12 @@ export async function getShiftsForMonth(workerId) {
   try {
     const { data, error } = await supabase
       .from('monthly_schedules')
-      .select('date, shift_type')
+      .select(`*,
+            related_worker:related_worker_id (
+          name,
+          surname
+          )
+        `)
       .eq('worker_id', workerId);
 
     if (error) {
@@ -26,14 +31,22 @@ export async function setShiftForDay(workerId, dateStr, shiftType) {
   try {
     const { error } = await supabase
       .from('monthly_schedules')
-      .upsert({ worker_id: workerId, date: dateStr, shift_type: shiftType }, { onConflict: ['worker_id', 'date'] });
+      .upsert(
+        {
+          worker_id: workerId,
+          date: dateStr,
+          shift_type: shiftType,
+          source: 'manual' // ✅ Forzamos que sea manual al crear/editar desde el calendario
+        },
+        { onConflict: ['worker_id', 'date'] }
+      );
 
     if (error) {
       throw new Error(error.message || 'Error al asignar turno');
     }
   } catch (err) {
     console.error('❌ Error en setShiftForDay:', err.message);
-    throw err; // Propagamos el error
+    throw err;
   }
 }
 
