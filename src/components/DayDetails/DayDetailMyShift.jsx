@@ -4,11 +4,11 @@ import Button from '../ui/Button/Button'; // Ajusta si tu path varía
 import { Lightning, PencilSimple, Trash } from '../../theme/icons';
 import { shiftTypeLabels } from '../../utils/labelMaps';
 
-
 export default function DayDetailMyShift({
   dateStr,
   entry,
   dayLabel,
+  isPublished,
   onDeletePublication,
   onRemoveShift,
   onEditShift,
@@ -18,7 +18,8 @@ export default function DayDetailMyShift({
     <div>
       <h3 className="mb-2">Turno propio</h3>
       <p>Turno: {dayLabel} de {shiftTypeLabels[entry.shift_type]}</p>
-      {entry.isPublished ? (
+
+      {isPublished ? (
         <>
           <p>Turno publicado</p>
           <Button
@@ -26,7 +27,7 @@ export default function DayDetailMyShift({
             variant="outline"
             leftIcon={<Trash size={20} />}
             size="lg"
-            onClick={() => onDeletePublication(entry.shift_id, dateStr)} // ✅ pasamos dateStr
+            onClick={() => onDeletePublication(entry.shift_id, dateStr)}
           />
         </>
       ) : (

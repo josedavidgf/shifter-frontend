@@ -20,6 +20,8 @@ export function AuthProvider({ children }) {
   const [currentUser, setCurrentUser] = useState(null);
   const [isWorker, setIsWorker] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [pendingEmail, setPendingEmail] = useState(null);
+
   const navigate = useNavigate();
 
 
@@ -103,6 +105,7 @@ export function AuthProvider({ children }) {
       }
 
       if (!data.session) {
+        setPendingEmail(email);         // ✅ guarda el email para reenviar luego
         navigate('/verify-email'); // o muestra mensaje si no tienes esa ruta
         return;
       }
@@ -206,7 +209,9 @@ export function AuthProvider({ children }) {
     loading,
     authReady, 
     setIsWorker,
-    refreshWorkerProfile
+    refreshWorkerProfile,
+    pendingEmail,      
+    setPendingEmail      
   };
 
   const isReady =

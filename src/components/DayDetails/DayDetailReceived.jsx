@@ -1,6 +1,6 @@
 // src/components/DayDetails/DayDetailReceived.jsx
 import React from 'react';
-import Button from '../ui/Button/Button'; // Ajusta si tu path varía
+import Button from '../ui/Button/Button';
 import { Lightning } from '../../theme/icons';
 import { shiftTypeLabels } from '../../utils/labelMaps';
 
@@ -14,7 +14,18 @@ export default function DayDetailReceived({
     <div>
       <h3 className="font-bold mb-2">Turno recibido</h3>
       <p>Turno: {dayLabel} de {shiftTypeLabels[entry.shift_type]}</p>
-      <p>Propietario original: {entry.requester_name} {entry.requester_surname}</p>
+      {entry.related_worker_id && (
+        <p><strong>Cedido por:</strong> {entry.related_worker_name} {entry.related_worker_surname}</p>
+      )}
+      {entry.swap_id && (
+        <Button
+          label="Ver intercambio"
+          variant="outline"
+          leftIcon={<Lightning size={20} />}
+          size="sm"
+          onClick={() => navigate(`/swaps/${entry.swap_id}`)}
+        />
+      )}
 
       <Button
         label="Publicar turno recibido"
