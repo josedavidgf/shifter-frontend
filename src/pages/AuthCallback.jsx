@@ -18,6 +18,7 @@ const AuthCallback = () => {
     async function handleCallback() {
       // ⏱️ Fallback de 10s máximo
       fallbackTimeout = setTimeout(() => {
+        console.log('ENTRO al Callback');
         setLoading(false);
         if (!error) {
           setError('El proceso de verificación está tardando demasiado. Intenta iniciar sesión nuevamente.');
@@ -31,8 +32,9 @@ const AuthCallback = () => {
         if (error) {
           console.warn('⚠️ exchangeCodeForSession lanzó error:', error.message);
         }
-
+        
         session = data?.session;
+        console.log('session',session);
         if (session) {
           await supabase.auth.setSession(session);
           setCurrentUser(session.user);
@@ -56,22 +58,36 @@ const AuthCallback = () => {
       }
 
       try {
-        const res = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/auth/post-login-check`, {
+        console.log('aqui');
+        const url = `${process.env.REACT_APP_BACKEND_URL}/api/workers/post-login-check`;
+        const token = session.access_token;
+      
+        console.log('🔁 Llamando a post-login-check con token:', token);
+        console.log('🔗 URL:', url);
+      
+        const res = await fetch(url, {
+          method: 'GET',
           headers: {
-            Authorization: `Bearer ${session.access_token}`,
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
           },
         });
-
+      
+        console.log('📡 Respuesta HTTP:', res.status);
+      
         const result = await res.json();
-
+      
+        console.log('📥 Respuesta JSON:', result);
+      
         if (!result.success) {
           setError('No se pudo verificar tu estado. Intenta iniciar sesión.');
           setLoading(false);
           return;
         }
-
+      
         const status = result.data;
-
+        console.log('✅ Estado del usuario:', status);
+      
         if (!status.exists) {
           navigate('/onboarding/code');
         } else if (status.onboarding_completed) {
@@ -93,6 +109,7 @@ const AuthCallback = () => {
       } finally {
         setLoading(false);
       }
+      
     }
 
     handleCallback();

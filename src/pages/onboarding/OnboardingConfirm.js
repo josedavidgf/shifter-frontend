@@ -26,7 +26,7 @@ export default function OnboardingConfirmStep() {
       setWorkerTypeId(worker_type_id);
     }
   }, [hospital_id, worker_type_id, navigate]);
-  
+
 
   const handleConfirm = async () => {
     const token = await getToken();
@@ -66,27 +66,31 @@ export default function OnboardingConfirmStep() {
       />
       <div className='page page-primary'>
         <div className='container'>
-          <h2>El código que has introducido te habilita Tanda para {workerTypeName} en {hospitalName}</h2>
+          <h2 className="register-code__title">
+            El código que has introducido te habilita Tanda como
+            <span className="highlight-purple"> {workerTypeName}</span> en
+            <span className="highlight-purple"> {hospitalName}</span>
+          </h2>
 
           {error && <p style={{ color: 'red' }}>{error}</p>}
           {workerApiError && <p style={{ color: 'red' }}>{workerApiError}</p>}
 
+          <div className="btn-group">
 
-          <Button
-            label="Crear cuenta"
-            variant="primary"
-            size="lg"
-            onClick={handleConfirm}
-            disabled={loading}
-          />
-
-          <hr />
-          <Button
-            label="Contactar con Tanda"
-            variant="outline"
-            size="lg"
-            onClick={() => navigate('/onboarding/code')}
-          />
+            <Button
+              label="Crear cuenta"
+              variant="primary"
+              size="lg"
+              onClick={handleConfirm}
+              disabled={loading}
+            />
+            <Button
+              label="Contactar con Tanda"
+              variant="outline"
+              size="lg"
+              onClick={() => navigate('/onboarding/code')}
+            />
+          </div>
         </div>
       </div>
     </>

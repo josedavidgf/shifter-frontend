@@ -166,26 +166,27 @@ export function AuthProvider({ children }) {
 
   // login
   const login = async (email, password) => {
+
     try {
       const { data, error } = await supabase.auth.signInWithPassword({ email, password });
       if (error) throw error;
 
       const user = data.user;
       const token = data.session.access_token;
-      //localStorage.setItem('token', token);
       setCurrentUser(user);
 
       const workerProfile = await getMyWorkerProfile(token);
       setIsWorker(workerProfile);
 
-      navigate('/calendar'); // ⬅️ o cualquier ruta protegida
-
-
+      // ✅ Si todo correcto
+      navigate('/calendar');
       return data;
+
     } catch (err) {
       throw new Error(err.message);
     }
   };
+
 
   const loginWithGoogle = async () => {
     try {

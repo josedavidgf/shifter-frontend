@@ -367,7 +367,7 @@ function MonthlyCalendar() {
   async function handleDeletePublication(shiftId, dateStr) {
     try {
       const token = await getToken(); // ✅ Obtener token antes
-      console.log('shiftId:', shiftId);
+      //console.log('shiftId:', shiftId);
       const success = await removeShift(shiftId, token); // ✅ Pasar token
 
       if (success) {
@@ -450,7 +450,7 @@ function MonthlyCalendar() {
     const dayLabel = format(parseISO(dateStr), 'dd/MM/yyyy');
 
     const { source, isPreference, isPublished } = entry;
-    console.log('entry', entry);
+    //console.log('entry', entry);
     if (source === 'manual') {
       return (
         <DayDetailMyShift
@@ -529,7 +529,7 @@ function MonthlyCalendar() {
     );
   }
 
-  console.log('ShiftMap:', shiftMap);
+  //console.log('ShiftMap:', shiftMap);
 
   return (
     <>

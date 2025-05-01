@@ -4,13 +4,14 @@ import { useAccessCodeApi } from '../../api/useAccessCodeApi';
 import { useHospitalApi } from '../../api/useHospitalApi';
 import { useAuth } from '../../context/AuthContext';
 import { useWorkerApi } from '../../api/useWorkerApi';
-import InputField from '../../components/ui/InputField/InputField';
 import HeaderSecondLevel from '../../components/ui/Header/HeaderSecondLevel';
 import Button from '../../components/ui/Button/Button'; // Ajusta ruta si necesario
 import AccessCodeInput from '../../components/ui/AccessCodeInput/AccessCodeInput';
+import Loader from '../../components/ui/Loader/Loader';
 
 
 export default function OnboardingCodeStep() {
+  console.log('🧩 MONTANDO OnboardingCode');
   const [code, setCode] = useState('');
   const { getToken } = useAuth();
   const { validateAccessCode, loading: loadingAccessCode, error: errorAccessCode } = useAccessCodeApi();
@@ -21,11 +22,13 @@ export default function OnboardingCodeStep() {
   const navigate = useNavigate();
   const { loading, isWorker } = useAuth();
 
+  console.log('⛔️ isWorker en OnboardingCode:', isWorker);
+
   // Protege de render anticipado
-  if (loading) return null;
+  if (loading) return <Loader text="Cargando paso de onboarding..." />;
 
   // Si el worker ya ha hecho onboarding, no debería ver esto
-  if (isWorker?.onboarding_completed) {
+  if (isWorker?.onboarding_completed === true) {
     return <Navigate to="/calendar" />;
   }
 
@@ -34,15 +37,25 @@ export default function OnboardingCodeStep() {
     setError('');
 
     try {
+      console.log('aqui')
       const response = await validateAccessCode(code);
-      const { hospital_id, worker_type_id } = response;
+      console.log('response',response)
 
+      const { hospital_id, worker_type_id } = response;
       const token = await getToken();
+      console.log('token',token)
+
       const hospitals = await getHospitals(token);
+      console.log('hospitals',hospitals)
+
       const workerTypes = await getWorkerTypes(token);
+      console.log('workerTypes',workerTypes)
 
       const hospital = hospitals.find(h => h.hospital_id === hospital_id);
+      console.log('hospital',hospital)
+
       const workerType = workerTypes.find(w => w.worker_type_id === worker_type_id);
+      console.log('workerType',workerType)
 
       const hospitalName = hospital?.name || '';
       const workerTypeName = workerType?.worker_type_name || '';
