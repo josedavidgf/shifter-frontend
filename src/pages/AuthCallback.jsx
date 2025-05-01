@@ -15,15 +15,21 @@ const AuthCallback = () => {
 
   useEffect(() => {
     async function handleCallback() {
+      setLoading(true);
+      setError(null);
+  
       let session;
   
       try {
         const { data, error } = await supabase.auth.exchangeCodeForSession();
   
-        // ⚠️ Aunque haya error, puede venir con data.session válido
+        if (error) {
+          console.warn('⚠️ exchangeCodeForSession lanzó error:', error.message);
+        }
+  
         if (!data?.session) {
-          console.error('❌ Sesión inválida:', error?.message);
-          setError('No se pudo recuperar la sesión. Intenta iniciar sesión de nuevo.');
+          console.error('❌ Sesión inválida o ausente tras intercambio');
+          setError('No se pudo recuperar tu sesión. Intenta iniciar sesión nuevamente.');
           return;
         }
   
@@ -31,20 +37,23 @@ const AuthCallback = () => {
         await supabase.auth.setSession(session);
         setCurrentUser(session.user);
       } catch (err) {
-        console.warn('⚠️ exchangeCodeForSession falló parcialmente:', err.message);
-        // Pero no devolvemos aún — puede haber sesión válida
+        console.error('❌ Excepción en exchangeCodeForSession:', err.message);
+        setError('Ocurrió un error inesperado al iniciar sesión. Intenta de nuevo.');
+        return;
       }
   
       try {
         const res = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/auth/post-login-check`, {
-          headers: { Authorization: `Bearer ${session.access_token}` },
+          headers: {
+            Authorization: `Bearer ${session.access_token}`,
+          },
         });
   
         const result = await res.json();
   
         if (!result.success) {
           console.error('❌ Error en post-login-check:', result.message);
-          setError('No se pudo verificar el estado del usuario. Intenta iniciar sesión.');
+          setError('No se pudo verificar tu estado. Intenta iniciar sesión nuevamente.');
           return;
         }
   
@@ -67,7 +76,7 @@ const AuthCallback = () => {
         }
       } catch (err) {
         console.error('❌ Error en verificación post-login:', err.message);
-        setError('Error inesperado al comprobar tu estado. Intenta iniciar sesión.');
+        setError('Ha fallado la verificación del estado del usuario.');
       } finally {
         setLoading(false);
       }
@@ -75,6 +84,7 @@ const AuthCallback = () => {
   
     handleCallback();
   }, []);
+  
   
 
   if (loading) {
