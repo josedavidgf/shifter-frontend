@@ -9,7 +9,6 @@ import Button from '../components/ui/Button/Button'; // Ajusta ruta si necesario
 const AuthCallback = () => {
   const navigate = useNavigate();
   const { setCurrentUser } = useAuth();
-
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -17,38 +16,40 @@ const AuthCallback = () => {
     async function handleCallback() {
       let session = null;
 
-      // Paso 1: intentar intercambiar el código
+      // Paso 1: intentar intercambio del código
       try {
         const { data, error } = await supabase.auth.exchangeCodeForSession();
         if (error) {
           console.warn('⚠️ exchangeCodeForSession lanzó error:', error.message);
         }
 
-        session = data?.session || (await supabase.auth.getSession())?.data?.session;
-
-        if (!session) {
-          setError('No se pudo recuperar tu sesión. Intenta iniciar sesión nuevamente.');
-          return;
-        }
-
-        await supabase.auth.setSession(session);
-        setCurrentUser(session.user);
-      } catch (err) {
-        console.error('❌ Excepción en exchangeCodeForSession:', err.message);
-
-        // Fallback adicional si hay sesión válida
-        const { data } = await supabase.auth.getSession();
         session = data?.session;
-
-        if (!session) {
-          setError('Error inesperado al verificar tu cuenta. Intenta iniciar sesión nuevamente.');
-          return;
+        if (session) {
+          await supabase.auth.setSession(session);
+          setCurrentUser(session.user);
         }
-
-        setCurrentUser(session.user);
+      } catch (err) {
+        console.warn('⚠️ Excepción en exchangeCodeForSession:', err.message);
+        // No hacemos return todavía
       }
 
-      // Paso 2: verificación de onboarding
+      // Paso 2: fallback → si no hay session aún, intentamos getSession()
+      if (!session) {
+        const { data: fallbackData } = await supabase.auth.getSession();
+        if (fallbackData?.session) {
+          session = fallbackData.session;
+          setCurrentUser(session.user);
+        }
+      }
+
+      // Paso 3: si no hay sesión → mostrar error
+      if (!session) {
+        setError('No se pudo recuperar tu sesión. Intenta iniciar sesión nuevamente.');
+        setLoading(false);
+        return;
+      }
+
+      // Paso 4: verificación de estado del worker
       try {
         const res = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/auth/post-login-check`, {
           headers: {
@@ -59,8 +60,8 @@ const AuthCallback = () => {
         const result = await res.json();
 
         if (!result.success) {
-          console.error('❌ Error en post-login-check:', result.message);
           setError('No se pudo verificar tu estado. Intenta iniciar sesión.');
+          setLoading(false);
           return;
         }
 
