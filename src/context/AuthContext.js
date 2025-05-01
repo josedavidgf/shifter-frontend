@@ -183,16 +183,25 @@ export function AuthProvider({ children }) {
 
   const loginWithGoogle = async () => {
     try {
+      const redirectTo =
+        process.env.NODE_ENV === 'development'
+          ? 'http://localhost:3000/auth/callback'
+          : 'https://pre-app.apptanda.com/auth/callback';
+  
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
+        options: {
+          redirectTo,
+        },
       });
+  
       if (error) throw error;
-      // El usuario será redirigido automáticamente
     } catch (err) {
       console.error('Google login error:', err.message);
       throw err;
     }
   };
+  
 
 
   // Logout
