@@ -27,29 +27,25 @@ const AuthCallback = () => {
 
       let session = null;
 
-      try {
-        const { data, error } = await supabase.auth.exchangeCodeForSession();
-        console.log('DATA:', data);
-        console.log('ERROR:', error);
-        if (error) {
-          console.warn('⚠️ exchangeCodeForSession lanzó error:', error.message);
-        }
-
-        session = data?.session;
-        console.log('session', session);
-        if (session) {
-          await supabase.auth.setSession(session);
-          setCurrentUser(session.user);
-        }
-      } catch (err) {
-        console.warn('⚠️ Excepción en exchangeCodeForSession:', err.message);
-      }
-
-      if (!session) {
-        const { data: fallbackData } = await supabase.auth.getSession();
-        if (fallbackData?.session) {
-          session = fallbackData.session;
-          setCurrentUser(session.user);
+      const { data: maybeSession } = await supabase.auth.getSession();
+      console.log('maybeSession:',maybeSession);
+      if (maybeSession?.session) {
+        console.log('🎯 Ya hay sesión activa');
+        session = maybeSession.session;
+        setCurrentUser(session.user);
+      } else {
+        try {
+          const { data, error } = await supabase.auth.exchangeCodeForSession();
+          if (error) {
+            console.warn('⚠️ exchangeCodeForSession lanzó error:', error.message);
+          }
+          session = data?.session;
+          if (session) {
+            await supabase.auth.setSession(session);
+            setCurrentUser(session.user);
+          }
+        } catch (err) {
+          console.warn('⚠️ Excepción en exchangeCodeForSession:', err.message);
         }
       }
 
@@ -58,6 +54,7 @@ const AuthCallback = () => {
         setLoading(false);
         return;
       }
+
 
       try {
         console.log('🏋🏼‍♂️🏋🏼‍♂️🏋🏼‍♂️🏋🏼‍♂️CREAR WORKER')
