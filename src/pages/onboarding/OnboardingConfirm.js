@@ -4,6 +4,8 @@ import { useWorkerApi } from '../../api/useWorkerApi';
 import { useAuth } from '../../context/AuthContext';
 import HeaderSecondLevel from '../../components/ui/Header/HeaderSecondLevel';
 import Button from '../../components/ui/Button/Button'; // Ajusta ruta si necesario
+import { useToast } from '../../hooks/useToast'; // Ajusta ruta
+
 
 export default function OnboardingConfirmStep() {
   const [hospitalId, setHospitalId] = useState('');
@@ -13,6 +15,7 @@ export default function OnboardingConfirmStep() {
   const { createWorker, createWorkerHospital, loading, error: workerApiError } = useWorkerApi(); // 🆕
   const navigate = useNavigate();
   const { setIsWorker, refreshWorkerProfile } = useAuth();
+  const { showSuccess, showError } = useToast();
 
   const location = useLocation();
   const { hospital_id, worker_type_id, hospitalName, workerTypeName } = location.state || {};
@@ -34,7 +37,7 @@ export default function OnboardingConfirmStep() {
     try {
       const response = await createWorker({ workerTypeId }, token);
       if (response?.success) {
-        alert('Trabajador creado con éxito');
+        showSuccess('Trabajador creado con éxito');
         setIsWorker(true);
       } else {
         throw new Error(response?.message || 'Error al crear el trabajador');
@@ -47,7 +50,7 @@ export default function OnboardingConfirmStep() {
       navigate('/onboarding/speciality');
     } catch (err) {
       console.error('Error creando el worker:', err.message);
-      setError('Error creando el perfil. Por favor inténtalo de nuevo.');
+      showError('Error creando el perfil. Por favor inténtalo de nuevo.');
     }
   };
   const handleBack = () => {

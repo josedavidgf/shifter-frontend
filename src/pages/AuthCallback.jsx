@@ -18,12 +18,11 @@ const AuthCallback = () => {
     async function handleCallback() {
       // ⏱️ Fallback de 10s máximo
       fallbackTimeout = setTimeout(() => {
-        console.log('ENTRO al Callback');
         setLoading(false);
         if (!error) {
           setError('El proceso de verificación está tardando demasiado. Intenta iniciar sesión nuevamente.');
         }
-      }, 3000);
+      }, 8000);
 
       let session = null;
 
@@ -58,54 +57,22 @@ const AuthCallback = () => {
       }
 
       try {
-        console.log('aqui');
-        const url = `${process.env.REACT_APP_BACKEND_URL}/api/workers/post-login-check`;
+        const initUrl = `${process.env.REACT_APP_BACKEND_URL}/api/workers/init`;
         const token = session.access_token;
       
-        console.log('🔁 Llamando a post-login-check con token:', token);
-        console.log('🔗 URL:', url);
-      
-        const res = await fetch(url, {
-          method: 'GET',
+        console.log('🆕 Creando worker con token:', token);
+        const res = await fetch(initUrl, {
+          method: 'POST',
           headers: {
             Authorization: `Bearer ${token}`,
             'Content-Type': 'application/json',
           },
         });
       
-        console.log('📡 Respuesta HTTP:', res.status);
-      
         const result = await res.json();
-      
-        console.log('📥 Respuesta JSON:', result);
-      
-        if (!result.success) {
-          setError('No se pudo verificar tu estado. Intenta iniciar sesión.');
-          setLoading(false);
-          return;
-        }
-      
-        const status = result.data;
-        console.log('✅ Estado del usuario:', status);
-      
-        if (!status.exists) {
-          navigate('/onboarding/code');
-        } else if (status.onboarding_completed) {
-          navigate('/calendar');
-        } else if (!status.hasWorkerType) {
-          navigate('/onboarding/code');
-        } else if (!status.hasSpeciality) {
-          navigate('/onboarding/speciality');
-        } else if (!status.hasName) {
-          navigate('/onboarding/name');
-        } else if (!status.hasPhone) {
-          navigate('/onboarding/phone');
-        } else {
-          navigate('/calendar');
-        }
+        console.log('🧱 Resultado de /init:', result);
       } catch (err) {
-        console.error('❌ Error en verificación post-login:', err.message);
-        setError('Ha fallado la verificación del estado del usuario.');
+        console.error('❌ Error creando el worker inicial:', err.message);
       } finally {
         setLoading(false);
       }
