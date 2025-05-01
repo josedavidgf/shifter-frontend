@@ -21,8 +21,9 @@ const AuthCallback = () => {
       let session;
   
       try {
+        console.log('Aquí');
         const { data, error } = await supabase.auth.exchangeCodeForSession();
-
+        console.log('O Aquí');
   
         if (error) {
           console.warn('⚠️ exchangeCodeForSession lanzó error:', error.message);
