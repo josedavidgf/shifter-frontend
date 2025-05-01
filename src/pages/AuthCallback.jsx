@@ -28,7 +28,7 @@ const AuthCallback = () => {
       let session = null;
 
       const { data: maybeSession } = await supabase.auth.getSession();
-      console.log('maybeSession:',maybeSession);
+      console.log('maybeSession:', maybeSession);
       if (maybeSession?.session) {
         console.log('🎯 Ya hay sesión activa');
         session = maybeSession.session;
@@ -57,24 +57,31 @@ const AuthCallback = () => {
 
 
       try {
-        console.log('🏋🏼‍♂️🏋🏼‍♂️🏋🏼‍♂️🏋🏼‍♂️CREAR WORKER')
+        console.log('🛠️ CREAR WORKER');
         const token = session.access_token;
-        console.log('🆕 Creando worker con token:', token);
-        const res = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/workers/init`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
 
-        });
+        const res = await axios.post(
+          `${process.env.REACT_APP_BACKEND_URL}/api/workers/init`,
+          {}, // cuerpo vacío
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              'Content-Type': 'application/json',
+            },
+          }
+        );
 
-
-        const result = await res.json();
-        console.log('🧱 Resultado de /init:', result);
+        const result = res.data;
+        console.log('✅ Resultado de /init:', result);
       } catch (err) {
-        console.error('❌ Error creando el worker inicial:', err.message);
-      } finally {
-        setLoading(false);
+        console.error('❌ Error creando el worker inicial:', err.response?.data?.message || err.message);
+        setError('No se pudo crear tu perfil. Intenta iniciar sesión nuevamente.');
+        await supabase.auth.signOut();
+        return;
       }
+
+      setLoading(false);
+      navigate('/calendar');
 
     }
 
