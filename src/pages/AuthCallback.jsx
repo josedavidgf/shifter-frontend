@@ -4,6 +4,7 @@ import supabase from '../config/supabase';
 import { useAuth } from '../context/AuthContext';
 import Loader from '../components/ui/Loader/Loader';
 import Button from '../components/ui/Button/Button'; // Ajusta ruta si necesario
+import axios from 'axios';
 
 
 const AuthCallback = () => {
@@ -28,14 +29,14 @@ const AuthCallback = () => {
 
       try {
         const { data, error } = await supabase.auth.exchangeCodeForSession();
-        console.log('DATA:',data);
-        console.log('ERROR:',error);
+        console.log('DATA:', data);
+        console.log('ERROR:', error);
         if (error) {
           console.warn('⚠️ exchangeCodeForSession lanzó error:', error.message);
         }
-        
+
         session = data?.session;
-        console.log('session',session);
+        console.log('session', session);
         if (session) {
           await supabase.auth.setSession(session);
           setCurrentUser(session.user);
@@ -60,18 +61,16 @@ const AuthCallback = () => {
 
       try {
         console.log('🏋🏼‍♂️🏋🏼‍♂️🏋🏼‍♂️🏋🏼‍♂️CREAR WORKER')
-        const initUrl = `${process.env.REACT_APP_BACKEND_URL}/api/workers/init`;
         const token = session.access_token;
-      
         console.log('🆕 Creando worker con token:', token);
-        const res = await fetch(initUrl, {
-          method: 'POST',
+        const res = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/workers/init`, {
           headers: {
             Authorization: `Bearer ${token}`,
-            'Content-Type': 'application/json',
           },
+
         });
-      
+
+
         const result = await res.json();
         console.log('🧱 Resultado de /init:', result);
       } catch (err) {
@@ -79,7 +78,7 @@ const AuthCallback = () => {
       } finally {
         setLoading(false);
       }
-      
+
     }
 
     handleCallback();
