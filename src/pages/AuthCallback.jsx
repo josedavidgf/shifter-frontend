@@ -22,7 +22,7 @@ const AuthCallback = () => {
         if (!error) {
           setError('El proceso de verificación está tardando demasiado. Intenta iniciar sesión nuevamente.');
         }
-      }, 10000);
+      }, 3000);
 
       let session = null;
 
