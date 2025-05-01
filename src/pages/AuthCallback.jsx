@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import supabase from '../config/supabase';
 import { useAuth } from '../context/AuthContext';
 import Loader from '../components/ui/Loader/Loader';
+import Button from '../components/ui/Button/Button'; // Ajusta ruta si necesario
+
 
 const AuthCallback = () => {
   const navigate = useNavigate();
@@ -13,32 +15,41 @@ const AuthCallback = () => {
 
   useEffect(() => {
     async function handleCallback() {
+      let session;
+  
       try {
         const { data, error } = await supabase.auth.exchangeCodeForSession();
-
-        if (error || !data?.session) {
-          console.error('❌ Error recuperando sesión desde URL:', error?.message);
+  
+        // ⚠️ Aunque haya error, puede venir con data.session válido
+        if (!data?.session) {
+          console.error('❌ Sesión inválida:', error?.message);
           setError('No se pudo recuperar la sesión. Intenta iniciar sesión de nuevo.');
           return;
         }
-
-        const session = data.session;
+  
+        session = data.session;
         await supabase.auth.setSession(session);
         setCurrentUser(session.user);
-
+      } catch (err) {
+        console.warn('⚠️ exchangeCodeForSession falló parcialmente:', err.message);
+        // Pero no devolvemos aún — puede haber sesión válida
+      }
+  
+      try {
         const res = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/auth/post-login-check`, {
           headers: { Authorization: `Bearer ${session.access_token}` },
         });
-
+  
         const result = await res.json();
+  
         if (!result.success) {
           console.error('❌ Error en post-login-check:', result.message);
           setError('No se pudo verificar el estado del usuario. Intenta iniciar sesión.');
           return;
         }
-
+  
         const status = result.data;
-
+  
         if (!status.exists) {
           navigate('/onboarding/code');
         } else if (status.onboarding_completed) {
@@ -52,18 +63,19 @@ const AuthCallback = () => {
         } else if (!status.hasPhone) {
           navigate('/onboarding/phone');
         } else {
-          navigate('/calendar'); // fallback final
+          navigate('/calendar'); // fallback
         }
       } catch (err) {
-        console.error('❌ Error general en AuthCallback:', err.message);
-        setError('Ha ocurrido un error inesperado. Por favor, vuelve a intentarlo.');
+        console.error('❌ Error en verificación post-login:', err.message);
+        setError('Error inesperado al comprobar tu estado. Intenta iniciar sesión.');
       } finally {
         setLoading(false);
       }
     }
-
+  
     handleCallback();
   }, []);
+  
 
   if (loading) {
     return <Loader text="Verificando tu cuenta..." />;
@@ -75,9 +87,15 @@ const AuthCallback = () => {
         <div className="container" style={{ padding: '2rem' }}>
           <h2>❌ Algo salió mal</h2>
           <p>{error}</p>
-          <button onClick={() => navigate('/login')} style={{ marginTop: '1rem' }}>
-            Volver a iniciar sesión
-          </button>
+          <Button
+            label="Volver a iniciar sesión"
+            variant="primary"
+            size="lg"
+            onClick={async () => {
+              await supabase.auth.signOut();
+              navigate('/login');
+            }} />
+
         </div>
       </div>
     );
