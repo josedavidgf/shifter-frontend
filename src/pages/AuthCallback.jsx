@@ -54,7 +54,7 @@ const AuthCallback = () => {
         });
   
         const result = await res.json();
-  
+        console.log('result:',result)
         if (!result.success) {
           console.error('❌ Error en post-login-check:', result.message);
           setError('No se pudo verificar tu estado. Intenta iniciar sesión nuevamente.');
