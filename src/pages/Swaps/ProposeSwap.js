@@ -9,6 +9,7 @@ import ShiftSelector from '../../components/ShiftSelector';
 import HeaderSecondLevel from '../../components/ui/Header/HeaderSecondLevel';
 import Button from '../../components/ui/Button/Button';
 import Loader from '../../components/ui/Loader/Loader';
+import EmptyState from '../../components/ui/EmptyState/EmptyState';
 
 
 const ProposeSwap = () => {
@@ -83,11 +84,27 @@ const ProposeSwap = () => {
 
   if (shifts.length === 0) {
     return (
-      <div>
-        <p>No tienes turnos disponibles para ofrecer.</p>
-      </div>
+      <>
+        <HeaderSecondLevel
+          title="Proponer intercambio"
+          showBackButton
+          onBack={handleBack}
+        />
+        <div className="page page-secondary">
+          <div className="container">
+
+            <EmptyState
+              title="No hay turnos que ofrecer"
+              description="Añade de forma masiva tu plantilla."
+              ctaLabel="Ir al Calendario"
+              onCtaClick={() => navigate('/calendar')}
+            />
+          </div>
+        </div>
+      </>
     );
   }
+  
 
   return (
     <>

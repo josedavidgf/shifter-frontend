@@ -15,7 +15,7 @@ import ChatsList from './pages/Chats/ChatList';
 import CreateShift from './pages/Shifts/CreateShift';
 import ProposeSwap from './pages/Swaps/ProposeSwap';
 import VerifyEmail from './pages/VerifyEmail';
-import Verified from './components/Verified';
+//import Verified from './components/Verified';
 import SwapDetail from './pages/Swaps/SwapDetail';
 import OnboardingCode from './pages/onboarding/OnboardingCode';
 import OnboardingConfirm from './pages/onboarding/OnboardingConfirm';
@@ -30,6 +30,7 @@ import WorkSettings from './pages/Profile/WorkSettings';
 import ProfilePreferences from './pages/Profile/ProfilePreferences';
 import ButtonDemo from './components/ui/Button/ButtonDemo';
 import GlobalUI from './components/ui/GlobalUI/GlobalUI';
+import AuthCallback from './pages/AuthCallback.jsx'
 
 
 function App() {
@@ -41,6 +42,7 @@ function App() {
         <Route path="/login" element={<PublicRoute><Login /></PublicRoute>} />
         <Route path="/register" element={<PublicRoute><Register /></PublicRoute>} />
         <Route path="/button-demo" element={<ButtonDemo />} />
+        <Route path="/auth/callback" element={<AuthCallback />} />
 
         {/* Rutas privadas: agrupadas bajo el nuevo layout */}
         <Route path="/" element={<PrivateRoute><AppLayout /></PrivateRoute>}>
@@ -60,7 +62,7 @@ function App() {
           <Route path="/shifts/create" element={<PrivateRoute><CreateShift /></PrivateRoute>} />
           <Route path="/propose-swap/:shift_id" element={<PrivateRoute><ProposeSwap /></PrivateRoute>} />
           <Route path="/verify-email" element={<VerifyEmail />} />
-          <Route path="/verified" element={<Verified />} />
+          {/* <Route path="/verified" element={<Verified />} /> */}
           <Route path="/swaps/:id" element={<PrivateRoute><SwapDetail /></PrivateRoute>} />
           <Route path="/onboarding/code" element={<PrivateRoute><OnboardingCode /></PrivateRoute>} />
           <Route path="/onboarding/confirm" element={<PrivateRoute><OnboardingConfirm /></PrivateRoute>} />

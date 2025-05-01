@@ -1,25 +1,33 @@
 .empty-state-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    padding: 2rem;
-  }
-  
-  .empty-state-logo {
-    width: 120px;
-    margin-bottom: 1.5rem;
-  }
-  
-  .empty-state-title {
-    font-size: 1.8rem;
-    margin-bottom: 1rem;
-  }
-  
-  .empty-state-description {
-    font-size: 1rem;
-    color: #666;
-    margin-bottom: 2rem;
-  }
-  
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: calc(100vh - 64px);
+  background-color: #f4f6f8; /* si quieres un fondo neutro como Loader */
+  text-align: center;
+  padding: 5rem;
+  box-sizing: border-box;
+  gap: 1.5rem;
+}
+
+
+
+.empty-state-logo img {
+  width: 180px;
+  margin-bottom: 2rem;
+}
+
+.empty-state-title {
+  font-size: 1.6rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+.empty-state-description {
+  font-size: 1rem;
+  color: #666;
+  margin: 0 0 1.5rem 0;
+  line-height: 1.4;
+  max-width: 320px;
+}

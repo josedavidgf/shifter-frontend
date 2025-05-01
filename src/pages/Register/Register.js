@@ -5,6 +5,9 @@ import useTrackPageView from '../../hooks/useTrackPageView';
 import InputField from '../../components/ui/InputField/InputField';
 import Button from '../../components/ui/Button/Button';
 import DividerText from '../../components/ui/DividerText/DividerText';
+import logoTanda from '../../assets/logo-tanda-light.png';
+import logoGoogle from "../../assets/google-icon.svg"
+
 
 function Register() {
     const { register, loginWithGoogle } = useAuth();
@@ -35,7 +38,7 @@ function Register() {
         <div className="container auth-container">
             <div className="auth-content">
                 <div className="auth-logo-container">
-                    <img src={'assets/logo-tanda-light.png'} alt="Tanda Logo" className="auth-logo" />
+                    <img src={logoTanda} alt="Tanda Logo" className="auth-logo" />
                 </div>
                 <div className="auth-body">
                     <form className="auth-form" onSubmit={handleSubmit}>
@@ -75,7 +78,7 @@ function Register() {
                         label="Registro con Google"
                         variant="outline"
                         size="lg"
-                        leftIcon={<img src={'assets/google-icon.svg'} alt="Google" width="20" height="20" />}
+                        leftIcon={<img src={logoGoogle} alt="Google" width="20" height="20" />}
                         onClick={loginWithGoogle}
                     />
                 </div>

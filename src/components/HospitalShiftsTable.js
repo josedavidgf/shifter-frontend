@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Button from '../components/ui/Button/Button';
-import { shiftTypeLabels, swapStatusLabels, shiftStatusLabels } from '../utils/labelMaps';
+import { shiftTypeLabels } from '../utils/labelMaps';
 import SelectorInput from '../components/ui/SelectorInput/SelectorInput';
 import { Eraser } from '../theme/icons';
 

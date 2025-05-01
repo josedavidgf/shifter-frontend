@@ -9,8 +9,8 @@ export default function AppLayout() {
             <main style={{
                 flex: 1,
                 overflowY: 'auto',
-/*                 paddingBottom: '56px', // deja espacio para BottomNav
- */            }}>
+                paddingBottom: '56px', // deja espacio para BottomNav
+            }}>
                 <motion.div
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}

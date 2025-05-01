@@ -64,7 +64,7 @@ const MySwaps = () => {
 
   return (
     <>
-      <HeaderFirstLevel title="Intercambios propuestos" />
+      <HeaderFirstLevel title="Intercambios" />
       <div className="page page-primary">
         <div className="container">
           {swaps.length === 0 ? (

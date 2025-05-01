@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useSwapApi } from '../../api/useSwapApi';
-import ChatBox from '../../components/ChatBox';
 import { useAuth } from '../../context/AuthContext';
 import { useWorkerApi } from '../../api/useWorkerApi';
 import useTrackPageView from '../../hooks/useTrackPageView';
@@ -12,7 +11,7 @@ import { useToast } from '../../hooks/useToast'; // Ajusta ruta
 import Loader from '../../components/ui/Loader/Loader';
 import InputField from '../../components/ui/InputField/InputField';
 import { format, parseISO } from 'date-fns';
-import { shiftTypeLabels,swapStatusLabels,shiftStatusLabels } from '../../utils/labelMaps';
+import { shiftTypeLabels,swapStatusLabels } from '../../utils/labelMaps';
 
 
 
@@ -121,9 +120,9 @@ const SwapDetail = () => {
 
     const handleAcceptSwap = () => handleRespond('accepted');
     const handleRejectSwap = () => handleRespond('rejected');
-
+/* 
     // Mostrar chat solo si el estado lo permite
-    const showChat = ['proposed', 'accepted'].includes(swap.status);
+    const showChat = ['proposed', 'accepted'].includes(swap.status); */
 
 
     return (

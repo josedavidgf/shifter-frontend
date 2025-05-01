@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { updateWorkerInfo } from '../../services/userService';
 import { useAuth } from '../../context/AuthContext';
@@ -14,6 +14,12 @@ export default function OnboardingNameStep() {
   const { getToken } = useAuth();
   const navigate = useNavigate();
   const { isWorker, refreshWorkerProfile } = useAuth();
+
+  useEffect(() => {
+    if (!isWorker) {
+      navigate('/onboarding/code'); // Redirige al primer paso para crear el worker
+    }
+  }, [isWorker]);
 
 
   const handleConfirm = async () => {

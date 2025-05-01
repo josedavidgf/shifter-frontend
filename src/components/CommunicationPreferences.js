@@ -7,7 +7,7 @@ import { useToast } from '../hooks/useToast';
 
 
 const CommunicationPreferences = () => {
-    const [status, setStatus] = useState('');
+    const [, setStatus] = useState('');
     const { getToken } = useAuth();
     const { showSuccess, showError } = useToast();
     const [emailSwapNotifications, setEmailSwapNotifications] = useState(true);
