@@ -27,11 +27,11 @@ const AuthCallback = () => {
 
       let session = null;
 
-      const { data: maybeSession } = await supabase.auth.getSession();
-      console.log('maybeSession:', maybeSession);
-      if (maybeSession?.session) {
+      const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
+      console.log('sessionData:', sessionData);
+      if (sessionData?.session) {
         console.log('🎯 Ya hay sesión activa');
-        session = maybeSession.session;
+        session = sessionData.session;
         setCurrentUser(session.user);
       } else {
         try {
