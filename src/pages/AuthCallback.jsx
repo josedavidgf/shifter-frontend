@@ -22,6 +22,7 @@ const AuthCallback = () => {
   
       try {
         const { data, error } = await supabase.auth.exchangeCodeForSession();
+
   
         if (error) {
           console.warn('⚠️ exchangeCodeForSession lanzó error:', error.message);
@@ -32,10 +33,12 @@ const AuthCallback = () => {
           setError('No se pudo recuperar tu sesión. Intenta iniciar sesión nuevamente.');
           return;
         }
-  
+    
         session = data.session;
+        console.log('session:',session);
         await supabase.auth.setSession(session);
         setCurrentUser(session.user);
+        console.log('user',session.user);
       } catch (err) {
         console.error('❌ Excepción en exchangeCodeForSession:', err.message);
         setError('Ocurrió un error inesperado al iniciar sesión. Intenta de nuevo.');
@@ -43,6 +46,7 @@ const AuthCallback = () => {
       }
   
       try {
+        console.log('token:',session.access_token);
         const res = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/auth/post-login-check`, {
           headers: {
             Authorization: `Bearer ${session.access_token}`,
