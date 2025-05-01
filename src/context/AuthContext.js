@@ -134,7 +134,7 @@ export function AuthProvider({ children }) {
         email,
         password,
         options: {
-          emailRedirectTo: 'https://shifter-frontend.vercel.app/auth/callback',
+          emailRedirectTo: 'https://pre-app.apptanda.com/auth/callback',
         },
       });
 
