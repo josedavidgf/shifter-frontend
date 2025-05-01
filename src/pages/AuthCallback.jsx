@@ -58,7 +58,7 @@ const AuthCallback = () => {
       try {
         console.log('🛠️ CREAR WORKER');
         const token = session.access_token;
-
+        console.log('token',token)
         const res = await axios.post(
           `${process.env.REACT_APP_BACKEND_URL}/api/workers/init`,
           {}, // cuerpo vacío
@@ -69,6 +69,7 @@ const AuthCallback = () => {
             },
           }
         );
+        console.log('res',res)
         const result = res.data;
         console.log('✅ Resultado de /init:', result);
       } catch (err) {
