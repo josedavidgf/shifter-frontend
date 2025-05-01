@@ -10,7 +10,7 @@ const AuthCallback = () => {
 
   useEffect(() => {
     async function handleCallback() {
-      const { data, error } = await supabase.auth.getSessionFromUrl();
+      const { data, error } = await supabase.auth.exchangeCodeForSession();
 
       if (error || !data?.session) {
         console.error('❌ Error recuperando sesión desde URL:', error?.message);
