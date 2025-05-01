@@ -130,13 +130,19 @@ export function AuthProvider({ children }) {
   // Registro
   const register = async (email, password) => {
     try {
+      const redirectTo =
+        process.env.NODE_ENV === 'development'
+          ? 'http://localhost:3000/auth/callback'
+          : 'https://pre-app.apptanda.com/auth/callback';
+
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
         options: {
-          emailRedirectTo: 'https://pre-app.apptanda.com/auth/callback',
+          emailRedirectTo: redirectTo,
         },
       });
+
 
       if (error && !data?.user) {
         console.error('❌ Error en el registro:', error.message);
@@ -187,21 +193,21 @@ export function AuthProvider({ children }) {
         process.env.NODE_ENV === 'development'
           ? 'http://localhost:3000/auth/callback'
           : 'https://pre-app.apptanda.com/auth/callback';
-  
+
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
           redirectTo,
         },
       });
-  
+
       if (error) throw error;
     } catch (err) {
       console.error('Google login error:', err.message);
       throw err;
     }
   };
-  
+
 
 
   // Logout
