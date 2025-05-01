@@ -17,53 +17,57 @@ const AuthCallback = () => {
     async function handleCallback() {
       setLoading(true);
       setError(null);
-  
-      let session;
-  
+
+      let session = null;
+
       try {
-        console.log('Aquí');
         const { data, error } = await supabase.auth.exchangeCodeForSession();
-        console.log('O Aquí');
-  
         if (error) {
           console.warn('⚠️ exchangeCodeForSession lanzó error:', error.message);
         }
-  
-        if (!data?.session) {
-          console.error('❌ Sesión inválida o ausente tras intercambio');
-          setError('No se pudo recuperar tu sesión. Intenta iniciar sesión nuevamente.');
+
+        session = data?.session || (await supabase.auth.getSession())?.data?.session;
+
+        if (!session) {
+          setError('No se pudo recuperar tu sesión.');
           return;
         }
-    
-        session = data.session;
-        console.log('session:',session);
+
         await supabase.auth.setSession(session);
         setCurrentUser(session.user);
-        console.log('user',session.user);
       } catch (err) {
         console.error('❌ Excepción en exchangeCodeForSession:', err.message);
-        setError('Ocurrió un error inesperado al iniciar sesión. Intenta de nuevo.');
-        return;
+
+        // 🔁 Intento de rescate: buscar sesión activa
+        const { data } = await supabase.auth.getSession();
+        session = data?.session;
+
+        if (!session) {
+          setError('Error inesperado al verificar tu cuenta. Intenta iniciar sesión de nuevo.');
+          return;
+        }
+
+        setCurrentUser(session.user);
       }
-  
+
       try {
-        console.log('token:',session.access_token);
+        console.log('token:', session.access_token);
         const res = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/auth/post-login-check`, {
           headers: {
             Authorization: `Bearer ${session.access_token}`,
           },
         });
-  
+
         const result = await res.json();
-        console.log('result:',result)
+        console.log('result:', result)
         if (!result.success) {
           console.error('❌ Error en post-login-check:', result.message);
           setError('No se pudo verificar tu estado. Intenta iniciar sesión nuevamente.');
           return;
         }
-  
+
         const status = result.data;
-  
+
         if (!status.exists) {
           navigate('/onboarding/code');
         } else if (status.onboarding_completed) {
@@ -86,11 +90,11 @@ const AuthCallback = () => {
         setLoading(false);
       }
     }
-  
+
     handleCallback();
   }, []);
-  
-  
+
+
 
   if (loading) {
     return <Loader text="Verificando tu cuenta..." />;
