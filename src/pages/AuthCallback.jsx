@@ -13,10 +13,19 @@ const AuthCallback = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    let fallbackTimeout; // ✅ Declarado fuera
+
     async function handleCallback() {
+      // ⏱️ Fallback de 10s máximo
+      fallbackTimeout = setTimeout(() => {
+        setLoading(false);
+        if (!error) {
+          setError('El proceso de verificación está tardando demasiado. Intenta iniciar sesión nuevamente.');
+        }
+      }, 10000);
+
       let session = null;
 
-      // Paso 1: intentar intercambio del código
       try {
         const { data, error } = await supabase.auth.exchangeCodeForSession();
         if (error) {
@@ -30,10 +39,8 @@ const AuthCallback = () => {
         }
       } catch (err) {
         console.warn('⚠️ Excepción en exchangeCodeForSession:', err.message);
-        // No hacemos return todavía
       }
 
-      // Paso 2: fallback → si no hay session aún, intentamos getSession()
       if (!session) {
         const { data: fallbackData } = await supabase.auth.getSession();
         if (fallbackData?.session) {
@@ -42,14 +49,12 @@ const AuthCallback = () => {
         }
       }
 
-      // Paso 3: si no hay sesión → mostrar error
       if (!session) {
         setError('No se pudo recuperar tu sesión. Intenta iniciar sesión nuevamente.');
         setLoading(false);
         return;
       }
 
-      // Paso 4: verificación de estado del worker
       try {
         const res = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/auth/post-login-check`, {
           headers: {
@@ -91,7 +96,11 @@ const AuthCallback = () => {
     }
 
     handleCallback();
+
+    // ✅ cleanup correcto del timeout
+    return () => clearTimeout(fallbackTimeout);
   }, []);
+
 
   if (loading) return <Loader text="Verificando tu cuenta..." />;
 
@@ -105,10 +114,8 @@ const AuthCallback = () => {
             label="Volver a iniciar sesión"
             variant="primary"
             size="lg"
-            onClick={async () => {
-              await supabase.auth.signOut();
-              navigate('/login');
-            }} />
+            onClick={() => navigate('/login')}
+          />
 
         </div>
       </div>
