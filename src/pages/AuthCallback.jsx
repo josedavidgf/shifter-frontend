@@ -15,11 +15,9 @@ const AuthCallback = () => {
 
   useEffect(() => {
     async function handleCallback() {
-      setLoading(true);
-      setError(null);
-
       let session = null;
 
+      // Paso 1: intentar intercambiar el código
       try {
         const { data, error } = await supabase.auth.exchangeCodeForSession();
         if (error) {
@@ -29,7 +27,7 @@ const AuthCallback = () => {
         session = data?.session || (await supabase.auth.getSession())?.data?.session;
 
         if (!session) {
-          setError('No se pudo recuperar tu sesión.');
+          setError('No se pudo recuperar tu sesión. Intenta iniciar sesión nuevamente.');
           return;
         }
 
@@ -38,20 +36,20 @@ const AuthCallback = () => {
       } catch (err) {
         console.error('❌ Excepción en exchangeCodeForSession:', err.message);
 
-        // 🔁 Intento de rescate: buscar sesión activa
+        // Fallback adicional si hay sesión válida
         const { data } = await supabase.auth.getSession();
         session = data?.session;
 
         if (!session) {
-          setError('Error inesperado al verificar tu cuenta. Intenta iniciar sesión de nuevo.');
+          setError('Error inesperado al verificar tu cuenta. Intenta iniciar sesión nuevamente.');
           return;
         }
 
         setCurrentUser(session.user);
       }
 
+      // Paso 2: verificación de onboarding
       try {
-        console.log('token:', session.access_token);
         const res = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/auth/post-login-check`, {
           headers: {
             Authorization: `Bearer ${session.access_token}`,
@@ -59,10 +57,10 @@ const AuthCallback = () => {
         });
 
         const result = await res.json();
-        console.log('result:', result)
+
         if (!result.success) {
           console.error('❌ Error en post-login-check:', result.message);
-          setError('No se pudo verificar tu estado. Intenta iniciar sesión nuevamente.');
+          setError('No se pudo verificar tu estado. Intenta iniciar sesión.');
           return;
         }
 
@@ -81,7 +79,7 @@ const AuthCallback = () => {
         } else if (!status.hasPhone) {
           navigate('/onboarding/phone');
         } else {
-          navigate('/calendar'); // fallback
+          navigate('/calendar');
         }
       } catch (err) {
         console.error('❌ Error en verificación post-login:', err.message);
@@ -94,16 +92,12 @@ const AuthCallback = () => {
     handleCallback();
   }, []);
 
-
-
-  if (loading) {
-    return <Loader text="Verificando tu cuenta..." />;
-  }
+  if (loading) return <Loader text="Verificando tu cuenta..." />;
 
   if (error) {
     return (
       <div className="page page-primary">
-        <div className="container" style={{ padding: '2rem' }}>
+        <div className="container" style={{ padding: '2rem', textAlign: 'center' }}>
           <h2>❌ Algo salió mal</h2>
           <p>{error}</p>
           <Button
