@@ -28,6 +28,8 @@ const AuthCallback = () => {
 
       try {
         const { data, error } = await supabase.auth.exchangeCodeForSession();
+        console.log('DATA:',data);
+        console.log('ERROR:',error);
         if (error) {
           console.warn('⚠️ exchangeCodeForSession lanzó error:', error.message);
         }
@@ -57,6 +59,7 @@ const AuthCallback = () => {
       }
 
       try {
+        console.log('🏋🏼‍♂️🏋🏼‍♂️🏋🏼‍♂️🏋🏼‍♂️CREAR WORKER')
         const initUrl = `${process.env.REACT_APP_BACKEND_URL}/api/workers/init`;
         const token = session.access_token;
       
