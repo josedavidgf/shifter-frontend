@@ -107,38 +107,34 @@ export const updateShiftPreferences = async (shiftId, preferences, token) => {
   }
 };
 
-
-// Obtener turnos disponibles propios y recibidos
-export const getMyAvailableShifts = async (workerId, token) => {
+export const getMyAvailableShifts = async (workerId) => {
   try {
-    const [myShifts, acceptedSwaps] = await Promise.all([
-      getShiftsForMonth(workerId),
-      getAcceptedSwaps(token),
-    ]);
-
     const now = new Date();
 
-    const ownShifts = (myShifts || [])
-      .filter(shift => new Date(shift.date) >= now)
-      .map(shift => ({
-        id: `${shift.date}_${shift.shift_type}`,
-        date: shift.date,
-        type: shift.shift_type,
-        label: shift.shift_label,
+    const allShifts = await getShiftsForMonth(workerId);
+
+    const ownShifts = (allShifts || [])
+      .filter(s => new Date(s.date) >= now && s.source === 'manual')
+      .map(s => ({
+        id: `${s.date}_${s.shift_type}`,
+        date: s.date,
+        type: s.shift_type,
+        label: s.shift_label || 'regular',
       }));
 
-    const receivedShifts = (acceptedSwaps || [])
-      .filter(swap => swap.offered_date && new Date(swap.offered_date) >= now)
-      .map(swap => ({
-        id: `${swap.offered_date}_${swap.offered_type}`,
-        date: swap.offered_date,
-        type: swap.offered_type,
-        label: swap.offered_label,
+    const receivedShifts = (allShifts || [])
+      .filter(s => new Date(s.date) >= now && s.source === 'received_swap')
+      .map(s => ({
+        id: `${s.date}_${s.shift_type}`,
+        date: s.date,
+        type: s.shift_type,
+        label: s.shift_label || 'received',
         indicator: 'received',
       }));
 
     return [...ownShifts, ...receivedShifts];
   } catch (error) {
-    throw new Error(handleError(error, 'Error al cargar turnos disponibles'));
+    throw new Error('Error al cargar turnos disponibles');
   }
 };
+

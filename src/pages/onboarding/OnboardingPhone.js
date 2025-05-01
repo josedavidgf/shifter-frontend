@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useUserApi } from '../../api/useUserApi';
 import { useAuth } from '../../context/AuthContext';
@@ -15,6 +15,12 @@ export default function OnboardingPhoneStep() {
   const { getToken } = useAuth();
   const { updateWorkerInfo, loading, error: apiError } = useUserApi();
   const { isWorker, refreshWorkerProfile } = useAuth();
+
+  useEffect(() => {
+    if (!isWorker) {
+      navigate('/onboarding/code'); // Redirige al primer paso para crear el worker
+    }
+  }, [isWorker]);
 
 
   const handleConfirm = async () => {
