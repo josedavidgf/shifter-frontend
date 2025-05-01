@@ -9,7 +9,7 @@ import axios from 'axios';
 
 const AuthCallback = () => {
   const navigate = useNavigate();
-  const { setCurrentUser } = useAuth();
+  const {currentUser, setCurrentUser } = useAuth();
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -32,7 +32,7 @@ const AuthCallback = () => {
       if (sessionData?.session) {
         console.log('🎯 Ya hay sesión activa');
         session = sessionData.session;
-        setCurrentUser(session.user);
+        console.log()
       } else {
         try {
           const { data, error } = await supabase.auth.exchangeCodeForSession();
@@ -42,20 +42,19 @@ const AuthCallback = () => {
           session = data?.session;
           if (session) {
             await supabase.auth.setSession(session);
-            setCurrentUser(session.user);
           }
         } catch (err) {
           console.warn('⚠️ Excepción en exchangeCodeForSession:', err.message);
         }
       }
-
+      console.log('SESSION');
       if (!session) {
         setError('No se pudo recuperar tu sesión. Intenta iniciar sesión nuevamente.');
         setLoading(false);
         return;
       }
 
-
+      console.log('PASO POR AQUI');
       try {
         console.log('🛠️ CREAR WORKER');
         const token = session.access_token;
@@ -70,10 +69,10 @@ const AuthCallback = () => {
             },
           }
         );
-
         const result = res.data;
         console.log('✅ Resultado de /init:', result);
       } catch (err) {
+        console.log('PASO POR AQUI TAMBIÉN');
         console.error('❌ Error creando el worker inicial:', err.response?.data?.message || err.message);
         setError('No se pudo crear tu perfil. Intenta iniciar sesión nuevamente.');
         await supabase.auth.signOut();
