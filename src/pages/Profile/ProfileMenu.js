@@ -4,6 +4,7 @@ import { useAuth } from '../../context/AuthContext';
 import HeaderSecondLevel from '../../components/ui/Header/HeaderSecondLevel';
 import { AddressBook, Briefcase, Notification, Gift, MessengerLogo, File, Books } from '../../theme/icons';
 import Button from '../../components/ui/Button/Button'; // Ajusta ruta si necesario
+import { TagChevron } from '../../theme/icons';
 
 
 
@@ -17,8 +18,8 @@ const ProfileMenu = () => {
     { label: 'Preferencias de comunicación', route: '/profile/preferences', Icon: Notification },
     { label: 'Referir', route: '/profile/referral', Icon: Gift },
     { label: 'Contacto', route: '/profile/contact', Icon: MessengerLogo },
-    { label: 'Términos y condiciones', route: 'https://tanda-app/legal/terms', Icon: File, external: true },
-    { label: 'Política de privacidad', route: 'https://tanda-app/legal/privacy', Icon: Books, external: true },
+    { label: 'Términos y condiciones', route: '/legal/terms-v1.pdf', Icon: File, external: true },
+    { label: 'Política de privacidad', route: '/legal/privacy-v1.pdf', Icon: Books, external: true },
   ];
   const handleLogout = async () => {
     try {
@@ -48,23 +49,34 @@ const ProfileMenu = () => {
         <div className="container">
 
           <ul className="menu-list">
-            {items.map(({ label, route, Icon }) => (
-              <li key={label} className="menu-item" onClick={() => navigate(route)}>
+            {items.map(({ label, route, Icon, external }) => (
+              <li
+                key={label}
+                className="menu-item"
+                onClick={() => {
+                  if (external) {
+                    window.open(route, '_blank', 'noopener,noreferrer');
+                  } else {
+                    navigate(route);
+                  }
+                }}
+              >
                 <div className="menu-item-left">
                   <Icon width={24} height={24} />
                   <span>{label}</span>
                 </div>
-                <span className="menu-item-chevron">{'›'}</span>
-              </li>
+                <TagChevron width={16} height={16} className="menu-item-chevron" />
+                </li>
             ))}
           </ul>
+
           <div className="logout-button-wrapper mt-8">
             <Button
               label="Cerrar sesión"
               variant="danger"
               size="lg"
               onClick={handleLogout}
-              />
+            />
           </div>
         </div>
       </div>

@@ -255,7 +255,7 @@ function MonthlyCalendar() {
     setLoadingMassiveSave(true);
     try {
       const VALID_SHIFT_TYPES = ['morning', 'evening', 'night', 'reinforcement'];
-
+  
       const updates = Object.entries(draftShiftMap)
         .filter(([dateStr, entry]) => {
           return (
@@ -265,11 +265,17 @@ function MonthlyCalendar() {
           );
         })
         .map(([dateStr, entry]) => {
+          // ✅ Añadimos el source: 'manual' antes de guardar
+          draftShiftMap[dateStr] = {
+            ...entry,
+            source: 'manual',
+          };
+  
           return setShiftForDay(isWorker.worker_id, dateStr, entry.shift_type);
         });
-
+  
       await Promise.all(updates);
-
+  
       setShiftMap(draftShiftMap);
       setDraftShiftMap(null);
       setIsMassiveEditMode(false);
@@ -281,6 +287,7 @@ function MonthlyCalendar() {
       setLoadingMassiveSave(false);
     }
   }
+  
 
   async function toggleShift(dateStr) {
     const entry = shiftMap[dateStr] || {};
