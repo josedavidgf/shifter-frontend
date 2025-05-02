@@ -2,7 +2,7 @@
 import React from 'react';
 import Button from '../../components/ui/Button/Button';
 import { Lightning } from '../../theme/icons';
-import { Lightbulb } from 'phosphor-react';
+import { CalendarPlus, Lightbulb } from 'phosphor-react';
 
 export default function DayDetailEmpty({
   dateStr,
@@ -20,7 +20,7 @@ export default function DayDetailEmpty({
           label="Añadir turno"
           variant="primary"
           size="lg"
-          leftIcon={<Lightning size={20} />}
+          leftIcon={<CalendarPlus size={20} />}
           onClick={() => onAddShift(dateStr)}
         />
 
