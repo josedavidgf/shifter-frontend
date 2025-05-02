@@ -9,7 +9,7 @@ import axios from 'axios';
 
 const AuthCallback = () => {
   const navigate = useNavigate();
-  const {currentUser, setCurrentUser } = useAuth();
+  const { currentUser, setCurrentUser, setIsWorker } = useAuth();
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -30,9 +30,7 @@ const AuthCallback = () => {
       const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
       console.log('sessionData:', sessionData);
       if (sessionData?.session) {
-        console.log('🎯 Ya hay sesión activa');
         session = sessionData.session;
-        console.log()
       } else {
         try {
           const { data, error } = await supabase.auth.exchangeCodeForSession();
@@ -47,21 +45,19 @@ const AuthCallback = () => {
           console.warn('⚠️ Excepción en exchangeCodeForSession:', err.message);
         }
       }
-      console.log('SESSION');
       if (!session) {
         setError('No se pudo recuperar tu sesión. Intenta iniciar sesión nuevamente.');
         setLoading(false);
         return;
       }
 
-      console.log('PASO POR AQUI');
       try {
-        console.log('🛠️ CREAR WORKER');
         const token = session.access_token;
-        console.log('token',token)
-        const res = await axios.post(
+
+        // 1. Crear worker si no existe
+        await axios.post(
           `${process.env.REACT_APP_BACKEND_URL}/api/workers/init`,
-          {}, // cuerpo vacío
+          {},
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -69,25 +65,30 @@ const AuthCallback = () => {
             },
           }
         );
-        console.log('res',res)
-        const result = res.data;
-        console.log('✅ Resultado de /init:', result);
+
+        // 2. Obtener el perfil actualizado y guardarlo en contexto
+        const profileRes = await axios.get(
+          `${process.env.REACT_APP_BACKEND_URL}/api/workers/me`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              'Content-Type': 'application/json',
+            },
+          }
+        );
+
+        setIsWorker(profileRes.data);
+        setLoading(false);
+        navigate('/calendar');
       } catch (err) {
-        console.log('PASO POR AQUI TAMBIÉN');
-        console.error('❌ Error creando el worker inicial:', err.response?.data?.message || err.message);
+        console.error('❌ Error creando o cargando el perfil:', err.response?.data?.message || err.message);
         setError('No se pudo crear tu perfil. Intenta iniciar sesión nuevamente.');
         await supabase.auth.signOut();
-        return;
+        setLoading(false);
       }
-
-      setLoading(false);
-      navigate('/calendar');
-
     }
 
     handleCallback();
-
-    // ✅ cleanup correcto del timeout
     return () => clearTimeout(fallbackTimeout);
   }, []);
 
