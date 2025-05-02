@@ -1,0 +1,20 @@
+.phone-input-group {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+  }
+  
+  .phone-input-group__wrapper {
+    display: flex;
+    gap: 12px;
+    width: 100%;
+  }
+  
+  .phone-input-group__prefix {
+    flex: 0 0 120px;
+  }
+  
+  .phone-input-group__number {
+    flex: 1;
+  }
+  

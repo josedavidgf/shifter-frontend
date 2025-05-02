@@ -9,6 +9,7 @@ import HeaderFirstLevel from '../../components/ui/Header/HeaderFirstLevel';
 import Loader from '../../components/ui/Loader/Loader'; // ✅
 import EmptyState from '../../components/ui/EmptyState/EmptyState';
 import { useNavigate } from 'react-router-dom';
+import useMinimumDelay from '../../hooks/useMinimumDelay';
 
 
 const HospitalShifts = () => {
@@ -20,9 +21,10 @@ const HospitalShifts = () => {
     const [workerId, setWorkerId] = useState(null);
     const [sentSwaps, setSentSwaps] = useState([]);
     const [profile, setProfile] = useState(null);
-    const [loading, setLoading] = useState(true); // ✅ UNIFICADO
-    const [error, setError] = useState(null); // ✅
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
     const navigate = useNavigate();
+    const showLoader = useMinimumDelay(loading, 500);
 
 
 
@@ -51,11 +53,7 @@ const HospitalShifts = () => {
                 console.error('❌ Error al cargar datos de hospital:', err.message);
                 setError('Error al cargar los turnos.');
             } finally {
-                const elapsed = Date.now() - startTime;
-                const delay = Math.max(0, 600 - elapsed); // ✅ delay mínimo para suavizar UX
-                setTimeout(() => {
-                    setLoading(false);
-                }, delay);
+                setLoading(false);
             }
         }
 
@@ -63,17 +61,21 @@ const HospitalShifts = () => {
     }, [getToken]);
 
 
-    if (loading) {
+    if (showLoader) {
         return <Loader text="Cargando turnos de tu servicio en tu hospital..." />;
     }
 
     if (error) {
-        return <p style={{ textAlign: 'center', marginTop: '2rem', color: 'red' }}>{error}</p>;
+        return (
+            <EmptyState
+                title="No se pudo cargar la información"
+                description={error}
+                ctaLabel="Reintentar"
+                onCtaClick={() => window.location.reload()}
+            />
+        );
     }
 
-    if (!profile) {
-        return <p>No se pudo cargar tu perfil.</p>;
-    }
 
     return (
         <>

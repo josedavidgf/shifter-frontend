@@ -11,8 +11,10 @@ import { useToast } from '../../hooks/useToast'; // Ajusta ruta
 import Loader from '../../components/ui/Loader/Loader';
 import InputField from '../../components/ui/InputField/InputField';
 import { format, parseISO } from 'date-fns';
-import { shiftTypeLabels,swapStatusLabels } from '../../utils/labelMaps';
-
+import { shiftTypeLabels, swapStatusLabels } from '../../utils/labelMaps';
+import EmptyState from '../../components/ui/EmptyState/EmptyState';
+import ConfirmationModal from '../../components/ui/ConfirmationModal/ConfirmationModal';
+import useMinimumDelay from '../../hooks/useMinimumDelay';
 
 
 const SwapDetail = () => {
@@ -27,7 +29,9 @@ const SwapDetail = () => {
     const [isRejecting, setIsRejecting] = useState(false);
     const [isCancelling, setIsCancelling] = useState(false);
     const { showSuccess, showError } = useToast();
-    const showRespondFeedback = useRespondFeedback('toast'); // 👈 ahora usamos alert
+    const showRespondFeedback = useRespondFeedback('toast');
+    const [showCancelModal, setShowCancelModal] = useState(false);
+    const showLoader = useMinimumDelay(loadingSwap || !swap || !workerId, 500);
 
 
     useTrackPageView('swap-detail');
@@ -50,7 +54,7 @@ const SwapDetail = () => {
     }, [id, getToken]);
 
 
-    if (loadingSwap || !swap || !workerId) {
+    if (showLoader) {
         return (
             <div className="flex justify-center items-center min-h-screen">
                 <Loader text="Cargando detalle del intercambio..." />
@@ -60,9 +64,12 @@ const SwapDetail = () => {
 
     if (errorSwap) {
         return (
-            <div className="flex justify-center items-center min-h-screen">
-                <p className="text-red-500">{errorSwap}</p>
-            </div>
+            <EmptyState
+                title="No se pudo cargar el intercambio"
+                description={errorSwap}
+                ctaLabel="Volver al calendario"
+                onCtaClick={() => navigate('/calendar')}
+            />
         );
     }
 
@@ -75,9 +82,10 @@ const SwapDetail = () => {
     };
 
     const handleCancelSwap = async () => {
-        const confirmCancel = window.confirm('¿Estás seguro de que quieres cancelar este intercambio?');
-        if (!confirmCancel) return;
+        setShowCancelModal(true);
+    };
 
+    const confirmCancelSwap = async () => {
         setIsCancelling(true);
         try {
             const token = await getToken();
@@ -93,6 +101,7 @@ const SwapDetail = () => {
             showError('Error inesperado al cancelar el intercambio');
         } finally {
             setIsCancelling(false);
+            setShowCancelModal(false);
         }
     };
 
@@ -120,9 +129,9 @@ const SwapDetail = () => {
 
     const handleAcceptSwap = () => handleRespond('accepted');
     const handleRejectSwap = () => handleRespond('rejected');
-/* 
-    // Mostrar chat solo si el estado lo permite
-    const showChat = ['proposed', 'accepted'].includes(swap.status); */
+    /* 
+        // Mostrar chat solo si el estado lo permite
+        const showChat = ['proposed', 'accepted'].includes(swap.status); */
 
 
     return (
@@ -158,7 +167,7 @@ const SwapDetail = () => {
                             readOnly
                         />
                     </div>
-{/* 
+                    {/* 
                     {showChat && (
                         <div className="mb-3">
                             <ChatBox
@@ -200,6 +209,15 @@ const SwapDetail = () => {
                     )}
                 </div>
             </div>
+            <ConfirmationModal
+                open={showCancelModal}
+                title="¿Cancelar intercambio?"
+                description="Esta acción no se puede deshacer. El otro trabajador dejará de verlo en su panel."
+                confirmLabel="Sí, cancelar"
+                cancelLabel="Volver"
+                onConfirm={confirmCancelSwap}
+                onCancel={() => setShowCancelModal(false)}
+            />
         </>
     );
 };

@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { formatDate, getVerb, getOtherVerb } from '../utils/dateUtils';
 import SearchFilterInput from '../components/ui/SearchFilterInput/SearchFilterInput';
 import Button from '../components/ui/Button/Button';
+import EmptyState from '../components/ui/EmptyState/EmptyState';
 
 const ChatsListTable = ({ swaps, workerId }) => {
   const navigate = useNavigate();
@@ -51,9 +52,10 @@ const ChatsListTable = ({ swaps, workerId }) => {
       </div>
 
       {filteredSwaps.length === 0 ? (
-        <p style={{ textAlign: 'center', marginTop: '2rem' }}>
-          No hay chats que coincidan con tu búsqueda.
-        </p>
+        <EmptyState
+          title="Sin resultados"
+          description="No hay chats que coincidan con tu búsqueda."
+        />
       ) : (
         <div className="chat-list">
           {filteredSwaps.map((swap) => {
@@ -65,7 +67,7 @@ const ChatsListTable = ({ swaps, workerId }) => {
             const otherPersonName = iAmRequester
               ? `${swap.shift.worker?.name} ${swap.shift.worker?.surname}`
               : `${swap.requester?.name} ${swap.requester?.surname}`;
-
+              
             return (
               <div
                 key={swap.swap_id}

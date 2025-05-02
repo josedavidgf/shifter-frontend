@@ -21,7 +21,7 @@ import DayDetailSwapped from './DayDetails/DayDetailSwapped';
 import DayDetailEmpty from './DayDetails/DayDetailEmpty';
 import Loader from '../components/ui/Loader/Loader';
 import { Sun, SunHorizon, Moon, ShieldCheck, CirclesThree, SquaresFour, Stack, Trash, FloppyDisk, CalendarPlus } from '../theme/icons';
-
+import { useToast } from '../hooks/useToast'; // ya lo usas en otras vistas
 
 
 function renderShiftIcon(shift) {
@@ -86,6 +86,13 @@ function MonthlyCalendar() {
   const { getMySwapPreferences, createSwapPreference, deleteSwapPreference, updateSwapPreference, loading: loadingSwapPreferences, error: errorSwapPreferences } = useSwapPreferencesApi();
   const { getAcceptedSwaps } = useSwapApi();
   const { getMyShiftsPublished, removeShift } = useShiftApi();
+  const { showError, showSuccess } = useToast();
+  const [loadingMassiveSave, setLoadingMassiveSave] = useState(false);
+  const [loadingToggleShift, setLoadingToggleShift] = useState(false);
+  const [loadingTogglePreference, setLoadingTogglePreference] = useState(false);
+  const [loadingDeletePreference, setLoadingDeletePreference] = useState(false);
+  const [loadingDeletePublication, setLoadingDeletePublication] = useState(false);
+  const [loadingRemoveShift, setLoadingRemoveShift] = useState(false);
 
 
   useEffect(() => {
@@ -122,9 +129,25 @@ function MonthlyCalendar() {
       const preferences = results[1].status === 'fulfilled' ? results[1].value : [];
       const publishedShifts = results[2].status === 'fulfilled' ? results[2].value : [];
 
-      if (results[0].status === 'rejected') console.error('❌ Error cargando schedules:', results[0].reason.message);
-      if (results[1].status === 'rejected') console.error('❌ Error cargando preferencias:', results[1].reason.message);
-      if (results[2].status === 'rejected') console.error('❌ Error cargando publicaciones:', results[2].reason.message);
+      const errors = [];
+
+      if (results[0].status === 'rejected') {
+        console.error('❌ Error cargando schedules:', results[0].reason.message);
+        errors.push('turnos');
+      }
+      if (results[1].status === 'rejected') {
+        console.error('❌ Error cargando preferencias:', results[1].reason.message);
+        errors.push('preferencias');
+      }
+      if (results[2].status === 'rejected') {
+        console.error('❌ Error cargando publicaciones:', results[2].reason.message);
+        errors.push('turnos publicados');
+      }
+
+      if (errors.length > 0) {
+        showError(`Error al cargar: ${errors.join(', ')}`);
+      }
+
 
       const publishedMap = new Map();
       publishedShifts.forEach(s => {
@@ -229,6 +252,7 @@ function MonthlyCalendar() {
 
 
   async function handleSaveMassiveEdit() {
+    setLoadingMassiveSave(true);
     try {
       const VALID_SHIFT_TYPES = ['morning', 'evening', 'night', 'reinforcement'];
 
@@ -249,15 +273,18 @@ function MonthlyCalendar() {
       setShiftMap(draftShiftMap);
       setDraftShiftMap(null);
       setIsMassiveEditMode(false);
+      showSuccess('Cambios guardados correctamente');
     } catch (error) {
       console.error('❌ Error guardando cambios masivos:', error.message);
+      showError('Error guardando los cambios');
+    } finally {
+      setLoadingMassiveSave(false);
     }
   }
 
   async function toggleShift(dateStr) {
     const entry = shiftMap[dateStr] || {};
     const newType = getNextShiftType(entry.shift_type);
-
     const updatedEntry = { ...entry };
 
     if (newType) {
@@ -273,14 +300,20 @@ function MonthlyCalendar() {
       [dateStr]: updatedEntry,
     }));
 
+    setLoadingToggleShift(true);
     try {
       if (newType) {
         await setShiftForDay(isWorker.worker_id, dateStr, newType); // ✅ Desde useCalendarApi
+        showSuccess(`Turno actualizado para ${dateStr}`);
       } else {
         await removeShiftForDay(isWorker.worker_id, dateStr); // ✅ Desde useCalendarApi
+        showSuccess(`Turno eliminado en ${dateStr}`);
       }
     } catch (error) {
       console.error('❌ Error gestionando turno:', error.message);
+      showError('Error al actualizar el turno');
+    } finally {
+      setLoadingToggleShift(false);
     }
   }
 
@@ -289,7 +322,6 @@ function MonthlyCalendar() {
   async function togglePreference(dateStr) {
     const entry = shiftMap[dateStr] || {};
     const newTypePreference = getNextPreferenceType(entry.preference_type);
-
     const updatedEntry = { ...entry };
 
     if (newTypePreference) {
@@ -305,6 +337,7 @@ function MonthlyCalendar() {
       [dateStr]: updatedEntry,
     }));
 
+    setLoadingTogglePreference(true);
     try {
       if (newTypePreference) {
         if (entry.preference_type !== newTypePreference) {
@@ -328,13 +361,18 @@ function MonthlyCalendar() {
             }));
           }
         }
+        showSuccess(`Preferencia actualizada para ${dateStr}`);
       } else {
         if (entry.preferenceId) {
           await deleteSwapPreference(entry.preferenceId); // ✅ Desde useSwapPreferencesApi
+          showSuccess(`Preferencia eliminada en ${dateStr}`);
         }
       }
     } catch (error) {
       console.error('❌ Error gestionando preferencia:', error.message);
+      showError('Error al actualizar la preferencia');
+    } finally {
+      setLoadingTogglePreference(false);
     }
   }
 
@@ -346,6 +384,7 @@ function MonthlyCalendar() {
       return;
     }
 
+    setLoadingDeletePreference(true);
     try {
       await deleteSwapPreference(entry.preferenceId); // ✅ desde useSwapPreferencesApi
 
@@ -358,13 +397,23 @@ function MonthlyCalendar() {
         ...prev,
         [dateStr]: updatedEntry,
       }));
+      showSuccess(`Preferencia eliminada para ${dateStr}`);
     } catch (error) {
       console.error('❌ Error al eliminar preferencia:', error.message);
+      showError('Error al eliminar la preferencia');
+    } finally {
+      setLoadingDeletePreference(false);
     }
   }
 
 
   async function handleDeletePublication(shiftId, dateStr) {
+    if (!shiftId) {
+      showError('No se encontró el turno para eliminar la publicación.');
+      return;
+    }
+
+    setLoadingDeletePublication(true);
     try {
       const token = await getToken(); // ✅ Obtener token antes
       //console.log('shiftId:', shiftId);
@@ -378,10 +427,15 @@ function MonthlyCalendar() {
         setShiftMap(prev => ({
           ...prev,
           [dateStr]: updatedEntry,
-        }));
+        })); showSuccess(`Turno despublicado correctamente (${dateStr})`);
+      } else {
+        showError('No se pudo eliminar la publicación');
       }
     } catch (error) {
       console.error('❌ Error al eliminar publicación:', error.message);
+      showError('Error al eliminar la publicación del turno');
+    } finally {
+      setLoadingDeletePublication(false);
     }
   }
 
@@ -424,6 +478,14 @@ function MonthlyCalendar() {
 
 
   async function handleRemoveShiftForDay(dateStr) {
+    const entry = shiftMap[dateStr];
+
+    if (!entry?.shift_type) {
+      showError('No hay turno asignado para este día');
+      return;
+    }
+    setLoadingRemoveShift(true);
+
     try {
       await removeShiftForDay(isWorker.worker_id, dateStr);
 
@@ -437,8 +499,12 @@ function MonthlyCalendar() {
       }));
 
       setSelectedDay(dateStr);
+      showSuccess(`Turno eliminado para el ${dateStr}`);
     } catch (error) {
       console.error('Error eliminando turno del día:', error.message);
+      showError('Error al eliminar el turno');
+    } finally {
+      setLoadingRemoveShift(false);
     }
   }
 
@@ -462,6 +528,8 @@ function MonthlyCalendar() {
           onRemoveShift={handleRemoveShiftForDay}
           onEditShift={toggleShift}
           navigate={navigate}
+          loadingDeletePublication={loadingDeletePublication}
+          loadingRemoveShift={loadingRemoveShift}
         />
       );
     }
@@ -474,6 +542,7 @@ function MonthlyCalendar() {
           dayLabel={dayLabel}
           onEditPreference={togglePreference}
           onDeletePreference={handleDeletePreference}
+          loadingDeletePreference={loadingDeletePreference}
         />
       );
     }
@@ -595,7 +664,8 @@ function MonthlyCalendar() {
                 const shiftType = entry.shift_type || '';
                 const isSwappedOut = entry.source === 'swapped_out';
                 const flags = entry || {};
-                const isPast = format(day, 'yyyy-MM-dd') < today;
+                const todayDate = new Date();
+                const isPast = day < todayDate;
                 const isSelected = selectedDay === dateStr;
 
 
@@ -648,7 +718,8 @@ function MonthlyCalendar() {
             leftIcon={<FloppyDisk size={16} />}
             size="md"
             onClick={handleSaveMassiveEdit}
-          />
+            isLoading={loadingMassiveSave}
+            disabled={loadingMassiveSave} />
           <Button
             label="Descartar"
             variant="danger"

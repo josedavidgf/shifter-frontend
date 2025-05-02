@@ -7,6 +7,8 @@ import HeaderFirstLevel from '../../components/ui/Header/HeaderFirstLevel';
 import Loader from '../../components/ui/Loader/Loader';
 import EmptyState from '../../components/ui/EmptyState/EmptyState';
 import { useNavigate } from 'react-router-dom';
+import useMinimumDelay from '../../hooks/useMinimumDelay';
+import { useToast } from '../../hooks/useToast'; // ya lo usas en otras vistas
 
 const MySwaps = () => {
   const { getToken } = useAuth();
@@ -15,6 +17,9 @@ const MySwaps = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
+  const { showError } = useToast();
+  const showLoader = useMinimumDelay(loading, 500);
+
 
 
   useTrackPageView('my-swaps');
@@ -41,26 +46,30 @@ const MySwaps = () => {
         setSwaps(sorted);
       } catch (err) {
         console.error('❌ Error al cargar swaps:', err.message);
-        setError('Error al cargar intercambios');
+        showError('Error al cargar los intercambios. Intenta de nuevo.');
       } finally {
-        const elapsed = Date.now() - startTime;
-        const delay = Math.max(0, 1000 - elapsed); // queremos garantizar al menos 400ms de loading
-        setTimeout(() => {
           setLoading(false);
-        }, delay);
       }
     }
 
     fetchSwaps();
   }, [getToken]);
 
-  if (loading) {
+  if (showLoader) {
     return <Loader text="Cargando intercambios..." />;
   }
 
   if (error) {
-    return <p style={{ textAlign: 'center', marginTop: '2rem', color: 'red' }}>{error}</p>;
+    return (
+      <EmptyState
+        title="No se pudo cargar la información"
+        description={error}
+        ctaLabel="Reintentar"
+        onCtaClick={() => window.location.reload()}
+      />
+    );
   }
+  
 
   return (
     <>
@@ -70,7 +79,7 @@ const MySwaps = () => {
           {swaps.length === 0 ? (
             <EmptyState
               title="No tienes intercambios activos"
-              description="Cuando propongas o aceptes un intercambio, aparecerán aquí."
+              description="Cuando propongas o te propongan un intercambio, aparecerán aquí."
               ctaLabel="Buscar turnos"
               onCtaClick={() => navigate('/shifts/hospital')}
             />

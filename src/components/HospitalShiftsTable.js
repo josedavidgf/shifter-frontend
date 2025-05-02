@@ -4,11 +4,14 @@ import Button from '../components/ui/Button/Button';
 import { shiftTypeLabels } from '../utils/labelMaps';
 import SelectorInput from '../components/ui/SelectorInput/SelectorInput';
 import { Eraser } from '../theme/icons';
+import EmptyState from '../components/ui/EmptyState/EmptyState';
+import { useToast } from '../hooks/useToast'; // ya lo usas en otras vistas
 
 
 const HospitalShiftsTable = ({ shifts, workerId, sentSwapShiftIds }) => {
   const navigate = useNavigate();
   const currentMonth = new Date().toISOString().slice(0, 7); // YYYY-MM
+  const { showWarning } = useToast();
 
   const [filters, setFilters] = useState({
     date: currentMonth,
@@ -22,7 +25,7 @@ const HospitalShiftsTable = ({ shifts, workerId, sentSwapShiftIds }) => {
   const handleSelectorChange = (name, value) => {
     setFilters((prev) => ({ ...prev, [name]: value }));
   };
-  
+
 
   const clearFilters = () => {
     setFilters({
@@ -77,9 +80,12 @@ const HospitalShiftsTable = ({ shifts, workerId, sentSwapShiftIds }) => {
         </div>
       </div>
       {filteredShifts.length === 0 ? (
-        <p style={{ textAlign: 'center', marginTop: '2rem' }}>
-          No hay turnos que coincidan con tu búsqueda.
-        </p>
+        <EmptyState
+          title="Sin turnos disponibles"
+          description="No hay turnos que coincidan con los filtros seleccionados."
+          ctaLabel="Limpiar filtros"
+          onCtaClick={clearFilters}
+        />
       ) : (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
           {filteredShifts.map((shift) => {
@@ -87,13 +93,21 @@ const HospitalShiftsTable = ({ shifts, workerId, sentSwapShiftIds }) => {
             const alreadyProposed = sentSwapShiftIds.includes(shift.shift_id);
             const isDisabled = isMine || shift.state !== 'published' || alreadyProposed;
 
+            const handleClick = () => {
+              if (isDisabled) {
+                if (isMine) showWarning('Este turno es tuyo.');
+                else if (alreadyProposed) showWarning('Ya has propuesto un intercambio para este turno.');
+                else if (shift.state !== 'published') showWarning('Este turno no está disponible.');
+              } else {
+                navigate(`/propose-swap/${shift.shift_id}`);
+              }
+            };
+
             return (
               <div
                 key={shift.shift_id}
                 className={`shift-card ${isDisabled ? 'disabled' : ''}`}
-                onClick={() => {
-                  if (!isDisabled) navigate(`/propose-swap/${shift.shift_id}`);
-                }}
+                onClick={handleClick}
               >
                 <div className="shift-info">
                   <div className="shift-date">{shift.date} de {shiftTypeLabels[shift.shift_type]}</div>
@@ -103,15 +117,15 @@ const HospitalShiftsTable = ({ shifts, workerId, sentSwapShiftIds }) => {
                   </div>
                 </div>
 
-                {alreadyProposed && (
-                  <span className="shift-status">Intercambio propuesto</span>
-                )}
+                {isMine && <span className="shift-status">Tu turno</span>}
+                {alreadyProposed && <span className="shift-status">Intercambio ya propuesto</span>}
+                {shift.state !== 'published' && <span className="shift-status">No disponible</span>}
               </div>
             );
           })}
         </div>
       )}
-    </div >
+    </div>
   );
 };
 

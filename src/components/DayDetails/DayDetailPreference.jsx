@@ -8,7 +8,8 @@ export default function DayDetailPreference({
   entry,
   dayLabel,
   onEditPreference,
-  onDeletePreference
+  onDeletePreference,
+  loadingDeletePreference
 }) {
   return (
     <div>
@@ -27,6 +28,8 @@ export default function DayDetailPreference({
           size="md"
           onClick={() => onDeletePreference(dateStr)}
           style={{ marginTop: '1rem' }}
+          isLoading={loadingDeletePreference}
+          disabled={loadingDeletePreference}
         />
       </div>
     </div>

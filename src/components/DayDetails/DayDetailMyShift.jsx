@@ -13,6 +13,8 @@ export default function DayDetailMyShift({
   onRemoveShift,
   onEditShift,
   navigate,
+  loadingDeletePublication,
+  loadingRemoveShift,
 }) {
   return (
     <div>
@@ -28,6 +30,8 @@ export default function DayDetailMyShift({
             leftIcon={<Trash size={20} />}
             size="lg"
             onClick={() => onDeletePublication(entry.shift_id, dateStr)}
+            isLoading={loadingDeletePublication}
+            disabled={loadingDeletePublication}
           />
         </>
       ) : (
@@ -55,6 +59,8 @@ export default function DayDetailMyShift({
                 size="md"
                 leftIcon={<Trash size={20} />}
                 onClick={() => onRemoveShift(dateStr)}
+                isLoading={loadingRemoveShift}
+                disabled={loadingRemoveShift}
               />
             </div>
           </div>

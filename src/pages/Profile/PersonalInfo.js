@@ -2,28 +2,28 @@ import React, { useEffect, useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { useUserApi } from '../../api/useUserApi';
 import supabase from '../../config/supabase';
-import InputField from '../../components/ui/InputField/InputField';
 import { useNavigate } from 'react-router-dom';
 import HeaderSecondLevel from '../../components/ui/Header/HeaderSecondLevel';
-import Button from '../../components/ui/Button/Button'; // Ajusta ruta si necesario
+import Button from '../../components/ui/Button/Button';
 import { useToast } from '../../hooks/useToast';
-
+import { phonePrefixes } from '../../utils/phonePrefixes';
+import InputField from '../../components/ui/InputField/InputField';
+import PhoneInputGroup from '../../components/ui/PhoneInputGroup/PhoneInputGroup';
 
 const PersonalInfo = () => {
   const { getToken } = useAuth();
-  const { getFullWorkerProfile, updateWorkerInfo, loading, error: apiError } = useUserApi();
+  const { getFullWorkerProfile, updateWorkerInfo, loading } = useUserApi();
   const navigate = useNavigate();
   const { showSuccess, showError, showWarning } = useToast();
-  const [initialForm, setInitialForm] = useState(null);
 
+  const [initialForm, setInitialForm] = useState(null);
 
   const [form, setForm] = useState({
     name: '',
     surname: '',
-    mobile_country_code: '',
+    mobile_country_code: '+34',
     mobile_phone: '',
   });
-  const [message, setMessage] = useState('');
 
   useEffect(() => {
     async function fetchData() {
@@ -32,13 +32,13 @@ const PersonalInfo = () => {
 
       if (data?.worker) {
         const fetchedForm = {
-          name: data.worker.name,
-          surname: data.worker.surname,
-          mobile_country_code: data.worker.mobile_country_code || '',
+          name: data.worker.name || '',
+          surname: data.worker.surname || '',
+          mobile_country_code: data.worker.mobile_country_code || '+34',
           mobile_phone: data.worker.mobile_phone || '',
         };
         setForm(fetchedForm);
-        setInitialForm(fetchedForm); // ⬅️ Guarda copia inicial
+        setInitialForm(fetchedForm);
       }
     }
     fetchData();
@@ -61,8 +61,11 @@ const PersonalInfo = () => {
 
     if (uploadError) {
       console.error('Error subiendo imagen:', uploadError.message);
+      showError('Error al subir imagen de perfil.');
       return;
     }
+
+    showSuccess('Imagen subida correctamente');
   };
 
   const handleChange = (e) => {
@@ -70,16 +73,43 @@ const PersonalInfo = () => {
     setForm((prev) => ({ ...prev, [name]: value }));
   };
 
+  const handlePhoneGroupChange = ({ prefix, phone }) => {
+    setForm((prev) => ({
+      ...prev,
+      mobile_country_code: prefix,
+      mobile_phone: phone
+    }));
+  };
+
   async function handleSubmit(e) {
     e.preventDefault();
+
     if (JSON.stringify(form) === JSON.stringify(initialForm)) {
       showWarning('No se han hecho cambios');
       return;
     }
 
+    const cleanedPhone = form.mobile_phone.replace(/\s+/g, '');
+    const isValidPhone = /^\d{9}$/.test(cleanedPhone);
+    const isValidPrefix = phonePrefixes.some(p => p.code === form.mobile_country_code);
+
+    if (!isValidPrefix) {
+      showError('Selecciona un prefijo válido.');
+      return;
+    }
+
+    if (!isValidPhone) {
+      showError('El teléfono debe tener exactamente 9 dígitos.');
+      return;
+    }
+
     const token = await getToken();
     try {
-      const updated = await updateWorkerInfo(form, token);
+      const updated = await updateWorkerInfo({
+        ...form,
+        mobile_phone: cleanedPhone
+      }, token);
+
       if (updated) {
         showSuccess('Información actualizada');
       } else {
@@ -89,7 +119,6 @@ const PersonalInfo = () => {
       showError('Error al actualizar la información');
     }
   }
-
 
   const handleBack = () => {
     if (window.history.length > 1) {
@@ -108,7 +137,6 @@ const PersonalInfo = () => {
       />
       <div className="page page-secondary">
         <div className="container">
-
           <form onSubmit={handleSubmit}>
             <InputField
               name="name"
@@ -126,40 +154,30 @@ const PersonalInfo = () => {
               onChange={handleChange}
               required
             />
-            <InputField
-              name="mobile_country_code"
-              label="Prefijo"
-              placeholder="Ej: +34"
-              value={form.mobile_country_code}
-              onChange={handleChange}
-              type="text"
-            />
-            <InputField
-              name="mobile_phone"
-              label="Teléfono"
-              placeholder="Introduce tu teléfono"
-              value={form.mobile_phone}
-              onChange={handleChange}
-              type="tel"
+            <PhoneInputGroup
+              prefix={form.mobile_country_code}
+              phone={form.mobile_phone}
+              onChange={handlePhoneGroupChange}
+              prefixOptions={phonePrefixes.map(p => ({
+                value: p.code,
+                label: `${p.flag} ${p.code}`,
+              }))}
             />
 
             <div className="form-group">
               <label>Imagen de perfil:</label>
               <input type="file" accept="image/*" onChange={handleAvatarChange} />
             </div>
+
             <Button
               label="Guardar"
               variant="primary"
               size="lg"
               type="submit"
               disabled={!form.name || !form.surname || loading}
-              isLoading={loading} // 🆕
+              isLoading={loading}
             />
           </form>
-
-
-          {apiError && <p style={{ color: 'red', marginTop: '1rem' }}>{apiError}</p>}
-          {message && <p className="mt-2">{message}</p>}
         </div>
       </div>
     </>

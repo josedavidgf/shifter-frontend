@@ -3,25 +3,24 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { useWorkerApi } from '../../api/useWorkerApi';
 import { useAuth } from '../../context/AuthContext';
 import HeaderSecondLevel from '../../components/ui/Header/HeaderSecondLevel';
-import Button from '../../components/ui/Button/Button'; // Ajusta ruta si necesario
-import { useToast } from '../../hooks/useToast'; // Ajusta ruta
-
+import Button from '../../components/ui/Button/Button';
+import { useToast } from '../../hooks/useToast';
+import Loader from '../../components/ui/Loader/Loader';
 
 export default function OnboardingConfirmStep() {
   const [hospitalId, setHospitalId] = useState('');
   const [workerTypeId, setWorkerTypeId] = useState('');
-  const [error, setError] = useState('');
-  const { getToken } = useAuth();
-  const { createWorker, createWorkerHospital, loading, error: workerApiError } = useWorkerApi(); // 🆕
+  const [loadingForm, setLoadingForm] = useState(false);
+
+  const { getToken, setIsWorker, refreshWorkerProfile } = useAuth();
+  const { createWorker, createWorkerHospital } = useWorkerApi();
   const navigate = useNavigate();
-  const { setIsWorker, refreshWorkerProfile } = useAuth();
   const { showSuccess, showError } = useToast();
 
   const location = useLocation();
   const { hospital_id, worker_type_id, hospitalName, workerTypeName } = location.state || {};
 
   useEffect(() => {
-
     if (!hospital_id || !worker_type_id) {
       navigate('/onboarding/code');
     } else {
@@ -30,29 +29,29 @@ export default function OnboardingConfirmStep() {
     }
   }, [hospital_id, worker_type_id, navigate]);
 
-
   const handleConfirm = async () => {
-    const token = await getToken();
-
+    setLoadingForm(true);
     try {
+      const token = await getToken();
+
       const response = await createWorker({ workerTypeId }, token);
-      if (response?.success) {
-        showSuccess('Trabajador creado con éxito');
-        setIsWorker(true);
-      } else {
+      if (!response?.success) {
         throw new Error(response?.message || 'Error al crear el trabajador');
       }
 
       await createWorkerHospital(response.worker.worker_id, hospitalId, token);
-
       await refreshWorkerProfile();
 
+      showSuccess('Trabajador creado con éxito');
       navigate('/onboarding/speciality');
     } catch (err) {
-      console.error('Error creando el worker:', err.message);
+      console.error('❌ Error creando el worker:', err.message);
       showError('Error creando el perfil. Por favor inténtalo de nuevo.');
+    } finally {
+      setLoadingForm(false);
     }
   };
+
   const handleBack = () => {
     if (window.history.length > 1) {
       navigate(-1);
@@ -67,31 +66,29 @@ export default function OnboardingConfirmStep() {
         showBackButton
         onBack={handleBack}
       />
-      <div className='page page-primary'>
-        <div className='container'>
+      <div className="page page-primary">
+        <div className="container">
           <h2 className="register-code__title">
             El código que has introducido te habilita Tanda como
             <span className="highlight-purple"> {workerTypeName}</span> en
             <span className="highlight-purple"> {hospitalName}</span>
           </h2>
 
-          {error && <p style={{ color: 'red' }}>{error}</p>}
-          {workerApiError && <p style={{ color: 'red' }}>{workerApiError}</p>}
-
           <div className="btn-group">
-
             <Button
               label="Crear cuenta"
               variant="primary"
               size="lg"
               onClick={handleConfirm}
-              disabled={loading}
+              disabled={loadingForm}
+              isLoading={loadingForm}
             />
             <Button
               label="Contactar con Tanda"
               variant="outline"
               size="lg"
               onClick={() => navigate('/onboarding/code')}
+              disabled={loadingForm}
             />
           </div>
         </div>

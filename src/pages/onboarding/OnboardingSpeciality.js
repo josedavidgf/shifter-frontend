@@ -5,42 +5,57 @@ import { useAuth } from '../../context/AuthContext';
 import HeaderSecondLevel from '../../components/ui/Header/HeaderSecondLevel';
 import Button from '../../components/ui/Button/Button';
 import SpecialitiesTable from '../../components/SpecialitiesTable';
+import Loader from '../../components/ui/Loader/Loader';
+import useMinimumDelay from '../../hooks/useMinimumDelay';
+import { useToast } from '../../hooks/useToast';
 
 export default function OnboardingSpecialityStep() {
   const [specialities, setSpecialities] = useState([]);
   const [selectedSpeciality, setSelectedSpeciality] = useState('');
-  const [error, setError] = useState('');
+  const [loadingInitial, setLoadingInitial] = useState(true);
+
   const navigate = useNavigate();
   const { getToken, isWorker, refreshWorkerProfile } = useAuth();
-  const { getSpecialitiesByHospital, addSpecialityToWorker, loading, error: apiError } = useSpecialityApi();
+  const {
+    getSpecialitiesByHospital,
+    addSpecialityToWorker,
+    loading
+  } = useSpecialityApi();
+  const { showError } = useToast();
+
+  const showLoader = useMinimumDelay(loadingInitial, 400);
 
   useEffect(() => {
     const fetchSpecialities = async () => {
       try {
         const token = await getToken();
+        const hospitalId = isWorker?.workers_hospitals?.[0]?.hospital_id;
 
-        if (!isWorker?.workers_hospitals?.[0]?.hospital_id) {
+        if (!hospitalId) {
           navigate('/onboarding/code');
           return;
         }
 
-        const data = await getSpecialitiesByHospital(isWorker.workers_hospitals?.[0]?.hospital_id, token);
+        const data = await getSpecialitiesByHospital(hospitalId, token);
         setSpecialities(data);
       } catch (err) {
-        console.error('Error fetching specialities:', err.message);
+        console.error('❌ Error fetching specialities:', err.message);
+        showError('Error cargando especialidades.');
+      } finally {
+        setLoadingInitial(false);
       }
     };
 
     fetchSpecialities();
-  }, [getToken, isWorker, navigate]);
+  }, [getToken, isWorker, navigate, getSpecialitiesByHospital, showError]);
 
   const handleConfirm = async () => {
     try {
       const token = await getToken();
-      const workerId = isWorker.worker_id;
+      const workerId = isWorker?.worker_id;
 
       if (!workerId || !selectedSpeciality) {
-        setError('Debes seleccionar una especialidad.');
+        showError('Debes seleccionar una especialidad antes de continuar.');
         return;
       }
 
@@ -48,8 +63,8 @@ export default function OnboardingSpecialityStep() {
       await refreshWorkerProfile();
       navigate('/onboarding/name');
     } catch (err) {
-      console.error('Error adding speciality to worker:', err.message);
-      setError('Error guardando la especialidad.');
+      console.error('❌ Error adding speciality to worker:', err.message);
+      showError('Error guardando la especialidad.');
     }
   };
 
@@ -60,6 +75,8 @@ export default function OnboardingSpecialityStep() {
       navigate('/calendar');
     }
   };
+
+  if (showLoader) return <Loader text="Cargando especialidades..." />;
 
   return (
     <>
@@ -77,14 +94,13 @@ export default function OnboardingSpecialityStep() {
             setSelectedSpeciality={setSelectedSpeciality}
           />
 
-          {(error || apiError) && <p style={{ color: 'red' }}>{error || apiError}</p>}
-
           <Button
             label="Continuar"
             variant="primary"
             size="lg"
             onClick={handleConfirm}
-            disabled={!selectedSpeciality} // Solo habilitado si seleccionan algo
+            disabled={!selectedSpeciality || loading}
+            isLoading={loading}
           />
         </div>
       </div>

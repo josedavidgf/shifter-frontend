@@ -33,6 +33,8 @@
 @import './components/access-code-input.css';
 @import './components/toogle-switch.css';
 @import './components/search-filter-input.css';
+@import './components/confirmation-modal.css';
+@import './components/phone-input-group.css';
 
 /* Pages */
 @import './pages/calendar.css';
