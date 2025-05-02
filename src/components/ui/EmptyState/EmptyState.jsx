@@ -11,11 +11,11 @@ const EmptyState = ({
 }) => {
   return (
     <div className="empty-state-container">
-      <img
+      {/* <img
         src={logoTanda}
         alt="Tanda Logo"
         className="empty-state-logo"
-      />
+      /> */}
 
       <h2 className="empty-state-title">{title}</h2>
       {description && <p className="empty-state-description">{description}</p>}

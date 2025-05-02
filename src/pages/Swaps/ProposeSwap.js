@@ -10,6 +10,8 @@ import HeaderSecondLevel from '../../components/ui/Header/HeaderSecondLevel';
 import Button from '../../components/ui/Button/Button';
 import Loader from '../../components/ui/Loader/Loader';
 import EmptyState from '../../components/ui/EmptyState/EmptyState';
+import { useToast } from '../../hooks/useToast'; // ya lo usas en otras vistas
+import useMinimumDelay from '../../hooks/useMinimumDelay';
 
 
 const ProposeSwap = () => {
@@ -19,6 +21,8 @@ const ProposeSwap = () => {
   const { showSwapFeedback } = useSwapFeedback();
   const { shifts, loading: loadingShifts, error: errorShifts } = useAvailableShifts();
   const { proposeSwap, loading: loadingPropose, error: errorPropose } = useSwapApi(); // 🆕
+  const { showError } = useToast();
+  const showLoader = useMinimumDelay(loadingShifts, 500);
 
 
   const [selectedShift, setSelectedShift] = useState(null);
@@ -36,7 +40,7 @@ const ProposeSwap = () => {
     e.preventDefault();
 
     if (!selectedShift) {
-      alert('Por favor selecciona un turno para ofrecer.');
+      showError('Por favor selecciona un turno para ofrecer.');
       return;
     }
 
@@ -54,7 +58,7 @@ const ProposeSwap = () => {
         showSwapFeedback(result);
         navigate('/shifts/hospital');
       } else {
-        alert('No se pudo enviar la propuesta de intercambio.');
+        showError('No se pudo enviar la propuesta de intercambio. Intenta de nuevo.');
       }
     } catch (err) {
       console.error('❌ Error al proponer intercambio:', err.message);
@@ -70,7 +74,7 @@ const ProposeSwap = () => {
     }
   };
 
-  if (loadingShifts) {
+  if (showLoader ) {
     return (
       <div className="flex justify-center items-center min-h-screen">
         <Loader text="Cargando turnos disponibles..." />
@@ -82,7 +86,7 @@ const ProposeSwap = () => {
     return <p style={{ color: 'red' }}>{errorShifts}</p>;
   }
 
-  if (shifts.length === 0) {
+  if (!loadingShifts && shifts.length === 0) {
     return (
       <>
         <HeaderSecondLevel

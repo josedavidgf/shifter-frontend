@@ -24,11 +24,13 @@ export const getMessagesBySwap = async (swapId) => {
 // Enviar un mensaje en un swap
 export const sendMessage = async ({ swap_id, sender_id, recipient_id, content }) => {
   try {
+    if (!content || !content.trim()) {
+      throw new Error('Mensaje vacío');
+    }
+
     const { error } = await supabase
       .from('messages')
-      .insert([
-        { swap_id, sender_id, recipient_id, content },
-      ]);
+      .insert([{ swap_id, sender_id, recipient_id, content }]);
 
     if (error) {
       throw new Error(error.message || 'Error al enviar mensaje');

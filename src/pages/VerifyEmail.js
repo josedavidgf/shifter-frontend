@@ -5,32 +5,32 @@ import Button from '../components/ui/Button/Button';
 import supabase from '../config/supabase';
 import { useToast } from '../hooks/useToast';
 
-
-
 const VerifyEmail = () => {
   const { pendingEmail } = useAuth();
-  const [status, setStatus] = useState('');
   const { showSuccess, showError } = useToast();
-
+  const [loadingResend, setLoadingResend] = useState(false);
 
   useTrackPageView('verify-email');
 
   const handleResend = async () => {
     if (!pendingEmail) {
-      setStatus('❌ No se pudo encontrar el email registrado.');
+      showError('No se pudo encontrar el email registrado.');
       return;
     }
 
+    setLoadingResend(true);
     try {
       const { error } = await supabase.auth.resend({
         type: 'signup',
         email: pendingEmail,
       });
       if (error) throw error;
-      showSuccess('Verificación reenviada. Revisa tu correo');
+      showSuccess('Verificación reenviada. Revisa tu correo.');
     } catch (err) {
-      console.error(err);
+      console.error('❌ Error reenviando email de verificación:', err.message);
       showError('Error al reenviar la verificación. Intenta de nuevo más tarde.');
+    } finally {
+      setLoadingResend(false);
     }
   };
 
@@ -47,9 +47,9 @@ const VerifyEmail = () => {
             variant="outline"
             size="lg"
             onClick={handleResend}
-            disabled={!pendingEmail}
+            disabled={!pendingEmail || loadingResend}
+            isLoading={loadingResend}
           />
-          {status && <p style={{ marginTop: '1rem' }}>{status}</p>}
         </div>
       </div>
     </div>

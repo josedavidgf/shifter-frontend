@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import HeaderFirstLevel from '../../components/ui/Header/HeaderFirstLevel';
 import Loader from '../../components/ui/Loader/Loader';
 import EmptyState from '../../components/ui/EmptyState/EmptyState';
-import ChatsListTable from '../../components/ChatsListTable'; // ✅
+import ChatsListTable from '../../components/ChatsListTable';
 
 const ChatsList = () => {
   const { getToken } = useAuth();
@@ -23,7 +23,6 @@ const ChatsList = () => {
     async function fetchData() {
       setLoading(true);
       setError(null);
-
       const startTime = Date.now();
 
       try {
@@ -37,7 +36,7 @@ const ChatsList = () => {
         }
       } catch (err) {
         console.error('❌ Error cargando chats:', err.message);
-        setError('Error al cargar chats activos.');
+        setError('No se pudieron cargar tus chats activos.');
       } finally {
         const elapsed = Date.now() - startTime;
         const delay = Math.max(0, 600 - elapsed);
@@ -50,6 +49,7 @@ const ChatsList = () => {
     fetchData();
   }, [getToken]);
 
+  // Un chat se considera activo si hoy es anterior o igual a la fecha del turno o del turno ofrecido
   const isActive = (swap) => {
     const turnoDate = new Date(swap.shift.date);
     const offeredDate = new Date(swap.offered_date);
@@ -57,15 +57,22 @@ const ChatsList = () => {
     return new Date() <= maxDate;
   };
 
+  const activeSwaps = swaps.filter(isActive);
+
   if (loading) {
     return <Loader text="Cargando chats activos..." />;
   }
 
   if (error) {
-    return <p style={{ textAlign: 'center', marginTop: '2rem', color: 'red' }}>{error}</p>;
+    return (
+      <EmptyState
+        title="Error al cargar chats"
+        description={error}
+        ctaLabel="Reintentar"
+        onCtaClick={() => window.location.reload()}
+      />
+    );
   }
-
-  const activeSwaps = swaps.filter(isActive);
 
   return (
     <>

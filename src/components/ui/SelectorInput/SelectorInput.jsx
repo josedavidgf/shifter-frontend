@@ -26,42 +26,48 @@ const SelectorInput = ({
 
     return (
         <div className={`input-field ${error ? 'error' : ''} ${disabled ? 'disabled' : ''}`}>
-            <div className="input-selector__wrapper">
-                <select
-                    id={name}
-                    name={name}
-                    className="input-selector__select"
-                    value={value}
-                    onChange={onChange}
-                    onFocus={handleFocus}
-                    onBlur={handleBlur}
-                    disabled={disabled}
-                >
-                    <option value="" disabled hidden>
-                        Selecciona una opción
-                    </option>
-                    {options.map((option) => (
-                        <option key={option.value} value={option.value}>
-                            {option.label}
-                        </option>
-                    ))}
-                </select>
-
-                {/* 🔥 ICONO DENTRO DEL WRAPPER */}
-                <CaretDown className="input-selector__caret" size={20} />
-            </div>
-
-
-            <HelperText
-                helperText={helperText}
-                errorText={errorText}
-                showCounter={showCharacterCount}
-                valueLength={value.length}
-                maxLength={undefined}
-                focused={isFocused}
-            />
+          <InputLabel
+            label={label}
+            focused={isFocused}
+            filled={filled}
+            error={error}
+          />
+      
+          <div className="input-selector__wrapper">
+            <select
+              id={name}
+              name={name}
+              className="input-selector__select"
+              value={value}
+              onChange={onChange}
+              onFocus={handleFocus}
+              onBlur={handleBlur}
+              disabled={disabled}
+            >
+              <option value="" disabled hidden>
+                Selecciona una opción
+              </option>
+              {options.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
+      
+            <CaretDown className="input-selector__caret" size={20} />
+          </div>
+      
+          <HelperText
+            helperText={helperText}
+            errorText={errorText}
+            showCounter={showCharacterCount}
+            valueLength={value.length}
+            maxLength={undefined}
+            focused={isFocused}
+          />
         </div>
-    );
+      );
+      
 };
 
 export default SelectorInput;

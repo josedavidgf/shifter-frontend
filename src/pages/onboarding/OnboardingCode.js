@@ -5,57 +5,45 @@ import { useHospitalApi } from '../../api/useHospitalApi';
 import { useAuth } from '../../context/AuthContext';
 import { useWorkerApi } from '../../api/useWorkerApi';
 import HeaderSecondLevel from '../../components/ui/Header/HeaderSecondLevel';
-import Button from '../../components/ui/Button/Button'; // Ajusta ruta si necesario
+import Button from '../../components/ui/Button/Button';
 import AccessCodeInput from '../../components/ui/AccessCodeInput/AccessCodeInput';
 import Loader from '../../components/ui/Loader/Loader';
-
+import { useToast } from '../../hooks/useToast';
 
 export default function OnboardingCodeStep() {
-  console.log('🧩 MONTANDO OnboardingCode');
   const [code, setCode] = useState('');
-  const { getToken } = useAuth();
-  const { validateAccessCode, loading: loadingAccessCode, error: errorAccessCode } = useAccessCodeApi();
-  const { getHospitals, loading: loadingHospitals, error: errorHospitals } = useHospitalApi();
-  const { getWorkerTypes, loading: loadingWorkerTypes, error: errorWorkerTypes } = useWorkerApi(); // Ya lo tienes
-
-  const [error, setError] = useState('');
+  const [loadingForm, setLoadingForm] = useState(false);
+  const { getToken, loading, isWorker } = useAuth();
+  const { validateAccessCode } = useAccessCodeApi();
+  const { getHospitals } = useHospitalApi();
+  const { getWorkerTypes } = useWorkerApi();
   const navigate = useNavigate();
-  const { loading, isWorker } = useAuth();
+  const { showError } = useToast();
 
-  console.log('⛔️ isWorker en OnboardingCode:', isWorker);
-
-  // Protege de render anticipado
+  // Loader inicial mientras carga auth
   if (loading) return <Loader text="Cargando paso de onboarding..." />;
 
-  // Si el worker ya ha hecho onboarding, no debería ver esto
+  // Si ya hizo onboarding, lo mandamos al calendario
   if (isWorker?.onboarding_completed === true) {
     return <Navigate to="/calendar" />;
   }
 
   const handleValidateCode = async (e) => {
     e.preventDefault();
-    setError('');
+    setLoadingForm(true);
 
     try {
-      console.log('aqui')
       const response = await validateAccessCode(code);
-      console.log('response',response)
-
       const { hospital_id, worker_type_id } = response;
+
       const token = await getToken();
-      console.log('token',token)
+      if (!token) throw new Error('Token no disponible');
 
       const hospitals = await getHospitals(token);
-      console.log('hospitals',hospitals)
-
       const workerTypes = await getWorkerTypes(token);
-      console.log('workerTypes',workerTypes)
 
       const hospital = hospitals.find(h => h.hospital_id === hospital_id);
-      console.log('hospital',hospital)
-
       const workerType = workerTypes.find(w => w.worker_type_id === worker_type_id);
-      console.log('workerType',workerType)
 
       const hospitalName = hospital?.name || '';
       const workerTypeName = workerType?.worker_type_name || '';
@@ -70,12 +58,12 @@ export default function OnboardingCodeStep() {
         }
       });
     } catch (err) {
-      console.error('Error validando el código:', err.message);
-      setError('Código inválido. Por favor verifica y vuelve a intentarlo.');
+      console.error('❌ Error validando código:', err.message);
+      showError('Código inválido o error al validar. Verifica e intenta de nuevo.');
+    } finally {
+      setLoadingForm(false);
     }
   };
-
-
 
   const handleBack = () => {
     if (window.history.length > 1) {
@@ -92,35 +80,28 @@ export default function OnboardingCodeStep() {
         onBack={handleBack}
       />
       <div className="page page-primary">
-        <div className='container'>
+        <div className="container">
           <h2>Bienvenido a la plataforma</h2>
-          <p>Para completar tu registro, por favor introduce el código de acceso que te ha sido proporcionado.</p>
-          <p>Si no tienes un código, contacta con tu administrador.</p>
+          <p>Para completar tu registro, introduce el código de acceso proporcionado por tu administrador.</p>
           <form onSubmit={handleValidateCode}>
             <div className="access-code__container">
               <AccessCodeInput
                 code={code}
                 setCode={setCode}
-                error={error}
               />
             </div>
-            {errorWorkerTypes && <p style={{ color: 'red' }}>{errorWorkerTypes}</p>}
-            {errorAccessCode && <p style={{ color: 'red' }}>{errorAccessCode}</p>}
-            {errorHospitals && <p style={{ color: 'red' }}>{errorHospitals}</p>}
-            {loadingAccessCode && <p>Cargando...</p>}
-            {loadingHospitals && <p>Cargando hospitales...</p>}
 
             <Button
               label="Validar código"
               variant="primary"
               size="lg"
               type="submit"
-              disabled={!code}
-              isLoading={loadingWorkerTypes} // 🆕
+              disabled={!code || loadingForm}
+              isLoading={loadingForm}
             />
           </form>
         </div>
-      </div >
+      </div>
     </>
   );
 }

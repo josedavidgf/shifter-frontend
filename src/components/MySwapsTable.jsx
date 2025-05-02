@@ -4,6 +4,7 @@ import Button from '../components/ui/Button/Button';
 import { shiftTypeLabels, swapStatusLabels } from '../utils/labelMaps';
 import { Eraser } from '../theme/icons';
 import SelectorInput from '../components/ui/SelectorInput/SelectorInput';
+import EmptyState from '../components/ui/EmptyState/EmptyState';
 
 
 
@@ -72,9 +73,12 @@ const MySwapsTable = ({ swaps = [] }) => {
 
       {/* Ahora sí: no loading aquí, solo empty si de verdad no hay resultados */}
       {filtered.length === 0 ? (
-        <p style={{ textAlign: 'center', marginTop: '2rem' }}>
-          No tienes intercambios en esta búsqueda.
-        </p>
+        <EmptyState
+          title="Sin resultados"
+          description="No hay intercambios que coincidan con los filtros seleccionados."
+          ctaLabel="Limpiar filtros"
+          onCtaClick={clearFilters}
+        />
       ) : (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
           {filtered.map((swap) => (

@@ -1,45 +1,66 @@
-import React, { useState,useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { updateWorkerInfo } from '../../services/userService';
 import { useAuth } from '../../context/AuthContext';
 import InputField from '../../components/ui/InputField/InputField';
 import HeaderSecondLevel from '../../components/ui/Header/HeaderSecondLevel';
-import Button from '../../components/ui/Button/Button'; // Ajusta ruta si necesario
-
+import Button from '../../components/ui/Button/Button';
+import { useToast } from '../../hooks/useToast';
 
 export default function OnboardingNameStep() {
   const [name, setFirstName] = useState('');
   const [surname, setLastName] = useState('');
-  const [error, setError] = useState('');
-  const { getToken } = useAuth();
+  const [loadingForm, setLoadingForm] = useState(false);
+  const { getToken, isWorker, refreshWorkerProfile } = useAuth();
   const navigate = useNavigate();
-  const { isWorker, refreshWorkerProfile } = useAuth();
+  const { showError } = useToast();
 
   useEffect(() => {
     if (!isWorker) {
-      navigate('/onboarding/code'); // Redirige al primer paso para crear el worker
+      navigate('/onboarding/code');
     }
-  }, [isWorker]);
+  }, [isWorker, navigate]);
 
+  const capitalizeWords = (str) =>
+    str
+      .toLowerCase()
+      .split(' ')
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(' ');
 
   const handleConfirm = async () => {
+    setLoadingForm(true);
     try {
       const token = await getToken();
       const workerId = isWorker?.worker_id;
+
       if (!workerId || !name || !surname) {
-        setError('Debes rellenar nombre y apellido.');
+        showError('Debes rellenar nombre y apellidos.');
         return;
       }
-      await updateWorkerInfo({ workerId: workerId, name: name, surname: surname }, token);
+
+      const formattedName = capitalizeWords(name);
+      const formattedSurname = capitalizeWords(surname);
+
+      await updateWorkerInfo(
+        {
+          workerId,
+          name: formattedName,
+          surname: formattedSurname,
+        },
+        token
+      );
 
       await refreshWorkerProfile();
-
       navigate('/onboarding/phone');
     } catch (err) {
-      console.error('Error updating worker profile:', err.message);
-      setError('Error guardando el nombre.');
+      console.error('❌ Error updating worker profile:', err.message);
+      showError('Error guardando el nombre. Intenta de nuevo.');
+    } finally {
+      setLoadingForm(false);
     }
   };
+
   const handleBack = () => {
     if (window.history.length > 1) {
       navigate(-1);
@@ -50,10 +71,7 @@ export default function OnboardingNameStep() {
 
   return (
     <>
-      <HeaderSecondLevel
-        showBackButton
-        onBack={handleBack}
-      />
+      <HeaderSecondLevel showBackButton onBack={handleBack} />
       <div className="page page-secondary">
         <div className="container">
           <h2>Añade tu nombre y apellidos</h2>
@@ -78,18 +96,14 @@ export default function OnboardingNameStep() {
             required
           />
 
-
-          {error && <p style={{ color: 'red' }}>{error}</p>}
-
-
           <Button
-            label="Finizar registro"
+            label="Continuar"
             variant="primary"
             size="lg"
             onClick={handleConfirm}
-            disabled={!name || !surname}
+            disabled={!name || !surname || loadingForm}
+            isLoading={loadingForm}
           />
-
         </div>
       </div>
     </>

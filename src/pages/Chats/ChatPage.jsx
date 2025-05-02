@@ -8,6 +8,7 @@ import { useAuth } from '../../context/AuthContext';
 import { formatDate, getVerb, getOtherVerb } from '../../utils/dateUtils';
 import HeaderSecondLevel from '../../components/ui/Header/HeaderSecondLevel';
 import Loader from '../../components/ui/Loader/Loader'; // ✅
+import { Phone } from '../../theme/icons';
 
 
 const ChatPage = () => {
@@ -69,10 +70,15 @@ const ChatPage = () => {
     const {
         otherPersonName,
         otherPersonSurname,
+        otherPersonMobileCountryCode,
+        otherPersonMobilePhone,
         otherWorkerId,
         myDate,
         otherDate
     } = buildChatContext(swap, workerId);
+
+    const fullPhone = `${otherPersonMobileCountryCode ?? ''}${otherPersonMobilePhone ?? ''}`.replace(/\s+/g, '');
+    const phoneLink = fullPhone.length >= 10 ? `https://wa.me/${fullPhone}` : null;
 
     const handleBack = () => {
         if (window.history.length > 1) {
@@ -88,15 +94,24 @@ const ChatPage = () => {
                 title={`Chat con ${otherPersonName}`}
                 showBackButton
                 onBack={handleBack}
+                rightButton={
+                    phoneLink
+                        ? {
+                            icon: <Phone size={20} />,
+                            onClick: () => window.open(phoneLink, '_blank'),
+                        }
+                        : undefined
+                }
             />
+
             <div className="page">
                 <div className="container">
 
                     <div className="chat-page-header">
-{/*                             <strong>{otherPersonName} {otherPersonSurname}</strong><br />
+                        {/*                             <strong>{otherPersonName} {otherPersonSurname}</strong><br />
  */}                            <p>
-                                {getVerb(myDate)} {formatDate(myDate)} y {otherPersonName} {getOtherVerb(otherDate)} {formatDate(otherDate)}
-                            </p>
+                            {getVerb(myDate)} {formatDate(myDate)} y {otherPersonName} {getOtherVerb(otherDate)} {formatDate(otherDate)}
+                        </p>
                     </div>
                     <div className="chat-page-content">
                         <ChatBox

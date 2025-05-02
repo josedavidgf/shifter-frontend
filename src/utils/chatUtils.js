@@ -16,6 +16,14 @@ export function buildChatContext(swap, workerId) {
     ? capitalize(swap.shift.worker?.surname)
     : capitalize(swap.requester?.surname);
 
+  const otherPersonMobileCountryCode = iAmRequester
+    ? swap.shift.worker?.mobile_country_code
+    : swap.requester?.mobile_country_code;
+
+  const otherPersonMobilePhone = iAmRequester
+    ? swap.shift.worker?.mobile_phone
+    : swap.requester?.mobile_phone;
+
   const myDate = iAmRequester
     ? swap.offered_date
     : swap.shift.date;
@@ -32,6 +40,8 @@ export function buildChatContext(swap, workerId) {
     iAmRequester,
     otherPersonName,
     otherPersonSurname,
+    otherPersonMobileCountryCode,
+    otherPersonMobilePhone,
     myDate,
     otherDate,
     otherWorkerId,
