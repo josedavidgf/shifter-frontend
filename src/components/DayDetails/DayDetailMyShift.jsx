@@ -42,7 +42,6 @@ export default function DayDetailMyShift({
               variant="primary"
               size="lg"
               leftIcon={<Lightning size={20} />}
-              rightIcon={<Lightning size={20} />}
               onClick={() => navigate(`/shifts/create?date=${dateStr}&shift_type=${entry.shift_type}`)}
             />
             <div className="btn-group-row">
