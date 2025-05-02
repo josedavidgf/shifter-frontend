@@ -2,29 +2,74 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import HeaderSecondLevel from '../../components/ui/Header/HeaderSecondLevel';
-import { AddressBook, Briefcase, Notification, Gift, MessengerLogo, File, Books } from '../../theme/icons';
-import Button from '../../components/ui/Button/Button'; // Ajusta ruta si necesario
-import { TagChevron } from '../../theme/icons';
+import Button from '../../components/ui/Button/Button';
 
-
+import {
+  AddressBook,
+  Briefcase,
+  Notification,
+  Gift,
+  MessengerLogo,
+  File,
+  Books,
+  CaretRight,
+} from '../../theme/icons';
 
 const ProfileMenu = () => {
   const navigate = useNavigate();
   const { logout } = useAuth();
 
   const items = [
-    { label: 'Información personal', route: '/profile/personal', Icon: AddressBook },
-    { label: 'Ajustes profesionales', route: '/profile/work', Icon: Briefcase },
-    { label: 'Preferencias de comunicación', route: '/profile/preferences', Icon: Notification },
-    { label: 'Referir', route: '/profile/referral', Icon: Gift },
-    { label: 'Contacto', route: '/profile/contact', Icon: MessengerLogo },
-    { label: 'Términos y condiciones', route: '/legal/terms-v1.pdf', Icon: File, external: true },
-    { label: 'Política de privacidad', route: '/legal/privacy-v1.pdf', Icon: Books, external: true },
+    {
+      label: 'Información personal',
+      route: '/profile/personal',
+      Icon: AddressBook,
+      RightIcon: CaretRight,
+    },
+    {
+      label: 'Ajustes profesionales',
+      route: '/profile/work',
+      Icon: Briefcase,
+      RightIcon: CaretRight,
+    },
+    {
+      label: 'Preferencias de comunicación',
+      route: '/profile/preferences',
+      Icon: Notification,
+      RightIcon: CaretRight,
+    },
+    {
+      label: 'Referir',
+      route: '/profile/referral',
+      Icon: Gift,
+      RightIcon: CaretRight,
+    },
+    {
+      label: 'Contacto',
+      route: '/profile/contact',
+      Icon: MessengerLogo,
+      RightIcon: CaretRight,
+    },
+    {
+      label: 'Términos y condiciones',
+      route: '/legal/terms-v1.pdf',
+      Icon: File,
+      external: true,
+      RightIcon: CaretRight,
+    },
+    {
+      label: 'Política de privacidad',
+      route: '/legal/privacy-v1.pdf',
+      Icon: Books,
+      external: true,
+      RightIcon: CaretRight,
+    },
   ];
+
   const handleLogout = async () => {
     try {
       await logout();
-      navigate('/login'); // <--- AÑADE ESTO
+      navigate('/login');
     } catch (error) {
       console.error('Error during logout:', error);
     }
@@ -47,9 +92,8 @@ const ProfileMenu = () => {
       />
       <div className="page page-secondary">
         <div className="container">
-
           <ul className="menu-list">
-            {items.map(({ label, route, Icon, external }) => (
+            {items.map(({ label, route, Icon, RightIcon, external }) => (
               <li
                 key={label}
                 className="menu-item"
@@ -65,8 +109,10 @@ const ProfileMenu = () => {
                   <Icon width={24} height={24} />
                   <span>{label}</span>
                 </div>
-                <TagChevron width={16} height={16} className="menu-item-chevron" />
-                </li>
+                {RightIcon && (
+                  <RightIcon width={16} height={16} className="menu-item-chevron" />
+                )}
+              </li>
             ))}
           </ul>
 
