@@ -79,16 +79,19 @@ const ChatsList = () => {
       <HeaderFirstLevel title="Chats activos" />
       <div className="page page-secondary">
         <div className="container">
-          {activeSwaps.length === 0 ? (
+          {!loading && activeSwaps.length === 0 ? (
             <EmptyState
               title="No tienes chats activos"
               description="Cuando aceptes o propongas un intercambio, tendrás un chat activo aquí."
               ctaLabel="Ir al calendario"
               onCtaClick={() => navigate('/calendar')}
             />
-          ) : (
+          ) : null}
+
+          {!loading && activeSwaps.length > 0 && (
             <ChatsListTable swaps={activeSwaps} workerId={workerId} />
           )}
+
         </div>
       </div>
     </>

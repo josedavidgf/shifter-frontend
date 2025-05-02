@@ -78,7 +78,9 @@ const ChatPage = () => {
     } = buildChatContext(swap, workerId);
 
     const fullPhone = `${otherPersonMobileCountryCode ?? ''}${otherPersonMobilePhone ?? ''}`.replace(/\s+/g, '');
-    const phoneLink = fullPhone.length >= 10 ? `https://wa.me/${fullPhone}` : null;
+    const phoneLink = fullPhone.length >= 10 ? `tel:${fullPhone}` : null;
+    //const whatsappLink = fullPhone.length >= 10 ? `https://wa.me/${fullPhone}` : null;
+
 
     const handleBack = () => {
         if (window.history.length > 1) {
@@ -87,6 +89,7 @@ const ChatPage = () => {
             navigate('/calendar');
         }
     };
+  
 
     return (
         <>
@@ -94,15 +97,17 @@ const ChatPage = () => {
                 title={`Chat con ${otherPersonName}`}
                 showBackButton
                 onBack={handleBack}
-                rightButton={
+                rightAction={
                     phoneLink
                         ? {
                             icon: <Phone size={20} />,
-                            onClick: () => window.open(phoneLink, '_blank'),
-                        }
+                            label: 'Llamar',
+                            onClick: () => window.open(phoneLink, '_blank')
+                          }
+                          
                         : undefined
                 }
-            />
+                />
 
             <div className="page">
                 <div className="container">

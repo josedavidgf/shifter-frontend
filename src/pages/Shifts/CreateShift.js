@@ -1,96 +1,67 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { useAuth } from '../../context/AuthContext';
-import { useUserApi } from '../../api/useUserApi';
-import { useSpecialityApi } from '../../api/useSpecialityApi';
-import { useShiftApi } from '../../api/useShiftApi';
-import useTrackPageView from '../../hooks/useTrackPageView';
 import { format, parseISO } from 'date-fns';
 import { shiftTypeLabels } from '../../utils/labelMaps';
 import HeaderSecondLevel from '../../components/ui/Header/HeaderSecondLevel';
 import Button from '../../components/ui/Button/Button';
 import InputField from '../../components/ui/InputField/InputField';
-import Loader from '../../components/ui/Loader/Loader';
 import { useToast } from '../../hooks/useToast';
+import { useShiftApi } from '../../api/useShiftApi';
+import { useAuth } from '../../context/AuthContext';
+import useTrackPageView from '../../hooks/useTrackPageView';
 
 const CreateShift = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { getToken } = useAuth();
-  const { getFullWorkerProfile } = useUserApi();
-  const { getSpecialities } = useSpecialityApi();
+  const { getToken, isWorker } = useAuth();
   const { createShift, loading: creatingShift } = useShiftApi();
   const { showSuccess, showError } = useToast();
 
-  const [loadingShift, setLoadingShift] = useState(true);
-  const [specialities, setSpecialities] = useState([]);
-  const [selectedSpeciality, setSelectedSpeciality] = useState(null);
+  useTrackPageView('create-shift');
 
   const params = new URLSearchParams(location.search);
   const prefilDate = params.get('date');
   const prefilShiftType = params.get('shift_type');
 
+  const [invalidParams, setInvalidParams] = useState(false);
+
+  useEffect(() => {
+    if (!prefilDate || !prefilShiftType || !isWorker?.workers_specialities?.[0]?.speciality_id) {
+      setInvalidParams(true);
+    }
+  }, [prefilDate, prefilShiftType, isWorker]);
+
+  useEffect(() => {
+    if (invalidParams) {
+      navigate('/calendar');
+    }
+  }, [invalidParams, navigate]);
+
+
   const [form, setForm] = useState({
-    date: '',
-    shift_type: '',
-    speciality_id: '',
+    date: prefilDate,
+    shift_type: prefilShiftType,
+    speciality_id: isWorker.workers_specialities[0].speciality_id,
     shift_comments: '',
   });
 
-  useTrackPageView('create-shift');
-
-  useEffect(() => {
-    if (!prefilDate || !prefilShiftType) {
-      navigate('/shifts/hospital');
-    }
-  }, [prefilDate, prefilShiftType, navigate]);
-
-  useEffect(() => {
-    async function fetchData() {
-      try {
-        setLoadingShift(true);
-        const token = await getToken();
-        const profile = await getFullWorkerProfile(token);
-        const specs = await getSpecialities(token);
-
-        const match = specs.find(s => s.speciality_id === profile.specialityId);
-        setSpecialities(specs);
-        setSelectedSpeciality(match);
-
-        setForm(prev => ({
-          ...prev,
-          date: prefilDate || prev.date,
-          shift_type: prefilShiftType || prev.shift_type,
-          speciality_id: profile.specialityId,
-        }));
-      } catch (err) {
-        console.error('❌ Error al cargar el perfil o especialidad:', err.message);
-        showError('No se pudo cargar tu perfil o especialidad.');
-      } finally {
-        setLoadingShift(false);
-      }
-    }
-
-    fetchData();
-  }, [getToken, prefilDate, prefilShiftType, showError]);
-
-  if (loadingShift) {
-    return <Loader text="Cargando información del turno..." />;
-  }
+  const speciality = isWorker.workers_specialities[0].specialities;
+  const specialityLabel = `${speciality?.speciality_category} - ${speciality?.speciality_subcategory}`;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       const token = await getToken();
-      const success = await createShift({ ...form }, token);
+      const success = await createShift(form, token);
+
       if (success) {
         showSuccess('Turno publicado correctamente');
-        setTimeout(() => navigate('/calendar'), 1000); // Alternativa: navigate directo
+        setTimeout(() => navigate('/calendar'), 1000);
       } else {
         showError('Error al publicar el turno');
       }
     } catch (err) {
-      console.error('❌ Error creando el turno:', err.message);
+      console.error('❌ Error creando turno:', err.message);
       showError('Error al publicar el turno');
     }
   };
@@ -112,7 +83,7 @@ const CreateShift = () => {
             <InputField
               name="Shift"
               label="Turno"
-              value={`${form.date ? format(parseISO(form.date), 'dd/MM/yyyy') : '-'} de ${shiftTypeLabels[form.shift_type]}`}
+              value={`${format(parseISO(form.date), 'dd/MM/yyyy')} de ${shiftTypeLabels[form.shift_type]}`}
               disabled
               readOnly
             />
@@ -120,13 +91,13 @@ const CreateShift = () => {
             <InputField
               name="speciality"
               label="Servicio"
-              value={selectedSpeciality ? `${selectedSpeciality.speciality_category} - ${selectedSpeciality.speciality_subcategory}` : 'No disponible'}
+              value={specialityLabel}
               disabled
               readOnly
             />
 
             <InputField
-              name="shift_comments"
+              name="Comentarios"
               label="Comentarios"
               value={form.shift_comments}
               placeholder="Añade comentarios si lo deseas"
@@ -142,7 +113,7 @@ const CreateShift = () => {
             size="lg"
             type="submit"
             onClick={handleSubmit}
-            disabled={!form.date || !form.shift_type || creatingShift}
+            disabled={creatingShift}
             isLoading={creatingShift}
           />
         </div>

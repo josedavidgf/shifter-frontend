@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Button from '../components/ui/Button/Button';
 import { shiftTypeLabels } from '../utils/labelMaps';
@@ -8,10 +8,12 @@ import EmptyState from '../components/ui/EmptyState/EmptyState';
 import { useToast } from '../hooks/useToast'; // ya lo usas en otras vistas
 
 
-const HospitalShiftsTable = ({ shifts, workerId, sentSwapShiftIds }) => {
+const HospitalShiftsTable = ({ shifts, workerId, sentSwapShiftIds, isLoading }) => {
   const navigate = useNavigate();
   const currentMonth = new Date().toISOString().slice(0, 7); // YYYY-MM
   const { showWarning } = useToast();
+  const [filtersReady, setFiltersReady] = useState(false);
+
 
   const [filters, setFilters] = useState({
     date: currentMonth,
@@ -40,14 +42,22 @@ const HospitalShiftsTable = ({ shifts, workerId, sentSwapShiftIds }) => {
     { value: 'reinforcement', label: 'Refuerzo' },
   ];
 
-  const filteredShifts = shifts
-    .filter((shift) => {
-      return (
-        (!filters.date || shift.date.slice(0, 7) === filters.date) &&
-        (!filters.type || shift.shift_type === filters.type)
-      );
-    })
-    .sort((a, b) => new Date(a.date) - new Date(b.date));
+  const [filteredShifts, setFilteredShifts] = useState([]);
+
+  useEffect(() => {
+    const result = shifts
+      .filter((shift) => {
+        return (
+          (!filters.date || shift.date.slice(0, 7) === filters.date) &&
+          (!filters.type || shift.shift_type === filters.type)
+        );
+      })
+      .sort((a, b) => new Date(a.date) - new Date(b.date));
+
+    setFilteredShifts(result);
+    setFiltersReady(true);
+  }, [shifts, filters]);
+
 
 
 
@@ -79,14 +89,15 @@ const HospitalShiftsTable = ({ shifts, workerId, sentSwapShiftIds }) => {
           />
         </div>
       </div>
-      {filteredShifts.length === 0 ? (
+      {!isLoading && filtersReady && filteredShifts.length === 0 ? (
         <EmptyState
           title="Sin turnos disponibles"
           description="No hay turnos que coincidan con los filtros seleccionados."
           ctaLabel="Limpiar filtros"
           onCtaClick={clearFilters}
         />
-      ) : (
+      ) : null}
+      {!isLoading && filtersReady && filteredShifts.length > 0 && (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
           {filteredShifts.map((shift) => {
             const isMine = shift.worker_id === workerId;
