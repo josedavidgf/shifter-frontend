@@ -48,7 +48,7 @@ const MySwaps = () => {
         console.error('❌ Error al cargar swaps:', err.message);
         showError('Error al cargar los intercambios. Intenta de nuevo.');
       } finally {
-          setLoading(false);
+        setLoading(false);
       }
     }
 
@@ -69,22 +69,24 @@ const MySwaps = () => {
       />
     );
   }
-  
+
 
   return (
     <>
       <HeaderFirstLevel title="Intercambios" />
       <div className="page page-primary">
         <div className="container">
-          {swaps.length === 0 ? (
+          {!loading && swaps.length === 0 ? (
             <EmptyState
               title="No tienes intercambios activos"
               description="Cuando propongas o te propongan un intercambio, aparecerán aquí."
               ctaLabel="Buscar turnos"
               onCtaClick={() => navigate('/shifts/hospital')}
             />
-          ) : (
-            <MySwapsTable swaps={swaps} />
+          ) : null}
+
+          {!loading && swaps.length > 0 && (
+            <MySwapsTable swaps={swaps} isLoading={loading} />
           )}
         </div>
       </div>

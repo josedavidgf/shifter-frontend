@@ -1,0 +1,38 @@
+// src/api/useSupportApi.js
+import { useState } from 'react';
+import { useAuth } from '../context/AuthContext';
+import { useToast } from '../hooks/useToast';
+import { sendSupportContact as sendContactService } from '../services/supportService';
+
+export function useSupportApi() {
+  const { getToken, isWorker } = useAuth();
+  const { showSuccess, showError } = useToast();
+
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  const sendSupportContact = async (title, description) => {
+    setLoading(true);
+    setError(null);
+
+    try {
+      const token = await getToken();
+      const workerId = isWorker?.worker_id;
+      const data = await sendContactService(workerId, title, description, token);
+      showSuccess('¡Gracias! Hemos recibido tu mensaje.');
+      return data;
+    } catch (err) {
+      setError(err.message);
+      showError('Error al enviar el mensaje. Intenta más tarde.');
+      return null;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return {
+    sendSupportContact,
+    loading,
+    error,
+  };
+}

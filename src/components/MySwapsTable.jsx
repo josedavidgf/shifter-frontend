@@ -8,12 +8,13 @@ import EmptyState from '../components/ui/EmptyState/EmptyState';
 
 
 
-const MySwapsTable = ({ swaps = [] }) => {
+const MySwapsTable = ({ swaps = [], isLoading }) => {
   const [filtered, setFiltered] = useState([]);
   const currentMonth = new Date().toISOString().slice(0, 7); // YYYY-MM
   const [filterStatus, setFilterStatus] = useState('proposed'); // ⬅️ Default
   const [filterDate, setFilterDate] = useState(currentMonth);   // ⬅️ Default
   const navigate = useNavigate();
+  const [filtersReady, setFiltersReady] = useState(false);
 
   useEffect(() => {
     let result = swaps;
@@ -30,7 +31,9 @@ const MySwapsTable = ({ swaps = [] }) => {
     }
 
     setFiltered(result);
+    setFiltersReady(true);
   }, [filterStatus, filterDate, swaps]);
+
   const swapStatusOptions = [
     { value: 'proposed', label: 'Propuesto' },
     { value: 'accepted', label: 'Aceptado' },
@@ -72,14 +75,16 @@ const MySwapsTable = ({ swaps = [] }) => {
       </div>
 
       {/* Ahora sí: no loading aquí, solo empty si de verdad no hay resultados */}
-      {filtered.length === 0 ? (
+      {!isLoading && filtersReady && filtered.length === 0 ? (
         <EmptyState
           title="Sin resultados"
           description="No hay intercambios que coincidan con los filtros seleccionados."
           ctaLabel="Limpiar filtros"
           onCtaClick={clearFilters}
         />
-      ) : (
+      ) : null}
+
+      {!isLoading && filtersReady && filtered.length > 0 && (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
           {filtered.map((swap) => (
             <div
@@ -105,6 +110,7 @@ const MySwapsTable = ({ swaps = [] }) => {
           ))}
         </div>
       )}
+
     </div>
   );
 };

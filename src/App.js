@@ -31,6 +31,7 @@ import ProfilePreferences from './pages/Profile/ProfilePreferences';
 import ButtonDemo from './components/ui/Button/ButtonDemo';
 import GlobalUI from './components/ui/GlobalUI/GlobalUI';
 import AuthCallback from './pages/AuthCallback.jsx'
+import ContactPage from './pages/Profile/ContactPage.jsx'
 
 
 function App() {
@@ -58,6 +59,7 @@ function App() {
           <Route path="/profile/personal" element={<PrivateRoute><PersonalInfo /></PrivateRoute>} />
           <Route path="/profile/work" element={<PrivateRoute><WorkSettings /></PrivateRoute>} />
           <Route path="profile/preferences" element={<PrivateRoute><ProfilePreferences /></PrivateRoute>} />
+          <Route path="profile/contact" element={<PrivateRoute><ContactPage /></PrivateRoute>} />
           <Route path="/chats/:swapId" element={<PrivateRoute><ChatPage /></PrivateRoute>} />
           <Route path="/shifts/create" element={<PrivateRoute><CreateShift /></PrivateRoute>} />
           <Route path="/propose-swap/:shift_id" element={<PrivateRoute><ProposeSwap /></PrivateRoute>} />

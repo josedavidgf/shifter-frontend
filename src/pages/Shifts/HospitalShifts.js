@@ -82,21 +82,23 @@ const HospitalShifts = () => {
             <HeaderFirstLevel title="Turnos disponibles" />
             <div className="page">
                 <div className="container">
-                    {shifts.length === 0 ? (
+                    {!loading && shifts.length === 0 ? (
                         <EmptyState
                             title="No hay turnos publicados"
                             description="Actualmente no hay turnos publicados en este servicio."
                             ctaLabel="Ir al Calendario"
                             onCtaClick={() => navigate('/calendar')}
                         />
-                    ) : (
+                    ) : null}
+
+                    {!loading && shifts.length > 0 && (
                         <HospitalShiftsTable
                             shifts={shifts}
                             workerId={workerId}
                             sentSwapShiftIds={sentSwaps}
+                            isLoading={loading}
                         />
                     )}
-
                 </div>
             </div>
         </>
