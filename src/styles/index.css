@@ -35,6 +35,7 @@
 @import './components/search-filter-input.css';
 @import './components/confirmation-modal.css';
 @import './components/phone-input-group.css';
+@import './components/checkbox.css';
 
 /* Pages */
 @import './pages/calendar.css';

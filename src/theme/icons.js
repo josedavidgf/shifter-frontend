@@ -41,6 +41,7 @@ export {
   CirclesThree,
   Stack,
   FloppyDisk,
-  Phone
+  Phone,
+  TagChevron
 
   } from 'phosphor-react';

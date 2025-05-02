@@ -13,6 +13,8 @@ export default function OnboardingSpecialityStep() {
   const [specialities, setSpecialities] = useState([]);
   const [selectedSpeciality, setSelectedSpeciality] = useState('');
   const [loadingInitial, setLoadingInitial] = useState(true);
+  const [saving, setSaving] = useState(false);
+
 
   const navigate = useNavigate();
   const { getToken, isWorker, refreshWorkerProfile } = useAuth();
@@ -50,6 +52,7 @@ export default function OnboardingSpecialityStep() {
   }, [getToken, isWorker, navigate, getSpecialitiesByHospital, showError]);
 
   const handleConfirm = async () => {
+    setSaving(true);
     try {
       const token = await getToken();
       const workerId = isWorker?.worker_id;
@@ -65,6 +68,8 @@ export default function OnboardingSpecialityStep() {
     } catch (err) {
       console.error('❌ Error adding speciality to worker:', err.message);
       showError('Error guardando la especialidad.');
+    } finally {
+      setSaving(false);
     }
   };
 
@@ -99,8 +104,8 @@ export default function OnboardingSpecialityStep() {
             variant="primary"
             size="lg"
             onClick={handleConfirm}
-            disabled={!selectedSpeciality || loading}
-            isLoading={loading}
+            disabled={!selectedSpeciality || saving}
+            isLoading={saving}
           />
         </div>
       </div>

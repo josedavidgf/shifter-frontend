@@ -4,13 +4,17 @@ import { useWorkerApi } from '../../api/useWorkerApi';
 import { useAuth } from '../../context/AuthContext';
 import HeaderSecondLevel from '../../components/ui/Header/HeaderSecondLevel';
 import Button from '../../components/ui/Button/Button';
+import Checkbox from '../../components/ui/Checkbox/Checkbox';
 import { useToast } from '../../hooks/useToast';
 import Loader from '../../components/ui/Loader/Loader';
+import supabase from '../../config/supabase';
 
 export default function OnboardingConfirmStep() {
   const [hospitalId, setHospitalId] = useState('');
   const [workerTypeId, setWorkerTypeId] = useState('');
   const [loadingForm, setLoadingForm] = useState(false);
+  const [acceptedTerms, setAcceptedTerms] = useState(false);
+  const [acceptedPrivacy, setAcceptedPrivacy] = useState(false);
 
   const { getToken, setIsWorker, refreshWorkerProfile } = useAuth();
   const { createWorker, createWorkerHospital } = useWorkerApi();
@@ -19,6 +23,14 @@ export default function OnboardingConfirmStep() {
 
   const location = useLocation();
   const { hospital_id, worker_type_id, hospitalName, workerTypeName } = location.state || {};
+
+  const termsUrl = '/legal/terms-v1.pdf';
+  const privacyUrl = '/legal/privacy-v1.pdf';
+
+  const getVersionFromUrl = (url) => {
+    const match = url.match(/-(v\d+)\.pdf$/);
+    return match ? match[1] : 'v1';
+  };
 
   useEffect(() => {
     if (!hospital_id || !worker_type_id) {
@@ -40,12 +52,20 @@ export default function OnboardingConfirmStep() {
       }
 
       await createWorkerHospital(response.worker.worker_id, hospitalId, token);
-      await refreshWorkerProfile();
 
+      // Guardar aceptación legal
+      await supabase.from('legal_acceptance').insert({
+        worker_id: response.worker.worker_id,
+        terms_version: getVersionFromUrl(termsUrl),
+        privacy_version: getVersionFromUrl(privacyUrl),
+        user_agent: navigator.userAgent
+      });
+
+      await refreshWorkerProfile();
       showSuccess('Trabajador creado con éxito');
       navigate('/onboarding/speciality');
     } catch (err) {
-      console.error('❌ Error creando el worker:', err.message);
+      console.error('❌ Error creando el worker o guardando consentimiento:', err.message);
       showError('Error creando el perfil. Por favor inténtalo de nuevo.');
     } finally {
       setLoadingForm(false);
@@ -74,13 +94,30 @@ export default function OnboardingConfirmStep() {
             <span className="highlight-purple"> {hospitalName}</span>
           </h2>
 
-          <div className="btn-group">
+          <div className="checkbox-group" style={{ marginTop: '1.5rem' }}>
+            <Checkbox
+              id="terms"
+              checked={acceptedTerms}
+              onChange={() => setAcceptedTerms(!acceptedTerms)}
+              label={<>He leído y acepto los <a href={termsUrl}>Términos y Condiciones</a></>}
+              description=""
+            />
+            <Checkbox
+              id="privacy"
+              checked={acceptedPrivacy}
+              onChange={() => setAcceptedPrivacy(!acceptedPrivacy)}
+              label={<>He leído y acepto la <a href={privacyUrl}>Política de Privacidad</a></>}
+              description=""
+            />
+          </div>
+
+          <div className="btn-group" style={{ marginTop: '2rem' }}>
             <Button
               label="Crear cuenta"
               variant="primary"
               size="lg"
               onClick={handleConfirm}
-              disabled={loadingForm}
+              disabled={!acceptedTerms || !acceptedPrivacy || loadingForm}
               isLoading={loadingForm}
             />
             <Button
