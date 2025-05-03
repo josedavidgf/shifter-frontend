@@ -19,10 +19,13 @@ const ForgotPassword = () => {
         if (!email) return;
 
         setLoading(true);
+        const redirectTo =
+            process.env.NODE_ENV === 'development'
+                ? 'http://localhost:3000/auth/callback'
+                : 'https://pre-app.apptanda.com/auth/callback';
         const { error } = await supabase.auth.resetPasswordForEmail(email, {
-            redirectTo: 'https://pre-app.apptanda.com/reset-password',
+            redirectTo,
         });
-
         if (error) {
             showError("No hemos podido enviar el email. ¿Está bien escrito?");
         } else {
