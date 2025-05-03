@@ -60,16 +60,20 @@ const PrivateRoute = ({ children }) => {
   ) {
     return children;
   }
+  const hashParams = new URLSearchParams(window.location.hash.slice(1));
+  const type = hashParams.get('type');
+  const isResetPasswordFlow =
+    location.pathname === '/reset-password' || type === 'reset_password';
 
   // ✅ Si hay onboarding pendiente, redirige al paso correspondiente
   const pendingStep = getPendingOnboardingStep(isWorker);
-  const isResetPasswordPath = location.pathname === '/reset-password';
+
 
   if (
     pendingStep &&
     location.pathname !== pendingStep &&
     !location.pathname.startsWith(pendingStep) &&
-    !isResetPasswordPath
+    !isResetPasswordFlow
   ) {
     return <Navigate to={pendingStep} />;
   }
