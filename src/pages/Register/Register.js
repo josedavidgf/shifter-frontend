@@ -61,7 +61,7 @@ function Register() {
       />
       <div className="container auth-container">
         <div className="auth-content">
-          <h2>Crea tu cuenta en Tanda</h2>
+          <h1>Crea tu cuenta en Tanda</h1>
           <div className="auth-body">
             <form className="auth-form" onSubmit={handleSubmit}>
               <InputField

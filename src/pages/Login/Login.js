@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import useTrackPageView from '../../hooks/useTrackPageView';
 import InputField from '../../components/ui/InputField/InputField';
 import Button from '../../components/ui/Button/Button';
@@ -59,7 +59,7 @@ function Login() {
       />
       <div className="container auth-container">
         <div className="auth-content">
-          <h2>Inicia sesión en Tanda</h2>
+          <h1>Inicia sesión en Tanda</h1>
 
           <div className="auth-body">
             <form className="auth-form" onSubmit={handleSubmit}>
@@ -103,23 +103,9 @@ function Login() {
               onClick={loginWithGoogle}
             />
           </div>
-          <p style={{ marginTop: '1rem', textAlign: 'right' }}>
-            <button
-              type="button"
-              onClick={() => navigate('/forgot-password')}
-              style={{
-                background: 'none',
-                border: 'none',
-                color: '#007bff',
-                cursor: 'pointer',
-                textDecoration: 'underline',
-                padding: 0
-              }}
-            >
-              ¿Has olvidado tu contraseña?
-            </button>
-          </p>
-
+          <div className="mt-4">
+            <p><Link to='/forgot-password'> ¿Has olvidado tu contraseña?</Link></p>
+          </div>
         </div>
       </div>
     </>
