@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import InputLabel from './InputLabel';
 import InputIcon from './InputIcon';
 import HelperText from '../HelperText/HelperText';
-import { Eye, EyeSlash } from '../../../theme/icons'; // ajusta la ruta si es necesario
+import { Eye, EyeSlash } from '../../../theme/icons';
 
 const InputField = ({
   name,
@@ -22,6 +22,7 @@ const InputField = ({
   leftIcon,
   isClearable = false,
   clearableIcon,
+  rightIcon = null,
 }) => {
   const [isFocused, setIsFocused] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
@@ -30,11 +31,9 @@ const InputField = ({
 
   const handleFocus = () => setIsFocused(true);
   const handleBlur = () => setIsFocused(false);
-
   const handleClear = () => {
     if (onClear) onClear();
   };
-
   const togglePasswordVisibility = () => {
     setShowPassword((prev) => !prev);
   };
@@ -77,16 +76,19 @@ const InputField = ({
                 disabled={disabled}
                 maxLength={maxLength}
               />
-              {type === 'password' && (
-                <button
-                  type="button"
-                  className="input-field__password-toggle"
-                  onClick={togglePasswordVisibility}
-                  aria-label={showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}
-                >
-                  {showPassword ? <EyeSlash size={18} /> : <Eye size={18} />}
-                </button>
-              )}
+              <div className="input-field__right-icon">
+                {type === 'password' ? (
+                  <button
+                    type="button"
+                    onClick={togglePasswordVisibility}
+                    aria-label={showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}
+                  >
+                    {showPassword ? <EyeSlash size={18} /> : <Eye size={18} />}
+                  </button>
+                ) : (
+                  rightIcon
+                )}
+              </div>
             </div>
           )}
 
