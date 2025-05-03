@@ -27,72 +27,6 @@ export function AuthProvider({ children }) {
 
 
   // Recuperar usuario al iniciar app
-  useEffect(() => {
-    async function rehydrateUser() {
-      try {
-        const { data, error } = await supabase.auth.getSession();
-
-        // 1. Error o sin sesión válida
-        if (error || !data?.session) {
-          console.warn('No active session detected.');
-          setCurrentUser(null);
-          setIsWorker(false);
-          setLoading(false);
-          return;
-        }
-
-        const { session } = data;
-
-        // 2. Validar token de sesión
-        if (!session.access_token || !session.user) {
-          console.warn('Invalid session structure detected.');
-          setCurrentUser(null);
-          setIsWorker(false);
-          setLoading(false);
-          return;
-        }
-
-        const token = session.access_token;
-        setCurrentUser(session.user);
-
-        // 3. Inicializar Amplitude solo si no estaba
-        if (!isAmplitudeInitialized) {
-          initAmplitude();
-          isAmplitudeInitialized = true;
-        }
-
-        // 4. Obtener perfil de Worker
-        try {
-          const workerProfile = await getMyWorkerProfile(token);
-
-          if (workerProfile) {
-            setIsWorker(workerProfile);
-            identifyUser(workerProfile);
-          } else {
-            console.log('⛔️ Worker no encontrado aún. Probablemente está en onboarding.');
-            setIsWorker(false);
-          }
-        } catch (err) {
-          if (err.message.includes('multiple') || err.message.includes('no rows')) {
-            console.log('⛔️ Worker no encontrado aún. Probablemente está en onboarding.');
-            setIsWorker(false);
-          } else {
-            console.error('Worker profile fetch error:', err);
-            setIsWorker(false);
-          }
-        }
-
-      } catch (globalError) {
-        console.error('Error during rehydrateUser:', globalError);
-        setCurrentUser(null);
-        setIsWorker(false);
-      } finally {
-        setLoading(false); // Siempre al final
-      }
-    }
-
-    rehydrateUser();
-  }, []);
 
   useEffect(() => {
     const { data: listener } = supabase.auth.onAuthStateChange(async (event, session) => {
@@ -236,6 +170,56 @@ export function AuthProvider({ children }) {
 
 
 
+
+
+  const rehydrateUser = async () => {
+    try {
+      const { data, error } = await supabase.auth.getSession();
+
+      if (error || !data?.session) {
+        console.warn('No active session detected.');
+        setCurrentUser(null);
+        setIsWorker(false);
+        return;
+      }
+
+      const { session } = data;
+
+      if (!session.access_token || !session.user) {
+        console.warn('Invalid session structure detected.');
+        setCurrentUser(null);
+        setIsWorker(false);
+        return;
+      }
+
+      const token = session.access_token;
+      setCurrentUser(session.user);
+
+      if (!isAmplitudeInitialized) {
+        initAmplitude();
+        isAmplitudeInitialized = true;
+      }
+
+      try {
+        const workerProfile = await getMyWorkerProfile(token);
+        if (workerProfile) {
+          setIsWorker(workerProfile);
+          identifyUser(workerProfile);
+        } else {
+          console.log('⛔️ Worker no encontrado aún. Probablemente está en onboarding.');
+          setIsWorker(false);
+        }
+      } catch (err) {
+        console.warn('⛔️ Error al obtener perfil del worker:', err.message);
+        setIsWorker(false);
+      }
+
+    } catch (globalError) {
+      console.error('Error during rehydrateUser:', globalError);
+      setCurrentUser(null);
+      setIsWorker(false);
+    }
+  };
   const value = {
     currentUser,
     register,
@@ -249,7 +233,8 @@ export function AuthProvider({ children }) {
     setIsWorker,
     refreshWorkerProfile,
     pendingEmail,
-    setPendingEmail
+    setPendingEmail,
+    rehydrateUser
   };
 
   return (

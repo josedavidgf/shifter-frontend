@@ -69,7 +69,10 @@ const AuthCallback = () => {
           }
         );
 
-        // 2. Obtener el perfil actualizado y guardarlo en contexto
+        // 2. Rehidratar estado desde contexto
+        await rehydrateUser();
+
+        // 3. Comprobar si el worker ha completado el onboarding
         const profileRes = await axios.get(
           `${process.env.REACT_APP_BACKEND_URL}/api/workers/me`,
           {
@@ -80,9 +83,10 @@ const AuthCallback = () => {
           }
         );
 
-        await rehydrateUser();
+        const isOnboardingCompleted = profileRes?.data?.onboarding_completed;
+
         setLoading(false);
-        navigate('/calendar');
+        navigate(isOnboardingCompleted ? '/calendar' : '/onboarding/code');
       } catch (err) {
         console.error('❌ Error creando o cargando el perfil:', err.response?.data?.message || err.message);
         setError('No se pudo crear tu perfil. Intenta iniciar sesión nuevamente.');
