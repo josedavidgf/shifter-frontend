@@ -62,8 +62,7 @@ const PrivateRoute = ({ children }) => {
   }
   const hashParams = new URLSearchParams(window.location.hash.slice(1));
   const type = hashParams.get('type');
-  const isResetPasswordFlow =
-    location.pathname === '/reset-password' || type === 'reset_password';
+  const isRecoveryFlow = type === 'recovery' || type === 'reset_password';
 
   // ✅ Si hay onboarding pendiente, redirige al paso correspondiente
   const pendingStep = getPendingOnboardingStep(isWorker);
@@ -73,13 +72,10 @@ const PrivateRoute = ({ children }) => {
     pendingStep &&
     location.pathname !== pendingStep &&
     !location.pathname.startsWith(pendingStep) &&
-    !isResetPasswordFlow
+    !isRecoveryFlow
   ) {
     return <Navigate to={pendingStep} />;
   }
-
-
-
 
 
   return children;
