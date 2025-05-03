@@ -41,7 +41,7 @@
 }
 
 .auth-divider {
-    margin: var(--space-lg) 0 var(--space-md) 0;
+    margin: var(--space-sm) 0 var(--space-sm) 0;
 }
 
 .auth-footer {
