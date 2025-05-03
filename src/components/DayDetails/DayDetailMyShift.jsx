@@ -3,6 +3,10 @@ import React from 'react';
 import Button from '../ui/Button/Button'; // Ajusta si tu path varía
 import { Lightning, PencilSimple, Trash } from '../../theme/icons';
 import { shiftTypeLabels } from '../../utils/labelMaps';
+import { format, parseISO } from 'date-fns';
+import es from 'date-fns/locale/es';
+
+const capitalize = (s) => s.charAt(0).toUpperCase() + s.slice(1);
 
 export default function DayDetailMyShift({
   dateStr,
@@ -16,14 +20,25 @@ export default function DayDetailMyShift({
   loadingDeletePublication,
   loadingRemoveShift,
 }) {
+  const parsedDate = parseISO(dateStr);
+  const shiftTitle = `${capitalize(format(parsedDate, 'EEEE', { locale: es }))}, ${format(parsedDate, 'dd/MM')} - Turno propio`;
+
   return (
     <div>
-      <h3 className="mb-2">Turno propio</h3>
-      <p>Turno: {dayLabel} de {shiftTypeLabels[entry.shift_type]}</p>
+      <h3 className="mb-2">{shiftTitle}</h3>
+
+      {!isPublished && (
+        <p style={{ marginBottom: '16px' }}>
+          El {dayLabel.toLowerCase()} tienes turno propio de {shiftTypeLabels[entry.shift_type]}.
+        </p>
+      )}
 
       {isPublished ? (
         <>
-          <p>Turno publicado</p>
+          <p style={{ marginBottom: '16px' }}>
+            El {dayLabel.toLowerCase()} tienes turno propio de {shiftTypeLabels[entry.shift_type]}.{' '}
+            <span style={{ fontWeight: 600 }}>Tienes publicado el turno para cambiar.</span>
+          </p>
           <Button
             label="Quitar publicación"
             variant="outline"
