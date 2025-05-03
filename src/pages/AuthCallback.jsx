@@ -14,10 +14,10 @@ const AuthCallback = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    let fallbackTimeout; // ✅ Declarado fuera
+    let fallbackTimeout;
 
     async function handleCallback() {
-      // ⏱️ Fallback de 10s máximo
+      // ⏱️ Fallback de 8s máximo
       fallbackTimeout = setTimeout(() => {
         setLoading(false);
         if (!error) {
@@ -40,11 +40,14 @@ const AuthCallback = () => {
           session = data?.session;
           if (session) {
             await supabase.auth.setSession(session);
+            setCurrentUser(session.user); // ✅ esto es crítico para que el contexto se actualice
+            console.log('✅ Usuario verificado:', session.user); // 🧠 Debug temporal
           }
         } catch (err) {
           console.warn('⚠️ Excepción en exchangeCodeForSession:', err.message);
         }
       }
+
       if (!session) {
         setError('No se pudo recuperar tu sesión. Intenta iniciar sesión nuevamente.');
         setLoading(false);
@@ -91,6 +94,7 @@ const AuthCallback = () => {
     handleCallback();
     return () => clearTimeout(fallbackTimeout);
   }, []);
+
 
 
   if (loading) return <Loader text="Verificando tu cuenta..." />;

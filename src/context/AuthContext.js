@@ -126,42 +126,26 @@ export function AuthProvider({ children }) {
 
 
 
-
   const register = async (email, password) => {
-    try {
-      const redirectTo =
-        process.env.NODE_ENV === 'development'
-          ? 'http://localhost:3000/auth/callback'
-          : 'https://pre-app.apptanda.com/auth/callback';
+    const redirectTo =
+      process.env.NODE_ENV === 'development'
+        ? 'http://localhost:3000/auth/callback'
+        : 'https://pre-app.apptanda.com/auth/callback';
 
-      const { data, error } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          emailRedirectTo: redirectTo,
-        },
-      });
+    const { data, error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: { emailRedirectTo: redirectTo },
+    });
 
-
-      if (error) {
-        console.error('❌ Error en el registro:', error.message);
-        throw error; // 🔥 Lanza el error para que lo capture Register.js
-      }
-
-      if (!data.session) {
-        setPendingEmail(email);         // ✅ guarda el email para reenviar luego
-        navigate('/verify-email'); // o muestra mensaje si no tienes esa ruta
-        return;
-      }
-
-      //localStorage.setItem('token', data.session.access_token);
-      setCurrentUser(data.user);
-      return data;
-
-    } catch (err) {
-      throw err;
+    if (error) {
+      console.error('❌ Error en el registro:', error.message);
+      throw error;
     }
+
+    return data; // Devuelve siempre { user, session }
   };
+
 
   // login
   const login = async (email, password) => {

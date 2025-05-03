@@ -25,20 +25,21 @@ function Register() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoadingForm(true);
+
     try {
       const { session } = await register(email, password);
+
       localStorage.setItem('lastRegisteredEmail', email);
 
       if (session) {
-        // Usuario nuevo: sesión creada, mail enviado
+        // Sesión creada (puede ocurrir si has activado confirmación automática)
         navigate('/verify-email');
       } else {
-        // Usuario ya registrado o sin sesión: mensaje neutro
+        // Usuario ya estaba registrado o necesita verificar
         showInfo(
-          "Si tu correo está registrado, te hemos enviado instrucciones para continuar."
+          'Si tu correo está registrado, te hemos enviado instrucciones para continuar.'
         );
       }
-
     } catch (err) {
       console.error('❌ Register error:', err.message);
       showError(mapSupabaseError(err));
@@ -46,6 +47,7 @@ function Register() {
       setLoadingForm(false);
     }
   };
+
   const handleBack = () => {
     navigate('/');
 
@@ -59,7 +61,7 @@ function Register() {
       />
       <div className="container auth-container">
         <div className="auth-content">
-        <h2>Crea tu cuenta en Tanda</h2>
+          <h2>Crea tu cuenta en Tanda</h2>
           <div className="auth-body">
             <form className="auth-form" onSubmit={handleSubmit}>
               <InputField
