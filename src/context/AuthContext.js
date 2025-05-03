@@ -232,7 +232,7 @@ export function AuthProvider({ children }) {
     }
   };
 
-  const authReady = !loading && (currentUser === null || (currentUser && (isWorker || isWorker === false)));
+  const authReady = !loading && (currentUser === null || (currentUser && isWorker !== null));
 
 
 

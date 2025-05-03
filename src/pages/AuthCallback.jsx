@@ -9,7 +9,7 @@ import axios from 'axios';
 
 const AuthCallback = () => {
   const navigate = useNavigate();
-  const { currentUser, setCurrentUser, setIsWorker } = useAuth();
+  const { rehydrateUser, currentUser, setCurrentUser, setIsWorker } = useAuth();
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -80,7 +80,7 @@ const AuthCallback = () => {
           }
         );
 
-        setIsWorker(profileRes.data);
+        await rehydrateUser();
         setLoading(false);
         navigate('/calendar');
       } catch (err) {

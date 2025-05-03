@@ -3,6 +3,7 @@ import { Navigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import AppLoader from './ui/AppLoader';
 import { useLocation } from 'react-router-dom';
+import Loader from '../../components/ui/Loader/Loader';
 
 
 // 🔁 Función auxiliar para detectar paso pendiente del onboarding
@@ -32,7 +33,7 @@ const PrivateRoute = ({ children }) => {
   const location = useLocation();
 
 
-  if (!authReady || typeof isWorker !== 'object') {
+  if (!authReady || isWorker === null) {
     return <AppLoader />;
   }
   if (!currentUser) return <Navigate to="/login" />;
