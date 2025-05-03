@@ -24,9 +24,9 @@ const Calendar = () => {
     return (
         <>
             <HeaderFirstLevel
-                title={`Hola ${isWorker?.name || ''}`}
+                title={`Hola, ${isWorker?.name || ''}`}
                 rightAction={{
-                    icon: <UserCircle size={24} />,
+                    icon: <UserCircle size={32} weight="fill" />,
                     onClick: handleProfileClick,
                 }}
             />
