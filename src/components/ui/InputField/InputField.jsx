@@ -39,6 +39,17 @@ const InputField = ({
   };
 
   const inputType = type === 'password' ? (showPassword ? 'text' : 'password') : type;
+  const isPassword = type === 'password';
+  const defaultPasswordIcon = (
+    <button
+      type="button"
+      onClick={togglePasswordVisibility}
+      aria-label={showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}
+    >
+      {showPassword ? <EyeSlash size={18} /> : <Eye size={18} />}
+    </button>
+  );
+  const resolvedRightIcon = rightIcon ?? (isPassword ? defaultPasswordIcon : null);
 
   return (
     <div className={`input-field ${error ? 'error' : ''} ${disabled ? 'disabled' : ''}`}>
@@ -76,19 +87,11 @@ const InputField = ({
                 disabled={disabled}
                 maxLength={maxLength}
               />
-              <div className="input-field__right-icon">
-                {type === 'password' ? (
-                  <button
-                    type="button"
-                    onClick={togglePasswordVisibility}
-                    aria-label={showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}
-                  >
-                    {showPassword ? <EyeSlash size={18} /> : <Eye size={18} />}
-                  </button>
-                ) : (
-                  rightIcon
-                )}
-              </div>
+              {resolvedRightIcon && (
+                <div className="input-field__right-icon">
+                  {resolvedRightIcon}
+                </div>
+              )}
             </div>
           )}
 

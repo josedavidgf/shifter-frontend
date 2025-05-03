@@ -48,5 +48,6 @@ export {
     CaretUp,
     Eye,
     EyeClosed,
-    EyeSlash
+    EyeSlash,
+    EnvelopeSimple
   } from 'phosphor-react';
