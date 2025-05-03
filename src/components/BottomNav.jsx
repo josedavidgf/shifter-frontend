@@ -8,7 +8,7 @@ export default function BottomNav() {
       <NavLink to="/calendar" className="nav-item">
         {({ isActive }) => (
           <div className={`nav-icon ${isActive ? 'active' : ''}`}>
-            <CalendarCheck size={24} />
+            <CalendarCheck size={24} weight={isActive ? 'fill' : 'regular'} />
             <span>Calendario</span>
           </div>
         )}
@@ -17,7 +17,7 @@ export default function BottomNav() {
       <NavLink to="/my-swaps" className="nav-item">
         {({ isActive }) => (
           <div className={`nav-icon ${isActive ? 'active' : ''}`}>
-            <Lightning size={24} />
+            <Lightning size={24} weight={isActive ? 'fill' : 'regular'} />
             <span>Cambios</span>
           </div>
         )}
@@ -26,7 +26,7 @@ export default function BottomNav() {
       <NavLink to="/shifts/hospital" className="nav-item">
         {({ isActive }) => (
           <div className={`nav-icon ${isActive ? 'active' : ''}`}>
-            <MagnifyingGlass size={24} />
+            <MagnifyingGlass size={24} weight={isActive ? 'fill' : 'regular'} />
             <span>Turnos</span>
           </div>
         )}
@@ -35,7 +35,7 @@ export default function BottomNav() {
       <NavLink to="/chats" className="nav-item">
         {({ isActive }) => (
           <div className={`nav-icon ${isActive ? 'active' : ''}`}>
-            <ChatCircle size={24} />
+            <ChatCircle size={24} weight={isActive ? 'fill' : 'regular'} />
             <span>Mensajes</span>
           </div>
         )}
