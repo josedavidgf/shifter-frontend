@@ -5,7 +5,6 @@ import useTrackPageView from '../../hooks/useTrackPageView';
 import InputField from '../../components/ui/InputField/InputField';
 import Button from '../../components/ui/Button/Button';
 import DividerText from '../../components/ui/DividerText/DividerText';
-import logoTanda from '../../assets/logo-tanda-light.png';
 import logoGoogle from '../../assets/google-icon.svg';
 import { useToast } from '../../hooks/useToast';
 import { mapSupabaseError } from '../../utils/mapSupabaseError';

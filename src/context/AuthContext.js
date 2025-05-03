@@ -1,6 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import supabase from '../config/supabase';
-import { useNavigate } from 'react-router-dom';
 import { getMyWorkerProfile, } from '../services/workerService';
 import { initAmplitude, identifyUser } from '../lib/amplitude';
 import * as amplitude from '@amplitude/analytics-browser';
@@ -18,11 +17,10 @@ let isAmplitudeInitialized = false; // 🔥 flag global (fuera del AuthProvider)
 
 export function AuthProvider({ children }) {
   const [currentUser, setCurrentUser] = useState(null);
-  const [isWorker, setIsWorker] = useState(false);
+  const [isWorker, setIsWorker] = useState(null);
   const [loading, setLoading] = useState(true);
   const [pendingEmail, setPendingEmail] = useState(null);
 
-  const navigate = useNavigate();
 
   const rehydrateUser = async () => {
     try {
@@ -155,8 +153,6 @@ export function AuthProvider({ children }) {
       console.warn("Worker not found yet, maybe onboarding.");
       setIsWorker(false);
     }
-
-    navigate('/calendar');
     return data;
   };
 
