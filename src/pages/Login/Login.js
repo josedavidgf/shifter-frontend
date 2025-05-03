@@ -43,8 +43,10 @@ function Login() {
     }
   };
 
+
+
   const handleBack = () => {
-      navigate('/');
+    navigate('/');
 
   };
 
@@ -101,6 +103,27 @@ function Login() {
               onClick={loginWithGoogle}
             />
           </div>
+          <div className="auth-divider">
+            <DividerText text="" />
+          </div>
+
+          <p style={{ marginTop: '1rem', textAlign: 'right' }}>
+            <button
+              type="button"
+              onClick={() => navigate('/forgot-password')}
+              style={{
+                background: 'none',
+                border: 'none',
+                color: '#007bff',
+                cursor: 'pointer',
+                textDecoration: 'underline',
+                padding: 0
+              }}
+            >
+              ¿Has olvidado tu contraseña?
+            </button>
+          </p>
+
         </div>
       </div>
     </>

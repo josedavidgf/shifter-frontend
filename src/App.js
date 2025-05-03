@@ -32,6 +32,8 @@ import ButtonDemo from './components/ui/Button/ButtonDemo';
 import GlobalUI from './components/ui/GlobalUI/GlobalUI';
 import AuthCallback from './pages/AuthCallback.jsx'
 import ContactPage from './pages/Profile/ContactPage.jsx'
+import ForgotPassword from './pages/Login/ForgotPassword';
+import ResetPassword from './pages/Login/ResetPassword';
 
 
 function App() {
@@ -44,6 +46,8 @@ function App() {
         <Route path="/register" element={<PublicRoute><Register /></PublicRoute>} />
         <Route path="/button-demo" element={<ButtonDemo />} />
         <Route path="/auth/callback" element={<AuthCallback />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+
 
         {/* Rutas privadas: agrupadas bajo el nuevo layout */}
         <Route path="/" element={<PrivateRoute><AppLayout /></PrivateRoute>}>
@@ -56,6 +60,7 @@ function App() {
         </Route>
 
         <Route element={<SimpleLayout />}>
+          <Route path="/forgot-password" element={<PrivateRoute><ResetPassword /></PrivateRoute>} />
           <Route path="/profile/personal" element={<PrivateRoute><PersonalInfo /></PrivateRoute>} />
           <Route path="/profile/work" element={<PrivateRoute><WorkSettings /></PrivateRoute>} />
           <Route path="profile/preferences" element={<PrivateRoute><ProfilePreferences /></PrivateRoute>} />

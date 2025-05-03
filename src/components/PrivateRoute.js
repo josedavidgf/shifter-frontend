@@ -63,13 +63,17 @@ const PrivateRoute = ({ children }) => {
 
   // ✅ Si hay onboarding pendiente, redirige al paso correspondiente
   const pendingStep = getPendingOnboardingStep(isWorker);
+  const isResetPasswordPath = location.pathname === '/reset-password';
+
   if (
     pendingStep &&
     location.pathname !== pendingStep &&
-    !location.pathname.startsWith(pendingStep)
+    !location.pathname.startsWith(pendingStep) &&
+    !isResetPasswordPath
   ) {
     return <Navigate to={pendingStep} />;
   }
+
 
 
 

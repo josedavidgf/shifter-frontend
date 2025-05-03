@@ -48,6 +48,18 @@ const AuthCallback = () => {
         }
       }
 
+      // Detectar tipo de callback desde el hash
+      const hashParams = new URLSearchParams(window.location.hash.slice(1));
+      const type = hashParams.get('type');
+
+      if (type === 'reset_password') {
+        console.log('🔐 Entrando por flujo de recuperación de contraseña');
+        setLoading(false);
+        navigate('/reset-password');
+        return;
+      }
+
+
       if (!session) {
         setError('No se pudo recuperar tu sesión. Intenta iniciar sesión nuevamente.');
         setLoading(false);
