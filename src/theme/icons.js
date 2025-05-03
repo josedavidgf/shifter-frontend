@@ -49,5 +49,6 @@ export {
     Eye,
     EyeClosed,
     EyeSlash,
-    EnvelopeSimple
+    EnvelopeSimple,
+    CalendarCheck
   } from 'phosphor-react';
