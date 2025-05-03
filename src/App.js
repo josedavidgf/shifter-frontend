@@ -34,6 +34,7 @@ import AuthCallback from './pages/AuthCallback.jsx'
 import ContactPage from './pages/Profile/ContactPage.jsx'
 import ForgotPassword from './pages/Login/ForgotPassword';
 import ResetPassword from './pages/Login/ResetPassword';
+import ResetPasswordPage from  './pages/Profile/ResetPasswordPage';
 
 
 function App() {
@@ -65,6 +66,7 @@ function App() {
           <Route path="/profile/work" element={<PrivateRoute><WorkSettings /></PrivateRoute>} />
           <Route path="profile/preferences" element={<PrivateRoute><ProfilePreferences /></PrivateRoute>} />
           <Route path="profile/contact" element={<PrivateRoute><ContactPage /></PrivateRoute>} />
+          <Route path="profile/reset-password-request" element={<PrivateRoute><ResetPasswordPage /></PrivateRoute>} />
           <Route path="/chats/:swapId" element={<PrivateRoute><ChatPage /></PrivateRoute>} />
           <Route path="/shifts/create" element={<PrivateRoute><CreateShift /></PrivateRoute>} />
           <Route path="/propose-swap/:shift_id" element={<PrivateRoute><ProposeSwap /></PrivateRoute>} />

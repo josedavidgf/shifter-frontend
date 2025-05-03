@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { useUserApi } from '../../api/useUserApi';
-import supabase from '../../config/supabase';
+/* import supabase from '../../config/supabase'; */
 import { useNavigate } from 'react-router-dom';
 import HeaderSecondLevel from '../../components/ui/Header/HeaderSecondLevel';
 import Button from '../../components/ui/Button/Button';
@@ -44,7 +44,7 @@ const PersonalInfo = () => {
     fetchData();
   }, [getToken]);
 
-  const handleAvatarChange = async (e) => {
+/*   const handleAvatarChange = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
 
@@ -66,7 +66,7 @@ const PersonalInfo = () => {
     }
 
     showSuccess('Imagen subida correctamente');
-  };
+  }; */
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -112,6 +112,7 @@ const PersonalInfo = () => {
 
       if (updated) {
         showSuccess('Información actualizada');
+        navigate('/profile');
       } else {
         showWarning('No se pudo actualizar la información');
       }
@@ -164,10 +165,10 @@ const PersonalInfo = () => {
               }))}
             />
 
-            <div className="form-group">
+{/*             <div className="form-group">
               <label>Imagen de perfil:</label>
               <input type="file" accept="image/*" onChange={handleAvatarChange} />
-            </div>
+            </div> */}
 
             <Button
               label="Guardar"

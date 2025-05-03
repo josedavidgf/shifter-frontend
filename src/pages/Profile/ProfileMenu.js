@@ -13,6 +13,7 @@ import {
   File,
   Books,
   CaretRight,
+  Password
 } from '../../theme/icons';
 
 const ProfileMenu = () => {
@@ -24,6 +25,12 @@ const ProfileMenu = () => {
       label: 'Información personal',
       route: '/profile/personal',
       Icon: AddressBook,
+      RightIcon: CaretRight,
+    },
+    {
+      label: 'Actualizar contraseña',
+      route: '/profile/reset-password-request',
+      Icon: Password,
       RightIcon: CaretRight,
     },
     {
