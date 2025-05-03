@@ -24,6 +24,7 @@ import DayDetailEmpty from './DayDetails/DayDetailEmpty';
 import Loader from '../components/ui/Loader/Loader';
 import { Sun, SunHorizon, Moon, ShieldCheck, CirclesThree, SquaresFour, Stack, Trash, FloppyDisk, CalendarPlus } from '../theme/icons';
 import { useToast } from '../hooks/useToast'; // ya lo usas en otras vistas
+import { Check } from 'phosphor-react';
 
 
 function renderShiftIcon(shift) {
@@ -729,9 +730,9 @@ function MonthlyCalendar() {
 
         <div className="btn-group-row">
           <Button
-            label="Guardar"
+            label="Aplicar"
             variant="primary"
-            leftIcon={<FloppyDisk size={16} />}
+            leftIcon={<Check size={24} />}
             size="md"
             onClick={handleSaveMassiveEdit}
             isLoading={loadingMassiveSave}
@@ -740,7 +741,7 @@ function MonthlyCalendar() {
             label="Descartar"
             variant="danger"
             size="md"
-            leftIcon={<Trash size={16} />}
+            leftIcon={<Trash size={24} />}
             onClick={() => {
               setDraftShiftMap(null);
               setIsMassiveEditMode(false);
