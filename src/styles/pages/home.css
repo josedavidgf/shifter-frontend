@@ -1,4 +1,4 @@
-.auth-container {
+.home-container {
     display: flex;
     flex-direction: column;
     justify-content: space-between; /* Recuperamos sticky footer */
@@ -7,8 +7,7 @@
     padding: var(--space-lg);
     background-color: var(--color-background);
 }
-
-.auth-content {
+.home-content {
     display: flex;
     margin-top: 100px;
     flex-direction: column;
@@ -17,17 +16,17 @@
     width: 100%;
 }
 
-.auth-logo-container {
+.home-logo-container {
     display: flex;
     justify-content: center;
 }
 
-.auth-logo-container img {
+.home-logo-container img {
     width: 150px;
     height: auto;
 }
 
-.auth-body {
+.home-body {
     width: 100%;
     max-width: 343px;
     display: flex;
@@ -35,19 +34,9 @@
     gap: var(--space-md);
 }
 
-.auth-form {
+.home-form {
     width: 100%;
     display: flex;
     flex-direction: column;
-}
-
-.auth-divider {
-    margin: var(--space-lg) 0 var(--space-md) 0;
-}
-
-.auth-footer {
-    width: 100%;
-    max-width: 343px;
-    margin-top: var(--space-md);
-    margin-bottom: var(--space-md);
+    gap: var(--space-md);
 }
