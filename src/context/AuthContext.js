@@ -127,7 +127,6 @@ export function AuthProvider({ children }) {
 
 
 
-  // Registro
   const register = async (email, password) => {
     try {
       const redirectTo =
@@ -144,9 +143,9 @@ export function AuthProvider({ children }) {
       });
 
 
-      if (error && !data?.user) {
+      if (error) {
         console.error('❌ Error en el registro:', error.message);
-        return;
+        throw error; // 🔥 Lanza el error para que lo capture Register.js
       }
 
       if (!data.session) {
@@ -160,31 +159,31 @@ export function AuthProvider({ children }) {
       return data;
 
     } catch (err) {
-      throw new Error(err.message);
+      throw err;
     }
   };
 
   // login
   const login = async (email, password) => {
 
+    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+
+    if (error) throw error;
+
+    const user = data.user;
+    const token = data.session.access_token;
+    setCurrentUser(user);
+
     try {
-      const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-      if (error) throw error;
-
-      const user = data.user;
-      const token = data.session.access_token;
-      setCurrentUser(user);
-
       const workerProfile = await getMyWorkerProfile(token);
       setIsWorker(workerProfile);
-
-      // ✅ Si todo correcto
-      navigate('/calendar');
-      return data;
-
     } catch (err) {
-      throw new Error(err.message);
+      console.warn("Worker not found yet, maybe onboarding.");
+      setIsWorker(false);
     }
+
+    navigate('/calendar');
+    return data;
   };
 
 
