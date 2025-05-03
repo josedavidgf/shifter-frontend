@@ -46,4 +46,7 @@ export {
     CaretRight,
     CaretLeft,
     CaretUp,
+    Eye,
+    EyeClosed,
+    EyeSlash
   } from 'phosphor-react';
