@@ -1,11 +1,16 @@
 import React from 'react';
+import logoTanda from '../../assets/logo-tanda-light.png';
+
 
 const AppLoader = () => {
   return (
-    <div style={{ height: '100vh', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-      <p>Cargando Tanda...</p>
-      {/* Aquí puedes meter un spinner bonito más adelante */}
-    </div>
+    <div className="loader-splash">
+      <img src={logoTanda} alt="Tanda Logo" className="logo-splash" />
+      <div className="progress-bar-container">
+        <div className="progress-bar" />
+        <p className="loader-text">Cargando Tanda...</p>
+      </div>
+    </div >
   );
 };
 
