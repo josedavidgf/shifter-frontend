@@ -252,13 +252,11 @@ export function AuthProvider({ children }) {
     setPendingEmail
   };
 
-  const isReady = !loading;
-
-
   return (
     <AuthContext.Provider value={value}>
-      {isReady ? children : null}
+      {!authReady ? null : children}
     </AuthContext.Provider>
   );
+
 
 }

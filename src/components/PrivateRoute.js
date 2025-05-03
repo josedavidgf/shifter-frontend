@@ -32,7 +32,7 @@ const PrivateRoute = ({ children }) => {
   const location = useLocation();
 
 
-  if (!authReady || isWorker === null) {
+  if (!authReady || typeof isWorker !== 'object') {
     return <AppLoader />;
   }
   if (!currentUser) return <Navigate to="/login" />;
