@@ -1,6 +1,8 @@
 // src/components/MonthlyCalendar.jsx (actualizado)
 import { useEffect, useState, useRef } from 'react';
-import { format, startOfMonth, endOfMonth, eachDayOfInterval, /* isSameDay, */ parseISO } from 'date-fns';
+import { format, startOfMonth, endOfMonth, eachDayOfInterval, /* isSameDay, */ parseISO, addDays } from 'date-fns';
+import { isToday } from 'date-fns';
+import es from 'date-fns/locale/es';
 import { useCalendarApi } from '../api/useCalendarApi';
 import { useSwapPreferencesApi } from '../api/useSwapPreferencesApi';
 import { useSwapApi } from '../api/useSwapApi'; // Ya lo tenías
@@ -520,7 +522,14 @@ function MonthlyCalendar() {
   function renderDayDetails(dateStr) {
     const dataForRender = isMassiveEditMode ? draftShiftMap : shiftMap;
     const entry = dataForRender[dateStr] || {};
-    const dayLabel = format(parseISO(dateStr), 'dd/MM/yyyy');
+    const parsedDate = parseISO(dateStr);
+    const capitalize = (s) => s.charAt(0).toUpperCase() + s.slice(1);
+    const tomorrow = addDays(new Date(), 1);
+    const dayLabel = isToday(parsedDate)
+      ? `Hoy, ${format(parsedDate, 'dd/MM')}`
+      : format(parsedDate, 'yyyy-MM-dd') === format(tomorrow, 'yyyy-MM-dd')
+        ? `Mañana, ${format(parsedDate, 'dd/MM')}`
+        : `${capitalize(format(parsedDate, 'EEEE', { locale: es }))}, ${format(parsedDate, 'dd/MM')}`;
 
     const { source, isPreference, isPublished } = entry;
     //console.log('entry', entry);

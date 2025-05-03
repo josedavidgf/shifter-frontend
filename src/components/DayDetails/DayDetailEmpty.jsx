@@ -13,7 +13,7 @@ export default function DayDetailEmpty({
   return (
     <div>
       <h3 className="font-bold mb-2">{dayLabel} - Día libre</h3>
-      <p className="mb-4">Actualmente no tienes ningún turno ni disponibilidad registrada para este día.</p>
+      <p className="mb-4">Hoy no tienes turno ni lo tienes seleccionado como disponible para trabajar.</p>
 
       <div className="btn-group">
         <Button
