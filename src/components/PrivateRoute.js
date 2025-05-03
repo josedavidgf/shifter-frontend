@@ -69,7 +69,7 @@ const PrivateRoute = ({ children }) => {
   if (
     pendingStep &&
     location.pathname !== pendingStep &&
-    !location.pathname.startsWith(pendingStep) &&
+    !location.pathname.startsWith(pendingStep)
   ) {
     return <Navigate to={pendingStep} />;
   }
