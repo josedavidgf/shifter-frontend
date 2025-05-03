@@ -46,6 +46,4 @@ export {
     CaretRight,
     CaretLeft,
     CaretUp,
-    CaretDown
-
   } from 'phosphor-react';
