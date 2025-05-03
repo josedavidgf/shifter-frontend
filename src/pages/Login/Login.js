@@ -103,10 +103,6 @@ function Login() {
               onClick={loginWithGoogle}
             />
           </div>
-          <div className="auth-divider">
-            <DividerText text="" />
-          </div>
-
           <p style={{ marginTop: '1rem', textAlign: 'right' }}>
             <button
               type="button"
