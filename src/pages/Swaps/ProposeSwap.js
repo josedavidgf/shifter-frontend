@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { useSwapApi } from '../../api/useSwapApi';
@@ -12,6 +12,8 @@ import Loader from '../../components/ui/Loader/Loader';
 import EmptyState from '../../components/ui/EmptyState/EmptyState';
 import { useToast } from '../../hooks/useToast'; // ya lo usas en otras vistas
 import useMinimumDelay from '../../hooks/useMinimumDelay';
+import { useSwapPreferencesApi } from '../../api/useSwapPreferencesApi'; // o crea un hook nuevo
+import { useShiftApi } from '../../api/useShiftApi'; // asegúrate de tener esta función creada
 
 
 const ProposeSwap = () => {
@@ -23,7 +25,62 @@ const ProposeSwap = () => {
   const { proposeSwap, loading: loadingPropose, error: errorPropose } = useSwapApi(); // 🆕
   const { showError } = useToast();
   const showLoader = useMinimumDelay(loadingShifts, 500);
+  const [enrichedShifts, setEnrichedShifts] = useState([]);
+  const { getShiftById } = useShiftApi();
+  const { getMySwapPreferences } = useSwapPreferencesApi();
 
+
+
+  useEffect(() => {
+    const enrichShiftsWithPreferences = async () => {
+      if (!shifts.length || !shift_id) return;
+
+      try {
+        const token = await getToken();
+        const publishedShift = await getShiftById(shift_id, token);
+
+
+
+
+        const receiverId = publishedShift.worker?.worker_id;
+
+        if (!receiverId) {
+          console.error('⛔️ receiverId no encontrado en publishedShift:', publishedShift);
+          setEnrichedShifts(shifts);
+          return;
+        }
+
+        console.log('📦 receiverId', receiverId);
+
+        
+
+        const preferences = await getMySwapPreferences(receiverId);
+
+        console.log('📦 preferences', preferences);
+
+
+        const enriched = shifts.map((s) => {
+          const isPreferred = preferences.some(
+            (p) =>
+              p.date === s.date &&
+              p.preference_type === s.type
+          );
+          
+          return { ...s, preferred: isPreferred };
+        });
+
+        console.log('📦 enriched', enriched);
+
+
+        setEnrichedShifts(enriched);
+      } catch (err) {
+        console.error('❌ Error enriqueciendo shifts con preferencias:', err);
+        setEnrichedShifts(shifts); // fallback sin marcar
+      }
+    };
+
+    enrichShiftsWithPreferences();
+  }, [shifts, shift_id]);
 
   const [selectedShift, setSelectedShift] = useState(null);
   const [selectedShiftId, setSelectedShiftId] = useState('');
@@ -74,7 +131,7 @@ const ProposeSwap = () => {
     }
   };
 
-  if (showLoader ) {
+  if (showLoader) {
     return (
       <div className="flex justify-center items-center min-h-screen">
         <Loader text="Cargando turnos disponibles..." />
@@ -108,7 +165,7 @@ const ProposeSwap = () => {
       </>
     );
   }
-  
+
 
   return (
     <>
@@ -121,10 +178,11 @@ const ProposeSwap = () => {
         <div className="container">
           <form onSubmit={handleSubmit} className="propose-form">
             <ShiftSelector
-              shifts={shifts}
+              shifts={enrichedShifts}
               selectedShiftId={selectedShiftId}
               onSelect={handleSelectShift}
             />
+
             <div className="form-group">
               <label>Comentarios:</label>
               <textarea

@@ -12,7 +12,7 @@ function ShiftSelector({ shifts, selectedShiftId, onSelect }) {
 
   const options = shifts.map((shift) => ({
     value: shift.id,
-    label: `${formatDate(shift.date)} - ${translateType(shift.type)}${shift.indicator === 'received' ? ' ↓' : ''}`,
+    label: `${formatDate(shift.date)} - ${translateType(shift.type)}${shift.indicator === 'received' ? ' ↓' : ''}${shift.preferred ? ' 🟢' : ''}`,
   }));
 
   return (

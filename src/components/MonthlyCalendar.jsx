@@ -176,7 +176,6 @@ function MonthlyCalendar() {
           shift_id: publishedMap.get(key) || null,
           worker_id: workerId, // 👈 nuevo campo añadido
         };
-        console.log('enrichedMap', enrichedMap);
       });
 
       preferences.forEach(({ preference_id, date, preference_type }) => {
