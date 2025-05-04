@@ -1,6 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import logoTanda from '../../assets/logo-tanda-light.png';
+import illustration from '../../assets/illustration.png';
 import Button from '../../components/ui/Button/Button';
 
 function Home() {
@@ -12,6 +13,14 @@ function Home() {
                 <div className="home-logo-container">
                     <img src={logoTanda} alt="Tanda Logo" className="home-logo" />
                 </div>
+
+                <div className="home-hero">
+  <img src={illustration} alt="Ilustración" className="home-illustration" />
+  <p className="home-description">
+    Cambia tus turnos sin perder horas. Publica los que no quieres y consigue los que necesitas
+  </p>
+</div>
+
                 <div className="home-body">
                     <div className="home-form">
                         <div className="btn-group">
@@ -32,7 +41,6 @@ function Home() {
                 </div>
             </div>
         </div>
-
     );
 }
 
