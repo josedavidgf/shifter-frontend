@@ -749,7 +749,7 @@ function MonthlyCalendar() {
       )}
       {isMassiveEditMode && (
 
-        <div className="btn-group-row">
+        <div className="btn-group-row mt-4">
           <Button
             label="Aplicar"
             variant="primary"
