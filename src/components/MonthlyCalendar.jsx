@@ -658,7 +658,7 @@ function MonthlyCalendar() {
         </Banner>
 
       )}
-      <div className="mb-4 p-4 border rounded shadow">
+      <div className="mt-3 mb-3 p-4 border rounded shadow">
         <div className="badge-container">
           {['total', 'morning', 'evening', 'night', 'reinforcement'].map((type) => {
             const count = stats[type];
@@ -749,7 +749,7 @@ function MonthlyCalendar() {
       )}
       {isMassiveEditMode && (
 
-        <div className="btn-group-row mt-4">
+        <div className="btn-group-row mt-3">
           <Button
             label="Aplicar"
             variant="primary"
