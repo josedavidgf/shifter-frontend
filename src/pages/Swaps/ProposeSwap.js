@@ -14,7 +14,7 @@ import { useToast } from '../../hooks/useToast'; // ya lo usas en otras vistas
 import useMinimumDelay from '../../hooks/useMinimumDelay';
 import { useSwapPreferencesApi } from '../../api/useSwapPreferencesApi'; // o crea un hook nuevo
 import { useShiftApi } from '../../api/useShiftApi'; // asegúrate de tener esta función creada
-import { formatFriendlyDate } from '../../utils/formatFriendlyDate';
+import Banner from '../../components/ui/Banner/Banner';
 
 
 const ProposeSwap = () => {
@@ -53,7 +53,7 @@ const ProposeSwap = () => {
 
         console.log('📦 receiverId', receiverId);
 
-        
+
 
         const preferences = await getMySwapPreferences(receiverId);
 
@@ -66,7 +66,7 @@ const ProposeSwap = () => {
               p.date === s.date &&
               p.preference_type === s.type
           );
-          
+
           return { ...s, preferred: isPreferred };
         });
 
@@ -183,6 +183,13 @@ const ProposeSwap = () => {
               selectedShiftId={selectedShiftId}
               onSelect={handleSelectShift}
             />
+            <Banner type="info">
+              <p><strong>¿Qué significan los colores?</strong></p>
+              <ul>
+                <li><span style={{ color: 'green' }}>🟢</span> Turnos que tu compañero marca como disponible: La aceptación será automática, el resto requieren aceptación.</li>
+                <li><span style={{ color: 'gray' }}>🔄</span> Turnos que has recibido: Transmite a tu compañero quien era el propietario del turno.</li>
+              </ul>
+            </Banner>
 
             <div className="form-group">
               <label>Comentarios:</label>
@@ -193,6 +200,8 @@ const ProposeSwap = () => {
                 placeholder="Comentarios adicionales"
               />
             </div>
+
+            
 
             {errorPropose && (
               <p style={{ color: 'red', marginTop: '10px' }}>
