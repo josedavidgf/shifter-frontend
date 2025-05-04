@@ -30,9 +30,17 @@ export function buildChatContext(swap, workerId) {
     ? swap.offered_date
     : swap.shift.date;
 
+  const myDateType = iAmRequester
+    ? swap.offered_type
+    : swap.shift.shift_type;
+
   const otherDate = iAmRequester
     ? swap.shift.date
     : swap.offered_date;
+
+  const otherDateType = iAmRequester
+    ? swap.shift.shift_type
+    : swap.offered_type;
 
   const otherWorkerId = iAmRequester
     ? swap.shift.worker_id
@@ -45,7 +53,9 @@ export function buildChatContext(swap, workerId) {
     otherPersonMobileCountryCode,
     otherPersonMobilePhone,
     myDate,
+    myDateType,
     otherDate,
+    otherDateType,
     otherWorkerId,
   };
 }

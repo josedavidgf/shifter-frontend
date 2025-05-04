@@ -14,6 +14,7 @@ import { useToast } from '../../hooks/useToast'; // ya lo usas en otras vistas
 import useMinimumDelay from '../../hooks/useMinimumDelay';
 import { useSwapPreferencesApi } from '../../api/useSwapPreferencesApi'; // o crea un hook nuevo
 import { useShiftApi } from '../../api/useShiftApi'; // asegúrate de tener esta función creada
+import { formatFriendlyDate } from '../../utils/formatFriendlyDate';
 
 
 const ProposeSwap = () => {

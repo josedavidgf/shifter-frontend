@@ -1,5 +1,7 @@
 import React from 'react';
 import SelectorInput from '../components/ui/SelectorInput/SelectorInput'; // Ajusta ruta si necesario
+import { formatFriendlyDate } from '../utils/formatFriendlyDate'; // Ajusta path si necesario
+
 
 function ShiftSelector({ shifts, selectedShiftId, onSelect }) {
   const handleChange = (e) => {
@@ -12,7 +14,7 @@ function ShiftSelector({ shifts, selectedShiftId, onSelect }) {
 
   const options = shifts.map((shift) => ({
     value: shift.id,
-    label: `${formatDate(shift.date)} - ${translateType(shift.type)}${shift.indicator === 'received' ? ' ↓' : ''}${shift.preferred ? ' 🟢' : ''}`,
+    label: `${formatFriendlyDate(shift.date)} de ${translateType(shift.type)}${shift.indicator === 'received' ? ' ↓' : ''}${shift.preferred ? ' 🟢' : ''}`,
   }));
 
   return (

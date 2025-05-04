@@ -5,7 +5,9 @@ import { useWorkerApi } from '../../api/useWorkerApi';
 import { buildChatContext } from '../../utils/chatUtils';
 import ChatBox from '../../components/ChatBox';
 import { useAuth } from '../../context/AuthContext';
-import { formatDate, getVerb, getOtherVerb } from '../../utils/dateUtils';
+import { getVerb, getOtherVerb } from '../../utils/dateUtils';
+import { formatFriendlyDate } from '../../utils/formatFriendlyDate';
+import { translateShiftType } from '../../utils/translateServices';
 import HeaderSecondLevel from '../../components/ui/Header/HeaderSecondLevel';
 import Loader from '../../components/ui/Loader/Loader'; // ✅
 import { Phone } from '../../theme/icons';
@@ -67,15 +69,20 @@ const ChatPage = () => {
         return <Loader text="Cargando conversación..." />;
     }
 
+    console.log(swap)
+
     const {
         otherPersonName,
         otherPersonSurname,
         otherPersonMobileCountryCode,
         otherPersonMobilePhone,
-        otherWorkerId,
         myDate,
-        otherDate
+        myDateType,
+        otherDate,
+        otherDateType,
+        otherWorkerId,
     } = buildChatContext(swap, workerId);
+
 
     const fullPhone = `${otherPersonMobileCountryCode ?? ''}${otherPersonMobilePhone ?? ''}`.replace(/\s+/g, '');
     const phoneLink = fullPhone.length >= 10 ? `tel:${fullPhone}` : null;
@@ -89,7 +96,7 @@ const ChatPage = () => {
             navigate('/calendar');
         }
     };
-  
+
 
     return (
         <>
@@ -103,11 +110,11 @@ const ChatPage = () => {
                             icon: <Phone size={20} />,
                             label: 'Llamar',
                             onClick: () => window.open(phoneLink, '_blank')
-                          }
-                          
+                        }
+
                         : undefined
                 }
-                />
+            />
 
             <div className="page">
                 <div className="container">
@@ -115,7 +122,7 @@ const ChatPage = () => {
                     <div className="chat-page-header">
                         {/*                             <strong>{otherPersonName} {otherPersonSurname}</strong><br />
  */}                            <p>
-                            {getVerb(myDate)} {formatDate(myDate)} y {otherPersonName} {getOtherVerb(otherDate)} {formatDate(otherDate)}
+                            {getVerb(myDate)} {formatFriendlyDate(myDate)} de {translateShiftType(myDateType)} y {otherPersonName} {getOtherVerb(otherDate)} {formatFriendlyDate(otherDate)} de {translateShiftType(otherDateType)}
                         </p>
                     </div>
                     <div className="chat-page-content">

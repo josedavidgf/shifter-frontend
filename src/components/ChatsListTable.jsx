@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { formatDate, getVerb, getOtherVerb } from '../utils/dateUtils';
+import { getVerb, getOtherVerb } from '../utils/dateUtils';
+import { formatFriendlyDate } from '../utils/formatFriendlyDate';
+import { translateShiftType } from '../utils/translateServices';
 import SearchFilterInput from '../components/ui/SearchFilterInput/SearchFilterInput';
 import Button from '../components/ui/Button/Button';
 import EmptyState from '../components/ui/EmptyState/EmptyState';
@@ -76,7 +78,7 @@ const ChatsListTable = ({ swaps, workerId }) => {
               >
                 <strong>Intercambio #{swap.swap_id}</strong>
                 <span>
-                  {getVerb(myDate)} el {formatDate(myDate)} {myDateType} y {otherPersonName} {getOtherVerb(otherDate)} el {formatDate(otherDate)} {otherType}
+                  {getVerb(myDate)} el {formatFriendlyDate(myDate)} de {translateShiftType(myDateType)} y {otherPersonName} {getOtherVerb(otherDate)} el {formatFriendlyDate(otherDate)} de {translateShiftType(otherType)}
                 </span>
               </div>
             );

@@ -15,6 +15,7 @@ import { shiftTypeLabels, swapStatusLabels } from '../../utils/labelMaps';
 import EmptyState from '../../components/ui/EmptyState/EmptyState';
 import ConfirmationModal from '../../components/ui/ConfirmationModal/ConfirmationModal';
 import useMinimumDelay from '../../hooks/useMinimumDelay';
+import { formatFriendlyDate } from '../../utils/formatFriendlyDate';
 
 
 const SwapDetail = () => {
@@ -148,14 +149,14 @@ const SwapDetail = () => {
                         <InputField
                             name="original_shift_date"
                             label="Turno original"
-                            value={`${swap.shift?.date ? format(parseISO(swap.shift.date), 'dd/MM/yyyy') : '-'} de ${shiftTypeLabels[swap.shift?.shift_type]}`}
+                            value={`${formatFriendlyDate(swap.shift?.date)} de ${shiftTypeLabels[swap.shift?.shift_type]}`}
                             disabled
                             readOnly
                         />
                         <InputField
                             name="offered_swap_date"
                             label="Turno ofrecido"
-                            value={`${swap.offered_date ? format(parseISO(swap.offered_date), 'dd/MM/yyyy') : '-'} de ${shiftTypeLabels[swap.offered_type]}`}
+                            value={`${formatFriendlyDate(swap.offered_date)} de ${shiftTypeLabels[swap.offered_type]}`}
                             disabled
                             readOnly
                         />
@@ -200,7 +201,7 @@ const SwapDetail = () => {
                         <div className="btn-group mb-4">
                             <Button
                                 label="Cancelar intercambio"
-                                variant="danger"
+                                variant="outline"
                                 size="lg"
                                 onClick={handleCancelSwap}
                                 isLoading={isCancelling}
