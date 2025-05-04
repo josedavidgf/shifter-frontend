@@ -58,47 +58,45 @@ const MySwapsTable = ({ swaps = [], isLoading }) => {
 
 
   return (
-    <div>
+    <>
       <div className="filters-container">
         <div className="filters-group">
           <DateRangePicker onChange={(range) => setFilterRange(range)} />
+        </div>
 
-          <div className="chip-filter-group">
+        <div className="chip-filter-group">
+          <div className="chip-scroll-group">
             {swapStatusOptions.map((option) => {
               const isSelected = filterStatuses.includes(option.value);
 
               return (
-                <div className="chip-scroll-group">
 
-                  <Chip
-                    key={option.value}
-                    label={option.label}
-                    selected={filterStatuses.includes(option.value)}
-                    onClick={() => {
-                      setFilterStatuses((prev) =>
-                        prev.includes(option.value)
-                          ? prev.filter((v) => v !== option.value) // Deseleccionar
-                          : [...prev, option.value]               // Seleccionar
-                      );
-                    }}
-                  />
-                </div>
-
+                <Chip
+                  key={option.value}
+                  label={option.label}
+                  selected={filterStatuses.includes(option.value)}
+                  onClick={() => {
+                    setFilterStatuses((prev) =>
+                      prev.includes(option.value)
+                        ? prev.filter((v) => v !== option.value) // Deseleccionar
+                        : [...prev, option.value]               // Seleccionar
+                    );
+                  }}
+                />
               );
             })}
           </div>
+        </div>
 
-
-          {/* <Button
+        {/* <Button
             label="Limpiar filtros"
             variant="outline"
             size="lg"
             leftIcon={<Eraser size={16} />}
             onClick={clearFilters}
           /> */}
-        </div>
-      </div>
 
+      </div>
       {/* Ahora sí: no loading aquí, solo empty si de verdad no hay resultados */}
       {!isLoading && filtersReady && filtered.length === 0 ? (
         <EmptyState
@@ -136,7 +134,7 @@ const MySwapsTable = ({ swaps = [], isLoading }) => {
         </div>
       )}
 
-    </div>
+    </>
   );
 };
 

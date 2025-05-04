@@ -87,45 +87,45 @@ const HospitalShiftsTable = ({ shifts, workerId, sentSwapShiftIds, isLoading }) 
 
 
   return (
-    <div>
+    <>
       <div className="filters-container">
         <div className="filters-group">
           <DateRangePicker onChange={(range) => setFilterRange(range)} />
+        </div>
 
-          <div className="chip-filter-group">
+        <div className="chip-filter-group">
+          <div className="chip-scroll-group">
             {shiftTypeOptions.map((option) => {
               const isSelected = filters.types.includes(option.value);
               return (
-                <div className="chip-scroll-group">
-
-                  <Chip
-                    key={option.value}
-                    label={option.label}
-                    icon={option.icon}
-                    selected={isSelected}
-                    onClick={() =>
-                      setFilters((prev) => ({
-                        ...prev,
-                        types: isSelected
-                          ? prev.types.filter((v) => v !== option.value)
-                          : [...prev.types, option.value]
-                      }))
-                    }
-                  />
-                </div>
+                <Chip
+                  key={option.value}
+                  label={option.label}
+                  icon={option.icon}
+                  selected={isSelected}
+                  onClick={() =>
+                    setFilters((prev) => ({
+                      ...prev,
+                      types: isSelected
+                        ? prev.types.filter((v) => v !== option.value)
+                        : [...prev.types, option.value]
+                    }))
+                  }
+                />
               );
             })}
           </div>
+        </div>
+      </div>
 
-          {/*           <Button
+
+      {/*           <Button
             label="Limpiar filtros"
             variant="outline"
             size="lg"
             leftIcon={<Eraser size={16} />}
             onClick={clearFilters}
           /> */}
-        </div>
-      </div>
       {!isLoading && filtersReady && filteredShifts.length === 0 ? (
         <EmptyState
           title="Sin turnos disponibles"
@@ -173,7 +173,7 @@ const HospitalShiftsTable = ({ shifts, workerId, sentSwapShiftIds, isLoading }) 
           })}
         </div>
       )}
-    </div>
+    </>
   );
 };
 
