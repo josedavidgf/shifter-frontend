@@ -73,7 +73,7 @@ const MySwaps = () => {
 
   return (
     <>
-      <HeaderFirstLevel title="Intercambios" />
+      <HeaderFirstLevel title="Tus cambios" />
       <div className="page page-primary">
         <div className="container">
           {!loading && swaps.length === 0 ? (
