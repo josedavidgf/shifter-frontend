@@ -34,27 +34,25 @@ export default function DayDetailPreference({
           : <>El {dayLabel.toLowerCase()} no tienes turno. <strong>Disponibilidad marcada para:</strong></>}
       </p>
 
-      <div className="btn-group">
+      
+      <div className="chip-scroll-group mb-3">
+        {ALL_TYPES.map((type) => {
+          const isActive = activeTypes.includes(type);
+          const Icon = shiftTypeIcons?.[type];
 
-        <div className="chip-scroll-group">
-          {ALL_TYPES.map((type) => {
-            const isActive = activeTypes.includes(type);
-            const Icon = shiftTypeIcons?.[type];
-
-            return (
-              <Chip
-                key={type}
-                label={shiftTypeLabels[type]}
-                icon={Icon}
-                selected={isActive}
-                onClick={() => onEditPreference(dateStr, type)}
-                disabled={loadingDeletePreference}
-              />
-            );
-          })}
-        </div>
-
+          return (
+            <Chip
+              key={type}
+              label={shiftTypeLabels[type]}
+              icon={Icon}
+              selected={isActive}
+              onClick={() => onEditPreference(dateStr, type)}
+              disabled={loadingDeletePreference}
+            />
+          );
+        })}
       </div>
+
 
       {activeTypes.length > 0 && (
         <Button

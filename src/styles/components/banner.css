@@ -1,0 +1,50 @@
+/* src/components/ui/Banner/Banner.css */
+
+.banner {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-sm);
+    padding: var(--space-md);
+    border-radius: var(--radius-md);
+    background-color: var(--color-info-bg);
+    color: var(--color-info-text);
+    font-size: var(--font-sm);
+    position: relative;
+  }
+  
+  .banner__icon {
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+  
+  .banner__content {
+    flex: 1;
+  }
+  
+  .banner__close {
+    background: none;
+    border: none;
+    color: inherit;
+    cursor: pointer;
+    padding: var(--space-xs);
+    margin-top: 2px;
+  }
+    
+  .banner--info {
+    border-color: var(--color-info-border);
+    background-color: var(--color-info-bg);
+    color: var(--color-info-text);
+  }
+  
+  .banner--success {
+    border-color: var(--color-success);
+    background-color: var(--color-success-bg);
+    color: var(--color-success-text);
+  }
+  
+  .banner--danger {
+    border-color: var(--color-danger);
+    background-color: var(--color-danger-bg);
+    color: var(--color-danger-text);
+  }
+  
