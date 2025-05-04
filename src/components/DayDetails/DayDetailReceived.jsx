@@ -17,15 +17,6 @@ export default function DayDetailReceived({
       {entry.related_worker_id && (
         <p><strong>Cedido por:</strong> {entry.related_worker_name} {entry.related_worker_surname}</p>
       )}
-      {entry.swap_id && (
-        <Button
-          label="Ver intercambio"
-          variant="outline"
-          leftIcon={<Lightning size={20} />}
-          size="sm"
-          onClick={() => navigate(`/swaps/${entry.swap_id}`)}
-        />
-      )}
 
       <Button
         label="Publicar turno recibido"
@@ -35,6 +26,16 @@ export default function DayDetailReceived({
         rightIcon={<Lightning size={20} />}
         onClick={() => navigate(`/shifts/create?date=${dateStr}&shift_type=${entry.shift_type}`)}
       />
+      
+      {entry.swap_id && (
+        <Button
+          label="Ver detalles"
+          variant="ghost"
+          leftIcon={<Lightning size={20} />}
+          size="lg"
+          onClick={() => navigate(`/swaps/${entry.swap_id}`)}
+        />
+      )}
     </div>
   );
 }

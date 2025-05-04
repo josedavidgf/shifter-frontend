@@ -4,6 +4,8 @@ import Button from '../ui/Button/Button'; // Ajusta si tu path varía
 import { shiftTypeLabels } from '../../utils/labelMaps';
 import { parseISO, format, isToday } from 'date-fns';
 import es from 'date-fns/locale/es';
+import { PaintBrush, Trash } from '../../theme/icons';
+
 
 export default function DayDetailPreference({
   dateStr,
@@ -30,14 +32,16 @@ export default function DayDetailPreference({
       <div className="btn-group">
         <Button
           label="Editar disponibilidad"
-          variant="outline"
-          size="md"
+          leftIcon={<PaintBrush size={20} />}
+          variant="primary"
+          size="lg"
           onClick={() => onEditPreference(dateStr)}
         />
         <Button
           label="Eliminar disponibilidad"
-          variant="danger"
-          size="md"
+          variant="outline"
+          size="lg"
+          leftIcon={<Trash size={20} />}
           onClick={() => onDeletePreference(dateStr)}
           style={{ marginTop: '1rem' }}
           isLoading={loadingDeletePreference}
