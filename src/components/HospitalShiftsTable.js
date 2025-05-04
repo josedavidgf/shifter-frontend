@@ -1,11 +1,12 @@
-import React, { useState,useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Button from '../components/ui/Button/Button';
 import { shiftTypeLabels } from '../utils/labelMaps';
-import SelectorInput from '../components/ui/SelectorInput/SelectorInput';
-import { Eraser } from '../theme/icons';
+import Chip from '../components/ui/Chip/Chip';
 import EmptyState from '../components/ui/EmptyState/EmptyState';
 import { useToast } from '../hooks/useToast'; // ya lo usas en otras vistas
+import { Eraser, Sun, SunHorizon, Moon, ShieldCheck,  } from '../theme/icons';
+
 
 
 const HospitalShiftsTable = ({ shifts, workerId, sentSwapShiftIds, isLoading }) => {
@@ -17,29 +18,25 @@ const HospitalShiftsTable = ({ shifts, workerId, sentSwapShiftIds, isLoading }) 
 
   const [filters, setFilters] = useState({
     date: currentMonth,
-    type: ''
+    types: []
   });
 
   const handleFilterDateChange = (e) => {
     const { name, value } = e.target;
     setFilters((prev) => ({ ...prev, [name]: value }));
   };
-  const handleSelectorChange = (name, value) => {
-    setFilters((prev) => ({ ...prev, [name]: value }));
-  };
-
 
   const clearFilters = () => {
     setFilters({
       date: '',
-      type: ''
+      types: []
     });
   };
   const shiftTypeOptions = [
-    { value: 'morning', label: 'Mañana' },
-    { value: 'evening', label: 'Tarde' },
-    { value: 'night', label: 'Noche' },
-    { value: 'reinforcement', label: 'Refuerzo' },
+    { value: 'morning', label: 'Mañana', icon: Sun },
+    { value: 'evening', label: 'Tarde', icon: SunHorizon },
+    { value: 'night', label: 'Noche', icon: Moon },
+    { value: 'reinforcement', label: 'Refuerzo', icon: ShieldCheck },
   ];
 
   const [filteredShifts, setFilteredShifts] = useState([]);
@@ -49,7 +46,7 @@ const HospitalShiftsTable = ({ shifts, workerId, sentSwapShiftIds, isLoading }) 
       .filter((shift) => {
         return (
           (!filters.date || shift.date.slice(0, 7) === filters.date) &&
-          (!filters.type || shift.shift_type === filters.type)
+          (filters.types.length === 0 || filters.types.includes(shift.shift_type))
         );
       })
       .sort((a, b) => new Date(a.date) - new Date(b.date));
@@ -72,14 +69,28 @@ const HospitalShiftsTable = ({ shifts, workerId, sentSwapShiftIds, isLoading }) 
             value={filters.date}
             onChange={handleFilterDateChange}
           />
-          <SelectorInput
-            name="shift_type"
-            label="Tipo de turno"
-            value={filters.type}
-            onChange={(e) => handleSelectorChange('type', e.target.value)}
-            options={shiftTypeOptions}
-            required
-          />
+          <div className="chip-filter-group">
+            {shiftTypeOptions.map((option) => {
+              const isSelected = filters.types.includes(option.value);
+              return (
+                <Chip
+                  key={option.value}
+                  label={option.label}
+                  icon={option.icon}
+                  selected={isSelected}
+                  onClick={() =>
+                    setFilters((prev) => ({
+                      ...prev,
+                      types: isSelected
+                        ? prev.types.filter((v) => v !== option.value)
+                        : [...prev.types, option.value]
+                    }))
+                  }
+                />
+              );
+            })}
+          </div>
+
           <Button
             label="Limpiar filtros"
             variant="outline"

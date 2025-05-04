@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import Button from '../components/ui/Button/Button';
 import { shiftTypeLabels, swapStatusLabels } from '../utils/labelMaps';
 import { Eraser } from '../theme/icons';
-import SelectorInput from '../components/ui/SelectorInput/SelectorInput';
+import Chip from '../components/ui/Chip/Chip';
 import EmptyState from '../components/ui/EmptyState/EmptyState';
 
 
@@ -11,7 +11,7 @@ import EmptyState from '../components/ui/EmptyState/EmptyState';
 const MySwapsTable = ({ swaps = [], isLoading }) => {
   const [filtered, setFiltered] = useState([]);
   const currentMonth = new Date().toISOString().slice(0, 7); // YYYY-MM
-  const [filterStatus, setFilterStatus] = useState('proposed'); // ⬅️ Default
+  const [filterStatuses, setFilterStatuses] = useState(['proposed']); // multiselección
   const [filterDate, setFilterDate] = useState(currentMonth);   // ⬅️ Default
   const navigate = useNavigate();
   const [filtersReady, setFiltersReady] = useState(false);
@@ -19,9 +19,10 @@ const MySwapsTable = ({ swaps = [], isLoading }) => {
   useEffect(() => {
     let result = swaps;
 
-    if (filterStatus) {
-      result = result.filter(s => s.status === filterStatus);
+    if (filterStatuses.length > 0) {
+      result = result.filter((s) => filterStatuses.includes(s.status));
     }
+    
 
     if (filterDate) {
       result = result.filter(s => {
@@ -32,7 +33,7 @@ const MySwapsTable = ({ swaps = [], isLoading }) => {
 
     setFiltered(result);
     setFiltersReady(true);
-  }, [filterStatus, filterDate, swaps]);
+  }, [filterStatuses, filterDate, swaps]);
 
   const swapStatusOptions = [
     { value: 'proposed', label: 'Propuesto' },
@@ -43,8 +44,9 @@ const MySwapsTable = ({ swaps = [], isLoading }) => {
 
   const clearFilters = () => {
     setFilterDate('');
-    setFilterStatus('');
+    setFilterStatuses([]);
   };
+  
 
   return (
     <div>
@@ -56,14 +58,29 @@ const MySwapsTable = ({ swaps = [], isLoading }) => {
             value={filterDate}
             onChange={(e) => setFilterDate(e.target.value)}
           />
-          <SelectorInput
-            name="swap_status"
-            label="Estado del intercambio"
-            value={filterStatus}
-            onChange={(e) => setFilterStatus(e.target.value)}
-            options={swapStatusOptions}
-            required
-          />
+          <div className="chip-filter-group">
+            {swapStatusOptions.map((option) => {
+              const isSelected = filterStatuses.includes(option.value);
+
+              return (
+                <Chip
+                  key={option.value}
+                  label={option.label}
+                  selected={filterStatuses.includes(option.value)}
+                  onClick={() => {
+                    setFilterStatuses((prev) =>
+                      prev.includes(option.value)
+                        ? prev.filter((v) => v !== option.value) // Deseleccionar
+                        : [...prev, option.value]               // Seleccionar
+                    );
+                  }}
+                />
+
+              );
+            })}
+          </div>
+
+
           <Button
             label="Limpiar filtros"
             variant="outline"
