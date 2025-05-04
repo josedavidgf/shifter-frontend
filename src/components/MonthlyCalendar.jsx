@@ -181,13 +181,20 @@ function MonthlyCalendar() {
 
       preferences.forEach(({ preference_id, date, preference_type }) => {
         if (!enrichedMap[date]) enrichedMap[date] = {};
+      
+        const entry = enrichedMap[date];
+      
+        const prevTypes = entry.preference_types || [];
+        const prevIds = entry.preferenceIds || {};
+      
         enrichedMap[date] = {
-          ...enrichedMap[date],
+          ...entry,
           isPreference: true,
-          preference_type,
-          preferenceId: preference_id,
+          preference_types: [...prevTypes, preference_type],
+          preferenceIds: { ...prevIds, [preference_type]: preference_id },
         };
       });
+      
 
       setShiftMap(enrichedMap);
     } catch (error) {
@@ -261,7 +268,7 @@ function MonthlyCalendar() {
     setLoadingMassiveSave(true);
     try {
       const VALID_SHIFT_TYPES = ['morning', 'evening', 'night', 'reinforcement'];
-  
+
       const updates = Object.entries(draftShiftMap)
         .filter(([dateStr, entry]) => {
           return (
@@ -276,12 +283,12 @@ function MonthlyCalendar() {
             ...entry,
             source: 'manual',
           };
-  
+
           return setShiftForDay(isWorker.worker_id, dateStr, entry.shift_type);
         });
-  
+
       await Promise.all(updates);
-  
+
       setShiftMap(draftShiftMap);
       setDraftShiftMap(null);
       setIsMassiveEditMode(false);
@@ -293,7 +300,7 @@ function MonthlyCalendar() {
       setLoadingMassiveSave(false);
     }
   }
-  
+
 
   async function toggleShift(dateStr) {
     const entry = shiftMap[dateStr] || {};
@@ -332,55 +339,49 @@ function MonthlyCalendar() {
 
 
 
-  async function togglePreference(dateStr) {
-    const entry = shiftMap[dateStr] || {};
-    const newTypePreference = getNextPreferenceType(entry.preference_type);
-    const updatedEntry = { ...entry };
-
-    if (newTypePreference) {
-      updatedEntry.isPreference = true;
-      updatedEntry.preference_type = newTypePreference;
-    } else {
-      delete updatedEntry.isPreference;
-      delete updatedEntry.preference_type;
-    }
-
-    setShiftMap(prev => ({
-      ...prev,
-      [dateStr]: updatedEntry,
-    }));
-
+  async function togglePreference(dateStr, shiftType) {
     setLoadingTogglePreference(true);
     try {
-      if (newTypePreference) {
-        if (entry.preference_type !== newTypePreference) {
-          if (entry.preferenceId) {
-            await updateSwapPreference(entry.preferenceId, newTypePreference); // ✅ Desde useSwapPreferencesApi
-          } else {
-            const preferenceCreated = await createSwapPreference({
-              worker_id: isWorker.worker_id,
-              date: dateStr,
-              preference_type: newTypePreference,
-              hospital_id: isWorker.workers_hospitals?.[0]?.hospital_id,
-              speciality_id: isWorker.workers_specialities?.[0]?.speciality_id,
-            });
+      const entry = shiftMap[dateStr] || {};
 
-            setShiftMap(prev => ({
-              ...prev,
-              [dateStr]: {
-                ...prev[dateStr],
-                preferenceId: preferenceCreated.preference_id,
-              },
-            }));
-          }
+      const currentTypes = entry.preference_types || [];
+      const currentIds = entry.preferenceIds || {};
+
+      const alreadyExists = currentTypes.includes(shiftType);
+
+      let updatedTypes = [...currentTypes];
+      let updatedIds = { ...currentIds };
+
+      if (alreadyExists) {
+        const preferenceId = currentIds[shiftType];
+        if (preferenceId) {
+          await deleteSwapPreference(preferenceId);
+          updatedTypes = updatedTypes.filter(t => t !== shiftType);
+          delete updatedIds[shiftType];
         }
-        showSuccess(`Preferencia actualizada para ${dateStr}`);
       } else {
-        if (entry.preferenceId) {
-          await deleteSwapPreference(entry.preferenceId); // ✅ Desde useSwapPreferencesApi
-          showSuccess(`Preferencia eliminada en ${dateStr}`);
-        }
+        const res = await createSwapPreference({
+          worker_id: isWorker.worker_id,
+          date: dateStr,
+          preference_type: shiftType,
+          hospital_id: isWorker.workers_hospitals?.[0]?.hospital_id,
+          speciality_id: isWorker.workers_specialities?.[0]?.speciality_id,
+        });
+        updatedTypes.push(shiftType);
+        updatedIds[shiftType] = res.preference_id;
       }
+
+      const updatedEntry = {
+        ...entry,
+        isPreference: updatedTypes.length > 0,
+        preference_types: updatedTypes,
+        preferenceIds: updatedIds,
+      };
+
+      setShiftMap(prev => ({
+        ...prev,
+        [dateStr]: updatedEntry,
+      }));
     } catch (error) {
       console.error('❌ Error gestionando preferencia:', error.message);
       showError('Error al actualizar la preferencia');
@@ -389,35 +390,44 @@ function MonthlyCalendar() {
     }
   }
 
+
   async function handleDeletePreference(dateStr) {
     const entry = shiftMap[dateStr];
-
-    if (!entry?.preferenceId) {
-      console.error('No existe preferencia para eliminar.');
+    const preferenceIds = entry?.preferenceIds;
+  
+    if (!preferenceIds || Object.keys(preferenceIds).length === 0) {
+      console.warn('❌ No hay preferencias que eliminar.');
       return;
     }
-
+  
     setLoadingDeletePreference(true);
+  
     try {
-      await deleteSwapPreference(entry.preferenceId); // ✅ desde useSwapPreferencesApi
-
+      // Borramos todas las preferencias activas del día
+      await Promise.all(
+        Object.values(preferenceIds).map(id => deleteSwapPreference(id))
+      );
+  
+      // Limpiar el estado del shiftMap
       const updatedEntry = { ...entry };
       delete updatedEntry.isPreference;
-      delete updatedEntry.preferenceId;
-      delete updatedEntry.preference_type;
-
+      delete updatedEntry.preferenceIds;
+      delete updatedEntry.preference_types;
+  
       setShiftMap(prev => ({
         ...prev,
         [dateStr]: updatedEntry,
       }));
-      showSuccess(`Preferencia eliminada para ${dateStr}`);
+  
+      showSuccess(`Preferencias eliminadas para el ${dateStr}`);
     } catch (error) {
-      console.error('❌ Error al eliminar preferencia:', error.message);
-      showError('Error al eliminar la preferencia');
+      console.error('❌ Error al eliminar todas las preferencias:', error.message);
+      showError('Error al eliminar las disponibilidades');
     } finally {
       setLoadingDeletePreference(false);
     }
   }
+  
 
 
   async function handleDeletePublication(shiftId, dateStr) {
@@ -586,8 +596,8 @@ function MonthlyCalendar() {
           entry={entry}
           navigate={navigate}
           onAddShift={toggleShift}
-          onAddPreference={togglePreference}
-        />
+          onAddPreference={(dateStr) => togglePreference(dateStr, 'morning')}
+          />
       );
     }
 
@@ -596,8 +606,8 @@ function MonthlyCalendar() {
         dateStr={dateStr}
         dayLabel={dayLabel}
         onAddShift={toggleShift}
-        onAddPreference={togglePreference}
-      />
+        onAddPreference={(dateStr) => togglePreference(dateStr, 'morning')}
+        />
     );
   }
 
