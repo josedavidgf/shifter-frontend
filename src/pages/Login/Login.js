@@ -58,7 +58,7 @@ function Login() {
       />
       <div className="container auth-container">
         <div className="auth-content">
-          <h1>Inicia sesión en Tanda</h1>
+          <h1>Inicia sesión</h1>
 
           <div className="auth-body">
             <form className="auth-form" onSubmit={handleSubmit}>
