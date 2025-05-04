@@ -5,16 +5,21 @@ import { shiftTypeLabels, swapStatusLabels } from '../utils/labelMaps';
 import { Eraser } from '../theme/icons';
 import Chip from '../components/ui/Chip/Chip';
 import EmptyState from '../components/ui/EmptyState/EmptyState';
+import DateRangePicker from '../components/ui/DateRangePicker/DateRangePicker'; // ajusta path si es necesario
+import { addDays } from 'date-fns';
 
 
 
 const MySwapsTable = ({ swaps = [], isLoading }) => {
   const [filtered, setFiltered] = useState([]);
-  const currentMonth = new Date().toISOString().slice(0, 7); // YYYY-MM
-  const [filterStatuses, setFilterStatuses] = useState(['proposed']); // multiselección
-  const [filterDate, setFilterDate] = useState(currentMonth);   // ⬅️ Default
+  const [filterStatuses, setFilterStatuses] = useState([]); // multiselección
   const navigate = useNavigate();
   const [filtersReady, setFiltersReady] = useState(false);
+  const today = new Date();
+  const [filterRange, setFilterRange] = useState({
+    startDate: today,
+    endDate: addDays(today, 30)
+  });
 
   useEffect(() => {
     let result = swaps;
@@ -22,18 +27,18 @@ const MySwapsTable = ({ swaps = [], isLoading }) => {
     if (filterStatuses.length > 0) {
       result = result.filter((s) => filterStatuses.includes(s.status));
     }
-    
 
-    if (filterDate) {
+
+    if (filterRange) {
       result = result.filter(s => {
-        const shiftMonth = s.shift?.date?.slice(0, 7); // YYYY-MM
-        return shiftMonth === filterDate;
+        const date = new Date(s.shift?.date);
+        return date >= filterRange.startDate && date <= filterRange.endDate;
       });
     }
 
     setFiltered(result);
     setFiltersReady(true);
-  }, [filterStatuses, filterDate, swaps]);
+  }, [filterStatuses, filterRange, swaps]);
 
   const swapStatusOptions = [
     { value: 'proposed', label: 'Propuesto' },
@@ -43,21 +48,21 @@ const MySwapsTable = ({ swaps = [], isLoading }) => {
   ];
 
   const clearFilters = () => {
-    setFilterDate('');
+    setFilterRange({
+      startDate: today,
+      endDate: addDays(today, 30)
+    });
     setFilterStatuses([]);
   };
-  
+
+
 
   return (
     <div>
       <div className="filters-container">
         <div className="filters-group">
-          <input
-            type="month"
-            className="filter-input"
-            value={filterDate}
-            onChange={(e) => setFilterDate(e.target.value)}
-          />
+          <DateRangePicker onChange={(range) => setFilterRange(range)} />
+
           <div className="chip-filter-group">
             {swapStatusOptions.map((option) => {
               const isSelected = filterStatuses.includes(option.value);
@@ -81,13 +86,13 @@ const MySwapsTable = ({ swaps = [], isLoading }) => {
           </div>
 
 
-          <Button
+          {/* <Button
             label="Limpiar filtros"
             variant="outline"
             size="lg"
             leftIcon={<Eraser size={16} />}
             onClick={clearFilters}
-          />
+          /> */}
         </div>
       </div>
 
