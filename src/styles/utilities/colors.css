@@ -54,4 +54,16 @@
 
   --btn-disabled-bg: var(--color-disabled-bg);
   --btn-disabled-text: var(--color-disabled-text);
+
+  /* 🧭 Banners */
+  --color-info-bg: #EBF8FF;
+  --color-info-text: #2B6CB0;
+  --color-info-border: #3182CE;
+
+  --color-success-bg: #E6FFFA;
+  --color-success-text: #2C7A7B;
+
+  --color-danger-bg: #FFF5F5;
+  --color-danger-text: #C53030;
+
 }

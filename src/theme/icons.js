@@ -2,6 +2,7 @@
 export {
     CheckCircle,
     XCircle,
+    X,
     ArrowLeft,
     ArrowRight,
     Lightning,

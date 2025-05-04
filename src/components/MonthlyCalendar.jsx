@@ -22,6 +22,7 @@ import DayDetailReceived from './DayDetails/DayDetailReceived';
 import DayDetailSwapped from './DayDetails/DayDetailSwapped';
 import DayDetailEmpty from './DayDetails/DayDetailEmpty';
 import Loader from '../components/ui/Loader/Loader';
+import Banner from '../components/ui/Banner/Banner';
 import { Sun, SunHorizon, Moon, ShieldCheck, CirclesThree, SquaresFour, Stack, Trash, FloppyDisk, CalendarPlus } from '../theme/icons';
 import { useToast } from '../hooks/useToast'; // ya lo usas en otras vistas
 import { Check } from 'phosphor-react';
@@ -96,6 +97,8 @@ function MonthlyCalendar() {
   const [loadingDeletePreference, setLoadingDeletePreference] = useState(false);
   const [loadingDeletePublication, setLoadingDeletePublication] = useState(false);
   const [loadingRemoveShift, setLoadingRemoveShift] = useState(false);
+  const [showMassiveEditBanner, setShowMassiveEditBanner] = useState(false);
+
 
 
   useEffect(() => {
@@ -180,12 +183,12 @@ function MonthlyCalendar() {
 
       preferences.forEach(({ preference_id, date, preference_type }) => {
         if (!enrichedMap[date]) enrichedMap[date] = {};
-      
+
         const entry = enrichedMap[date];
-      
+
         const prevTypes = entry.preference_types || [];
         const prevIds = entry.preferenceIds || {};
-      
+
         enrichedMap[date] = {
           ...entry,
           isPreference: true,
@@ -193,7 +196,7 @@ function MonthlyCalendar() {
           preferenceIds: { ...prevIds, [preference_type]: preference_id },
         };
       });
-      
+
 
       setShiftMap(enrichedMap);
     } catch (error) {
@@ -393,31 +396,31 @@ function MonthlyCalendar() {
   async function handleDeletePreference(dateStr) {
     const entry = shiftMap[dateStr];
     const preferenceIds = entry?.preferenceIds;
-  
+
     if (!preferenceIds || Object.keys(preferenceIds).length === 0) {
       console.warn('❌ No hay preferencias que eliminar.');
       return;
     }
-  
+
     setLoadingDeletePreference(true);
-  
+
     try {
       // Borramos todas las preferencias activas del día
       await Promise.all(
         Object.values(preferenceIds).map(id => deleteSwapPreference(id))
       );
-  
+
       // Limpiar el estado del shiftMap
       const updatedEntry = { ...entry };
       delete updatedEntry.isPreference;
       delete updatedEntry.preferenceIds;
       delete updatedEntry.preference_types;
-  
+
       setShiftMap(prev => ({
         ...prev,
         [dateStr]: updatedEntry,
       }));
-  
+
       showSuccess(`Preferencias eliminadas para el ${dateStr}`);
     } catch (error) {
       console.error('❌ Error al eliminar todas las preferencias:', error.message);
@@ -426,7 +429,7 @@ function MonthlyCalendar() {
       setLoadingDeletePreference(false);
     }
   }
-  
+
 
 
   async function handleDeletePublication(shiftId, dateStr) {
@@ -596,7 +599,7 @@ function MonthlyCalendar() {
           navigate={navigate}
           onAddShift={toggleShift}
           onAddPreference={(dateStr) => togglePreference(dateStr, 'morning')}
-          />
+        />
       );
     }
 
@@ -606,7 +609,7 @@ function MonthlyCalendar() {
         dayLabel={dayLabel}
         onAddShift={toggleShift}
         onAddPreference={(dateStr) => togglePreference(dateStr, 'morning')}
-        />
+      />
     );
   }
 
@@ -633,7 +636,6 @@ function MonthlyCalendar() {
     <>
       <div className="month-selector-group">
         <MonthSelector selectedMonth={selectedMonth} onChange={setSelectedMonth} />
-
         {!isMassiveEditMode && (
           <Button
             variant="outline"
@@ -643,12 +645,19 @@ function MonthlyCalendar() {
               setDraftShiftMap({ ...shiftMap }); // Creamos copia
               setIsMassiveEditMode(true);
               setSelectedDay(null); // 👈 aseguramos que se oculte
+              setShowMassiveEditBanner(true); // 👈 Muestra banner
             }}
           />
         )}
 
 
       </div>
+      {showMassiveEditBanner && isMassiveEditMode && (
+        <Banner type="info" onClose={() => setShowMassiveEditBanner(false)}>
+          Haz clic varias veces para alternar entre mañana, tarde, noche o refuerzo.
+        </Banner>
+
+      )}
       <div className="mb-4 p-4 border rounded shadow">
         <div className="badge-container">
           {['total', 'morning', 'evening', 'night', 'reinforcement'].map((type) => {
