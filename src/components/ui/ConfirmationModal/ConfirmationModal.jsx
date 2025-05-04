@@ -1,5 +1,7 @@
-// components/ui/Modal/ConfirmationModal.jsx
+// src/components/ui/Modal/ConfirmationModal.jsx
 import React from 'react';
+import Button from '../Button/Button';
+import { X } from '../../../theme/icons';
 
 const ConfirmationModal = ({
   open,
@@ -14,16 +16,15 @@ const ConfirmationModal = ({
 
   return (
     <div className="modal-overlay">
-      <div className="modal">
-        <h3>{title}</h3>
-        <p>{description}</p>
+      <div className="modal-container shadow-lg fade-in">
+        <button className="modal-close" onClick={onCancel} aria-label="Cerrar modal">
+          <X size={20} weight="bold" />
+        </button>
+        <h3 className="modal-title">{title}</h3>
+        <p className="modal-description">{description}</p>
         <div className="modal-buttons">
-          <button className="btn btn-outline" onClick={onCancel}>
-            {cancelLabel}
-          </button>
-          <button className="btn btn-danger" onClick={onConfirm}>
-            {confirmLabel}
-          </button>
+          <Button label={cancelLabel} variant="outline" onClick={onCancel} />
+          <Button label={confirmLabel} variant="primary" onClick={onConfirm} />
         </div>
       </div>
     </div>

@@ -7,6 +7,7 @@ import Chip from '../components/ui/Chip/Chip';
 import EmptyState from '../components/ui/EmptyState/EmptyState';
 import DateRangePicker from '../components/ui/DateRangePicker/DateRangePicker'; // ajusta path si es necesario
 import { addDays } from 'date-fns';
+import { formatFriendlyDate } from '../utils/formatFriendlyDate';
 
 
 
@@ -119,12 +120,12 @@ const MySwapsTable = ({ swaps = [], isLoading }) => {
               <div className="my-swap-meta">
                 {swap.direction === 'sent' ? 'Propuesto por ti' : 'Propuesta recibida'}
               </div>
-              <strong>Turno objetivo:</strong> {swap.shift?.date} de {shiftTypeLabels[swap.shift?.shift_type]}
+              <strong>Turno objetivo:</strong> {formatFriendlyDate(swap.shift?.date)} de {shiftTypeLabels[swap.shift?.shift_type]}
               <div className="my-swap-meta">
                 <strong>Con:</strong> {swap.shift?.worker?.name} {swap.shift?.worker?.surname}
               </div>
               <div className="my-swap-meta">
-                <strong>Ofreces:</strong> {swap.offered_date || '—'} de {shiftTypeLabels[swap.offered_type]}
+                <strong>Ofreces:</strong> {formatFriendlyDate(swap.offered_date)} de {shiftTypeLabels[swap.offered_type]}
               </div>
               <span className={`swap-status ${swap.status}`}>
                 {swapStatusLabels[swap.status]}
