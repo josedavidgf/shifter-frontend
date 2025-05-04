@@ -76,7 +76,7 @@ const ChatsList = () => {
 
   return (
     <>
-      <HeaderFirstLevel title="Chats activos" />
+      <HeaderFirstLevel title="Tus mensajes" />
       <div className="page page-secondary">
         <div className="container">
           {!loading && activeSwaps.length === 0 ? (

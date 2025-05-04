@@ -92,19 +92,17 @@ function Register() {
               />
             </form>
 
-            <div className="auth-actions">
-              <div className="auth-divider">
-                <DividerText text="o" />
-              </div>
-
-              <Button
-                label="Registro con Google"
-                variant="outline"
-                size="lg"
-                leftIcon={<img src={logoGoogle} alt="Google" width="20" height="20" />}
-                onClick={loginWithGoogle}
-              />
+            <div className="auth-divider">
+              <DividerText text="o" />
             </div>
+
+            <Button
+              label="Registro con Google"
+              variant="outline"
+              size="lg"
+              leftIcon={<img src={logoGoogle} alt="Google" width="20" height="20" />}
+              onClick={loginWithGoogle}
+            />
           </div>
         </div>
       </div>

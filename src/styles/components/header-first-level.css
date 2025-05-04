@@ -3,6 +3,7 @@
   flex-direction: column;
   width: 100%;
   background-color: var(--color-background, #FFFFFF);
+  margin-top: 16px;
 }
 
 .header-first__content {
