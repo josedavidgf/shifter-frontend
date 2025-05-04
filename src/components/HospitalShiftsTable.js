@@ -1,30 +1,30 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import Button from '../components/ui/Button/Button';
+//import Button from '../components/ui/Button/Button';
 import { shiftTypeLabels } from '../utils/labelMaps';
 import Chip from '../components/ui/Chip/Chip';
 import EmptyState from '../components/ui/EmptyState/EmptyState';
 import { useToast } from '../hooks/useToast'; // ya lo usas en otras vistas
-import { Eraser, Sun, SunHorizon, Moon, ShieldCheck,  } from '../theme/icons';
+import { Sun, SunHorizon, Moon, ShieldCheck, } from '../theme/icons';
 
 
 
 const HospitalShiftsTable = ({ shifts, workerId, sentSwapShiftIds, isLoading }) => {
   const navigate = useNavigate();
-  const currentMonth = new Date().toISOString().slice(0, 7); // YYYY-MM
+  //const currentMonth = new Date().toISOString().slice(0, 7); // YYYY-MM
   const { showWarning } = useToast();
   const [filtersReady, setFiltersReady] = useState(false);
 
 
   const [filters, setFilters] = useState({
-    date: currentMonth,
-    types: []
+/*     date: '',
+ */    types: []
   });
 
-  const handleFilterDateChange = (e) => {
-    const { name, value } = e.target;
-    setFilters((prev) => ({ ...prev, [name]: value }));
-  };
+  /*   const handleFilterDateChange = (e) => {
+      const { name, value } = e.target;
+      setFilters((prev) => ({ ...prev, [name]: value }));
+    }; */
 
   const clearFilters = () => {
     setFilters({
@@ -45,8 +45,8 @@ const HospitalShiftsTable = ({ shifts, workerId, sentSwapShiftIds, isLoading }) 
     const result = shifts
       .filter((shift) => {
         return (
-          (!filters.date || shift.date.slice(0, 7) === filters.date) &&
-          (filters.types.length === 0 || filters.types.includes(shift.shift_type))
+/*           (!filters.date || shift.date.slice(0, 7) === filters.date) &&
+ */          (filters.types.length === 0 || filters.types.includes(shift.shift_type))
         );
       })
       .sort((a, b) => new Date(a.date) - new Date(b.date));
@@ -62,13 +62,14 @@ const HospitalShiftsTable = ({ shifts, workerId, sentSwapShiftIds, isLoading }) 
     <div>
       <div className="filters-container">
         <div className="filters-group">
-          <input
+          {/* <input
             type="month"
             className="filter-input"
+            placeholder='Selecciona un mes'
             name="date"
             value={filters.date}
             onChange={handleFilterDateChange}
-          />
+          /> */}
           <div className="chip-filter-group">
             {shiftTypeOptions.map((option) => {
               const isSelected = filters.types.includes(option.value);
@@ -91,13 +92,13 @@ const HospitalShiftsTable = ({ shifts, workerId, sentSwapShiftIds, isLoading }) 
             })}
           </div>
 
-          <Button
+{/*           <Button
             label="Limpiar filtros"
             variant="outline"
             size="lg"
             leftIcon={<Eraser size={16} />}
             onClick={clearFilters}
-          />
+          /> */}
         </div>
       </div>
       {!isLoading && filtersReady && filteredShifts.length === 0 ? (

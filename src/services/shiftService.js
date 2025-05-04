@@ -78,14 +78,19 @@ export const removeShift = async (id, token) => {
 };
 
 // Obtener turnos del hospital
-export const getHospitalShifts = async (token) => {
+export const getHospitalShifts = async (token, limit = 10, offset = 0) => {
   try {
-    const response = await axios.get(`${API_URL}/api/shifts/hospital`, authHeaders(token));
-    return response.data.data;
+    const res = await axios.get(
+      `${API_URL}/api/shifts/hospital?limit=${limit}&offset=${offset}`,
+      authHeaders(token)
+    );
+    return res.data.data;
   } catch (error) {
-    throw new Error(handleError(error, 'Error al cargar turnos de hospital'));
+    throw new Error(handleError(error, 'Error al cargar turnos'));
   }
 };
+
+
 
 // Obtener preferencias de un turno --- PUEDE DEPRECARSE
 export const getShiftPreferencesByShiftId = async (shiftId, token) => {

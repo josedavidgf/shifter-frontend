@@ -38,7 +38,7 @@ export function useShiftApi() {
     getShiftById: (id, token) => apiCall(getShiftById, id, token),
     updateShift: (id, updates, token) => apiCall(updateShift, id, updates, token),
     removeShift: (id, token) => apiCall(removeShift, id, token),
-    getHospitalShifts: (token) => apiCall(getHospitalShifts, token),
+    getHospitalShifts: (token, limit, offset) => apiCall(getHospitalShifts, token, limit, offset),
     getShiftPreferencesByShiftId: (shiftId, token) => apiCall(getShiftPreferencesByShiftId, shiftId, token),
     updateShiftPreferences: (shiftId, preferences, token) => apiCall(updateShiftPreferences, shiftId, preferences, token),
     getMyAvailableShifts: (workerId, token) => apiCall(getMyAvailableShifts, workerId, token),
