@@ -68,7 +68,10 @@ export default function DayDetailMyShift({
       {isPublished ? (
         <>
           <p style={{ marginBottom: '16px' }}>
-            El {dayLabel.toLowerCase()} tienes turno propio de {shiftTypeLabels[entry.shift_type]}.{' '}
+            El {dayLabel.toLowerCase()} tienes turno propio de {shiftTypeLabels[entry.shift_type]}
+            {entry.shift_type === 'morning' && ' de 8:00 a 15:00'}
+            {entry.shift_type === 'afternoon' && ' de 15:00 a 22:00'}
+            {entry.shift_type === 'night' && ' de 22:00 a 08:00'}.{' '}
             <span style={{ fontWeight: 600 }}>Tienes publicado el turno para cambiar.</span>
           </p>
           <Button
@@ -84,7 +87,10 @@ export default function DayDetailMyShift({
       ) : (
         <>
           <p style={{ marginBottom: '16px' }}>
-            El {dayLabel.toLowerCase()} tienes turno propio de {shiftTypeLabels[entry.shift_type]}.
+            El {dayLabel.toLowerCase()} tienes turno propio de {shiftTypeLabels[entry.shift_type]}
+            {entry.shift_type === 'morning' && ' de 8:00 a 15:00'}
+            {entry.shift_type === 'afternoon' && ' de 15:00 a 22:00'}
+            {entry.shift_type === 'night' && ' de 22:00 a 08:00'}
           </p>
           <div className="btn-group">
             <Button
