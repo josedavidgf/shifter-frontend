@@ -23,7 +23,10 @@ export default function DayDetailReceived({
       </h3>
 
       <p className="mb-4">
-        El {displayDay.toLowerCase()}, {format(parsedDate, 'dd/MM')} tienes turno recibido de {shiftTypeLabels[entry.shift_type].toLowerCase()}. Te lo ha cambiado{' '}
+        El {displayDay.toLowerCase()}, {format(parsedDate, 'dd/MM')} tienes turno recibido de {shiftTypeLabels[entry.shift_type].toLowerCase()}
+        {entry.shift_type === 'morning' && ' de 8:00 a 15:00'}
+        {entry.shift_type === 'afternoon' && ' de 15:00 a 22:00'}
+        {entry.shift_type === 'night' && ' de 22:00 a 08:00'}. Te lo ha cambiado{' '}
         <span style={{ fontWeight: 600 }}>
           {entry.related_worker_name} {entry.related_worker_surname}
         </span>.

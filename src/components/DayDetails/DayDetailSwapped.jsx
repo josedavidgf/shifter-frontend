@@ -36,16 +36,18 @@ export default function DayDetailSwapped({
   return (
     <div>
       <h3 className="font-bold mb-2">{dateLabel}</h3>
-      {isRequester ? (
+      {!isRequester ? (
         <p style={{ marginBottom: '16px' }}>
-          <span style={{ fontWeight: 600 }}>
-            Le cambiaste el turno a {otherName || 'otro trabajador'}
-          </span>
-          . Hoy no tienes turno ni lo tienes seleccionado como disponible para trabajar.
+          Le cambiaste el turno a <span style={{ fontWeight: 600 }}>{otherName || 'otro trabajador'}</span>. Hoy no tienes turno ni lo tienes seleccionado como disponible para trabajar. Tu turno era de {entry.shift_type === 'morning' && 'mañana'}
+          {entry.shift_type === 'afternoon' && 'tarde'}
+          {entry.shift_type === 'night' && 'noche'}.
         </p>
       ) : (
         <p style={{ marginBottom: '16px' }}>
-          El {displayDay.toLowerCase()}, {format(parsedDate, 'dd/MM')} tienes turno propio de {entry.shift_type?.toLowerCase()}. Te lo ha cambiado{' '}
+          El {displayDay.toLowerCase()}, {format(parsedDate, 'dd/MM')} tienes turno propio de {entry.shift_type?.toLowerCase()}
+          {entry.shift_type === 'morning' && ' de 8:00 a 15:00'}
+          {entry.shift_type === 'afternoon' && ' de 15:00 a 22:00'}
+          {entry.shift_type === 'night' && ' de 22:00 a 08:00'}. Te lo ha cambiado{' '}
           <span style={{ fontWeight: 600 }}>
             {otherName || 'otro trabajador'}
           </span>.
