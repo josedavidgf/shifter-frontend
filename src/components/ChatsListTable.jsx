@@ -6,6 +6,7 @@ import { translateShiftType } from '../utils/translateServices';
 import SearchFilterInput from '../components/ui/SearchFilterInput/SearchFilterInput';
 import Button from '../components/ui/Button/Button';
 import EmptyState from '../components/ui/EmptyState/EmptyState';
+import { Sparkle } from '../theme/icons';
 
 const ChatsListTable = ({ swaps, workerId }) => {
   const navigate = useNavigate();
@@ -42,15 +43,20 @@ const ChatsListTable = ({ swaps, workerId }) => {
       <div
         className="chat-card"
         style={{
-          backgroundColor: '#f0f9ff',
-          border: '1px solid #bae6fd',
+          background: 'linear-gradient(90deg, #FAF5FF 0%, #E9D8FD 100%)',
+          border: '1px solid #6B46C1',
           marginBottom: '1rem',
           cursor: 'pointer',
+          borderRadius: '12px',
+          padding: '16px',
         }}
         onClick={() => navigate('/chat-turnos')}
       >
-        <strong>🧠 GPT - Optimiza mis turnos</strong>
-        <p>Haz preguntas sobre tus turnos, días libres, vacaciones, etc.</p>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
+          <Sparkle size={18} weight="fill" color="#322659" />
+          <strong>Tanda, búscame los mejores turnos</strong>
+        </div>
+        <p>Utiliza Tanda IA y haz preguntas sobre tus turnos, días libres, vacaciones, etc.</p>
       </div>
 
       {filteredSwaps.length === 0 ? (

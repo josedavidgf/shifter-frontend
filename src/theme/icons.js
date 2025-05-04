@@ -53,5 +53,6 @@ export {
     EnvelopeSimple,
     CalendarCheck,
     Calendar,
-    PaintBrush
+    PaintBrush,
+    Sparkle
   } from 'phosphor-react';
