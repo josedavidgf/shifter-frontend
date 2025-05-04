@@ -170,10 +170,13 @@ function MonthlyCalendar() {
           related_worker_id,
           related_worker_name: hasRelated ? related_worker.name : null,
           related_worker_surname: hasRelated ? related_worker.surname : null,
+          related_worker, // 👈 se añade el objeto completo
           swap_id,
           isPublished: publishedMap.has(key),
           shift_id: publishedMap.get(key) || null,
+          worker_id: workerId, // 👈 nuevo campo añadido
         };
+        console.log('enrichedMap', enrichedMap);
       });
 
       preferences.forEach(({ preference_id, date, preference_type }) => {
