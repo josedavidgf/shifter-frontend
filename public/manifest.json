@@ -1,6 +1,6 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "Tanda",
+  "name": "Tanda",
   "icons": [
     {
       "src": "favicon.ico",
@@ -8,9 +8,9 @@
       "type": "image/x-icon"
     },
     {
-      "src": "logo192.png",
+      "src": "logo60.png",
       "type": "image/png",
-      "sizes": "192x192"
+      "sizes": "160x160"
     },
     {
       "src": "logo512.png",
