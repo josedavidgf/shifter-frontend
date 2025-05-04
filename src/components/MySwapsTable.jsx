@@ -68,18 +68,21 @@ const MySwapsTable = ({ swaps = [], isLoading }) => {
               const isSelected = filterStatuses.includes(option.value);
 
               return (
-                <Chip
-                  key={option.value}
-                  label={option.label}
-                  selected={filterStatuses.includes(option.value)}
-                  onClick={() => {
-                    setFilterStatuses((prev) =>
-                      prev.includes(option.value)
-                        ? prev.filter((v) => v !== option.value) // Deseleccionar
-                        : [...prev, option.value]               // Seleccionar
-                    );
-                  }}
-                />
+                <div className="chip-scroll-group">
+
+                  <Chip
+                    key={option.value}
+                    label={option.label}
+                    selected={filterStatuses.includes(option.value)}
+                    onClick={() => {
+                      setFilterStatuses((prev) =>
+                        prev.includes(option.value)
+                          ? prev.filter((v) => v !== option.value) // Deseleccionar
+                          : [...prev, option.value]               // Seleccionar
+                      );
+                    }}
+                  />
+                </div>
 
               );
             })}

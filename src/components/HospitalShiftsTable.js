@@ -59,6 +59,7 @@ const HospitalShiftsTable = ({ shifts, workerId, sentSwapShiftIds, isLoading }) 
     });
   };
 
+
   const shiftTypeOptions = [
     { value: 'morning', label: 'Mañana', icon: Sun },
     { value: 'evening', label: 'Tarde', icon: SunHorizon },
@@ -95,20 +96,23 @@ const HospitalShiftsTable = ({ shifts, workerId, sentSwapShiftIds, isLoading }) 
             {shiftTypeOptions.map((option) => {
               const isSelected = filters.types.includes(option.value);
               return (
-                <Chip
-                  key={option.value}
-                  label={option.label}
-                  icon={option.icon}
-                  selected={isSelected}
-                  onClick={() =>
-                    setFilters((prev) => ({
-                      ...prev,
-                      types: isSelected
-                        ? prev.types.filter((v) => v !== option.value)
-                        : [...prev.types, option.value]
-                    }))
-                  }
-                />
+                <div className="chip-scroll-group">
+
+                  <Chip
+                    key={option.value}
+                    label={option.label}
+                    icon={option.icon}
+                    selected={isSelected}
+                    onClick={() =>
+                      setFilters((prev) => ({
+                        ...prev,
+                        types: isSelected
+                          ? prev.types.filter((v) => v !== option.value)
+                          : [...prev.types, option.value]
+                      }))
+                    }
+                  />
+                </div>
               );
             })}
           </div>

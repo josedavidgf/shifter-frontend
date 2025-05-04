@@ -7,9 +7,26 @@ import { format, startOfMonth, endOfMonth, startOfWeek, endOfWeek } from 'date-f
 import Chip from '../../../components/ui/Chip/Chip';
 import { Calendar } from '../../../theme/icons';
 import InputField from '../../../components/ui/InputField/InputField';
+import { useRef, useEffect } from 'react';
+
 
 const DateRangePicker = ({ onChange }) => {
   const [visible, setVisible] = useState(false);
+  const wrapperRef = useRef(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (wrapperRef.current && !wrapperRef.current.contains(event.target)) {
+        setVisible(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
 
   const [range, setRange] = useState({
     startDate: startOfMonth(new Date()),
@@ -22,18 +39,18 @@ const DateRangePicker = ({ onChange }) => {
   const handleSelect = (ranges) => {
     const { startDate, endDate } = ranges.selection;
     setRange({ ...range, startDate, endDate });
-  
+
     const start = startDate?.toDateString();
     const end = endDate?.toDateString();
-  
+
     if (start && end && start !== end) {
       onChange({ startDate, endDate }); // aplicar filtro solo cuando haya selección completa
       setVisible(false);
       setSelectedQuickRange(null);
     }
   };
-  
-  
+
+
 
   const quickRanges = [
     {
@@ -74,7 +91,7 @@ const DateRangePicker = ({ onChange }) => {
   ];
 
   return (
-    <div className="date-range-wrapper">
+    <div className="date-range-wrapper" ref={wrapperRef}>
       <div onClick={() => setVisible(!visible)}>
         <InputField
           name="date-range"

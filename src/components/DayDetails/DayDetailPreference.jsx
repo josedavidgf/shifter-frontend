@@ -35,7 +35,8 @@ export default function DayDetailPreference({
       </p>
 
       <div className="btn-group">
-        <div className='btn-group-row'>
+
+        <div className="chip-scroll-group">
           {ALL_TYPES.map((type) => {
             const isActive = activeTypes.includes(type);
             const Icon = shiftTypeIcons?.[type];
@@ -52,11 +53,12 @@ export default function DayDetailPreference({
             );
           })}
         </div>
+
       </div>
 
       {activeTypes.length > 0 && (
         <Button
-          label="Eliminar todas las disponibilidades"
+          label="Eliminar disponibilidades"
           variant="outline"
           size="lg"
           leftIcon={<Trash size={20} />}

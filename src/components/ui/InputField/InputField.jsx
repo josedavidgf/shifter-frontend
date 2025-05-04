@@ -19,6 +19,7 @@ const InputField = ({
   errorText = '',
   showCharacterCount = false,
   maxLength,
+  readOnly,
   leftIcon,
   isClearable = false,
   clearableIcon,
@@ -79,6 +80,7 @@ const InputField = ({
                 name={name}
                 className="input-field__input"
                 type={inputType}
+                readOnly={readOnly}
                 value={value}
                 onChange={onChange}
                 onFocus={handleFocus}

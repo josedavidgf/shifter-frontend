@@ -60,7 +60,22 @@
 
 .chip-filter-group {
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   margin-top: var(--space-sm);
   margin-bottom: var(--space-sm);
+}
+
+.chip-scroll-group {
+  display: flex;
+  flex-direction: row;
+  overflow-x: auto;
+  overflow-y: hidden;
+  gap: var(--space-xs);
+  max-width: 100%;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+
+.chip-scroll-group::-webkit-scrollbar {
+  display: none;
 }
