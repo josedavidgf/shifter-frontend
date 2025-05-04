@@ -1,6 +1,6 @@
 {
   "short_name": "Tanda",
-  "name": "Tanda",
+  "name": "Tanda - Intercambio de turnos",
   "icons": [
     {
       "src": "favicon.ico",
@@ -8,9 +8,9 @@
       "type": "image/x-icon"
     },
     {
-      "src": "logo60.png",
+      "src": "logo180.png",
       "type": "image/png",
-      "sizes": "160x160"
+      "sizes": "180x180"
     },
     {
       "src": "logo512.png",
