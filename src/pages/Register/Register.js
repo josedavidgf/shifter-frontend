@@ -60,7 +60,7 @@ function Register() {
       />
       <div className="container auth-container">
         <div className="auth-content">
-          <h1>Crea tu cuenta en Tanda</h1>
+          <h1>Crea tu cuenta</h1>
           <div className="auth-body">
             <form className="auth-form" onSubmit={handleSubmit}>
               <InputField
@@ -92,17 +92,19 @@ function Register() {
               />
             </form>
 
-            <div className="auth-divider">
-              <DividerText text="o" />
-            </div>
+            <div className="auth-actions">
+              <div className="auth-divider">
+                <DividerText text="o" />
+              </div>
 
-            <Button
-              label="Registro con Google"
-              variant="outline"
-              size="lg"
-              leftIcon={<img src={logoGoogle} alt="Google" width="20" height="20" />}
-              onClick={loginWithGoogle}
-            />
+              <Button
+                label="Registro con Google"
+                variant="outline"
+                size="lg"
+                leftIcon={<img src={logoGoogle} alt="Google" width="20" height="20" />}
+                onClick={loginWithGoogle}
+              />
+            </div>
           </div>
         </div>
       </div>
