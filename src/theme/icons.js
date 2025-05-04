@@ -51,5 +51,6 @@ export {
     EyeSlash,
     EnvelopeSimple,
     CalendarCheck,
+    Calendar,
     PaintBrush
   } from 'phosphor-react';

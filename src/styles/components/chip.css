@@ -61,7 +61,6 @@
 .chip-filter-group {
   display: flex;
   flex-wrap: wrap;
-  gap: var(--space-xs);
   margin-top: var(--space-sm);
-  margin-bottom: var(--space-md);
+  margin-bottom: var(--space-sm);
 }

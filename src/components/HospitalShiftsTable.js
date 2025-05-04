@@ -6,20 +6,45 @@ import Chip from '../components/ui/Chip/Chip';
 import EmptyState from '../components/ui/EmptyState/EmptyState';
 import { useToast } from '../hooks/useToast'; // ya lo usas en otras vistas
 import { Sun, SunHorizon, Moon, ShieldCheck, } from '../theme/icons';
-
+import DateRangePicker from '../components/ui/DateRangePicker/DateRangePicker'; // ajusta path si es necesario
+import { addDays } from 'date-fns';
 
 
 const HospitalShiftsTable = ({ shifts, workerId, sentSwapShiftIds, isLoading }) => {
   const navigate = useNavigate();
-  //const currentMonth = new Date().toISOString().slice(0, 7); // YYYY-MM
   const { showWarning } = useToast();
   const [filtersReady, setFiltersReady] = useState(false);
+  const today = new Date();
+  const [filterRange, setFilterRange] = useState({
+    startDate: today,
+    endDate: addDays(today, 30)
+  });
 
 
   const [filters, setFilters] = useState({
-/*     date: '',
- */    types: []
+    date: '',
+    types: []
   });
+
+  useEffect(() => {
+    const result = shifts
+      .filter((shift) => {
+        const date = new Date(shift.date);
+        const inRange = date >= filterRange.startDate && date <= filterRange.endDate;
+
+        return (
+          inRange &&
+          (filters.types.length === 0 || filters.types.includes(shift.shift_type))
+        );
+      })
+      .sort((a, b) => new Date(a.date) - new Date(b.date));
+
+    setFilteredShifts(result);
+    setFiltersReady(true);
+  }, [shifts, filters, filterRange]);
+
+
+
 
   /*   const handleFilterDateChange = (e) => {
       const { name, value } = e.target;
@@ -27,11 +52,13 @@ const HospitalShiftsTable = ({ shifts, workerId, sentSwapShiftIds, isLoading }) 
     }; */
 
   const clearFilters = () => {
-    setFilters({
-      date: '',
-      types: []
+    setFilters({ types: [] });
+    setFilterRange({
+      startDate: today,
+      endDate: addDays(today, 30)
     });
   };
+
   const shiftTypeOptions = [
     { value: 'morning', label: 'Mañana', icon: Sun },
     { value: 'evening', label: 'Tarde', icon: SunHorizon },
@@ -62,14 +89,8 @@ const HospitalShiftsTable = ({ shifts, workerId, sentSwapShiftIds, isLoading }) 
     <div>
       <div className="filters-container">
         <div className="filters-group">
-          {/* <input
-            type="month"
-            className="filter-input"
-            placeholder='Selecciona un mes'
-            name="date"
-            value={filters.date}
-            onChange={handleFilterDateChange}
-          /> */}
+          <DateRangePicker onChange={(range) => setFilterRange(range)} />
+
           <div className="chip-filter-group">
             {shiftTypeOptions.map((option) => {
               const isSelected = filters.types.includes(option.value);
@@ -92,7 +113,7 @@ const HospitalShiftsTable = ({ shifts, workerId, sentSwapShiftIds, isLoading }) 
             })}
           </div>
 
-{/*           <Button
+          {/*           <Button
             label="Limpiar filtros"
             variant="outline"
             size="lg"
