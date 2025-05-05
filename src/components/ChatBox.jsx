@@ -17,7 +17,7 @@ const ChatBox = ({
 }) => {
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState('');
-  const bottomRef = useRef(null);
+  const messagesContainerRef = useRef(null);
   const inputRef = useRef(null);
   const [inputDisabled, setInputDisabled] = useState(false);
   const { showError } = useToast();
@@ -70,13 +70,12 @@ const ChatBox = ({
   };
 
   useEffect(() => {
-    const container = bottomRef.current?.parentElement;
-    if (!container) return;
-
-    if (isUserNearBottom(container)) {
-      bottomRef.current.scrollIntoView({ behavior: 'smooth' });
+    const container = messagesContainerRef.current;
+    if (container) {
+      container.scrollTo({ top: container.scrollHeight, behavior: 'smooth' });
     }
   }, [messages]);
+
 
   useEffect(() => {
     const hasSending = messages.some((msg) => msg.status === 'sending');
@@ -119,7 +118,7 @@ const ChatBox = ({
 
   return (
     <div className="chatbox">
-      <div className="chatbox-messages-wrapper">
+      <div className="chatbox-messages-wrapper" ref={messagesContainerRef}>
         {[...messages]
           .sort((a, b) => new Date(a.created_at) - new Date(b.created_at))
           .map((msg, index) => (
@@ -154,7 +153,6 @@ const ChatBox = ({
               </small>
             </div>
           ))}
-        <div ref={bottomRef} />
       </div>
 
       <div className="chatbox-input-area">
