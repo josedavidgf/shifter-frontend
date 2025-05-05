@@ -1,7 +1,7 @@
 .chat-wrapper {
   display: flex;
   flex-direction: column;
-  height: 100dvh;
+  height: 90dvh;
   background-color: var(--color-white);
   overflow: hidden;
 }
