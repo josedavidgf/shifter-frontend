@@ -35,6 +35,7 @@ import ContactPage from './pages/Profile/ContactPage.jsx'
 import ForgotPassword from './pages/Login/ForgotPassword';
 import ResetPassword from './pages/Login/ResetPassword';
 import ResetPasswordPage from  './pages/Profile/ResetPasswordPage';
+import Activity from './pages/Activity/Activity'
 
 
 function App() {
@@ -61,6 +62,7 @@ function App() {
         </Route>
 
         <Route element={<SimpleLayout />}>
+          <Route path="/activity" element={<PrivateRoute><Activity /></PrivateRoute>} />
           <Route path="/forgot-password" element={<PrivateRoute><ResetPassword /></PrivateRoute>} />
           <Route path="/profile/personal" element={<PrivateRoute><PersonalInfo /></PrivateRoute>} />
           <Route path="/profile/work" element={<PrivateRoute><WorkSettings /></PrivateRoute>} />

@@ -46,3 +46,8 @@
   height: 1px;
   width: 100%;
 }
+.header-first__actions-group {
+  display: flex;
+  align-items: center;
+  gap: 12px; /* Espaciado entre iconos */
+}

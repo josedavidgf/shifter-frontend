@@ -6,6 +6,7 @@ import { UserCircle } from '../../theme/icons';
 import { useNavigate } from 'react-router-dom';
 import HeaderFirstLevel from '../../components/ui/Header/HeaderFirstLevel';
 import { useAuth } from '../../context/AuthContext';
+import NotificationBell from '../../components/NotificationBell';
 
 
 
@@ -15,7 +16,8 @@ const Calendar = () => {
     const navigate = useNavigate();
     const { isWorker } = useAuth();
 
-
+    const goToProfile = () => navigate('/profile');
+    const goToActivity = () => navigate('/activity');
 
     const handleProfileClick = () => {
         navigate('/profile');
@@ -25,10 +27,16 @@ const Calendar = () => {
         <>
             <HeaderFirstLevel
                 title={`Hola, ${isWorker?.name || ''}`}
-                rightAction={{
-                    icon: <UserCircle size={32} weight="fill" />,
-                    onClick: handleProfileClick,
-                }}
+                rightActions={[
+                    {
+                        icon: <NotificationBell />,
+                        onClick: goToActivity,
+                    },
+                    {
+                        icon: <UserCircle size={32} weight="fill" />,
+                        onClick: goToProfile,
+                    },
+                ]}
             />
             <div className="page page-primary">
                 <div className="container">
