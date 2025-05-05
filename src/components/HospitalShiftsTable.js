@@ -8,6 +8,7 @@ import { useToast } from '../hooks/useToast'; // ya lo usas en otras vistas
 import { Sun, SunHorizon, Moon, ShieldCheck, } from '../theme/icons';
 import DateRangePicker from '../components/ui/DateRangePicker/DateRangePicker'; // ajusta path si es necesario
 import { addDays } from 'date-fns';
+import ShiftCardContent from '../components/ui/Cards/ShiftCardContent';
 
 
 const HospitalShiftsTable = ({ shifts, workerId, sentSwapShiftIds, isLoading }) => {
@@ -135,7 +136,7 @@ const HospitalShiftsTable = ({ shifts, workerId, sentSwapShiftIds, isLoading }) 
         />
       ) : null}
       {!isLoading && filtersReady && filteredShifts.length > 0 && (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+        <div className='card-list'>
           {filteredShifts.map((shift) => {
             const isMine = shift.worker_id === workerId;
             const alreadyProposed = sentSwapShiftIds.includes(shift.shift_id);
@@ -154,21 +155,18 @@ const HospitalShiftsTable = ({ shifts, workerId, sentSwapShiftIds, isLoading }) 
             return (
               <div
                 key={shift.shift_id}
-                className={`shift-card ${isDisabled ? 'disabled' : ''}`}
+                className={`card-base ${isDisabled ? 'disabled' : ''}`}
                 onClick={handleClick}
               >
-                <div className="shift-info">
-                  <div className="shift-date">{shift.date} de {shiftTypeLabels[shift.shift_type]}</div>
-                  <div>{shift.worker?.name} {shift.worker?.surname}</div>
-                  <div className="shift-meta">
-                    Intercambios aceptados: {shift.worker?.swapsAcceptedAsPublisher ?? 0}
-                  </div>
-                </div>
-
-                {isMine && <span className="shift-status">Tu turno</span>}
-                {alreadyProposed && <span className="shift-status">Intercambio ya propuesto</span>}
-                {shift.state !== 'published' && <span className="shift-status">No disponible</span>}
+                <ShiftCardContent
+                  date={shift.date}
+                  type={shift.shift_type}
+                  workerName={`${shift.worker?.name} ${shift.worker?.surname}`}
+                  swapsAccepted={shift.worker?.swapsAcceptedAsPublisher ?? 0}
+                />
               </div>
+
+
             );
           })}
         </div>
