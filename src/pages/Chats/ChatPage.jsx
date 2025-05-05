@@ -106,23 +106,27 @@ const ChatPage = () => {
                 onBack={handleBack}
                 rightAction={phoneLink ? { icon: <Phone size={20} />, label: 'Llamar', onClick: () => window.open(phoneLink, '_blank') } : undefined}
             />
+            <div className="page">
+                <div className="container">
 
-            <div className="chat-wrapper">
-                <div className="chat-header-info">
-                    <p>
-                        {getVerb(myDate)} {formatFriendlyDate(myDate)} de {translateShiftType(myDateType)} y {otherPersonName} {getOtherVerb(otherDate)} {formatFriendlyDate(otherDate)} de {translateShiftType(otherDateType)}
-                    </p>
+                    <div className="card-base chat-wrapper">
+                        <div className="chat-header-info">
+                            <p>
+                                {getVerb(myDate)} {formatFriendlyDate(myDate)} de {translateShiftType(myDateType)} y {otherPersonName} {getOtherVerb(otherDate)} {formatFriendlyDate(otherDate)} de {translateShiftType(otherDateType)}
+                            </p>
+                        </div>
+
+                        <ChatBox
+                            swapId={swap.swap_id}
+                            myWorkerId={workerId}
+                            otherWorkerId={otherWorkerId}
+                            otherPersonName={otherPersonName}
+                            otherPersonSurname={otherPersonSurname}
+                            myDate={myDate}
+                            otherDate={otherDate}
+                        />
+                    </div>
                 </div>
-
-                <ChatBox
-                    swapId={swap.swap_id}
-                    myWorkerId={workerId}
-                    otherWorkerId={otherWorkerId}
-                    otherPersonName={otherPersonName}
-                    otherPersonSurname={otherPersonSurname}
-                    myDate={myDate}
-                    otherDate={otherDate}
-                />
             </div>
         </>
 
