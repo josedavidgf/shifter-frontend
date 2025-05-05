@@ -1,4 +1,4 @@
-import { CalendarCheck, Repeat,CheckCircle,XCircle,ArrowsClockwise } from '../theme/icons'; // o los iconos que uséis
+import { CalendarCheck, Repeat,CheckCircle,XCircle,ArrowClockwise } from '../theme/icons'; // o los iconos que uséis
 import { formatFriendlyDate } from './formatFriendlyDate';
 import { translateShiftType } from './translateServices';
 
@@ -37,14 +37,14 @@ export const USER_EVENT_CONFIG = {
   },
   
   swap_accepted_automatically_requester: {
-    icon: <ArrowsClockwise size={20} />,
+    icon: <ArrowClockwise size={20} />,
     title: 'Intercambio automático realizado',
     getDescription: (metadata) =>
       `Tu turno ofrecido del ${formatFriendlyDate(metadata.offered_date)} (${translateShiftType(metadata.offered_type)}) ha sido intercambiado automáticamente por el turno del ${formatFriendlyDate(metadata.shift_date)} (${translateShiftType(metadata.shift_type)}).`,
   },
   
   swap_accepted_automatically_owner: {
-    icon: <ArrowsClockwise size={20} />,
+    icon: <ArrowClockwise size={20} />,
     title: 'Tu turno ha sido intercambiado automáticamente',
     getDescription: (metadata) =>
       `Tu turno del ${formatFriendlyDate(metadata.shift_date)} (${translateShiftType(metadata.shift_type)}) ha sido intercambiado automáticamente por el turno del ${formatFriendlyDate(metadata.offered_date)} (${translateShiftType(metadata.offered_type)}).`,
