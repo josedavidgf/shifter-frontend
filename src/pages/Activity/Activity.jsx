@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useUserEvents } from '../../hooks/useUserEvents';
 import HeaderSecondLevel from '../../components/ui/Header/HeaderSecondLevel';
@@ -6,30 +6,26 @@ import Loader from '../../components/ui/Loader/Loader';
 import ActivityTable from '../../components/ActivityTable';
 
 const Activity = () => {
-  const { events, isLoading, markAllAsSeen, refresh } = useUserEvents();
+  const { events, isLoading, markAllAsSeen, setEvents } = useUserEvents();
   const navigate = useNavigate();
+  const hasMarkedRef = useRef(false);
 
   useEffect(() => {
-    const markAndRefresh = async () => {
-      const unseen = events.filter(e => !e.seen);
-      if (unseen.length > 0) {
-        await markAllAsSeen();
-        await refresh();
-      }
-    };
+    if (events.length === 0 || hasMarkedRef.current) return;
 
-    if (events.length > 0) {
-      markAndRefresh();
+    const unseen = events.filter((e) => !e.seen);
+    if (unseen.length > 0) {
+      hasMarkedRef.current = true;
+      markAllAsSeen().then(() => {
+        // Actualiza el estado local para evitar flicker
+        const updated = events.map((e) => ({ ...e, seen: true }));
+        setEvents(updated);
+      });
     }
-  }, []); // <-- importante: [] para evitar que se dispare con cada cambio en events
-
+  }, [events.length]);
 
   const handleBack = () => {
-    if (window.history.length > 1) {
-      navigate(-1);
-    } else {
       navigate('/calendar');
-    }
   };
 
   return (
@@ -38,7 +34,8 @@ const Activity = () => {
         title="Tu actividad"
         showBackButton
         onBack={handleBack}
-      />      <div className="page page-secondary">
+      />
+      <div className="page page-secondary">
         <div className="container">
           {isLoading ? (
             <Loader text="Cargando actividad..." />
