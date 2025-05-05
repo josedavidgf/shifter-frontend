@@ -26,6 +26,7 @@ export function useUserEvents() {
 
   return {
     events,
+    setEvents, // ✅ Añádelo aquí
     isLoading: loading,
     isError: !!error,
     markAllAsSeen,

@@ -41,3 +41,9 @@
     transform: translate(5%, -5%);
   }
   
+  .activity-description {
+    font-size: 0.875rem;
+    color: #4b5563;
+    margin: 0.25rem 0;
+  }
+  
