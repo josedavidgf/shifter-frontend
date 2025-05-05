@@ -1,7 +1,7 @@
 // src/components/DayDetails/DayDetailSwapped.jsx
 import React from 'react';
 import Button from '../ui/Button/Button';
-import { Lightning } from '../../theme/icons';
+import { Lightning, Lightbulb, Eye } from '../../theme/icons';
 import { parseISO, format, isToday } from 'date-fns';
 import es from 'date-fns/locale/es';
 
@@ -54,22 +54,12 @@ export default function DayDetailSwapped({
         </p>
       )}
 
-      {entry.swap_id && (
-        <Button
-          label="Ver intercambio"
-          variant="outline"
-          size="sm"
-          onClick={() => navigate(`/swaps/${entry.swap_id}`)}
-        />
-      )}
-
       <div className="btn-group mt-3">
         <Button
           label="Añadir turno"
           variant="primary"
           size="lg"
           leftIcon={<Lightning size={20} />}
-          rightIcon={<Lightning size={20} />}
           onClick={() => onAddShift(dateStr)}
         />
 
@@ -77,11 +67,21 @@ export default function DayDetailSwapped({
           label="Añadir disponibilidad"
           variant="secondary"
           size="lg"
-          leftIcon={<Lightning size={20} />}
-          rightIcon={<Lightning size={20} />}
+          leftIcon={<Lightbulb size={20} />}
           onClick={() => onAddPreference(dateStr)}
         />
       </div>
+
+      {entry.swap_id && (
+        <Button
+          label="Ver detalles"
+          variant="ghost"
+          size="lg"
+          leftIcon={<Eye size={20} />}
+          onClick={() => navigate(`/swaps/${entry.swap_id}`)}
+        />
+      )}
+
     </div>
   );
 }

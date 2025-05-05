@@ -1,7 +1,7 @@
 // src/components/DayDetails/DayDetailReceived.jsx
 import React from 'react';
 import Button from '../ui/Button/Button';
-import { Lightning } from '../../theme/icons';
+import { Lightning, Eye } from '../../theme/icons';
 import { shiftTypeLabels } from '../../utils/labelMaps';
 import { parseISO, format } from 'date-fns';
 import es from 'date-fns/locale/es';
@@ -36,7 +36,6 @@ export default function DayDetailReceived({
         variant="primary"
         size="lg"
         leftIcon={<Lightning size={20} />}
-        rightIcon={<Lightning size={20} />}
         onClick={() => navigate(`/shifts/create?date=${dateStr}&shift_type=${entry.shift_type}`)}
       />
       
@@ -44,7 +43,7 @@ export default function DayDetailReceived({
         <Button
           label="Ver detalles"
           variant="ghost"
-          leftIcon={<Lightning size={20} />}
+          leftIcon={<Eye size={20} />}
           size="lg"
           onClick={() => navigate(`/swaps/${entry.swap_id}`)}
         />

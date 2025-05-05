@@ -54,5 +54,10 @@ export {
     CalendarCheck,
     Calendar,
     PaintBrush,
-    Sparkle
+    Sparkle,
+    Lightbulb,
+    LockSimpleOpen,
+    Lock,
+    CircleHalf,
+    CirclesThreePlus
   } from 'phosphor-react';
