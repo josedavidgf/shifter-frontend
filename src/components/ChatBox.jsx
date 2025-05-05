@@ -2,6 +2,9 @@ import React, { useEffect, useState, useRef } from 'react';
 import supabase from '../config/supabase';
 import { getMessagesBySwap, sendMessage } from '../services/messagesService';
 import { useToast } from '../hooks/useToast';
+import Button from '../components/ui/Button/Button';
+import { PaperPlaneTilt } from '../theme/icons';
+
 
 const ChatBox = ({
   swapId,
@@ -127,11 +130,10 @@ const ChatBox = ({
               }}
             >
               <div
-                className={`message-bubble ${
-                  msg.sender_id === myWorkerId
-                    ? 'message-bubble-own'
-                    : 'message-bubble-other'
-                }`}
+                className={`message-bubble ${msg.sender_id === myWorkerId
+                  ? 'message-bubble-own'
+                  : 'message-bubble-other'
+                  }`}
                 style={{
                   transform: msg.status === 'sending' ? 'scale(0.95)' : 'scale(1)',
                   opacity: msg.status === 'sending' ? 0.6 : 1,
@@ -167,14 +169,12 @@ const ChatBox = ({
             disabled={inputDisabled}
             className="chatbox-input"
           />
-          <button
+          <Button
             type="submit"
             disabled={inputDisabled}
-            className="chatbox-button"
-            aria-label="Enviar mensaje"
-          >
-            Enviar
-          </button>
+            leftIcon={<PaperPlaneTilt size={20} />}
+            size="sm"
+          />
         </form>
       </div>
     </div>

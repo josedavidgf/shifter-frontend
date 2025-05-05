@@ -6,6 +6,7 @@ export {
     ArrowLeft,
     ArrowRight,
     Lightning,
+    PaperPlaneTilt,
     CalendarPlus,
     MagnifyingGlass,
     ChatCircle,

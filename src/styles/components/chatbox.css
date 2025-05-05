@@ -4,20 +4,25 @@
   flex-direction: column;
   flex-grow: 1;
   overflow: hidden;
+  min-height: 0; /* 💡 Añade esto para asegurar que los hijos con overflow funcionen */
 }
 
 .chatbox-messages-wrapper {
   flex-grow: 1;
   overflow-y: auto;
   padding: var(--space-md);
+  background-color: var(--color-white); /* 💡 para evitar flashes */
+
 }
 
 .chatbox-input-area {
   flex-shrink: 0;
   padding: var(--space-md);
+  padding-bottom: calc(var(--space-md) + env(safe-area-inset-bottom)); /* ✅ mobile-first */
   border-top: 1px solid var(--color-gray-200);
   background-color: var(--color-white);
 }
+
 
 
 
@@ -28,31 +33,32 @@
 
 .chatbox-input {
   flex: 1;
-  padding: 0.5rem;
-  font-size: 1rem;
-  border-radius: 8px;
-  border: 1px solid #ccc;
+  padding: var(--space-sm);
+  font-size: var(--font-md);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
 }
 
 .chatbox-button {
-  padding: 0.5rem 1rem;
-  font-size: 1rem;
-  border-radius: 8px;
-  background-color: #007bff;
-  color: white;
+  padding: var(--space-sm) var(--space-md);
+  font-size: var(--font-md);
+  border-radius: var(--radius-md);
+  background-color: var(--color-primary);
+  color: var(--color-white);
   border: none;
   cursor: pointer;
   transition: background-color 0.2s ease;
 }
 
 .chatbox-button:hover {
-  background-color: #0056b3;
+  background-color: var(--color-primary-hover);
 }
 
 .chatbox-button:disabled {
-  background-color: #ccc;
+  background-color: var(--color-disabled);
   cursor: not-allowed;
 }
+
 
 .message-bubble {
   display: inline-block;
@@ -63,14 +69,15 @@
 }
 
 .message-bubble-own {
-  background: #d0e8ff;
+  background: var(--color-blue-100);
   text-align: right;
 }
 
 .message-bubble-other {
-  background: #ddd;
+  background: var(--color-gray-200);
   text-align: left;
 }
+
 
 /* Mobile optimizations */
 @media (max-width: 600px) {
