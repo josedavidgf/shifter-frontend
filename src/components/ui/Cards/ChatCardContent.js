@@ -13,7 +13,7 @@ const ChatCardContent = ({ otherPersonName, myDate, myType, otherDate, otherType
         <div className="chat-icon-wrapper">
           <ChatCircleText size={20} />
         </div>
-        <span className="chat-name">{otherPersonName}</span>
+        <span className="chat-name">Chat con {otherPersonName}</span>
       </div>
 
       <div className="chat-line-row">
