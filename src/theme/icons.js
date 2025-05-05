@@ -59,5 +59,7 @@ export {
     LockSimpleOpen,
     Lock,
     CircleHalf,
-    CirclesThreePlus
+    CirclesThreePlus,
+    Fire,
+    FireSimple
   } from 'phosphor-react';

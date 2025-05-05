@@ -24,6 +24,7 @@ import DayDetailEmpty from './DayDetails/DayDetailEmpty';
 import Loader from '../components/ui/Loader/Loader';
 import Banner from '../components/ui/Banner/Banner';
 import { Sun, SunHorizon, Moon, ShieldCheck, CirclesThree, SquaresFour, Stack, Trash, FloppyDisk, CalendarPlus } from '../theme/icons';
+import { Fire, FireSimple } from 'phosphor-react';
 import { useToast } from '../hooks/useToast'; // ya lo usas en otras vistas
 import { Check } from 'phosphor-react';
 
@@ -37,7 +38,7 @@ function renderShiftIcon(shift) {
     case 'night':
       return <Moon size={16} />;
     case 'reinforcement':
-      return <ShieldCheck size={16} />;
+      return <Fire size={16} />;
     case 'total':
       return <Stack size={16} />;
     default:
@@ -722,6 +723,7 @@ function MonthlyCalendar() {
                   <div
                     key={dateStr}
                     className={`calendar-day-container ${!isSwappedOut ? `shift-${shiftType}` : ''} ${isPast ? 'past' : ''} ${isSelected ? 'selected-day' : ''}`}
+                    style={shiftType === 'reinforcement' && entry.source === 'manual' ? { backgroundColor: '#FFD6C2' } : {}}
                     onClick={() => handleDayClick(dateStr)}
                   >
                     <div className="calendar-day-number">{format(day, 'd')}{/* {getShiftLabel(shiftType)} {indicator} */}</div>

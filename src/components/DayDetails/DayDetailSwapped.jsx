@@ -33,55 +33,58 @@ export default function DayDetailSwapped({
   const surname = entry.related_worker_surname;
   const otherName = name && surname ? `${name} ${surname}` : null;
 
+  const getShiftBackground = () => 'rgba(245, 246, 248, 0.8)';
+
   return (
-    <div>
-      <h3 className="font-bold mb-2">{dateLabel}</h3>
-      {!isRequester ? (
-        <p style={{ marginBottom: '16px' }}>
-          Le cambiaste el turno a <span style={{ fontWeight: 600 }}>{otherName || 'otro trabajador'}</span>. Hoy no tienes turno ni lo tienes seleccionado como disponible para trabajar. Tu turno era de {entry.shift_type === 'morning' && 'mañana'}
-          {entry.shift_type === 'afternoon' && 'tarde'}
-          {entry.shift_type === 'night' && 'noche'}.
-        </p>
-      ) : (
-        <p style={{ marginBottom: '16px' }}>
-          El {displayDay.toLowerCase()}, {format(parsedDate, 'dd/MM')} tienes turno propio de {entry.shift_type?.toLowerCase()}
-          {entry.shift_type === 'morning' && ' de 8:00 a 15:00'}
-          {entry.shift_type === 'afternoon' && ' de 15:00 a 22:00'}
-          {entry.shift_type === 'night' && ' de 22:00 a 08:00'}. Te lo ha cambiado{' '}
-          <span style={{ fontWeight: 600 }}>
-            {otherName || 'otro trabajador'}
-          </span>.
-        </p>
-      )}
+    <div style={{ borderRadius: '12px', backgroundColor: getShiftBackground() }}>
+      <div style={{ padding: '16px' }}>
+        <h3 className="font-bold mb-2">{dateLabel}</h3>
+        {!isRequester ? (
+          <p style={{ marginBottom: '16px' }}>
+            Le cambiaste el turno a <span style={{ fontWeight: 600 }}>{otherName || 'otro trabajador'}</span>. Hoy no tienes turno ni lo tienes seleccionado como disponible para trabajar. Tu turno era de {entry.shift_type === 'morning' && 'mañana'}
+            {entry.shift_type === 'afternoon' && 'tarde'}
+            {entry.shift_type === 'night' && 'noche'}.
+          </p>
+        ) : (
+          <p style={{ marginBottom: '16px' }}>
+            El {displayDay.toLowerCase()}, {format(parsedDate, 'dd/MM')} tienes turno propio de {entry.shift_type?.toLowerCase()}
+            {entry.shift_type === 'morning' && ' de 8:00 a 15:00'}
+            {entry.shift_type === 'afternoon' && ' de 15:00 a 22:00'}
+            {entry.shift_type === 'night' && ' de 22:00 a 08:00'}. Te lo ha cambiado{' '}
+            <span style={{ fontWeight: 600 }}>
+              {otherName || 'otro trabajador'}
+            </span>.
+          </p>
+        )}
 
-      <div className="btn-group mt-3">
-        <Button
-          label="Añadir turno"
-          variant="primary"
-          size="lg"
-          leftIcon={<Lightning size={20} />}
-          onClick={() => onAddShift(dateStr)}
-        />
+        <div className="btn-group mt-3">
+          <Button
+            label="Añadir turno"
+            variant="primary"
+            size="lg"
+            leftIcon={<Lightning size={20} />}
+            onClick={() => onAddShift(dateStr)}
+          />
 
-        <Button
-          label="Añadir disponibilidad"
-          variant="secondary"
-          size="lg"
-          leftIcon={<Lightbulb size={20} />}
-          onClick={() => onAddPreference(dateStr)}
-        />
+          <Button
+            label="Añadir disponibilidad"
+            variant="secondary"
+            size="lg"
+            leftIcon={<Lightbulb size={20} />}
+            onClick={() => onAddPreference(dateStr)}
+          />
+        </div>
+
+        {entry.swap_id && (
+          <Button
+            label="Ver detalles"
+            variant="ghost"
+            size="lg"
+            leftIcon={<Eye size={20} />}
+            onClick={() => navigate(`/swaps/${entry.swap_id}`)}
+          />
+        )}
       </div>
-
-      {entry.swap_id && (
-        <Button
-          label="Ver detalles"
-          variant="ghost"
-          size="lg"
-          leftIcon={<Eye size={20} />}
-          onClick={() => navigate(`/swaps/${entry.swap_id}`)}
-        />
-      )}
-
     </div>
   );
 }

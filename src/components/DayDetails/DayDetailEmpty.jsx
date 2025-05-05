@@ -11,26 +11,28 @@ export default function DayDetailEmpty({
   onAddPreference,
 }) {
   return (
-    <div>
-      <h3 className="font-bold mb-2">{dayLabel} - Día libre</h3>
-      <p className="mb-4">Hoy no tienes turno ni lo tienes seleccionado como disponible para trabajar.</p>
+    <div style={{ borderRadius: '12px', backgroundColor: 'rgba(245, 246, 248, 0.8)' }}>
+      <div style={{ padding: '16px' }}>
+        <h3 className="font-bold mb-2">{dayLabel} - Día libre</h3>
+        <p className="mb-4">Hoy no tienes turno ni lo tienes seleccionado como disponible para trabajar.</p>
 
-      <div className="btn-group">
-        <Button
-          label="Añadir turno"
-          variant="primary"
-          size="lg"
-          leftIcon={<CalendarPlus size={20} />}
-          onClick={() => onAddShift(dateStr)}
-        />
+        <div className="btn-group">
+          <Button
+            label="Añadir turno"
+            variant="primary"
+            size="lg"
+            leftIcon={<CalendarPlus size={20} />}
+            onClick={() => onAddShift(dateStr)}
+          />
 
-        <Button
-          label="Añadir disponibilidad"
-          variant="secondary"
-          size="lg"
-          leftIcon={<Lightbulb size={20} />}
-          onClick={() => onAddPreference(dateStr)}
-        />
+          <Button
+            label="Añadir disponibilidad"
+            variant="secondary"
+            size="lg"
+            leftIcon={<Lightbulb size={20} />}
+            onClick={() => onAddPreference(dateStr)}
+          />
+        </div>
       </div>
     </div>
   );
