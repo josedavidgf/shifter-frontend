@@ -61,5 +61,14 @@ export {
     CircleHalf,
     CirclesThreePlus,
     Fire,
-    FireSimple
+    FireSimple, 
+    ChartPie,
+    ChartBar,
+    ChartPieSlice,
+    ChatCircleDots,
+    ChartBarHorizontal,
+    ChartLineUp,
+    ChartLine,
+    Repeat,
+    ArrowClockwise
   } from 'phosphor-react';
