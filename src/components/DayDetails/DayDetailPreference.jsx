@@ -26,45 +26,47 @@ export default function DayDetailPreference({
   const activeTypes = entry.preference_types || [];
 
   return (
-    <div>
-      <h3 className="font-bold mb-2">{dateLabel}</h3>
-      <p className="mb-4">
-        {isTodayDate
-          ? <>Hoy no tienes turno. <strong>Disponibilidad marcada para:</strong></>
-          : <>El {dayLabel.toLowerCase()} no tienes turno. <strong>Disponibilidad marcada para:</strong></>}
-      </p>
+    <div style={{ borderRadius: '12px', backgroundColor: 'rgba(245, 246, 248, 0.6)' }}>
+      <div style={{ padding: '16px' }}>
+        <h3 className="font-bold mb-2">{dateLabel}</h3>
+        <p className="mb-4">
+          {isTodayDate
+            ? <>Hoy no tienes turno. <strong>Disponibilidad marcada para:</strong></>
+            : <>El {dayLabel.toLowerCase()} no tienes turno. <strong>Disponibilidad marcada para:</strong></>}
+        </p>
 
-      
-      <div className="chip-scroll-group mb-3">
-        {ALL_TYPES.map((type) => {
-          const isActive = activeTypes.includes(type);
-          const Icon = shiftTypeIcons?.[type];
+        
+        <div className="chip-scroll-group mb-3">
+          {ALL_TYPES.map((type) => {
+            const isActive = activeTypes.includes(type);
+            const Icon = shiftTypeIcons?.[type];
 
-          return (
-            <Chip
-              key={type}
-              label={shiftTypeLabels[type]}
-              icon={Icon}
-              selected={isActive}
-              onClick={() => onEditPreference(dateStr, type)}
-              disabled={loadingDeletePreference}
-            />
-          );
-        })}
+            return (
+              <Chip
+                key={type}
+                label={shiftTypeLabels[type]}
+                icon={Icon}
+                selected={isActive}
+                onClick={() => onEditPreference(dateStr, type)}
+                disabled={loadingDeletePreference}
+              />
+            );
+          })}
+        </div>
+
+
+        {activeTypes.length > 0 && (
+          <Button
+            label="Eliminar disponibilidades"
+            variant="outline"
+            size="lg"
+            leftIcon={<Trash size={20} />}
+            onClick={() => onDeletePreference(dateStr)} // Borra todas
+            isLoading={loadingDeletePreference}
+            disabled={loadingDeletePreference}
+          />
+        )}
       </div>
-
-
-      {activeTypes.length > 0 && (
-        <Button
-          label="Eliminar disponibilidades"
-          variant="outline"
-          size="lg"
-          leftIcon={<Trash size={20} />}
-          onClick={() => onDeletePreference(dateStr)} // Borra todas
-          isLoading={loadingDeletePreference}
-          disabled={loadingDeletePreference}
-        />
-      )}
     </div>
   );
 }
