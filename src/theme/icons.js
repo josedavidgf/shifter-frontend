@@ -70,5 +70,6 @@ export {
     ChartLineUp,
     ChartLine,
     Repeat,
-    ArrowClockwise
+    ArrowClockwise,
+    ArrowDownLeft
   } from 'phosphor-react';
