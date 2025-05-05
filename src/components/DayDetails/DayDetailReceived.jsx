@@ -21,7 +21,6 @@ export default function DayDetailReceived({
       case 'morning':
         return 'rgba(255, 249, 219, 0.6)';
       case 'evening':
-      case 'afternoon':
         return 'rgba(255, 226, 235, 0.6)';
       case 'night':
         return 'rgba(229, 234, 255, 0.6)';
@@ -42,7 +41,7 @@ export default function DayDetailReceived({
         <p className="mb-4">
           El {displayDay.toLowerCase()}, {format(parsedDate, 'dd/MM')} tienes turno recibido de {shiftTypeLabels[entry.shift_type].toLowerCase()}
           {entry.shift_type === 'morning' && ' de 8:00 a 15:00'}
-          {entry.shift_type === 'afternoon' && ' de 15:00 a 22:00'}
+          {entry.shift_type === 'evening' && ' de 15:00 a 22:00'}
           {entry.shift_type === 'night' && ' de 22:00 a 08:00'}. Te lo ha cambiado{' '}
           <span style={{ fontWeight: 600 }}>
             {entry.related_worker_name} {entry.related_worker_surname}

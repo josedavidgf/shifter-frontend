@@ -11,7 +11,7 @@ import { useToast } from '../../hooks/useToast'; // Ajusta ruta
 import Loader from '../../components/ui/Loader/Loader';
 import InputField from '../../components/ui/InputField/InputField';
 import { format, parseISO } from 'date-fns';
-import { shiftTypeLabels, swapStatusLabels } from '../../utils/labelMaps';
+import { shiftTypeLabels, swapStatusLabels} from '../../utils/labelMaps';
 import EmptyState from '../../components/ui/EmptyState/EmptyState';
 import ConfirmationModal from '../../components/ui/ConfirmationModal/ConfirmationModal';
 import useMinimumDelay from '../../hooks/useMinimumDelay';

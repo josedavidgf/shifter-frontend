@@ -42,6 +42,7 @@
 @import './components/checkbox.css';
 @import './components/chip.css';
 @import './components/banner.css';
+@import './components/tag.css';
 @import './components/date-range-picker.css';
 /* Pages */
 @import './pages/calendar.css';

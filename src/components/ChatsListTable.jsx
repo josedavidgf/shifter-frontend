@@ -1,12 +1,11 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { getVerb, getOtherVerb } from '../utils/dateUtils';
-import { formatFriendlyDate } from '../utils/formatFriendlyDate';
-import { translateShiftType } from '../utils/translateServices';
 import SearchFilterInput from '../components/ui/SearchFilterInput/SearchFilterInput';
 import Button from '../components/ui/Button/Button';
 import EmptyState from '../components/ui/EmptyState/EmptyState';
 import { Sparkle } from '../theme/icons';
+import ChatCardContent from '../components/ui/Cards/ChatCardContent';
+
 
 const ChatsListTable = ({ swaps, workerId }) => {
   const navigate = useNavigate();
@@ -14,11 +13,11 @@ const ChatsListTable = ({ swaps, workerId }) => {
 
   const filteredSwaps = query.length >= 3
     ? swaps.filter((swap) => {
-        const iAmRequester = swap.requester_id === workerId;
-        const otherPerson = iAmRequester ? swap.shift.worker : swap.requester;
-        const otherPersonName = `${otherPerson?.name ?? ''} ${otherPerson?.surname ?? ''}`.toLowerCase();
-        return otherPersonName.includes(query.toLowerCase());
-      })
+      const iAmRequester = swap.requester_id === workerId;
+      const otherPerson = iAmRequester ? swap.shift.worker : swap.requester;
+      const otherPersonName = `${otherPerson?.name ?? ''} ${otherPerson?.surname ?? ''}`.toLowerCase();
+      return otherPersonName.includes(query.toLowerCase());
+    })
     : swaps;
 
   return (
@@ -65,7 +64,7 @@ const ChatsListTable = ({ swaps, workerId }) => {
           description="No hay chats que coincidan con tu búsqueda."
         />
       ) : (
-        <div className="chat-list">
+        <div className="card-list">
           {filteredSwaps.map((swap) => {
             const iAmRequester = swap.requester_id === workerId;
             const myDate = iAmRequester ? swap.offered_date : swap.shift.date;
@@ -75,17 +74,20 @@ const ChatsListTable = ({ swaps, workerId }) => {
             const otherPersonName = iAmRequester
               ? `${swap.shift.worker?.name} ${swap.shift.worker?.surname}`
               : `${swap.requester?.name} ${swap.requester?.surname}`;
-              
+
             return (
               <div
                 key={swap.swap_id}
-                className="chat-card"
+                className="card-base"
                 onClick={() => navigate(`/chats/${swap.swap_id}`)}
               >
-                <strong>Intercambio #{swap.swap_id}</strong>
-                <span>
-                  {getVerb(myDate)} el {formatFriendlyDate(myDate)} de {translateShiftType(myDateType)} y {otherPersonName} {getOtherVerb(otherDate)} el {formatFriendlyDate(otherDate)} de {translateShiftType(otherType)}
-                </span>
+                <ChatCardContent
+                  otherPersonName={otherPersonName}
+                  myDate={myDate}
+                  myType={myDateType}
+                  otherDate={otherDate}
+                  otherType={otherType}
+                />
               </div>
             );
           })}

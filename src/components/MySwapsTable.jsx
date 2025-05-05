@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Button from '../components/ui/Button/Button';
-import { shiftTypeLabels, swapStatusLabels } from '../utils/labelMaps';
+import { shiftTypeLabels, swapStatusOptions } from '../utils/labelMaps';
 import { Eraser } from '../theme/icons';
 import Chip from '../components/ui/Chip/Chip';
 import EmptyState from '../components/ui/EmptyState/EmptyState';
 import DateRangePicker from '../components/ui/DateRangePicker/DateRangePicker'; // ajusta path si es necesario
 import { addDays } from 'date-fns';
-import { formatFriendlyDate } from '../utils/formatFriendlyDate';
+import SwapCardContent from '../components/ui/Cards/SwapCardContent';
 
 
 
@@ -41,12 +41,6 @@ const MySwapsTable = ({ swaps = [], isLoading }) => {
     setFiltersReady(true);
   }, [filterStatuses, filterRange, swaps]);
 
-  const swapStatusOptions = [
-    { value: 'proposed', label: 'Propuesto' },
-    { value: 'accepted', label: 'Aceptado' },
-    { value: 'rejected', label: 'Rechazado' },
-    { value: 'cancelled', label: 'Cancelado' },
-  ];
 
   const clearFilters = () => {
     setFilterRange({
@@ -109,28 +103,23 @@ const MySwapsTable = ({ swaps = [], isLoading }) => {
       ) : null}
 
       {!isLoading && filtersReady && filtered.length > 0 && (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+        <div className='card-list'>
           {filtered.map((swap) => (
             <div
               key={swap.swap_id}
-              className="my-swap-card"
+              className="card-base"
               onClick={() => navigate(`/swaps/${swap.swap_id}`)}
             >
-              {/* Card del swap */}
-              <div className="my-swap-meta">
-                {swap.direction === 'sent' ? 'Propuesto por ti' : 'Propuesta recibida'}
-              </div>
-              <strong>Turno objetivo:</strong> {formatFriendlyDate(swap.shift?.date)} de {shiftTypeLabels[swap.shift?.shift_type]}
-              <div className="my-swap-meta">
-                <strong>Con:</strong> {swap.shift?.worker?.name} {swap.shift?.worker?.surname}
-              </div>
-              <div className="my-swap-meta">
-                <strong>Ofreces:</strong> {formatFriendlyDate(swap.offered_date)} de {shiftTypeLabels[swap.offered_type]}
-              </div>
-              <span className={`swap-status ${swap.status}`}>
-                {swapStatusLabels[swap.status]}
-              </span>
+              <SwapCardContent
+                otherPersonName={`${swap.shift?.worker?.name} ${swap.shift?.worker?.surname}`}
+                myDate={swap.offered_date}
+                myType={swap.offered_type}
+                otherDate={swap.shift?.date}
+                otherType={swap.shift?.shift_type}
+                statusLabel={swap.status}
+              />
             </div>
+
           ))}
         </div>
       )}

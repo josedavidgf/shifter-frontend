@@ -15,7 +15,7 @@
 
   /* 🕒 Turnos */
   --shift-morning: #FFE681;
-  --shift-afternoon: #FFBCE2;
+  --shift-evening: #FFBCE2;
   --shift-night: #B9C7FF;
   --shift-reinforcement: #FFC6C6;
 
@@ -66,4 +66,9 @@
   --color-danger-bg: #FFF5F5;
   --color-danger-text: #C53030;
 
+  /* Tags estados swap */
+  --swap-proposed: #BEE3F8;
+  --swap-accepted: #C6F6D5;
+  --swap-rejected: #FC8181;
+  --swap-cancelled: #E53E3E;
 }
