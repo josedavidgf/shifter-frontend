@@ -24,7 +24,7 @@ import DayDetailEmpty from './DayDetails/DayDetailEmpty';
 import Loader from '../components/ui/Loader/Loader';
 import Banner from '../components/ui/Banner/Banner';
 import { Sun, SunHorizon, Moon, ShieldCheck, CirclesThree, SquaresFour, Stack, Trash, FloppyDisk, CalendarPlus } from '../theme/icons';
-import { Fire, FireSimple } from 'phosphor-react';
+import { Fire, FireSimple, ChartPieSlice, ChartBar, ChartLine, ChartBarHorizontal, ChartLineUp } from 'phosphor-react';
 import { useToast } from '../hooks/useToast'; // ya lo usas en otras vistas
 import { Check } from 'phosphor-react';
 
@@ -75,6 +75,7 @@ function computeShiftStats(shiftMap, selectedMonth) {
 function MonthlyCalendar() {
 
   const [isMassiveEditMode, setIsMassiveEditMode] = useState(false);
+  const [showStats, setShowStats] = useState(true);
   const [isLoadingCalendar, setIsLoadingCalendar] = useState(true);
   const [draftShiftMap, setDraftShiftMap] = useState(null);
   const [selectedDay, setSelectedDay] = useState(format(new Date(), 'yyyy-MM-dd'));
@@ -638,41 +639,47 @@ function MonthlyCalendar() {
       <div className="month-selector-group">
         <MonthSelector selectedMonth={selectedMonth} onChange={setSelectedMonth} />
         {!isMassiveEditMode && (
-          <Button
-            variant="outline"
-            leftIcon={<CalendarPlus size={20} />}
-            size="sm"
-            onClick={() => {
-              setDraftShiftMap({ ...shiftMap }); // Creamos copia
-              setIsMassiveEditMode(true);
-              setSelectedDay(null); // 👈 aseguramos que se oculte
-              setShowMassiveEditBanner(true); // 👈 Muestra banner
-            }}
-          />
+          <div className="month-selector-actions">
+            <Button
+              variant="outline"
+              leftIcon={<ChartPieSlice size={20} weight={showStats ? 'regular' : 'fill'} color={showStats ? undefined : '#1F2937'} />}
+              size="sm"
+              onClick={() => setShowStats(prev => !prev)}
+            />
+            <Button
+              variant="outline"
+              leftIcon={<CalendarPlus size={20} weight="fill" />}
+              size="sm"
+              onClick={() => {
+                setDraftShiftMap({ ...shiftMap });
+                setIsMassiveEditMode(true);
+                setSelectedDay(null);
+                setShowMassiveEditBanner(true);
+              }}
+            />
+          </div>
         )}
-
-
       </div>
       {showMassiveEditBanner && isMassiveEditMode && (
         <Banner type="info" onClose={() => setShowMassiveEditBanner(false)}>
           Haz clic varias veces para alternar entre mañana, tarde, noche o refuerzo.
         </Banner>
-
       )}
-      <div className="mt-3 mb-3 p-4 border rounded shadow">
-        <div className="badge-container">
-          {['total', 'morning', 'evening', 'night', 'reinforcement'].map((type) => {
-            const count = stats[type];
-
-            return (
-              <div key={type} className="stat-badge">
-                <span className="badge-icon">{renderShiftIcon(type)}</span>
-                <span className="badge-count">{count}</span>
-              </div>
-            );
-          })}
+      {showStats && (
+        <div className="mt-3 mb-3 p-4 border rounded shadow">
+          <div className="badge-container">
+            {['total', 'morning', 'evening', 'night', 'reinforcement'].map((type) => {
+              const count = stats[type];
+              return (
+                <div key={type} className="stat-badge">
+                  <span className="badge-icon">{renderShiftIcon(type)}</span>
+                  <span className="badge-count">{count}</span>
+                </div>
+              );
+            })}
+          </div>
         </div>
-      </div>
+      )}
 
       <div className="calendar-grid-container">
         <div className="calendar-header-container">
