@@ -1,7 +1,7 @@
 import React from 'react';
 import EmptyState from '../components/ui/EmptyState/EmptyState';
 import { USER_EVENT_CONFIG } from '../utils/userEvents';
-import { formatFriendlyDate } from '../utils/formatFriendlyDate';
+import { formatFriendlyDateTime } from '../utils/formatFriendlyDate';
 
 const ActivityTable = ({ events }) => {
   if (events.length === 0) {
@@ -20,7 +20,7 @@ const ActivityTable = ({ events }) => {
         const icon = config.icon;
         const title = config.title || event.type;
         const description = config.getDescription?.(event.metadata) || '';
-        const formattedDate = formatFriendlyDate(event.created_at);
+        const formattedDate = formatFriendlyDateTime(event.created_at);
 
         return (
           <div key={event.id} className="activity-card">

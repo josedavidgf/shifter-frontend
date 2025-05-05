@@ -19,10 +19,6 @@ const Calendar = () => {
     const goToProfile = () => navigate('/profile');
     const goToActivity = () => navigate('/activity');
 
-    const handleProfileClick = () => {
-        navigate('/profile');
-    };
-
     return (
         <>
             <HeaderFirstLevel
