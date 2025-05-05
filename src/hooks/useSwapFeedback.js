@@ -1,18 +1,21 @@
 import { useCallback } from 'react';
+import { useToast } from './useToast';
 
 export function useSwapFeedback() {
+  const { showInfo, showSuccess } = useToast();
+
   const showSwapFeedback = useCallback((swap) => {
     if (!swap) return;
 
     switch (swap.status) {
       case 'accepted':
-        alert('✅ ¡Intercambio realizado directamente!');
+        showSuccess('¡Intercambio realizado directamente!');
         break;
       case 'proposed':
-        alert('✅ Solicitud de intercambio creada. Pendiente de aceptación.');
+        showSuccess('Solicitud de intercambio creada. Pendiente de aceptación.');
         break;
       default:
-        alert('ℹ️ Estado desconocido del intercambio.');
+        showInfo('ℹEstado desconocido del intercambio.');
     }
     
   }, []);
