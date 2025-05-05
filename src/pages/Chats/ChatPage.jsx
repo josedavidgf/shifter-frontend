@@ -104,41 +104,28 @@ const ChatPage = () => {
                 title={`Chat con ${otherPersonName}`}
                 showBackButton
                 onBack={handleBack}
-                rightAction={
-                    phoneLink
-                        ? {
-                            icon: <Phone size={20} />,
-                            label: 'Llamar',
-                            onClick: () => window.open(phoneLink, '_blank')
-                        }
-
-                        : undefined
-                }
+                rightAction={phoneLink ? { icon: <Phone size={20} />, label: 'Llamar', onClick: () => window.open(phoneLink, '_blank') } : undefined}
             />
 
-            <div className="page">
-                <div className="container">
-
-                    <div className="chat-page-header">
-                        {/*                             <strong>{otherPersonName} {otherPersonSurname}</strong><br />
- */}                            <p>
-                            {getVerb(myDate)} {formatFriendlyDate(myDate)} de {translateShiftType(myDateType)} y {otherPersonName} {getOtherVerb(otherDate)} {formatFriendlyDate(otherDate)} de {translateShiftType(otherDateType)}
-                        </p>
-                    </div>
-                    <div className="chat-page-content">
-                        <ChatBox
-                            swapId={swap.swap_id}
-                            myWorkerId={workerId}
-                            otherWorkerId={otherWorkerId}
-                            otherPersonName={otherPersonName}
-                            otherPersonSurname={otherPersonSurname}
-                            myDate={myDate}
-                            otherDate={otherDate}
-                        />
-                    </div>
+            <div className="chat-wrapper">
+                <div className="chat-header-info">
+                    <p>
+                        {getVerb(myDate)} {formatFriendlyDate(myDate)} de {translateShiftType(myDateType)} y {otherPersonName} {getOtherVerb(otherDate)} {formatFriendlyDate(otherDate)} de {translateShiftType(otherDateType)}
+                    </p>
                 </div>
+
+                <ChatBox
+                    swapId={swap.swap_id}
+                    myWorkerId={workerId}
+                    otherWorkerId={otherWorkerId}
+                    otherPersonName={otherPersonName}
+                    otherPersonSurname={otherPersonSurname}
+                    myDate={myDate}
+                    otherDate={otherDate}
+                />
             </div>
         </>
+
     );
 };
 

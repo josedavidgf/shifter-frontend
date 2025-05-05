@@ -1,28 +1,15 @@
-.chat-page {
+.chat-wrapper {
   display: flex;
   flex-direction: column;
   height: 100dvh;
+  background-color: var(--color-white);
   overflow: hidden;
-  background-color: #fff;
-  gap: 1rem;
 }
 
-.chat-page-header {
+.chat-header-info {
   flex-shrink: 0;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  background-color: #fff;
-  border-bottom: 1px solid #ddd;
-  position: sticky;
-  top: 0;
-  z-index: 20;
-}
-
-.chat-page-content {
-  flex-grow: 1;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-  min-height: 0; /* ⬅️ CLAVE para que flexbox permita que hijos hagan overflow */
+  padding: var(--space-md);
+  border-bottom: 1px solid var(--color-gray-200);
+  background-color: var(--color-white);
+  z-index: 10;
 }
