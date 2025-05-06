@@ -41,22 +41,27 @@
     gap: var(--space-sm);
   }
   
-  .shift-icon {
-    width: 32px;
-    height: 32px;
-    border-radius: 2px;
+.shift-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 4px;
     display: flex;
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
   }
   
-  .shift-date-text {
+.shift-date-text {
     font-size: var(--font-lg);
     display: flex;
     flex-direction: column;
-    gap: var(--space-xs);
-  }
+    gap: 0px;
+}
+
+.shift-date-text div {
+    font-weight: 600;
+    margin-top: -4px;
+}
   
   .shift-type {
     font-size: var(--font-lg);
