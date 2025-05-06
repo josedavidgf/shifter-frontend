@@ -24,39 +24,49 @@ function Register() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (loadingForm) return;
     setLoadingForm(true);
-
-    try {
-      const { session, user } = await register(email, password);
-      const redirectTo = process.env.NODE_ENV === 'development'
+  
+    const redirectTo =
+      process.env.NODE_ENV === 'development'
         ? 'http://localhost:3000/auth/callback'
         : 'https://pre-app.apptanda.com/auth/callback';
-
+  
+    try {
+      const { session } = await register(email, password);
+      localStorage.setItem('lastRegisteredEmail', email);
+  
       if (session) {
         navigate('/');
-      } else {
-        // ⚠️ Comprobamos si el usuario ya existe y no ha verificado
-        let error;
-        try {
-          await supabase.auth.signInWithPassword({ email, password: 'dummy-password-incorrecta' });
-        } catch (err) {
-          error = err;
-        }
-
-        if (error?.message?.includes('Email not confirmed')) {
-          await supabase.auth.signUp({
-            email,
-            password,
-            options: { emailRedirectTo: redirectTo },
-          });
-          showInfo('Te hemos reenviado el correo de verificación. Revisa tu bandeja de entrada.');
-          return navigate('/verify-email');
-        } else {
-          await supabase.auth.resetPasswordForEmail(email, { redirectTo });
-          showInfo('Ya tenías cuenta. Te hemos enviado instrucciones para restablecer tu contraseña.');
-          return navigate('/login');
-        }
+        return;
       }
+  
+      let error;
+      try {
+        await supabase.auth.signInWithPassword({ email, password: 'dummy-password-incorrecta' });
+      } catch (err) {
+        error = err;
+      }
+  
+      if (error?.message?.includes('Email not confirmed')) {
+        await supabase.auth.signUp({
+          email,
+          password,
+          options: { emailRedirectTo: redirectTo },
+        });
+        showInfo('Te hemos reenviado el correo de verificación. Revisa tu bandeja de entrada.');
+        return navigate('/verify-email');
+      }
+  
+      // ⚠️ Email ya registrado y verificado
+      if (!error || error.message.includes('Invalid login credentials')) {
+        await supabase.auth.resetPasswordForEmail(email, { redirectTo });
+        showInfo('Ya tenías cuenta. Te hemos enviado instrucciones para restablecer tu contraseña.');
+        return navigate('/login');
+      }
+  
+      throw error;
+  
     } catch (err) {
       console.error('❌ Register error:', err.message);
       showError(mapSupabaseError(err));
@@ -64,6 +74,7 @@ function Register() {
       setLoadingForm(false);
     }
   };
+  
 
   const handleBack = () => {
     navigate('/');
