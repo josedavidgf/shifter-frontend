@@ -8,7 +8,7 @@ const ChatCardContent = ({ otherPersonName, myDate, myType, otherDate, otherType
   const other = getFriendlyDateParts(otherDate);
 
   return (
-    <div className="chat-card-content">
+    <div className="chat-card-content" style={{ padding: 0 }}>
       <div className="chat-line-row">
         <div className="chat-icon-wrapper">
           <ChatCircleText size={20} />
