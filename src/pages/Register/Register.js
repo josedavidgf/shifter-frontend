@@ -26,29 +26,34 @@ function Register() {
     e.preventDefault();
     if (loadingForm) return;
     setLoadingForm(true);
-  
+
     const redirectTo =
       process.env.NODE_ENV === 'development'
         ? 'http://localhost:3000/auth/callback'
         : 'https://pre-app.apptanda.com/auth/callback';
-  
+
     try {
       const { session } = await register(email, password);
       localStorage.setItem('lastRegisteredEmail', email);
-  
+
       if (session) {
         navigate('/');
         return;
       }
-  
+
       let error;
       try {
-        await supabase.auth.signInWithPassword({ email, password: 'dummy-password-incorrecta' });
+        await supabase.auth.signInWithPassword({
+          email,
+          password: 'dummy-password-incorrecta',
+        });
       } catch (err) {
         error = err;
       }
-  
-      if (error?.message?.includes('Email not confirmed')) {
+
+      const message = error?.message?.toLowerCase() || '';
+
+      if (message.includes('email not confirmed')) {
         await supabase.auth.signUp({
           email,
           password,
@@ -57,24 +62,27 @@ function Register() {
         showInfo('Te hemos reenviado el correo de verificación. Revisa tu bandeja de entrada.');
         return navigate('/verify-email');
       }
-  
-      // ⚠️ Email ya registrado y verificado
-      if (!error || error.message.includes('Invalid login credentials')) {
-        await supabase.auth.resetPasswordForEmail(email, { redirectTo });
-        showInfo('Ya tenías cuenta. Te hemos enviado instrucciones para restablecer tu contraseña.');
+
+      if (!error || message.includes('invalid login credentials')) {
+        await supabase.auth.signInWithOtp(email, { redirectTo });
+        showInfo('Ya estás registrado en Tanda. Puedes hacer login directamente o vía el link que te hemos mandado a tu correo.');
         return navigate('/login');
       }
-  
+
       throw error;
-  
     } catch (err) {
-      console.error('❌ Register error:', err.message);
-      showError(mapSupabaseError(err));
+      if (err.message === 'rate_limit_exceeded') {
+        showError('Has solicitado demasiados registros seguidos. Intenta de nuevo en unos minutos.');
+      } else {
+        console.error('❌ Register error:', err.message);
+        showError(mapSupabaseError(err));
+      }
     } finally {
       setLoadingForm(false);
     }
   };
-  
+
+
 
   const handleBack = () => {
     navigate('/');

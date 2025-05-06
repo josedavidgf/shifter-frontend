@@ -119,20 +119,23 @@ export function AuthProvider({ children }) {
       process.env.NODE_ENV === 'development'
         ? 'http://localhost:3000/auth/callback'
         : 'https://pre-app.apptanda.com/auth/callback';
-
+  
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
       options: { emailRedirectTo: redirectTo },
     });
-
+  
     if (error) {
-      console.error('❌ Error en el registro:', error.message);
+      if (error.status === 429 || error.message.toLowerCase().includes('rate')) {
+        throw new Error('rate_limit_exceeded');
+      }
       throw error;
     }
-
-    return data; // Devuelve siempre { user, session }
+  
+    return data; // Devuelve { user, session }
   };
+  
 
 
   // login
