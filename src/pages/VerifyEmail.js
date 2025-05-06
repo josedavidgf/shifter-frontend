@@ -10,21 +10,28 @@ const VerifyEmail = () => {
   const { showSuccess, showError } = useToast();
   const [loadingResend, setLoadingResend] = useState(false);
 
+
   useTrackPageView('verify-email');
 
   const handleResend = async () => {
-    if (!pendingEmail) {
+    const targetEmail = pendingEmail || localStorage.getItem('lastRegisteredEmail');
+  
+    if (!targetEmail) {
       showError('No se pudo encontrar el email registrado.');
       return;
     }
-
+  
     setLoadingResend(true);
+    const redirectTo = process.env.NODE_ENV === 'development'
+      ? 'http://localhost:3000/auth/callback'
+      : 'https://pre-app.apptanda.com/auth/callback';
+  
     try {
-      const { error } = await supabase.auth.resend({
-        type: 'signup',
-        email: pendingEmail,
+      await supabase.auth.signUp({
+        email: targetEmail,
+        password: 'dummy-temporal',
+        options: { emailRedirectTo: redirectTo }
       });
-      if (error) throw error;
       showSuccess('Verificación reenviada. Revisa tu correo.');
     } catch (err) {
       console.error('❌ Error reenviando email de verificación:', err.message);
@@ -33,6 +40,7 @@ const VerifyEmail = () => {
       setLoadingResend(false);
     }
   };
+  
 
   return (
     <div className="page page-primary">
