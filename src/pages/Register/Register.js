@@ -64,7 +64,10 @@ function Register() {
       }
 
       if (!error || message.includes('invalid login credentials')) {
-        await supabase.auth.signInWithOtp(email, { redirectTo });
+        await supabase.auth.signInWithOtp({
+          email,
+          options: { emailRedirectTo: redirectTo }
+        });
         showInfo('Ya estás registrado en Tanda. Puedes hacer login directamente o vía el link que te hemos mandado a tu correo.');
         return navigate('/login');
       }
