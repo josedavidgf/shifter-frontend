@@ -10,7 +10,7 @@ import InputField from '../../../components/ui/InputField/InputField';
 import { useRef, useEffect } from 'react';
 
 
-const DateRangePicker = ({ onChange }) => {
+const DateRangePicker = ({ onChange,value }) => {
   const [visible, setVisible] = useState(false);
   const wrapperRef = useRef(null);
 
@@ -33,6 +33,17 @@ const DateRangePicker = ({ onChange }) => {
     endDate: endOfMonth(new Date()),
     key: 'selection',
   });
+
+  useEffect(() => {
+    if (value?.startDate && value?.endDate) {
+      setRange({
+        startDate: value.startDate,
+        endDate: value.endDate,
+        key: 'selection'
+      });
+    }
+  }, [value]);
+  
 
   const [selectedQuickRange, setSelectedQuickRange] = useState(null);
 

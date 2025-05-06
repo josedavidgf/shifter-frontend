@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 //import Button from '../components/ui/Button/Button';
-import { shiftTypeLabels } from '../utils/labelMaps';
 import Chip from '../components/ui/Chip/Chip';
 import EmptyState from '../components/ui/EmptyState/EmptyState';
 import { useToast } from '../hooks/useToast'; // ya lo usas en otras vistas
-import { Sun, SunHorizon, Moon, ShieldCheck, } from '../theme/icons';
+import { shiftTypeOptions } from '../utils/labelMaps';
 import DateRangePicker from '../components/ui/DateRangePicker/DateRangePicker'; // ajusta path si es necesario
 import { addDays } from 'date-fns';
 import ShiftCardContent from '../components/ui/Cards/ShiftCardContent';
@@ -14,7 +13,6 @@ import ShiftCardContent from '../components/ui/Cards/ShiftCardContent';
 const HospitalShiftsTable = ({ shifts, workerId, sentSwapShiftIds, isLoading }) => {
   const navigate = useNavigate();
   const { showWarning } = useToast();
-  const [filtersReady, setFiltersReady] = useState(false);
   const today = new Date();
   const [filterRange, setFilterRange] = useState({
     startDate: today,
@@ -41,16 +39,8 @@ const HospitalShiftsTable = ({ shifts, workerId, sentSwapShiftIds, isLoading }) 
       .sort((a, b) => new Date(a.date) - new Date(b.date));
 
     setFilteredShifts(result);
-    setFiltersReady(true);
   }, [shifts, filters, filterRange]);
 
-
-
-
-  /*   const handleFilterDateChange = (e) => {
-      const { name, value } = e.target;
-      setFilters((prev) => ({ ...prev, [name]: value }));
-    }; */
 
   const clearFilters = () => {
     setFilters({ types: [] });
@@ -61,39 +51,18 @@ const HospitalShiftsTable = ({ shifts, workerId, sentSwapShiftIds, isLoading }) 
   };
 
 
-  const shiftTypeOptions = [
-    { value: 'morning', label: 'Mañana', icon: Sun },
-    { value: 'evening', label: 'Tarde', icon: SunHorizon },
-    { value: 'night', label: 'Noche', icon: Moon },
-    { value: 'reinforcement', label: 'Refuerzo', icon: ShieldCheck },
-  ];
-
   const [filteredShifts, setFilteredShifts] = useState([]);
-
-  useEffect(() => {
-    const result = shifts
-      .filter((shift) => {
-        return (
-/*           (!filters.date || shift.date.slice(0, 7) === filters.date) &&
- */          (filters.types.length === 0 || filters.types.includes(shift.shift_type))
-        );
-      })
-      .sort((a, b) => new Date(a.date) - new Date(b.date));
-
-    setFilteredShifts(result);
-    setFiltersReady(true);
-  }, [shifts, filters]);
-
-
 
 
   return (
     <>
       <div className="filters-container">
         <div className="filters-group">
-          <DateRangePicker onChange={(range) => setFilterRange(range)} />
+          <DateRangePicker
+            value={filterRange}
+            onChange={(range) => setFilterRange(range)}
+          />
         </div>
-
         <div className="chip-filter-group">
           <div className="chip-scroll-group">
             {shiftTypeOptions.map((option) => {
@@ -118,16 +87,7 @@ const HospitalShiftsTable = ({ shifts, workerId, sentSwapShiftIds, isLoading }) 
           </div>
         </div>
       </div>
-
-
-      {/*           <Button
-            label="Limpiar filtros"
-            variant="outline"
-            size="lg"
-            leftIcon={<Eraser size={16} />}
-            onClick={clearFilters}
-          /> */}
-      {!isLoading && filtersReady && filteredShifts.length === 0 ? (
+      {!isLoading && filteredShifts.length === 0 ? (
         <EmptyState
           title="Sin turnos disponibles"
           description="No hay turnos que coincidan con los filtros seleccionados."
@@ -135,7 +95,7 @@ const HospitalShiftsTable = ({ shifts, workerId, sentSwapShiftIds, isLoading }) 
           onCtaClick={clearFilters}
         />
       ) : null}
-      {!isLoading && filtersReady && filteredShifts.length > 0 && (
+      {!isLoading && filteredShifts.length > 0 && (
         <div className='card-list'>
           {filteredShifts.map((shift) => {
             const isMine = shift.worker_id === workerId;

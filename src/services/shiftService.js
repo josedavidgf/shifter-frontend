@@ -78,10 +78,10 @@ export const removeShift = async (id, token) => {
 };
 
 // Obtener turnos del hospital
-export const getHospitalShifts = async (token, limit = 10, offset = 0) => {
+export const getHospitalShifts = async (token) => {
   try {
     const res = await axios.get(
-      `${API_URL}/api/shifts/hospital?limit=${limit}&offset=${offset}`,
+      `${API_URL}/api/shifts/hospital`,
       authHeaders(token)
     );
     return res.data.data;

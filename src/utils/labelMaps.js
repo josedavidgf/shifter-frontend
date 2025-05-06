@@ -40,3 +40,10 @@ export const shiftTypeIcons = {
   night: Moon,
   reinforcement: ShieldCheck,
 };
+
+export const shiftTypeOptions = Object.entries(shiftTypeLabels).map(([value, label]) => ({
+  value,
+  label,
+  icon: shiftTypeIcons[value],
+}));
+

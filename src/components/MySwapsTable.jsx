@@ -56,7 +56,10 @@ const MySwapsTable = ({ swaps = [], isLoading }) => {
     <>
       <div className="filters-container">
         <div className="filters-group">
-          <DateRangePicker onChange={(range) => setFilterRange(range)} />
+          <DateRangePicker
+            value={filterRange}
+            onChange={(range) => setFilterRange(range)}
+          />
         </div>
 
         <div className="chip-filter-group">

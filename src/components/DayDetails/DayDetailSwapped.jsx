@@ -29,7 +29,7 @@ export default function DayDetailSwapped({
     related_worker: entry.related_worker,
   });
 
-  const name = entry.related_worker_name 
+  const name = entry.related_worker_name
   const surname = entry.related_worker_surname;
   const otherName = name && surname ? `${name} ${surname}` : null;
 
@@ -73,17 +73,16 @@ export default function DayDetailSwapped({
             leftIcon={<Lightbulb size={20} />}
             onClick={() => onAddPreference(dateStr)}
           />
+          {entry.swap_id && (
+            <Button
+              label="Ver detalles"
+              variant="ghost"
+              size="lg"
+              leftIcon={<Eye size={20} />}
+              onClick={() => navigate(`/swaps/${entry.swap_id}`)}
+            />
+          )}
         </div>
-
-        {entry.swap_id && (
-          <Button
-            label="Ver detalles"
-            variant="ghost"
-            size="lg"
-            leftIcon={<Eye size={20} />}
-            onClick={() => navigate(`/swaps/${entry.swap_id}`)}
-          />
-        )}
       </div>
     </div>
   );
