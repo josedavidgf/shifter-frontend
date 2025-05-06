@@ -64,7 +64,7 @@ const ChatsListTable = ({ swaps, workerId }) => {
           description="No hay chats que coincidan con tu búsqueda."
         />
       ) : (
-        <div className="card-list">
+        <div className="card-list" style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
           {filteredSwaps.map((swap) => {
             const iAmRequester = swap.requester_id === workerId;
             const myDate = iAmRequester ? swap.offered_date : swap.shift.date;
