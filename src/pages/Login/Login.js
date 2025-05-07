@@ -9,6 +9,7 @@ import logoGoogle from '../../assets/google-icon.svg';
 import { useToast } from '../../hooks/useToast';
 import { mapSupabaseError } from '../../utils/mapSupabaseError';
 import HeaderSecondLevel from '../../components/ui/Header/HeaderSecondLevel';
+import supabase from '../../config/supabase';
 
 
 
@@ -32,7 +33,25 @@ function Login() {
       console.error('❌ Login error:', err);
       console.error('❌ Login error:', err.message);
       if (err.message === "Email not confirmed") {
-        setPendingEmail(email); // esto viene del AuthContext
+        setPendingEmail(email);
+        localStorage.setItem('lastRegisteredEmail', email);
+
+        const redirectTo = process.env.REACT_APP_REDIRECT_URL;
+        
+        if (!redirectTo) {
+          throw new Error('redirectTo no está definido. Revisa tu .env');
+        }
+
+        try {
+          await supabase.auth.signUp({
+            email,
+            password: 'dummy-temporal',
+            options: { emailRedirectTo: redirectTo },
+          });
+        } catch (err) {
+          console.warn('❌ Error al reenviar email desde login:', err.message);
+        }
+
         navigate("/verify-email");
       } else {
         showError(mapSupabaseError(err));

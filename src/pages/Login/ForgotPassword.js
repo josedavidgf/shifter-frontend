@@ -19,10 +19,8 @@ const ForgotPassword = () => {
         if (!email) return;
 
         setLoading(true);
-        const redirectTo =
-            process.env.NODE_ENV === 'development'
-                ? 'http://localhost:3000/auth/callback'
-                : 'https://pre-app.apptanda.com/auth/callback';
+        const redirectTo = process.env.REACT_APP_REDIRECT_URL;
+
         const { error } = await supabase.auth.resetPasswordForEmail(email, {
             redirectTo,
         });

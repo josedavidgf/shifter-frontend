@@ -115,11 +115,8 @@ export function AuthProvider({ children }) {
 
 
   const register = async (email, password) => {
-    const redirectTo =
-      process.env.NODE_ENV === 'development'
-        ? 'http://localhost:3000/auth/callback'
-        : 'https://pre-app.apptanda.com/auth/callback';
-  
+    const redirectTo = process.env.REACT_APP_REDIRECT_URL;
+    
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
@@ -162,11 +159,10 @@ export function AuthProvider({ children }) {
 
   const loginWithGoogle = async () => {
     try {
-      const redirectTo =
-        process.env.NODE_ENV === 'development'
-          ? 'http://localhost:3000/auth/callback'
-          : 'https://pre-app.apptanda.com/auth/callback';
-
+      const redirectTo = process.env.REACT_APP_REDIRECT_URL;
+      if (!redirectTo) {
+        throw new Error('redirectTo no está definido. Revisa tu .env');
+      }
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
