@@ -1,5 +1,5 @@
 import React from 'react';
-import { Swap } from '../../../theme/icons';
+import { Swap, UserFocus } from '../../../theme/icons';
 import { shiftTypeLabels } from '../../../utils/labelMaps';
 import { getFriendlyDateParts } from '../../../utils/formatFriendlyDate';
 import { swapStatusTags } from '../../../utils/labelMaps';
@@ -21,16 +21,12 @@ const SwapCardContent = ({
                 <span className="tag__label">{swapStatusTags[statusLabel]}</span>
             </div>
             <div className="swap-line-row">
-                <div className='swap-icon-wrapper'>
-                    <Swap size={20} />
-                </div>
+                <UserFocus size={20} />
                 <span>Cambio con {otherPersonName}</span>
             </div>
 
-            <div className="swap-line-row">
-                <div className='swap-icon-wrapper-secondary'>
-                    <Swap size={20} />
-                </div>
+            <div className="swap-line-row" style={{ alignItems: 'flex-start' }}>
+                <Swap size={20} style={{ marginTop: '2px' }} />
                 <span>
                     Tú haces el {myDateParts.short} ({shiftTypeLabels[myType]}) por {otherDateParts.short} ({shiftTypeLabels[otherType]})
                 </span>
