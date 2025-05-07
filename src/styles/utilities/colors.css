@@ -17,10 +17,10 @@
   
 
   /* 🕒 Turnos */
-  --shift-morning: #FFE681;
-  --shift-evening: #FFBCE2;
-  --shift-night: #B9C7FF;
-  --shift-reinforcement: #FFC6C6;
+  --shift-morning: #FFD000;
+  --shift-evening: #FF336B;
+  --shift-night: #016EFF;
+  --shift-reinforcement: #FF6000;
 
   /* 🧱 Roles semánticos */
   --color-background: var(--color-gray-50);
