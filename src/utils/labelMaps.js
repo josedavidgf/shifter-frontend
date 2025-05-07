@@ -6,7 +6,7 @@ export const swapStatusLabels = {
   proposed: 'Pendiente',
   accepted: 'Aceptado',
   rejected: 'Rechazado',
-  cancelled: 'Cancelado',
+  cancelled: 'Anulado',
 };
 export const swapStatusOptions = Object.entries(swapStatusLabels).map(([value, label]) => ({
   value,
@@ -18,7 +18,7 @@ export const swapStatusTags = {
   proposed: 'Pendiente de aceptar',
   accepted: 'Aceptado',
   rejected: 'Rechazado',
-  cancelled: 'Cancelado',
+  cancelled: 'Anulado',
 };
 
 export const shiftStatusLabels = {
@@ -46,4 +46,3 @@ export const shiftTypeOptions = Object.entries(shiftTypeLabels).map(([value, lab
   label,
   icon: shiftTypeIcons[value],
 }));
-
