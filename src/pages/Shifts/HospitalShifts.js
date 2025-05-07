@@ -10,8 +10,6 @@ import Loader from '../../components/ui/Loader/Loader'; // ✅
 import EmptyState from '../../components/ui/EmptyState/EmptyState';
 import { useNavigate } from 'react-router-dom';
 import useMinimumDelay from '../../hooks/useMinimumDelay';
-import Button from '../../components/ui/Button/Button';
-
 
 const HospitalShifts = () => {
     const { getToken } = useAuth();
@@ -50,8 +48,12 @@ const HospitalShifts = () => {
 
             setProfile(profileData);
             setWorkerId(profileData.worker_id);
-            setSentSwaps(sentSwapsData.map(s => s.shift_id));
-
+            setSentSwaps(
+                sentSwapsData
+                  .filter(s => s.status === 'proposed')
+                  .map(s => s.shift_id)
+              );
+              
         } catch (err) {
             console.error('❌ Error al cargar datos de hospital:', err.message);
             setError('Error al cargar los turnos.');
