@@ -1,7 +1,5 @@
 import React from 'react';
 import Button from '../../../components/ui/Button/Button';
-import logoTanda from '../../../assets/logo-tanda-light.png';
-
 
 const EmptyState = ({
   title = 'Nada que mostrar',

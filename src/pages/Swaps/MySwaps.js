@@ -29,8 +29,6 @@ const MySwaps = () => {
       setLoading(true);
       setError(null);
 
-      const startTime = Date.now(); // ⏱️
-
       try {
         const token = await getToken();
         const [sent, received] = await Promise.all([

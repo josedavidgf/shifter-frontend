@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useSwapApi } from '../../api/useSwapApi';
 import { useAuth } from '../../context/AuthContext';
 import { useWorkerApi } from '../../api/useWorkerApi';
@@ -10,8 +10,7 @@ import Button from '../../components/ui/Button/Button'; // Ajusta ruta si necesa
 import { useToast } from '../../hooks/useToast'; // Ajusta ruta
 import Loader from '../../components/ui/Loader/Loader';
 import InputField from '../../components/ui/InputField/InputField';
-import { format, parseISO } from 'date-fns';
-import { shiftTypeLabels, swapStatusLabels} from '../../utils/labelMaps';
+import { shiftTypeLabels, swapStatusLabels } from '../../utils/labelMaps';
 import EmptyState from '../../components/ui/EmptyState/EmptyState';
 import ConfirmationModal from '../../components/ui/ConfirmationModal/ConfirmationModal';
 import useMinimumDelay from '../../hooks/useMinimumDelay';
@@ -208,6 +207,13 @@ const SwapDetail = () => {
                             />
                         </div>
                     )}
+                    {swap.status === 'accepted' && (
+                        <div className="mb-4">
+                            <p className="text-sm mb-2">
+                                ¿Ha habido algún problema con este intercambio? Ponte en <Link to='/profile/contact'> contacto con Tanda</Link> para ayudarte a gestionarlo.
+                            </p>
+                        </div>
+                    )}
                 </div>
             </div>
             <ConfirmationModal
@@ -219,6 +225,8 @@ const SwapDetail = () => {
                 onConfirm={confirmCancelSwap}
                 onCancel={() => setShowCancelModal(false)}
             />
+
+
         </>
     );
 };

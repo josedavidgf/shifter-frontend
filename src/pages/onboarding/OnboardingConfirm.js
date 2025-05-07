@@ -6,7 +6,6 @@ import HeaderSecondLevel from '../../components/ui/Header/HeaderSecondLevel';
 import Button from '../../components/ui/Button/Button';
 import Checkbox from '../../components/ui/Checkbox/Checkbox';
 import { useToast } from '../../hooks/useToast';
-import Loader from '../../components/ui/Loader/Loader';
 import supabase from '../../config/supabase';
 
 export default function OnboardingConfirmStep() {

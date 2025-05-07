@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import Button from '../components/ui/Button/Button';
-import { shiftTypeLabels, swapStatusOptions } from '../utils/labelMaps';
-import { Eraser } from '../theme/icons';
+import { swapStatusOptions } from '../utils/labelMaps';
 import Chip from '../components/ui/Chip/Chip';
 import EmptyState from '../components/ui/EmptyState/EmptyState';
 import DateRangePicker from '../components/ui/DateRangePicker/DateRangePicker'; // ajusta path si es necesario

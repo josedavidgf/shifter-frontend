@@ -63,12 +63,6 @@ const ChatBox = ({
     inputRef.current?.focus();
   }, []);
 
-  const isUserNearBottom = (container, threshold = 100) => {
-    if (!container) return false;
-    const { scrollTop, scrollHeight, clientHeight } = container;
-    return scrollHeight - scrollTop - clientHeight < threshold;
-  };
-
   useEffect(() => {
     const container = messagesContainerRef.current;
     if (container) {

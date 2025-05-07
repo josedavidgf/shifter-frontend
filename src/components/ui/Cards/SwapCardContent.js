@@ -3,7 +3,6 @@ import { Swap } from '../../../theme/icons';
 import { shiftTypeLabels } from '../../../utils/labelMaps';
 import { getFriendlyDateParts } from '../../../utils/formatFriendlyDate';
 import { swapStatusTags } from '../../../utils/labelMaps';
-import Tag from '../../../components/ui/Tag/Tag'
 
 const SwapCardContent = ({
     otherPersonName,
