@@ -1,8 +1,7 @@
 // src/components/DayDetails/DayDetailEmpty.jsx
 import React from 'react';
 import Button from '../../components/ui/Button/Button';
-import { Lightning } from '../../theme/icons';
-import { CalendarPlus, Lightbulb } from 'phosphor-react';
+import { CalendarPlus, Lightbulb } from '../../theme/icons';
 
 export default function DayDetailEmpty({
   dateStr,

@@ -1,7 +1,6 @@
 // src/services/shiftService.js
 import axios from 'axios';
 import { getShiftsForMonth } from './calendarService';
-import { getAcceptedSwaps } from './swapService';
 
 const API_URL = process.env.REACT_APP_BACKEND_URL;
 

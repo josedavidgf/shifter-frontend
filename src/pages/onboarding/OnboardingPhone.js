@@ -69,20 +69,9 @@ export default function OnboardingPhoneStep() {
     }
   };
 
-  const handleSkip = () => {
-    navigate('/onboarding/success');
-  };
-
   return (
     <>
-{/*       <HeaderSecondLevel
-        showBackButton
-        onBack={handleBack}
-        rightAction={{
-            label: 'Omitir',
-             onClick: handleSkip }
-            }
-      /> */}
+      <HeaderSecondLevel showBackButton onBack={handleBack} />
       <div className="page page-secondary">
         <div className="container">
           <h2>Por último, añade tu número de teléfono</h2>

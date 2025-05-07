@@ -1,7 +1,7 @@
 import React from 'react';
-import SelectorInput from '../components/ui/SelectorInput/SelectorInput'; // Ajusta ruta si necesario
-import { formatFriendlyDate } from '../utils/formatFriendlyDate'; // Ajusta path si necesario
-
+import SelectorInput from '../components/ui/SelectorInput/SelectorInput';
+import { formatFriendlyDate } from '../utils/formatFriendlyDate'; 
+import { shiftTypeLabels } from '../utils/labelMaps';
 
 function ShiftSelector({ shifts, selectedShiftId, onSelect }) {
   const handleChange = (e) => {
@@ -14,7 +14,7 @@ function ShiftSelector({ shifts, selectedShiftId, onSelect }) {
 
   const options = shifts.map((shift) => ({
     value: shift.id,
-    label: `${formatFriendlyDate(shift.date)} de ${translateType(shift.type)}${shift.indicator === 'received' ? ' 🔄' : ''}${shift.preferred ? ' 🟢' : ''}`,
+    label: `${formatFriendlyDate(shift.date)} de ${shiftTypeLabels[shift.type]}${shift.indicator === 'received' ? ' 🔄' : ''}${shift.preferred ? ' 🟢' : ''}`,
   }));
 
   return (
@@ -27,28 +27,6 @@ function ShiftSelector({ shifts, selectedShiftId, onSelect }) {
         required
       />
   );
-}
-
-function translateType(type) {
-  switch (type) {
-    case 'morning':
-      return 'Mañana';
-    case 'evening':
-      return 'Tarde';
-    case 'night':
-      return 'Noche';
-    default:
-      return type;
-  }
-}
-
-function formatDate(dateStr) {
-  const date = new Date(dateStr);
-  return date.toLocaleDateString('es-ES', {
-    day: '2-digit',
-    month: '2-digit',
-    year: 'numeric',
-  });
 }
 
 export default ShiftSelector;
