@@ -730,7 +730,6 @@ function MonthlyCalendar() {
                   <div
                     key={dateStr}
                     className={`calendar-day-container ${!isSwappedOut ? `shift-${shiftType}` : ''} ${isPast ? 'past' : ''} ${isSelected ? 'selected-day' : ''}`}
-                    style={shiftType === 'reinforcement' && entry.source === 'manual' ? { backgroundColor: '#FFD6C2' } : {}}
                     onClick={() => handleDayClick(dateStr)}
                   >
                     <div className="calendar-day-number">{format(day, 'd')}{/* {getShiftLabel(shiftType)} {indicator} */}</div>
@@ -740,7 +739,6 @@ function MonthlyCalendar() {
                     {showAvailability && (
                       <div className="calendar-availability-dot" />
                     )}
-
                   </div>
                 );
               })}
