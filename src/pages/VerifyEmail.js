@@ -22,9 +22,10 @@ const VerifyEmail = () => {
     }
   
     setLoadingResend(true);
-    const redirectTo = process.env.NODE_ENV === 'development'
-      ? 'http://localhost:3000/auth/callback'
-      : 'https://pre-app.apptanda.com/auth/callback';
+    const redirectTo = process.env.REACT_APP_REDIRECT_URL;
+    if (!redirectTo) {
+      throw new Error('redirectTo no está definido. Revisa tu .env');
+    }
   
     try {
       await supabase.auth.signUp({
