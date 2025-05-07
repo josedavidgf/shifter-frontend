@@ -78,7 +78,7 @@
   flex: 1 0 0;
   border-radius: 4px;
   background: #F3F4F6;
-  opacity: 0.65;
+  opacity: 0.8;
   position: relative;
 
 }
@@ -107,7 +107,7 @@
   right: 4px;
   width: 8px;
   height: 8px;
-  background-color: #00c853; /* verde Tanda, puedes ajustar */
+  background-color: #12dc92; /* verde Tanda, puedes ajustar */
   border-radius: 50%;
 }
 
@@ -115,24 +115,25 @@
 .selected-day {
   border: 1px solid var(--black, #000);
   border-radius: 4px;
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.2);
 }
 
 
 
 .shift-morning {
-  background-color: var(--shift-morning, #FFE681);
+  background-color: var(--shift-morning, #FFD000);
 }
 
 .shift-evening {
-  background-color: var(--shift-evening, #FFBCE2);
+  background-color: var(--shift-evening, #FF336B);
 }
 
 .shift-night {
-  background-color: var(--shift-night, #B9C7FF);
+  background-color: var(--shift-night, #016EFF);
 }
 
 .shift-reinforcement {
-  background-color: var(--shift-reinforcement, #FFB4B4);  
+  background-color: var(--shift-reinforcement, #FF6000);  
 }
 
 .past {
