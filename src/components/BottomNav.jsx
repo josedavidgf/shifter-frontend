@@ -14,20 +14,20 @@ export default function BottomNav() {
         )}
       </NavLink>
 
-      <NavLink to="/my-swaps" className="nav-item">
-        {({ isActive }) => (
-          <div className={`nav-icon ${isActive ? 'active' : ''}`}>
-            <Lightning size={24} weight={isActive ? 'fill' : 'regular'} />
-            <span>Cambios</span>
-          </div>
-        )}
-      </NavLink>
-
       <NavLink to="/shifts/hospital" className="nav-item">
         {({ isActive }) => (
           <div className={`nav-icon ${isActive ? 'active' : ''}`}>
             <MagnifyingGlass size={24} weight={isActive ? 'fill' : 'regular'} />
             <span>Turnos</span>
+          </div>
+        )}
+      </NavLink>
+
+      <NavLink to="/my-swaps" className="nav-item">
+        {({ isActive }) => (
+          <div className={`nav-icon ${isActive ? 'active' : ''}`}>
+            <Lightning size={24} weight={isActive ? 'fill' : 'regular'} />
+            <span>Cambios</span>
           </div>
         )}
       </NavLink>
