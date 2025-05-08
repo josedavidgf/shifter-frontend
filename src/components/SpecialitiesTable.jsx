@@ -6,7 +6,7 @@ const SpecialitiesTable = ({ specialities, selectedSpeciality, setSelectedSpecia
 
   const filteredSpecialities = query.length >= 3
     ? specialities.filter((spec) => {
-        const fullName = `${spec.speciality_category ?? ''} ${spec.speciality_subcategory ?? ''}`.toLowerCase();
+        const fullName = `${spec.speciality_category ?? ''}`.toLowerCase();
         return fullName.includes(query.toLowerCase());
       })
     : specialities;
@@ -43,7 +43,7 @@ const SpecialitiesTable = ({ specialities, selectedSpeciality, setSelectedSpecia
               cursor: 'pointer'
             }}
           >
-            {spec.speciality_category} - {spec.speciality_subcategory}
+            {spec.speciality_category}
           </div>
         ))}
       </div>

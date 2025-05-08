@@ -12,4 +12,10 @@ export function translateShiftType(type) {
         return type;
     }
   }
-  
+
+  export const translateWorkerType = {
+    doctor: 'Médico',
+    nurse: 'Enfermero/a',
+    assistant: 'Auxiliar',
+    porter: 'Celador/a',
+  };

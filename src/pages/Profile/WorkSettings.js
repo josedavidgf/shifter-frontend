@@ -15,6 +15,8 @@ import { useToast } from '../../hooks/useToast';
 import SpecialitiesTable from '../../components/SpecialitiesTable';
 import Loader from '../../components/ui/Loader/Loader';
 import useMinimumDelay from '../../hooks/useMinimumDelay';
+import { translateWorkerType } from '../../utils/translateServices';
+
 
 const WorkSettings = () => {
   const { getToken, refreshWorkerProfile, isWorker } = useAuth();
@@ -64,7 +66,7 @@ const WorkSettings = () => {
       const workerType = workerTypes.find(w => w.worker_type_id === response.worker_type_id);
 
       setHospitalName(hospital?.name || response.hospital_id);
-      setWorkerTypeLabel(workerType?.worker_type_name || response.worker_type_id);
+      setWorkerTypeLabel(translateWorkerType[workerType?.worker_type_name] || workerType?.worker_type_name || response.worker_type_id);
       setStep('confirm');
     } catch (err) {
       console.error('❌ Error en handleValidateCode:', err.message);
@@ -154,11 +156,7 @@ const WorkSettings = () => {
               <InputField
                 name="speciality"
                 label="Servicio"
-                value={
-                  isWorker.workers_specialities?.[0]?.specialities?.speciality_category +
-                  ' - ' +
-                  isWorker.workers_specialities?.[0]?.specialities?.speciality_subcategory
-                }
+                value="isWorker.workers_specialities?.[0]?.specialities?.speciality_category"
                 disabled
                 readOnly
               />

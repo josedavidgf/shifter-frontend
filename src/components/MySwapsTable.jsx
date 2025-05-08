@@ -48,7 +48,7 @@ const MySwapsTable = ({ swaps = [], isLoading }) => {
     setFilterStatuses([]);
   };
 
-
+  console.log('swap',swaps)
 
   return (
     <>

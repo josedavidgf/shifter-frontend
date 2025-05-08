@@ -7,6 +7,8 @@ import Button from '../../components/ui/Button/Button';
 import Checkbox from '../../components/ui/Checkbox/Checkbox';
 import { useToast } from '../../hooks/useToast';
 import supabase from '../../config/supabase';
+import { translateWorkerType } from '../../utils/translateServices';
+
 
 export default function OnboardingConfirmStep() {
   const [hospitalId, setHospitalId] = useState('');
@@ -89,7 +91,7 @@ export default function OnboardingConfirmStep() {
         <div className="container">
           <h2 className="register-code__title">
             El código que has introducido te habilita Tanda como
-            <span className="highlight-purple"> {workerTypeName}</span> en
+            <span className="highlight-purple"> {translateWorkerType[workerTypeName] || workerTypeName}</span>
             <span className="highlight-purple"> {hospitalName}</span>
           </h2>
 

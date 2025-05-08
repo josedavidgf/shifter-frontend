@@ -46,7 +46,7 @@ const CreateShift = () => {
   });
 
   const speciality = isWorker.workers_specialities[0].specialities;
-  const specialityLabel = `${speciality?.speciality_category} - ${speciality?.speciality_subcategory}`;
+  const specialityLabel = `${speciality?.speciality_category}}`;
 
   const handleSubmit = async (e) => {
     e.preventDefault();

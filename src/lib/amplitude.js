@@ -53,7 +53,6 @@ export const identifyUser = (userProfile) => {
     identifyObj.set('hospitalName', userProfile.workers_hospitals?.[0]?.hospitals?.name || '');
     //identifyObj.set('specialityId', userProfile.workers_specialities?.[0]?.speciality_id || '');
     identifyObj.set('specialityCategory', userProfile.workers_specialities?.[0]?.specialities?.speciality_category || '');
-    identifyObj.set('specialitySubcategory', userProfile.workers_specialities?.[0]?.specialities?.speciality_subcategory || '');
   
     amplitude.identify(identifyObj);
     amplitude.flush(); // 💥 Envía enseguida
