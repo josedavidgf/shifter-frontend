@@ -57,7 +57,11 @@ const ChatsList = () => {
     return new Date() <= maxDate;
   };
 
-  const activeSwaps = swaps.filter(isActive);
+  const activeSwaps = swaps
+  .filter(isActive)
+  .sort((a, b) => new Date(a.shift.date) - new Date(b.shift.date));
+
+
 
   if (loading) {
     return <Loader text="Cargando chats activos..." />;

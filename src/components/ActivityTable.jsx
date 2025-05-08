@@ -26,11 +26,12 @@ const ActivityTable = ({ events }) => {
           <div key={event.id} className="activity-card">
             <div className="activity-icon">{icon}</div>
             <div className="activity-details">
-              <strong>{title}</strong>
+              <strong className="activity-title">{title}</strong>
               {description && <p className="activity-description">{description}</p>}
               <p className="activity-date">{formattedDate}</p>
             </div>
           </div>
+
         );
       })}
     </div>

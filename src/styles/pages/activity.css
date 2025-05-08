@@ -18,11 +18,28 @@
     flex-shrink: 0;
   }
   
+  .activity-details {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    gap: 0.25rem; /* espaciado entre título, desc y fecha */
+  }
+  
+  .activity-title {
+    font-weight: bold;
+  }
+  
+  .activity-description {
+    margin: 0;
+  }
+  
   .activity-date {
+    align-self: flex-end; /* 👈 alinea solo la fecha a la derecha */
     font-size: 0.875rem;
     color: #6b7280;
-    margin: 0.25rem 0 0;
   }
+  
+  
   
   .notification-dot-wrapper {
     position: relative;

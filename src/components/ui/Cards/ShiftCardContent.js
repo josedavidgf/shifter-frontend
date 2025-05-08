@@ -10,7 +10,7 @@ const ShiftCardContent = ({ date, type, workerName, swapsAccepted }) => {
     const Icon = type === 'reinforcement' ? Fire : shiftTypeIcons[type];
     const { label, short } = getFriendlyDateParts(date);
 
-    const labelToUse = label === 'Mañana' ? format(addDays(new Date(), 1), 'EEEE', { locale: es }) : label;
+   // const labelToUse = label === 'Mañana' ? format(addDays(new Date(), 1), 'EEEE', { locale: es }) : label;
 
 
     return (
@@ -22,7 +22,7 @@ const ShiftCardContent = ({ date, type, workerName, swapsAccepted }) => {
                         <Icon size={24} weight="fill" />
                     </div>
                     <div className="shift-date-text">
-                        <strong>{labelToUse}</strong>
+                        <strong>{label}</strong>
                         <div>{short}</div>
                     </div>
 

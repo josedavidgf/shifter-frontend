@@ -27,6 +27,7 @@ import { Sun, SunHorizon, Moon, ShieldCheck, CirclesThree, SquaresFour, Stack, T
 import { Fire, FireSimple, ChartPieSlice, ChartBar, ChartLine, ChartBarHorizontal, ChartLineUp } from 'phosphor-react';
 import { useToast } from '../hooks/useToast'; // ya lo usas en otras vistas
 import { Check } from 'phosphor-react';
+import { formatFriendlyDate } from '../utils/formatFriendlyDate';
 
 
 function renderShiftIcon(shift) {
@@ -328,10 +329,10 @@ function MonthlyCalendar() {
     try {
       if (newType) {
         await setShiftForDay(isWorker.worker_id, dateStr, newType); // ✅ Desde useCalendarApi
-        showSuccess(`Turno actualizado para ${dateStr}`);
+        showSuccess(`Turno actualizado para ${formatFriendlyDate(dateStr)}`);
       } else {
         await removeShiftForDay(isWorker.worker_id, dateStr); // ✅ Desde useCalendarApi
-        showSuccess(`Turno eliminado en ${dateStr}`);
+        showSuccess(`Turno eliminado en ${formatFriendlyDate(dateStr)}`);
       }
     } catch (error) {
       console.error('❌ Error gestionando turno:', error.message);
@@ -423,7 +424,7 @@ function MonthlyCalendar() {
         [dateStr]: updatedEntry,
       }));
 
-      showSuccess(`Preferencias eliminadas para el ${dateStr}`);
+      showSuccess(`Preferencias eliminadas para ${formatFriendlyDate(dateStr)}`);
     } catch (error) {
       console.error('❌ Error al eliminar todas las preferencias:', error.message);
       showError('Error al eliminar las disponibilidades');
@@ -453,7 +454,7 @@ function MonthlyCalendar() {
         setShiftMap(prev => ({
           ...prev,
           [dateStr]: updatedEntry,
-        })); showSuccess(`Turno despublicado correctamente (${dateStr})`);
+        })); showSuccess(`Turno despublicado correctamente para ${formatFriendlyDate(dateStr)}`);
       } else {
         showError('No se pudo eliminar la publicación');
       }
@@ -525,7 +526,7 @@ function MonthlyCalendar() {
       }));
 
       setSelectedDay(dateStr);
-      showSuccess(`Turno eliminado para el ${dateStr}`);
+      showSuccess(`Turno eliminado para el ${formatFriendlyDate(dateStr)}`);
     } catch (error) {
       console.error('Error eliminando turno del día:', error.message);
       showError('Error al eliminar el turno');
