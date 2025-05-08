@@ -98,15 +98,16 @@ export default function OnboardingSpecialityStep() {
             selectedSpeciality={selectedSpeciality}
             setSelectedSpeciality={setSelectedSpeciality}
           />
-
-          <Button
-            label="Continuar"
-            variant="primary"
-            size="lg"
-            onClick={handleConfirm}
-            disabled={!selectedSpeciality || saving}
-            isLoading={saving}
-          />
+          <div className="btn-sticky-footer mt-2">
+            <Button
+              label="Continuar"
+              variant="primary"
+              size="lg"
+              onClick={handleConfirm}
+              disabled={!selectedSpeciality || saving}
+              isLoading={saving}
+            />
+          </div>
         </div>
       </div>
     </>

@@ -16,3 +16,10 @@
     align-items: flex-start;
     gap: 16px;
   }
+
+  .specialities-scrollable {
+    max-height: 60vh;
+    overflow-y: auto;
+    margin-bottom: 1.5rem; /* deja hueco para el botón sticky */
+  }
+  

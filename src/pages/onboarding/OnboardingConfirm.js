@@ -91,7 +91,7 @@ export default function OnboardingConfirmStep() {
         <div className="container">
           <h2 className="register-code__title">
             El código que has introducido te habilita Tanda como
-            <span className="highlight-purple"> {translateWorkerType[workerTypeName] || workerTypeName}</span>
+            <span className="highlight-purple"> {translateWorkerType[workerTypeName] || workerTypeName}</span> en
             <span className="highlight-purple"> {hospitalName}</span>
           </h2>
 
@@ -100,14 +100,22 @@ export default function OnboardingConfirmStep() {
               id="terms"
               checked={acceptedTerms}
               onChange={() => setAcceptedTerms(!acceptedTerms)}
-              label={<>He leído y acepto los <a href={termsUrl}>Términos y Condiciones</a></>}
+              label={<>He leído y acepto los <a
+                href={termsUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+              >Términos y Condiciones</a></>}
               description=""
             />
             <Checkbox
               id="privacy"
               checked={acceptedPrivacy}
               onChange={() => setAcceptedPrivacy(!acceptedPrivacy)}
-              label={<>He leído y acepto la <a href={privacyUrl}>Política de Privacidad</a></>}
+              label={<>He leído y acepto la <a
+                href={privacyUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+              >Política de Privacidad</a></>}
               description=""
             />
           </div>
