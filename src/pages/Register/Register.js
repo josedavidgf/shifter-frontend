@@ -18,7 +18,7 @@ function Register() {
   const [password, setPassword] = useState('');
   const [loadingForm, setLoadingForm] = useState(false);
   const navigate = useNavigate();
-  const { showError, showInfo } = useToast();
+  const { showError, showInfo, showSuccess } = useToast();
 
   useTrackPageView('register');
 
@@ -26,62 +26,58 @@ function Register() {
     e.preventDefault();
     if (loadingForm) return;
     setLoadingForm(true);
+  
     const redirectTo = process.env.REACT_APP_REDIRECT_URL;
     if (!redirectTo) {
-      throw new Error('redirectTo no está definido. Revisa tu .env');
+      showError('Error interno de configuración. Intenta más tarde.');
+      return;
     }
+  
     try {
-      const { session } = await register(email, password);
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: { emailRedirectTo: redirectTo },
+      });
+  
+      // 🧠 Guardamos el último email por UX
       localStorage.setItem('lastRegisteredEmail', email);
-
-      if (session) {
-        navigate('/');
-        return;
+  
+      if (error) {
+        // 💡 Usuario ya registrado pero no confirmado
+        if (error.message.toLowerCase().includes('user already registered')) {
+          const { data: resend, error: resendError } = await supabase.auth.signUp({
+            email,
+            password,
+            options: { emailRedirectTo: redirectTo },
+          });
+  
+          if (resendError) {
+            throw resendError;
+          }
+  
+          showSuccess('Este correo ya estaba registrado. Te hemos reenviado el email de verificación.');
+          return navigate('/verify-email');
+        }
+  
+        throw error;
       }
-
-      let error;
-      try {
-        await supabase.auth.signInWithPassword({
-          email,
-          password: 'dummy-password-incorrecta',
-        });
-      } catch (err) {
-        error = err;
-      }
-
-      const message = error?.message?.toLowerCase() || '';
-
-      if (message.includes('email not confirmed')) {
-        await supabase.auth.signUp({
-          email,
-          password,
-          options: { emailRedirectTo: redirectTo },
-        });
-        showInfo('Te hemos reenviado el correo de verificación. Revisa tu bandeja de entrada.');
-        return navigate('/verify-email');
-      }
-
-      if (!error || message.includes('invalid login credentials')) {
-        await supabase.auth.signInWithOtp({
-          email,
-          options: { emailRedirectTo: redirectTo }
-        });
-        showInfo('Ya estás registrado en Tanda. Puedes hacer login directamente o vía el link que te hemos mandado a tu correo.');
-        return navigate('/login');
-      }
-
-      throw error;
+  
+      showSuccess('Cuenta creada correctamente. Revisa tu correo para confirmar.');
+      return navigate('/verify-email');
+  
     } catch (err) {
+      console.error('❌ Register error:', err.message);
       if (err.message === 'rate_limit_exceeded') {
         showError('Has solicitado demasiados registros seguidos. Intenta de nuevo en unos minutos.');
       } else {
-        console.error('❌ Register error:', err.message);
         showError(mapSupabaseError(err));
       }
     } finally {
       setLoadingForm(false);
     }
   };
+  
 
 
 

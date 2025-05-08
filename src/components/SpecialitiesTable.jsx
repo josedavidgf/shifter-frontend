@@ -30,11 +30,11 @@ const SpecialitiesTable = ({ specialities, selectedSpeciality, setSelectedSpecia
         )}
       </div>
 
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+      <div className="specialities-scrollable" style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
         {filteredSpecialities.map((spec) => (
           <div
             key={spec.speciality_id}
-            className={`speciality-card ${selectedSpeciality === spec.speciality_id ? 'selected' : ''}`}
+            className={`card-base ${selectedSpeciality === spec.speciality_id ? 'selected' : ''}`}
             onClick={() => setSelectedSpeciality(spec.speciality_id)}
             style={{
               border: selectedSpeciality === spec.speciality_id ? '2px solid #0070f3' : '1px solid #ccc',

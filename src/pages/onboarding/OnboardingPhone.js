@@ -91,7 +91,6 @@ export default function OnboardingPhoneStep() {
               value: p.code,
               label: `${p.flag} ${p.code}`
             }))}
-            helperText="Tu número solo se usará en situaciones de emergencia"
           />
 
           <Button

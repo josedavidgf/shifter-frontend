@@ -235,7 +235,7 @@ const WorkSettings = () => {
                 selectedSpeciality={selectedSpeciality}
                 setSelectedSpeciality={setSelectedSpeciality}
               />
-              <div className="btn-group mt-3">
+              <div className="btn-sticky-footer mt-2">
                 <Button
                   label="Guardar cambios"
                   variant="primary"
@@ -244,12 +244,12 @@ const WorkSettings = () => {
                   disabled={!selectedSpeciality || loadingUserUpdate}
                   isLoading={loadingUserUpdate}
                 />
-                <Button
+                {/* <Button
                   label="Descartar cambios"
                   variant="outline"
                   size="lg"
                   onClick={() => setStep('view')}
-                />
+                /> */}
               </div>
             </div>
           )}
