@@ -34,13 +34,17 @@ import AuthCallback from './pages/AuthCallback.jsx'
 import ContactPage from './pages/Profile/ContactPage.jsx'
 import ForgotPassword from './pages/Login/ForgotPassword';
 import ResetPassword from './pages/Login/ResetPassword';
-import ResetPasswordPage from  './pages/Profile/ResetPasswordPage';
+import ResetPasswordPage from './pages/Profile/ResetPasswordPage';
 import Activity from './pages/Activity/Activity'
+import ScrollToTop from './components/ScrollToTop';
+
 
 
 function App() {
   return (
     <>
+      <ScrollToTop /> {/* 👈 Esto fuerza scroll top en cada cambio de ruta */}
+
       <Routes>
         {/* Rutas públicas */}
         <Route path="/" element={<PublicRoute><Home /></PublicRoute>} />

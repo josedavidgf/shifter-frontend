@@ -8,8 +8,7 @@ export function capitalize(str) {
 export function buildChatContext(swap, workerId) {
 
   const iAmRequester = swap.requester_id === workerId;
-  console.log(swap.shift.worker);
-  console.log(swap.requester);
+
   const otherPersonName = iAmRequester
     ? capitalize(swap.shift.worker?.name)
     : capitalize(swap.requester?.name);

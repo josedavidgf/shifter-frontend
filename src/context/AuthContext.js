@@ -67,7 +67,6 @@ export function AuthProvider({ children }) {
           setIsWorker(workerProfile);
           identifyUser(workerProfile);
         } else {
-          console.log('⛔️ Worker no encontrado aún. Probablemente está en onboarding.');
           setIsWorker(false);
         }
       } catch (err) {
@@ -95,7 +94,6 @@ export function AuthProvider({ children }) {
 
   useEffect(() => {
     const { data: listener } = supabase.auth.onAuthStateChange(async (event, session) => {
-      console.log('🔄 Auth state changed:', event);
 
       if (event === 'SIGNED_IN' && session?.user) {
         setCurrentUser(session.user);
@@ -221,7 +219,6 @@ export function AuthProvider({ children }) {
     try {
       const token = await getToken();
       const workerProfile = await getMyWorkerProfile(token);
-      console.log('Worker profile refreshed:', workerProfile);
       setIsWorker(workerProfile);
     } catch (err) {
       console.error('Error refreshing worker profile:', err.message);

@@ -6,10 +6,6 @@ export default function NotificationBell() {
   const { events } = useUserEvents();
   const hasUnseen = events.some((e) => !e.seen);
 
-  console.log('🔔 Eventos:', events);
-  console.log('🔴 Hay no vistos:', events.some((e) => !e.seen));
-
-
   return (
     <div className="notification-dot-wrapper">
       <Bell size={32} weight="regular" />

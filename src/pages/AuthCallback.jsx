@@ -28,7 +28,6 @@ const AuthCallback = () => {
       let session = null;
 
       const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
-      console.log('sessionData:', sessionData);
       if (sessionData?.session) {
         session = sessionData.session;
       } else {
@@ -41,7 +40,6 @@ const AuthCallback = () => {
           if (session) {
             await supabase.auth.setSession(session);
             setCurrentUser(session.user); // ✅ esto es crítico para que el contexto se actualice
-            console.log('✅ Usuario verificado:', session.user); // 🧠 Debug temporal
           }
         } catch (err) {
           console.warn('⚠️ Excepción en exchangeCodeForSession:', err.message);

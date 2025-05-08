@@ -22,13 +22,6 @@ export default function DayDetailSwapped({
   // Obtener workerId (ajusta esto según cómo obtienes el id del usuario actual)
   const workerId = entry.worker_id;
   const isRequester = entry.requester_id === workerId;
-
-  console.log('SWAPPED ENTRY:', {
-    workerId,
-    requester_id: entry.requester_id,
-    related_worker: entry.related_worker,
-  });
-
   const name = entry.related_worker_name
   const surname = entry.related_worker_surname;
   const otherName = name && surname ? `${name} ${surname}` : null;

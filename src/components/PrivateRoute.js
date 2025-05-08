@@ -10,7 +10,6 @@ function getPendingOnboardingStep(worker) {
   if (!worker) return '/onboarding/code';
 
   if (!worker.worker_type_id) {
-    console.log('👀 PrivateRoute redirigiendo a onboarding');
     return '/onboarding/code';
   }
 

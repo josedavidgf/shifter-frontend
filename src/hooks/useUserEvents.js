@@ -10,7 +10,6 @@ export function useUserEvents() {
   const fetchEvents = async () => {
     const token = await getToken();
     const data = await getUserEvents(token);
-    console.log('📦 Eventos recibidos:', data);
     if (data) setEvents(data);
   };
 

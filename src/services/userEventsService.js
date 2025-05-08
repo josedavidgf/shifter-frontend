@@ -14,7 +14,6 @@ const handleError = (error, defaultMessage = 'Error en la operación') => {
 };
 
 export const getUserEvents = async (token) => {
-  console.log('token get event', token);
   try {
     const response = await axios.get(`${API_URL}/api/user-events`, authHeaders(token));
     return response.data;

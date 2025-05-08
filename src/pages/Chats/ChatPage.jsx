@@ -69,7 +69,6 @@ const ChatPage = () => {
         return <Loader text="Cargando conversación..." />;
     }
 
-    console.log(swap)
 
     const {
         otherPersonName,

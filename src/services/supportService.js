@@ -4,10 +4,7 @@ import axios from 'axios';
 const API_URL = process.env.REACT_APP_BACKEND_URL;
 
 export const sendSupportContact = async (workerId, title, description, token) => {
-  console.log(workerId);
-  console.log(title);
-  console.log(description);
-  console.log(token);
+
   try {
     const response = await axios.post(
       `${API_URL}/api/support/contact`,

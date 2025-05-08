@@ -443,7 +443,6 @@ function MonthlyCalendar() {
     setLoadingDeletePublication(true);
     try {
       const token = await getToken(); // ✅ Obtener token antes
-      //console.log('shiftId:', shiftId);
       const success = await removeShift(shiftId, token); // ✅ Pasar token
 
       if (success) {
@@ -550,7 +549,6 @@ function MonthlyCalendar() {
         : `${capitalize(format(parsedDate, 'EEEE', { locale: es }))}, ${format(parsedDate, 'dd/MM')}`;
 
     const { source, isPreference, isPublished } = entry;
-    //console.log('entry', entry);
     if (source === 'manual') {
       return (
         <DayDetailMyShift
@@ -632,7 +630,6 @@ function MonthlyCalendar() {
     );
   }
 
-  //console.log('ShiftMap:', shiftMap);
 
   return (
     <>

@@ -51,13 +51,9 @@ const ProposeSwap = () => {
           return;
         }
 
-        console.log('📦 receiverId', receiverId);
-
 
 
         const preferences = await getMySwapPreferences(receiverId);
-
-        console.log('📦 preferences', preferences);
 
 
         const enriched = shifts.map((s) => {
@@ -70,7 +66,6 @@ const ProposeSwap = () => {
           return { ...s, preferred: isPreferred };
         });
 
-        console.log('📦 enriched', enriched);
 
 
         setEnrichedShifts(enriched);
