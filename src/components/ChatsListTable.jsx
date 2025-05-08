@@ -5,11 +5,14 @@ import Button from '../components/ui/Button/Button';
 import EmptyState from '../components/ui/EmptyState/EmptyState';
 import { Sparkle } from '../theme/icons';
 import ChatCardContent from '../components/ui/Cards/ChatCardContent';
+import { useFeatureFlags } from '../hooks/useFeatureFlags';
 
 
 const ChatsListTable = ({ swaps, workerId }) => {
   const navigate = useNavigate();
   const [query, setQuery] = useState('');
+  const { isEnabled } = useFeatureFlags();
+
 
   const filteredSwaps = query.length >= 3
     ? swaps.filter((swap) => {
@@ -39,24 +42,26 @@ const ChatsListTable = ({ swaps, workerId }) => {
       </div>
 
       {/* Chat GPT fijo arriba */}
-      <div
-        className="chat-card"
-        style={{
-          background: 'linear-gradient(90deg, #FAF5FF 0%, #E9D8FD 100%)',
-          border: '1px solid #6B46C1',
-          marginBottom: '1rem',
-          cursor: 'pointer',
-          borderRadius: '12px',
-          padding: '16px',
-        }}
-        onClick={() => navigate('/chat-turnos')}
-      >
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
-          <Sparkle size={18} weight="fill" color="#322659" />
-          <strong>Tanda, búscame los mejores turnos</strong>
+      {isEnabled('chat_tanda_ai') && (
+        <div
+          className="chat-card"
+          style={{
+            background: 'linear-gradient(90deg, #FAF5FF 0%, #E9D8FD 100%)',
+            border: '1px solid #6B46C1',
+            marginBottom: '1rem',
+            cursor: 'pointer',
+            borderRadius: '12px',
+            padding: '16px',
+          }}
+          onClick={() => navigate('/chat-turnos')}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
+            <Sparkle size={18} weight="fill" color="#322659" />
+            <strong>Tanda, búscame los mejores turnos</strong>
+          </div>
+          <p>Utiliza Tanda IA y haz preguntas sobre tus turnos, días libres, vacaciones, etc.</p>
         </div>
-        <p>Utiliza Tanda IA y haz preguntas sobre tus turnos, días libres, vacaciones, etc.</p>
-      </div>
+      )}
 
       {filteredSwaps.length === 0 ? (
         <EmptyState

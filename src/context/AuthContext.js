@@ -3,6 +3,7 @@ import supabase from '../config/supabase';
 import { getMyWorkerProfile, } from '../services/workerService';
 import { initAmplitude, identifyUser } from '../lib/amplitude';
 import * as amplitude from '@amplitude/analytics-browser';
+import { useFeatureFlagApi } from '../api/useFeatureFlagApi';
 
 
 const AuthContext = createContext();
@@ -16,10 +17,13 @@ let isAmplitudeInitialized = false; // 🔥 flag global (fuera del AuthProvider)
 
 
 export function AuthProvider({ children }) {
+  const { getFeatureFlags } = useFeatureFlagApi();
   const [currentUser, setCurrentUser] = useState(null);
   const [isWorker, setIsWorker] = useState(null);
   const [loading, setLoading] = useState(true);
   const [pendingEmail, setPendingEmail] = useState(null);
+
+  const [featureFlags, setFeatureFlags] = useState({});
 
 
   const rehydrateUser = async () => {
@@ -45,6 +49,13 @@ export function AuthProvider({ children }) {
       const token = session.access_token;
       setCurrentUser(session.user);
 
+      try {
+        const flags = await getFeatureFlags(token);
+        setFeatureFlags(flags);
+      } catch (err) {
+        console.warn('⚠️ No se pudieron cargar los feature flags:', err.message);
+      }
+
       if (!isAmplitudeInitialized) {
         initAmplitude();
         isAmplitudeInitialized = true;
@@ -68,7 +79,7 @@ export function AuthProvider({ children }) {
       console.error('Error during rehydrateUser:', globalError);
       setCurrentUser(null);
       setIsWorker(false);
-    }finally {
+    } finally {
       setLoading(false);
     }
   };
@@ -116,23 +127,23 @@ export function AuthProvider({ children }) {
 
   const register = async (email, password) => {
     const redirectTo = process.env.REACT_APP_REDIRECT_URL;
-    
+
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
       options: { emailRedirectTo: redirectTo },
     });
-  
+
     if (error) {
       if (error.status === 429 || error.message.toLowerCase().includes('rate')) {
         throw new Error('rate_limit_exceeded');
       }
       throw error;
     }
-  
+
     return data; // Devuelve { user, session }
   };
-  
+
 
 
   // login
@@ -238,7 +249,8 @@ export function AuthProvider({ children }) {
     refreshWorkerProfile,
     pendingEmail,
     setPendingEmail,
-    rehydrateUser
+    rehydrateUser,
+    featureFlags
   };
 
   return (
