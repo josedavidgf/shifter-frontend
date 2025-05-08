@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Navigate } from 'react-router-dom';
 import { useWorkerApi } from '../../api/useWorkerApi';
 import { useAuth } from '../../context/AuthContext';
 import Loader from '../../components/ui/Loader/Loader';
@@ -7,25 +7,24 @@ import Button from '../../components/ui/Button/Button';
 import { useToast } from '../../hooks/useToast';
 
 export default function OnboardingSuccess() {
-  const navigate = useNavigate();
   const { setIsWorker, getToken } = useAuth();
   const { getMyWorkerProfile, completeOnboarding } = useWorkerApi();
   const { showError } = useToast();
 
   const [loading, setLoading] = useState(true);
   const [failed, setFailed] = useState(false);
+  const [shouldRedirect, setShouldRedirect] = useState(false);
 
   useEffect(() => {
     const completeAndRedirect = async () => {
       try {
         const token = await getToken();
         await completeOnboarding(token);
-
         const updatedWorker = await getMyWorkerProfile(token);
         setIsWorker(updatedWorker);
 
         if (updatedWorker?.onboarding_completed) {
-          setTimeout(() => navigate('/calendar'), 800); // ⏱️ Transición suave
+          setShouldRedirect(true); // ← solo redirigimos cuando esté todo listo
         } else {
           showError('Tu perfil no se ha actualizado correctamente.');
           setFailed(true);
@@ -40,9 +39,11 @@ export default function OnboardingSuccess() {
     };
 
     completeAndRedirect();
-  }, [navigate, getToken, setIsWorker, completeOnboarding, getMyWorkerProfile, showError]);
+  }, [getToken, setIsWorker, completeOnboarding, getMyWorkerProfile, showError]);
 
-  if (loading) return <Loader text="Finalizando onboarding..." />;
+  if (loading || !shouldRedirect) {
+    return <Loader text="Finalizando onboarding y cargando tu calendario..." />;
+  }
 
   if (failed) {
     return (
@@ -54,18 +55,12 @@ export default function OnboardingSuccess() {
             label="Ir al panel"
             variant="primary"
             size="lg"
-            onClick={() => navigate('/calendar')}
+            onClick={() => setShouldRedirect(true)}
           />
         </div>
       </div>
     );
   }
 
-  return (
-    <div className="page page-primary" style={{ padding: '2rem', textAlign: 'center' }}>
-      <h2>🎉 Onboarding completado</h2>
-      <p>Serás redirigido a tu panel de control en un momento.</p>
-      <p>Si no ocurre automáticamente, haz clic <a href="/calendar">aquí</a>.</p>
-    </div>
-  );
+  return <Navigate to="/calendar" replace />;
 }

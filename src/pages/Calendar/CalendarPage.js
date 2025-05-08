@@ -7,6 +7,7 @@ import { useNavigate } from 'react-router-dom';
 import HeaderFirstLevel from '../../components/ui/Header/HeaderFirstLevel';
 import { useAuth } from '../../context/AuthContext';
 import NotificationBell from '../../components/NotificationBell';
+import Loader from '../../components/ui/Loader/Loader';
 
 
 
@@ -36,8 +37,11 @@ const Calendar = () => {
             />
             <div className="page page-primary">
                 <div className="container">
-                    <MonthlyCalendar />
-                </div>
+                    {isWorker ? (
+                        <MonthlyCalendar />
+                    ) : (
+                        <Loader text="Cargando tu calendario..." />
+                    )}                </div>
             </div>
         </>
     );
