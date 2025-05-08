@@ -14,7 +14,7 @@ import supabase from '../../config/supabase';
 
 
 function Login() {
-  const { login, loginWithGoogle, setPendingEmail } = useAuth();
+  const { login, loginWithGoogle, setPendingEmail, isWorker, refreshWorkerProfile } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loadingForm, setLoadingForm] = useState(false);
@@ -27,8 +27,8 @@ function Login() {
     e.preventDefault();
     setLoadingForm(true);
     try {
-      await login(email, password);
-      navigate('/calendar');
+      const { data } = await login(email, password);
+      console.log('[Login] Login completo. Redirigiendo...');
     } catch (err) {
       console.error('❌ Login error:', err);
       console.error('❌ Login error:', err.message);
@@ -37,7 +37,7 @@ function Login() {
         localStorage.setItem('lastRegisteredEmail', email);
 
         const redirectTo = process.env.REACT_APP_REDIRECT_URL;
-        
+
         if (!redirectTo) {
           throw new Error('redirectTo no está definido. Revisa tu .env');
         }

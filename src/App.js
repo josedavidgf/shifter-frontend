@@ -37,6 +37,7 @@ import ResetPassword from './pages/Login/ResetPassword';
 import ResetPasswordPage from './pages/Profile/ResetPasswordPage';
 import Activity from './pages/Activity/Activity'
 import ScrollToTop from './components/ScrollToTop';
+import SplashRedirectGuard from './components/SplashRedirectGuard.js';
 
 
 
@@ -44,6 +45,7 @@ function App() {
   return (
     <>
       <ScrollToTop /> {/* 👈 Esto fuerza scroll top en cada cambio de ruta */}
+
 
       <Routes>
         {/* Rutas públicas */}
@@ -56,13 +58,15 @@ function App() {
 
 
         {/* Rutas privadas: agrupadas bajo el nuevo layout */}
-        <Route path="/" element={<PrivateRoute><AppLayout /></PrivateRoute>}>
+        <Route path="entrypoint" element={<SplashRedirectGuard />} />
+        <Route element={<PrivateRoute><AppLayout /></PrivateRoute>}>
           <Route path="calendar" element={<Calendar />} />
           <Route path="my-swaps" element={<MySwaps />} />
           <Route path="shifts/hospital" element={<HospitalShifts />} />
           <Route path="chats" element={<ChatsList />} />
           <Route path="chat-turnos" element={<ShiftsAssistant />} /> {/* ✅ RUTA AÑADIDA */}
           <Route path="profile" element={<ProfileMenu />} />
+
         </Route>
 
         <Route element={<SimpleLayout />}>
