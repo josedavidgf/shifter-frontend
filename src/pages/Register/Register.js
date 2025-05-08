@@ -18,7 +18,9 @@ function Register() {
   const [password, setPassword] = useState('');
   const [loadingForm, setLoadingForm] = useState(false);
   const navigate = useNavigate();
-  const { showError, showInfo, showSuccess } = useToast();
+  const { showError, showSuccess } = useToast();
+  const { setPendingEmail } = useAuth();
+
 
   useTrackPageView('register');
 
@@ -42,28 +44,15 @@ function Register() {
   
       // 🧠 Guardamos el último email por UX
       localStorage.setItem('lastRegisteredEmail', email);
+      setPendingEmail(email);
+
+      console.log('error',error);
   
-      if (error) {
-        // 💡 Usuario ya registrado pero no confirmado
-        if (error.message.toLowerCase().includes('user already registered')) {
-          const { data: resend, error: resendError } = await supabase.auth.signUp({
-            email,
-            password,
-            options: { emailRedirectTo: redirectTo },
-          });
-  
-          if (resendError) {
-            throw resendError;
-          }
-  
-          showSuccess('Este correo ya estaba registrado. Te hemos reenviado el email de verificación.');
-          return navigate('/verify-email');
-        }
-  
+      if (error) {  
         throw error;
       }
   
-      showSuccess('Cuenta creada correctamente. Revisa tu correo para confirmar.');
+      showSuccess('Te hemos enviado un correo de verificación. Revisa tu bandeja de entrada para activar tu cuenta.');
       return navigate('/verify-email');
   
     } catch (err) {
