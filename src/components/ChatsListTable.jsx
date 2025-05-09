@@ -91,9 +91,10 @@ const ChatsListTable = ({ swaps, workerId }) => {
               <div
                 key={swap.swap_id}
                 className="card-base notification-dot-wrapper"
+                style={{ position: 'relative' }}
                 onClick={() => navigate(`/chats/${swap.swap_id}`)}
               >
-                {hasUnread && <span className="notification-dot" />}
+                {hasUnread && <span className="card-notification-dot " />}
                 <ChatCardContent
                   otherPersonName={otherPersonName}
                   myDate={myDate}

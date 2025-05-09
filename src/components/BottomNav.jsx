@@ -41,6 +41,7 @@ export default function BottomNav() {
         )}
       </NavLink>
 
+
       <NavLink to="/chats" className="nav-item">
         {({ isActive }) => (
           <div className={`nav-icon ${isActive ? 'active' : ''}`}>
@@ -52,6 +53,7 @@ export default function BottomNav() {
           </div>
         )}
       </NavLink>
+
     </nav>
   );
 }
