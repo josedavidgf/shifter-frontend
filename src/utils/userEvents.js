@@ -26,7 +26,7 @@ export const USER_EVENT_CONFIG = {
     icon: <CheckCircle size={20} />,
     title: 'Tu intercambio ha sido aceptado',
     getDescription: (metadata) =>
-      `Tu turno ofrecido del ${formatFriendlyDate(metadata.offered_date)} de ${translateShiftType(metadata.offered_type)}) ha sido aceptado. Recibirás el turno del ${formatFriendlyDate(metadata.shift_date)} de ${translateShiftType(metadata.shift_type)}.`,
+      `Tu turno ofrecido del ${formatFriendlyDate(metadata.offered_date)} de ${translateShiftType(metadata.offered_type)} ha sido aceptado. Recibirás el turno del ${formatFriendlyDate(metadata.shift_date)} de ${translateShiftType(metadata.shift_type)}.`,
   },
   
   swap_rejected: {
