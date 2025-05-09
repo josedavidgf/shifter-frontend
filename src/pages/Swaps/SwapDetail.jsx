@@ -133,6 +133,9 @@ const SwapDetail = () => {
         // Mostrar chat solo si el estado lo permite
         const showChat = ['proposed', 'accepted'].includes(swap.status); */
 
+    console.log('swap', swap);
+    console.log('workerId', workerId);
+    console.log('swap.shift.worker_id', swap.shift.worker_id);
 
     return (
         <>
@@ -177,7 +180,7 @@ const SwapDetail = () => {
                             />
                         </div>
                     )} */}
-                    {swap.status === 'proposed' && swap.shift.worker_id === workerId && (
+                    {swap.status === 'proposed' && swap.shift.worker.worker_id === workerId && (
                         <div className="btn-group mb-4">
                             <Button
                                 label="Aceptar intercambio"

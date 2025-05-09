@@ -2,10 +2,12 @@ import React from 'react';
 import { NavLink } from 'react-router-dom';
 import { CalendarCheck, Lightning, MagnifyingGlass, ChatCircle } from '../theme/icons';
 import { useSwapNotifications } from '../hooks/useSwapNotifications';
+import { useUnreadMessages } from '../hooks/useUnreadMessages'; // nuevo hook
 
 
 export default function BottomNav() {
   const { hasPendingSwaps } = useSwapNotifications();
+  const { hasUnreadMessages } = useUnreadMessages(); // nuevo hook
 
   return (
     <nav className="bottom-nav">
@@ -42,7 +44,10 @@ export default function BottomNav() {
       <NavLink to="/chats" className="nav-item">
         {({ isActive }) => (
           <div className={`nav-icon ${isActive ? 'active' : ''}`}>
-            <ChatCircle size={24} weight={isActive ? 'fill' : 'regular'} />
+            <div className="notification-dot-wrapper">
+              <ChatCircle size={24} weight={isActive ? 'fill' : 'regular'} />
+              {hasUnreadMessages && <span className="notification-dot" />}
+            </div>
             <span>Mensajes</span>
           </div>
         )}
