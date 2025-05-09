@@ -1,8 +1,12 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
 import { CalendarCheck, Lightning, MagnifyingGlass, ChatCircle } from '../theme/icons';
+import { useSwapNotifications } from '../hooks/useSwapNotifications';
+
 
 export default function BottomNav() {
+  const { hasPendingSwaps } = useSwapNotifications();
+
   return (
     <nav className="bottom-nav">
       <NavLink to="/calendar" className="nav-item">
@@ -26,7 +30,10 @@ export default function BottomNav() {
       <NavLink to="/my-swaps" className="nav-item">
         {({ isActive }) => (
           <div className={`nav-icon ${isActive ? 'active' : ''}`}>
-            <Lightning size={24} weight={isActive ? 'fill' : 'regular'} />
+            <div className="notification-dot-wrapper">
+              <Lightning size={24} weight={isActive ? 'fill' : 'regular'} />
+              {hasPendingSwaps && <span className="notification-dot" />}
+            </div>
             <span>Cambios</span>
           </div>
         )}
