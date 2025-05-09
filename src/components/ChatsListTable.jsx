@@ -6,14 +6,18 @@ import EmptyState from '../components/ui/EmptyState/EmptyState';
 import { Sparkle } from '../theme/icons';
 import ChatCardContent from '../components/ui/Cards/ChatCardContent';
 import { useFeatureFlags } from '../hooks/useFeatureFlags';
+import { useUnreadMessages } from '../hooks/useUnreadMessages';
+
 
 
 const ChatsListTable = ({ swaps, workerId }) => {
   const navigate = useNavigate();
   const [query, setQuery] = useState('');
   const { isEnabled } = useFeatureFlags();
+  const { unreadSwapIds } = useUnreadMessages();
 
-  console.log('isEnabled',isEnabled('chat_tanda_ai'));
+
+  console.log('isEnabled', isEnabled('chat_tanda_ai'));
 
 
   const filteredSwaps = query.length >= 3
@@ -73,6 +77,7 @@ const ChatsListTable = ({ swaps, workerId }) => {
       ) : (
         <div className="card-list" style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
           {filteredSwaps.map((swap) => {
+            const hasUnread = unreadSwapIds.includes(swap.swap_id);
             const iAmRequester = swap.requester_id === workerId;
             const myDate = iAmRequester ? swap.offered_date : swap.shift.date;
             const myDateType = iAmRequester ? swap.offered_type : swap.shift.shift_type;
@@ -85,9 +90,10 @@ const ChatsListTable = ({ swaps, workerId }) => {
             return (
               <div
                 key={swap.swap_id}
-                className="card-base"
+                className="card-base notification-dot-wrapper"
                 onClick={() => navigate(`/chats/${swap.swap_id}`)}
               >
+                {hasUnread && <span className="notification-dot" />}
                 <ChatCardContent
                   otherPersonName={otherPersonName}
                   myDate={myDate}

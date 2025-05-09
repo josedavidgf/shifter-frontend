@@ -11,6 +11,7 @@ import { translateShiftType } from '../../utils/translateServices';
 import HeaderSecondLevel from '../../components/ui/Header/HeaderSecondLevel';
 import Loader from '../../components/ui/Loader/Loader'; // ✅
 import { Phone } from '../../theme/icons';
+import { markMessagesAsRead } from '../../services/messagesService';
 
 
 const ChatPage = () => {
@@ -37,7 +38,6 @@ const ChatPage = () => {
                 const token = await getToken();
                 const worker = await getMyWorkerProfile(token);
                 setWorkerId(worker.worker_id);
-
                 const swapsData = await getAcceptedSwaps(token);
                 const selectedSwap = swapsData.find(s => s.swap_id === swapId);
                 setSwap(selectedSwap || null);
@@ -56,9 +56,16 @@ const ChatPage = () => {
         fetchData();
     }, [swapId, getToken]);
 
+    useEffect(() => {
+        if (swap && workerId) {
+            markMessagesAsRead(swap.swap_id, workerId);
+        }
+    }, [swap, workerId]);
+
+
 
     if (loading) {
-        return <Loader text="Cargando conversación..." minTime={50}/>;
+        return <Loader text="Cargando conversación..." minTime={50} />;
     }
 
     if (error) {
@@ -66,7 +73,7 @@ const ChatPage = () => {
     }
 
     if (!swap || !workerId) {
-        return <Loader text="Cargando conversación..." minTime={50}/>;
+        return <Loader text="Cargando conversación..." minTime={50} />;
     }
 
 
