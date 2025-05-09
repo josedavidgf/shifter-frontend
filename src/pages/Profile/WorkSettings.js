@@ -149,14 +149,14 @@ const WorkSettings = () => {
               <InputField
                 name="worker-type"
                 label="Profesión"
-                value={isWorker.worker_types?.worker_type_name}
+                value={translateWorkerType[isWorker.worker_types?.worker_type_name]}
                 disabled
                 readOnly
               />
               <InputField
                 name="speciality"
                 label="Servicio"
-                value="isWorker.workers_specialities?.[0]?.specialities?.speciality_category"
+                value={isWorker.workers_specialities?.[0]?.specialities?.speciality_category}
                 disabled
                 readOnly
               />
