@@ -10,14 +10,12 @@ const ChatCardContent = ({ otherPersonName, myDate, myType, otherDate, otherType
   return (
     <div className="chat-card-content" style={{ padding: 0 }}>
       <div className="chat-line-row">
-        <div className="chat-icon-wrapper">
           <ChatCircleText size={20} weight="fill" />
-        </div>
         <span className="chat-name">Chat con {otherPersonName}</span>
       </div>
 
       <div className="chat-line-row" style={{ alignItems: 'flex-start' }}>
-        <div style={{ marginTop: '2px' }}>
+        <div style={{ width: 20, height: 20, flexShrink: 0, marginTop: '2px' }}>
           <Swap size={20} />
         </div>
         <span>
