@@ -4,7 +4,7 @@ import BottomNav from './BottomNav';
 
 
 export default function AppLayout() {
-    console.debug('[AppLayout] montado en', window.location.pathname);
+    //console.debug('[AppLayout] montado en', window.location.pathname);
 
     return (
         <>

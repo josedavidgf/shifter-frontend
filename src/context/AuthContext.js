@@ -49,13 +49,6 @@ export function AuthProvider({ children }) {
       const token = session.access_token;
       setCurrentUser(session.user);
 
-      try {
-        const flags = await getFeatureFlags(token);
-        setFeatureFlags(flags);
-      } catch (err) {
-        console.warn('⚠️ No se pudieron cargar los feature flags:', err.message);
-      }
-
       if (!isAmplitudeInitialized) {
         initAmplitude();
         isAmplitudeInitialized = true;
@@ -220,9 +213,17 @@ export function AuthProvider({ children }) {
       const token = await getToken();
       const workerProfile = await getMyWorkerProfile(token);
       setIsWorker(workerProfile);
+      try {
+        const flags = await getFeatureFlags(token);
+        setFeatureFlags(flags);
+        console.log('[AuthContext] Feature flags actualizados:', flags);
+      } catch (err) {
+        console.warn('⚠️ No se pudieron cargar los feature flags:', err.message);
+      }
     } catch (err) {
       console.error('Error refreshing worker profile:', err.message);
     }
+    
   };
 
   const authReady = !loading && (currentUser === null || (currentUser && isWorker !== null));

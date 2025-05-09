@@ -65,10 +65,10 @@ const PrivateRoute = ({ children }) => {
   }
 
   // ✅ Si hay onboarding pendiente, redirige al paso correspondiente
-  console.log('[PrivateRoute]', location.pathname);
-  console.log('[PrivateRoute] isWorker:', isWorker);
+  //console.log('[PrivateRoute]', location.pathname);
+  //console.log('[PrivateRoute] isWorker:', isWorker);
   const pendingStep = getPendingOnboardingStep(isWorker);
-  console.log('[PrivateRoute] pendingStep:', pendingStep);
+  //console.log('[PrivateRoute] pendingStep:', pendingStep);
 
 
   if (

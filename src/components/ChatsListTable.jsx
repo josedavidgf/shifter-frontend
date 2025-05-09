@@ -13,6 +13,8 @@ const ChatsListTable = ({ swaps, workerId }) => {
   const [query, setQuery] = useState('');
   const { isEnabled } = useFeatureFlags();
 
+  console.log('isEnabled',isEnabled('chat_tanda_ai'));
+
 
   const filteredSwaps = query.length >= 3
     ? swaps.filter((swap) => {
