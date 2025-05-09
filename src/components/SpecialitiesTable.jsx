@@ -1,14 +1,16 @@
 import React, { useState } from 'react';
 import SearchFilterInput from '../components/ui/SearchFilterInput/SearchFilterInput';
+import Button from '../components/ui/Button/Button';
+
 
 const SpecialitiesTable = ({ specialities, selectedSpeciality, setSelectedSpeciality }) => {
   const [query, setQuery] = useState('');
 
   const filteredSpecialities = query.length >= 3
     ? specialities.filter((spec) => {
-        const fullName = `${spec.speciality_category ?? ''}`.toLowerCase();
-        return fullName.includes(query.toLowerCase());
-      })
+      const fullName = `${spec.speciality_category ?? ''}`.toLowerCase();
+      return fullName.includes(query.toLowerCase());
+    })
     : specialities;
 
   return (
@@ -20,13 +22,12 @@ const SpecialitiesTable = ({ specialities, selectedSpeciality, setSelectedSpecia
           placeholder="Busca tu especialidad..."
         />
         {query && (
-          <button
-            className="filter-reset"
+          <Button
+            label="Limpiar filtros"
+            variant="outline"
+            size="lg"
             onClick={() => setQuery('')}
-            style={{ marginTop: '0.5rem' }}
-          >
-            Limpiar búsqueda
-          </button>
+          />
         )}
       </div>
 
