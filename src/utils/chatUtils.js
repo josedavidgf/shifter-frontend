@@ -42,7 +42,7 @@ export function buildChatContext(swap, workerId) {
     : swap.offered_type;
 
   const otherWorkerId = iAmRequester
-    ? swap.shift.worker_id
+    ? swap.shift.worker.worker_id
     : swap.requester_id;
 
   return {
