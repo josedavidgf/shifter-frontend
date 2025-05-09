@@ -36,7 +36,7 @@ const SwapCardContent = ({
             <div className="swap-line-row" style={{ alignItems: 'flex-start' }}>
                 <Swap size={20} style={{ marginTop: '2px' }} />
                 <span>
-                    Tú haces el {myDateParts.short} ({shiftTypeLabels[myType]}) por {otherDateParts.short} ({shiftTypeLabels[otherType]})
+                    Tú haces el {myDateParts.short} de {shiftTypeLabels[myType]} por {otherDateParts.short} de {shiftTypeLabels[otherType]}
                 </span>
             </div>
         </div>
