@@ -44,6 +44,7 @@
 @import './components/banner.css';
 @import './components/tag.css';
 @import './components/date-range-picker.css';
+@import './components/notification-dot.css';
 /* Pages */
 @import './pages/calendar.css';
 @import './pages/chat-page.css';
