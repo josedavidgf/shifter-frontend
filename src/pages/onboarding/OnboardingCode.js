@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate, Navigate } from 'react-router-dom';
+import { useNavigate, Navigate, Link } from 'react-router-dom';
 import { useAccessCodeApi } from '../../api/useAccessCodeApi';
 import { useHospitalApi } from '../../api/useHospitalApi';
 import { useAuth } from '../../context/AuthContext';
@@ -21,7 +21,7 @@ export default function OnboardingCodeStep() {
   const { showError } = useToast();
 
   // Loader inicial mientras carga auth
-  if (loading) return <Loader text="Cargando paso de onboarding..." minTime={50}/>;
+  if (loading) return <Loader text="Cargando paso de onboarding..." minTime={50} />;
 
   // Si ya hizo onboarding, lo mandamos al calendario
   if (isWorker?.onboarding_completed === true) {
@@ -82,7 +82,7 @@ export default function OnboardingCodeStep() {
       <div className="page page-primary">
         <div className="container">
           <h2>Bienvenido a la plataforma</h2>
-          <p>Para completar tu registro, introduce el código de acceso proporcionado por tu administrador.</p>
+          <p>Para completar tu registro, introduce el código de acceso proporcionado por tus compañeros.</p>
           <form onSubmit={handleValidateCode}>
             <div className="access-code__container">
               <AccessCodeInput
@@ -99,6 +99,9 @@ export default function OnboardingCodeStep() {
               disabled={!code || loadingForm}
               isLoading={loadingForm}
             />
+            <p className="text-sm mt-4">
+              ¿No te sabes tu código para entrar en Tanda? Ponte en <Link to='https://tally.so/r/3NOK0j'> contacto con nosotros</Link> para ayudarte a gestionarlo.
+            </p>
           </form>
         </div>
       </div>
