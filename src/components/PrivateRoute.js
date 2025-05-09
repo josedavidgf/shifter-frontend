@@ -23,8 +23,6 @@ export function getPendingOnboardingStep(worker) {
 
   if (!worker.onboarding_completed) return '/onboarding/code';
 
-  console.log('worker', worker)
-
   return null; // ✅ Todo completado
 }
 

@@ -112,6 +112,24 @@ export function AuthProvider({ children }) {
   }, []);
 
 
+  useEffect(() => {
+    const refreshFlagsInterval = setInterval(async () => {
+      if (!currentUser || !isWorker) return;
+
+      const token = await getToken();
+      if (!token) return;
+
+      try {
+        const flags = await getFeatureFlags(token);
+        setFeatureFlags(flags);
+        console.debug('[FF] Flags refrescadas automáticamente:', flags);
+      } catch (err) {
+        console.warn('⚠️ No se pudieron refrescar las FF en background');
+      }
+    }, 60 * 1000); // cada 60 segundos
+
+    return () => clearInterval(refreshFlagsInterval);
+  }, [currentUser?.id, isWorker?.worker_id]);
 
 
 
@@ -223,7 +241,7 @@ export function AuthProvider({ children }) {
     } catch (err) {
       console.error('Error refreshing worker profile:', err.message);
     }
-    
+
   };
 
   const authReady = !loading && (currentUser === null || (currentUser && isWorker !== null));
