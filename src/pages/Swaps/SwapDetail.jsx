@@ -133,10 +133,6 @@ const SwapDetail = () => {
         // Mostrar chat solo si el estado lo permite
         const showChat = ['proposed', 'accepted'].includes(swap.status); */
 
-    console.log('swap', swap);
-    console.log('workerId', workerId);
-    console.log('swap.shift.worker_id', swap.shift.worker_id);
-
     return (
         <>
             <HeaderSecondLevel
@@ -170,16 +166,6 @@ const SwapDetail = () => {
                             readOnly
                         />
                     </div>
-                    {/* 
-                    {showChat && (
-                        <div className="mb-3">
-                            <ChatBox
-                                swapId={swap.swap_id}
-                                myWorkerId={swap.requester_id === workerId ? swap.requester_id : swap.shift.worker_id}
-                                otherWorkerId={swap.requester_id === workerId ? swap.shift.worker_id : swap.requester_id}
-                            />
-                        </div>
-                    )} */}
                     {swap.status === 'proposed' && swap.shift.worker.worker_id === workerId && (
                         <div className="btn-group mb-4">
                             <Button
