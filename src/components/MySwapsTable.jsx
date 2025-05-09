@@ -9,7 +9,7 @@ import SwapCardContent from '../components/ui/Cards/SwapCardContent';
 
 
 
-const MySwapsTable = ({ swaps = [], isLoading }) => {
+const MySwapsTable = ({ swaps = [], isLoading, workerId }) => {
   const [filtered, setFiltered] = useState([]);
   const [filterStatuses, setFilterStatuses] = useState([]); // multiselección
   const navigate = useNavigate();
@@ -48,7 +48,7 @@ const MySwapsTable = ({ swaps = [], isLoading }) => {
     setFilterStatuses([]);
   };
 
-  console.log('swap',swaps)
+  console.log('swap', swaps)
 
   return (
     <>
@@ -105,23 +105,34 @@ const MySwapsTable = ({ swaps = [], isLoading }) => {
 
       {!isLoading && filtersReady && filtered.length > 0 && (
         <div className='card-list'>
-          {filtered.map((swap) => (
-            <div
-              key={swap.swap_id}
-              className="card-base"
-              onClick={() => navigate(`/swaps/${swap.swap_id}`)}
-            >
-              <SwapCardContent
-                otherPersonName={`${swap.shift?.worker?.name} ${swap.shift?.worker?.surname}`}
-                myDate={swap.offered_date}
-                myType={swap.offered_type}
-                otherDate={swap.shift?.date}
-                otherType={swap.shift?.shift_type}
-                statusLabel={swap.status}
-              />
-            </div>
+          {filtered.map((swap) => {
+            const iAmRequester = swap.requester_id === workerId;
+            const myDate = iAmRequester ? swap.offered_date : swap.shift?.date;
+            const myType = iAmRequester ? swap.offered_type : swap.shift?.shift_type;
+            const otherDate = iAmRequester ? swap.shift?.date : swap.offered_date;
+            const otherType = iAmRequester ? swap.shift?.shift_type : swap.offered_type;
+            const otherPersonName = iAmRequester
+              ? `${swap.shift?.worker?.name ?? ''} ${swap.shift?.worker?.surname ?? ''}`
+              : `${swap.requester?.name ?? ''} ${swap.requester?.surname ?? ''}`;
 
-          ))}
+            return (  // ✅ AÑADIR ESTO
+              <div
+                key={swap.swap_id}
+                className="card-base"
+                onClick={() => navigate(`/swaps/${swap.swap_id}`)}
+              >
+                <SwapCardContent
+                  otherPersonName={otherPersonName}
+                  myDate={myDate}
+                  myType={myType}
+                  otherDate={otherDate}
+                  otherType={otherType}
+                  statusLabel={swap.status}
+                />
+              </div>
+            );
+          })}
+
         </div>
       )}
 

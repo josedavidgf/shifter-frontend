@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { useSwapApi } from '../../api/useSwapApi';
+import { useWorkerApi } from '../../api/useWorkerApi';
 import MySwapsTable from '../../components/MySwapsTable';
 import useTrackPageView from '../../hooks/useTrackPageView';
 import HeaderFirstLevel from '../../components/ui/Header/HeaderFirstLevel';
@@ -12,9 +13,11 @@ import { useToast } from '../../hooks/useToast'; // ya lo usas en otras vistas
 
 const MySwaps = () => {
   const { getToken } = useAuth();
+  const { getMyWorkerProfile } = useWorkerApi();
   const { getSentSwaps, getReceivedSwaps } = useSwapApi();
   const [swaps, setSwaps] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [workerId, setWorkerId] = useState(null);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
   const { showError } = useToast();
@@ -31,6 +34,8 @@ const MySwaps = () => {
 
       try {
         const token = await getToken();
+        const worker = await getMyWorkerProfile(token);
+        setWorkerId(worker.worker_id);
         const [sent, received] = await Promise.all([
           getSentSwaps(token),
           getReceivedSwaps(token),
@@ -83,8 +88,8 @@ const MySwaps = () => {
             />
           ) : null}
 
-          {!loading && swaps.length > 0 && (
-            <MySwapsTable swaps={swaps} isLoading={loading} />
+          {!loading && workerId && swaps.length > 0 && (
+            <MySwapsTable swaps={swaps} isLoading={loading} workerId={workerId} />
           )}
         </div>
       </div>

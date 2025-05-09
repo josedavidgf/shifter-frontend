@@ -12,6 +12,14 @@ const SwapCardContent = ({
     otherType,
     statusLabel
 }) => {
+
+    console.log('otherPersonName',otherPersonName);
+    console.log('myDate',myDate);
+    console.log('myType',myType);
+    console.log('otherDate',otherDate);
+    console.log('otherType',otherType);
+    console.log('statusLabel',statusLabel);
+
     const myDateParts = getFriendlyDateParts(myDate);
     const otherDateParts = getFriendlyDateParts(otherDate);
 
