@@ -13,12 +13,12 @@ const SwapCardContent = ({
     statusLabel
 }) => {
 
-    console.log('otherPersonName',otherPersonName);
-    console.log('myDate',myDate);
-    console.log('myType',myType);
-    console.log('otherDate',otherDate);
-    console.log('otherType',otherType);
-    console.log('statusLabel',statusLabel);
+    console.log('otherPersonName', otherPersonName);
+    console.log('myDate', myDate);
+    console.log('myType', myType);
+    console.log('otherDate', otherDate);
+    console.log('otherType', otherType);
+    console.log('statusLabel', statusLabel);
 
     const myDateParts = getFriendlyDateParts(myDate);
     const otherDateParts = getFriendlyDateParts(otherDate);
@@ -34,7 +34,9 @@ const SwapCardContent = ({
             </div>
 
             <div className="swap-line-row" style={{ alignItems: 'flex-start' }}>
-                <Swap size={20} style={{ marginTop: '2px' }} />
+                <div style={{ width: 20, height: 20, flexShrink: 0, marginTop: '2px' }}>
+                    <Swap size={20} />
+                </div>
                 <span>
                     Tú haces el {myDateParts.short} de {shiftTypeLabels[myType]} por {otherDateParts.short} de {shiftTypeLabels[otherType]}
                 </span>
