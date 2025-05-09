@@ -2,13 +2,18 @@ import React from 'react';
 import EmptyState from '../components/ui/EmptyState/EmptyState';
 import { USER_EVENT_CONFIG } from '../utils/userEvents';
 import { formatFriendlyDateTime } from '../utils/formatFriendlyDate';
+import { useNavigate } from 'react-router-dom';
 
 const ActivityTable = ({ events }) => {
+  const navigate = useNavigate();
+
   if (events.length === 0) {
     return (
       <EmptyState
         title="Sin actividad todavía"
         description="Aquí verás eventos cuando publiques turnos o propongas/recibas intercambios."
+        ctaLabel="Ir al calendario"
+        onCtaClick={() => navigate('/calendar')}
       />
     );
   }
