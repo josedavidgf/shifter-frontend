@@ -1,29 +1,26 @@
-import { Outlet } from 'react-router-dom';
+import { Outlet, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import BottomNav from './BottomNav';
 
-
 export default function AppLayout() {
-    //console.debug('[AppLayout] montado en', window.location.pathname);
+  const location = useLocation();
 
-    return (
-        <>
-            <main style={{
-                flex: 1,
-                overflowY: 'auto',
-                paddingBottom: '76px', // deja espacio para BottomNav
-            }}>
-                <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                >
-                    <Outlet />
-                </motion.div>
-            </main>
-            <footer>
-                <BottomNav />
-            </footer>
-        </>
-    );
+  return (
+    <>
+      <main style={{ flex: 1, overflowY: 'auto', paddingBottom: '76px' }}>
+        <motion.div
+          key={location.pathname}
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -10 }}
+          transition={{ duration: 0.2 }}
+        >
+          <Outlet />
+        </motion.div>
+      </main>
+      <footer>
+        <BottomNav />
+      </footer>
+    </>
+  );
 }

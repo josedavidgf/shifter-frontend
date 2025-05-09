@@ -80,7 +80,7 @@ const HospitalShifts = () => {
     }
 
     if (showLoader) {
-        return <Loader text="Cargando turnos de tu servicio en tu hospital..." />;
+        return <Loader text="Cargando turnos de tu servicio en tu hospital..." minTime={50}/>;
     }
 
 

@@ -62,7 +62,7 @@ const CommunicationPreferences = () => {
     }
   };
 
-  if (showLoader) return <Loader text="Cargando preferencias..." />;
+  if (showLoader) return <Loader text="Cargando preferencias..." minTime={50}/>;
 
   return (
     <div>

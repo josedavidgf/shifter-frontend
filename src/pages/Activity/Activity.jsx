@@ -38,7 +38,7 @@ const Activity = () => {
       <div className="page page-secondary">
         <div className="container">
           {isLoading ? (
-            <Loader text="Cargando actividad..." />
+            <Loader text="Cargando actividad..." minTime={50} />
           ) : (
             <ActivityTable events={events} />
           )}

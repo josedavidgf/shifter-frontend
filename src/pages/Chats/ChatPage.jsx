@@ -58,7 +58,7 @@ const ChatPage = () => {
 
 
     if (loading) {
-        return <Loader text="Cargando conversación..." />;
+        return <Loader text="Cargando conversación..." minTime={50}/>;
     }
 
     if (error) {
@@ -66,7 +66,7 @@ const ChatPage = () => {
     }
 
     if (!swap || !workerId) {
-        return <Loader text="Cargando conversación..." />;
+        return <Loader text="Cargando conversación..." minTime={50}/>;
     }
 
 

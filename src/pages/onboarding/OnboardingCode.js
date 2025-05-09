@@ -21,7 +21,7 @@ export default function OnboardingCodeStep() {
   const { showError } = useToast();
 
   // Loader inicial mientras carga auth
-  if (loading) return <Loader text="Cargando paso de onboarding..." />;
+  if (loading) return <Loader text="Cargando paso de onboarding..." minTime={50}/>;
 
   // Si ya hizo onboarding, lo mandamos al calendario
   if (isWorker?.onboarding_completed === true) {

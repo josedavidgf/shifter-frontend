@@ -130,7 +130,7 @@ const ProposeSwap = () => {
   if (showLoader) {
     return (
       <div className="flex justify-center items-center min-h-screen">
-        <Loader text="Cargando turnos disponibles..." />
+        <Loader text="Cargando turnos disponibles..." minTime={50}/>
       </div>
     );
   }

@@ -618,7 +618,7 @@ function MonthlyCalendar() {
   if (isLoadingCalendar) {
     return (
       <div className="flex justify-center items-center min-h-screen">
-        <Loader text="Cargando tu calendario..." />
+        <Loader text="Cargando tu AAAA..." minTime={1000}/>
       </div>
     );
   }

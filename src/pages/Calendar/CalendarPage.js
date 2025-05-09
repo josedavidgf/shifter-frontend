@@ -40,7 +40,7 @@ const Calendar = () => {
                     {isWorker ? (
                         <MonthlyCalendar />
                     ) : (
-                        <Loader text="Cargando tu calendario..." />
+                        <Loader text="Cargando tu calendario..." minTime={50}/>
                     )}                </div>
             </div>
         </>

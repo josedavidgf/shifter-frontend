@@ -59,7 +59,7 @@ const MySwaps = () => {
   }, [getToken]);
 
   if (showLoader) {
-    return <Loader text="Cargando intercambios..." />;
+    return <Loader text="Cargando intercambios..." minTime={50}/>;
   }
 
   if (error) {

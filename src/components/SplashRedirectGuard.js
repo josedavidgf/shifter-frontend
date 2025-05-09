@@ -12,7 +12,7 @@ export default function SplashRedirectGuard() {
 
   if (!authReady || !isWorker) {
     console.log('Cargando Splash')
-    return <Loader text="Cargando Tanda..." minTime={800} />;
+    return <Loader text="Cargando Tanda..." minTime={50} />;
   }
 
   if (!currentUser) {

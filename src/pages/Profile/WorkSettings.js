@@ -124,7 +124,7 @@ const WorkSettings = () => {
   };
 
   if (showLoader) {
-    return <Loader text="Cargando datos..." />;
+    return <Loader text="Cargando datos..." minTime={50}/>;
   }
 
   return (

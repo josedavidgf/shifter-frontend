@@ -64,7 +64,7 @@ const ChatsList = () => {
 
 
   if (loading) {
-    return <Loader text="Cargando chats activos..." />;
+    return <Loader text="Cargando chats activos..." minTime={50}/>;
   }
 
   if (error) {

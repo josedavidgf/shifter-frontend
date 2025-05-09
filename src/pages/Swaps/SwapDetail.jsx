@@ -57,7 +57,7 @@ const SwapDetail = () => {
     if (showLoader || !swap) {
         return (
             <div className="flex justify-center items-center min-h-screen">
-                <Loader text="Cargando detalle del intercambio..." />
+                <Loader text="Cargando detalle del intercambio..." minTime={50}/>
             </div>
         );
     }

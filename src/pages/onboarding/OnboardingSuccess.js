@@ -42,7 +42,7 @@ export default function OnboardingSuccess() {
   }, [getToken, setIsWorker, completeOnboarding, getMyWorkerProfile, showError]);
 
   if (loading || !shouldRedirect) {
-    return <Loader text="Finalizando onboarding y cargando tu calendario..." />;
+    return <Loader text="Finalizando onboarding y cargando tu calendario..." minTime={50}/>;
   }
 
   if (failed) {

@@ -81,7 +81,7 @@ export default function OnboardingSpecialityStep() {
     }
   };
 
-  if (showLoader) return <Loader text="Cargando especialidades..." />;
+  if (showLoader) return <Loader text="Cargando especialidades..." minTime={50}/>;
 
   return (
     <>
