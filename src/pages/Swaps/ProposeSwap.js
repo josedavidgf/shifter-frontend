@@ -15,6 +15,7 @@ import { useSwapPreferencesApi } from '../../api/useSwapPreferencesApi'; // o cr
 import { useShiftApi } from '../../api/useShiftApi'; // asegúrate de tener esta función creada
 import Banner from '../../components/ui/Banner/Banner';
 import { useToast } from '../../hooks/useToast'; // Ajusta la ruta según tu estructura de carpetas
+import { useCalendarApi } from '../../api/useCalendarApi';
 
 
 
@@ -30,7 +31,7 @@ const ProposeSwap = () => {
   const [enrichedShifts, setEnrichedShifts] = useState([]);
   const { getShiftById } = useShiftApi();
   const { getMySwapPreferences } = useSwapPreferencesApi();
-
+  const { getShiftsForMonth } = useCalendarApi();
 
 
 
@@ -41,11 +42,9 @@ const ProposeSwap = () => {
       try {
         const token = await getToken();
         const publishedShift = await getShiftById(shift_id, token);
-
-
-
-
         const receiverId = publishedShift.worker?.worker_id;
+
+
 
         if (!receiverId) {
           console.error('⛔️ receiverId no encontrado en publishedShift:', publishedShift);
@@ -53,20 +52,33 @@ const ProposeSwap = () => {
           return;
         }
 
+        // 🆕 Paso 1: obtener los schedules del receptor
+        const receiverSchedules = await getShiftsForMonth(receiverId);
+        const receiverDatesWithShift = new Set(
+          receiverSchedules.map((r) => r.date)
+        );
 
+
+      // Paso 3: enriquecer excluyendo días donde receptor ya tiene turno
 
         const preferences = await getMySwapPreferences(receiverId);
 
 
-        const enriched = shifts.map((s) => {
-          const isPreferred = preferences.some(
-            (p) =>
-              p.date === s.date &&
-              p.preference_type === s.type
-          );
+        const enriched = shifts
+          .filter((s) => {
+            // Excluir días donde el receptor ya tiene un turno programado
+            const receiverHasShiftThatDay = receiverSchedules.some(
+              (r) => r.date === s.date
+            );
+            return !receiverHasShiftThatDay;
+          })
+          .map((s) => {
+            const isPreferred = preferences.some(
+              (p) => p.date === s.date && p.preference_type === s.type
+            );
+            return { ...s, preferred: isPreferred };
+          });
 
-          return { ...s, preferred: isPreferred };
-        });
 
 
 
