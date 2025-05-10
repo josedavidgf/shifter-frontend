@@ -19,7 +19,7 @@ const ChatCardContent = ({ otherPersonName, myDate, myType, otherDate, otherType
           <Swap size={20} />
         </div>
         <span>
-          Tú haces el {my.short} de {shiftTypeLabels[myType]} por {other.short} de {shiftTypeLabels[otherType]}
+          Tú haces el {other.short} de {shiftTypeLabels[otherType]} por el {my.short} de {shiftTypeLabels[myType]}
         </span>
       </div>
     </div>

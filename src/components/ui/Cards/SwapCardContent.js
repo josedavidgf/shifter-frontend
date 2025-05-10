@@ -31,7 +31,7 @@ const SwapCardContent = ({
                     <Swap size={20} />
                 </div>
                 <span>
-                    Tú haces el {myDateParts.short} de {shiftTypeLabels[myType]} por {otherDateParts.short} de {shiftTypeLabels[otherType]}
+                    Tú haces el {otherDateParts.short} de {shiftTypeLabels[otherType]} por el {myDateParts.short} de {shiftTypeLabels[myType]}
                 </span>
             </div>
         </div>
