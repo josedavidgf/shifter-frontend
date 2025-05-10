@@ -90,7 +90,7 @@ const ChatsListTable = ({ swaps, workerId }) => {
             return (
               <div
                 key={swap.swap_id}
-                className="card-base notification-dot-wrapper"
+                className="card-base"
                 style={{ position: 'relative' }}
                 onClick={() => navigate(`/chats/${swap.swap_id}`)}
               >
