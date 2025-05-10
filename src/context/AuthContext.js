@@ -126,7 +126,7 @@ export function AuthProvider({ children }) {
       } catch (err) {
         console.warn('⚠️ No se pudieron refrescar las FF en background');
       }
-    }, 60 * 1000); // cada 60 segundos
+    }, 900 * 1000); // cada 60 segundos
 
     return () => clearInterval(refreshFlagsInterval);
   }, [currentUser?.id, isWorker?.worker_id]);
