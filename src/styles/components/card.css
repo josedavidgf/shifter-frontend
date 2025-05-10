@@ -152,4 +152,50 @@
     white-space: nowrap;
     text-overflow: ellipsis;
   }
-  
+/*Activity*/
+/* 📋 Activity Card */
+.activity-card-content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.activity-line-row {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-md);
+}
+
+.activity-icon-wrapper {
+  background-color: var(--color-gray-100);
+  border-radius: var(--radius-sm);
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.activity-details {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.activity-title {
+  font-weight: 500;
+  font-size: var(--font-md);
+  color: var(--color-text);
+}
+
+.activity-description {
+  font-size: var(--font-sm);
+  color: var(--color-muted);
+}
+
+.activity-date {
+  font-size: var(--font-xs);
+  color: var(--color-muted);
+}

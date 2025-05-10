@@ -10,23 +10,11 @@ const Activity = () => {
   const navigate = useNavigate();
   const hasMarkedRef = useRef(false);
 
-  useEffect(() => {
-    if (events.length === 0 || hasMarkedRef.current) return;
-
-    const unseen = events.filter((e) => !e.seen);
-    if (unseen.length > 0) {
-      hasMarkedRef.current = true;
-      markAllAsSeen().then(() => {
-        // Actualiza el estado local para evitar flicker
-        const updated = events.map((e) => ({ ...e, seen: true }));
-        setEvents(updated);
-      });
-    }
-  }, [events.length]);
-
-  const handleBack = () => {
-      navigate('/calendar');
+  const handleBack = async () => {
+    await markAllAsSeen();
+    navigate('/calendar');
   };
+
 
   return (
     <>

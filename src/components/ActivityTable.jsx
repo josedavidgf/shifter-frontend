@@ -1,8 +1,8 @@
 import React from 'react';
 import EmptyState from '../components/ui/EmptyState/EmptyState';
 import { USER_EVENT_CONFIG } from '../utils/userEvents';
-import { formatFriendlyDateTime } from '../utils/formatFriendlyDate';
 import { useNavigate } from 'react-router-dom';
+import ActivityCardContent from '../components/ui/Cards/ActivityCardContent';
 
 const ActivityTable = ({ events }) => {
   const navigate = useNavigate();
@@ -21,24 +21,29 @@ const ActivityTable = ({ events }) => {
   return (
     <div className="activity-list">
       {events.map((event) => {
-        const config = USER_EVENT_CONFIG[event.type] || {};
-        const icon = config.icon;
-        const title = config.title || event.type;
-        const description = config.getDescription?.(event.metadata) || '';
-        const formattedDate = formatFriendlyDateTime(event.created_at);
+      const config = USER_EVENT_CONFIG[event.type] || {};
+      const icon = config.icon;
+      const title = config.title || event.type;
+      const description = config.getDescription?.(event.metadata) || '';
+      const hasUnread = !event.seen;
 
-        return (
-          <div key={event.id} className="activity-card">
-            <div className="activity-icon">{icon}</div>
-            <div className="activity-details">
-              <strong className="activity-title">{title}</strong>
-              {description && <p className="activity-description">{description}</p>}
-              <p className="activity-date">{formattedDate}</p>
-            </div>
-          </div>
+      return (
+        <div
+          key={event.id}
+          className="card-base"
+          style={{ position: 'relative' }}
+        >
+          {hasUnread && <span className="card-notification-dot" />}
+          <ActivityCardContent
+            icon={icon}
+            title={title}
+            description={description}
+            date={event.created_at}
+          />
+        </div>
+      );
+    })}
 
-        );
-      })}
     </div>
   );
 };
