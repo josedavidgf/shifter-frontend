@@ -1,0 +1,43 @@
+/* FullScreenFeedback.css */
+.feedback-backdrop {
+  position: fixed;
+  inset: 0;
+  background-color: var(--color-background);
+  z-index: 1000;
+  display: flex;
+  justify-content: center;
+  align-items: left;
+  padding: var(--space-lg);
+}
+
+.feedback-container {
+  max-width: auto;
+  width: 100%;
+  text-align: left;
+  margin-bottom: 6rem;
+  /* o padding-bottom suficiente para dejar hueco */
+
+}
+
+.feedback-illustration {
+  margin-bottom: var(--space-md);
+  width: 9.5rem;
+  height: 9.5rem;
+}
+
+.feedback-title {
+  font-size: var(--font-lg);
+  font-weight: 700;
+  margin-bottom: var(--space-sm);
+}
+
+.feedback-description {
+  color: var(--color-muted);
+  margin-bottom: var(--space-lg);
+}
+
+.feedback-actions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}

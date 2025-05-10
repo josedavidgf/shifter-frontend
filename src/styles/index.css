@@ -45,6 +45,7 @@
 @import './components/tag.css';
 @import './components/date-range-picker.css';
 @import './components/notification-dot.css';
+@import './components/full-screen-feedback.css';
 /* Pages */
 @import './pages/calendar.css';
 @import './pages/chat-page.css';
@@ -54,3 +55,4 @@
 @import './pages/create-shift-form.css';
 @import './pages/home.css'; 
 @import './pages/activity.css'; 
+@import './pages/proposeSwap.css';

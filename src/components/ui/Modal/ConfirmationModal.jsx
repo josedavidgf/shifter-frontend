@@ -8,7 +8,7 @@ const ConfirmationModal = ({
   title,
   description,
   confirmLabel = 'Confirmar',
-  cancelLabel = 'Cancelar',
+  cancelLabel = 'Anular',
   onConfirm,
   onCancel,
 }) => {
