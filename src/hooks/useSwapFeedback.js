@@ -1,26 +1,22 @@
-import { useCallback } from 'react';
-import { useToast } from './useToast';
+// hooks/useSwapFeedback.js
+import { useCallback, useState } from 'react';
 
 export function useSwapFeedback() {
-  const { showInfo, showSuccess } = useToast();
+  const [modalStatus, setModalStatus] = useState(null);
 
   const showSwapFeedback = useCallback((swap) => {
     if (!swap) return;
 
-    switch (swap.status) {
-      case 'accepted':
-        showSuccess('¡Intercambio realizado directamente!');
-        break;
-      case 'proposed':
-        showSuccess('Solicitud de intercambio creada. Pendiente de aceptación.');
-        break;
-      default:
-        showInfo('ℹEstado desconocido del intercambio.');
+    if (swap.status === 'accepted' || swap.status === 'proposed') {
+      setModalStatus(swap.status);
+    } else {
+      setModalStatus('unknown');
     }
-    
   }, []);
 
   return {
-    showSwapFeedback
+    showSwapFeedback,
+    modalStatus,
+    setModalStatus,
   };
 }

@@ -40,6 +40,7 @@ import ResetPasswordPage from './pages/Profile/ResetPasswordPage';
 import Activity from './pages/Activity/Activity'
 import ScrollToTop from './components/ScrollToTop';
 import SplashRedirectGuard from './components/SplashRedirectGuard.js';
+import SwapFeedback from './pages/Swaps/SwapFeedback';
 
 
 
@@ -86,6 +87,7 @@ function App() {
             <Route path="/chats/:swapId" element={<PrivateRoute><ChatPage /></PrivateRoute>} />
             <Route path="/shifts/create" element={<PrivateRoute><CreateShift /></PrivateRoute>} />
             <Route path="/propose-swap/:shift_id" element={<PrivateRoute><ProposeSwap /></PrivateRoute>} />
+            <Route path="/swap-feedback/:swap_id" element={<SwapFeedback />} />
             <Route path="/verify-email" element={<VerifyEmail />} />
             {/* <Route path="/verified" element={<Verified />} /> */}
             <Route path="/swaps/:id" element={<PrivateRoute><SwapDetail /></PrivateRoute>} />

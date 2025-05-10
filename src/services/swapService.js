@@ -26,13 +26,13 @@ export const getReceivedSwaps = async (token) => {
   }
 };
 
-// Cancelar un swap
+// Anular un swap
 export const cancelSwap = async (swapId, token) => {
   try {
     const response = await axios.patch(`${API_URL}/api/swaps/${swapId}/cancel`, {}, authHeaders(token));
     return response.data.data;
   } catch (error) {
-    throw new Error(handleError(error, 'Error al cancelar intercambio'));
+    throw new Error(handleError(error, 'Error al anular intercambio'));
   }
 };
 

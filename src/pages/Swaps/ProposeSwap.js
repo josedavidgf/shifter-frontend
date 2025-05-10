@@ -10,25 +10,27 @@ import HeaderSecondLevel from '../../components/ui/Header/HeaderSecondLevel';
 import Button from '../../components/ui/Button/Button';
 import Loader from '../../components/ui/Loader/Loader';
 import EmptyState from '../../components/ui/EmptyState/EmptyState';
-import { useToast } from '../../hooks/useToast'; // ya lo usas en otras vistas
 import useMinimumDelay from '../../hooks/useMinimumDelay';
 import { useSwapPreferencesApi } from '../../api/useSwapPreferencesApi'; // o crea un hook nuevo
 import { useShiftApi } from '../../api/useShiftApi'; // asegúrate de tener esta función creada
 import Banner from '../../components/ui/Banner/Banner';
+import { useToast } from '../../hooks/useToast'; // Ajusta la ruta según tu estructura de carpetas
+
 
 
 const ProposeSwap = () => {
   const { shift_id } = useParams();
   const { getToken } = useAuth();
   const navigate = useNavigate();
-  const { showSwapFeedback } = useSwapFeedback();
+  const { showError } = useToast();
+  const { showSwapFeedback, modalStatus, setModalStatus } = useSwapFeedback();
   const { shifts, loading: loadingShifts, error: errorShifts } = useAvailableShifts();
   const { proposeSwap, loading: loadingPropose, error: errorPropose } = useSwapApi(); // 🆕
-  const { showError } = useToast();
   const showLoader = useMinimumDelay(loadingShifts, 500);
   const [enrichedShifts, setEnrichedShifts] = useState([]);
   const { getShiftById } = useShiftApi();
   const { getMySwapPreferences } = useSwapPreferencesApi();
+
 
 
 
@@ -108,9 +110,9 @@ const ProposeSwap = () => {
 
       const result = await proposeSwap(shift_id, form, token);
       if (result) {
-        showSwapFeedback(result);
-        navigate('/shifts/hospital');
-      } else {
+        navigate(`/swap-feedback/${result.swap_id}`);
+      }
+      else {
         showError('No se pudo enviar la propuesta de intercambio. Intenta de nuevo.');
       }
     } catch (err) {
@@ -130,7 +132,7 @@ const ProposeSwap = () => {
   if (showLoader) {
     return (
       <div className="flex justify-center items-center min-h-screen">
-        <Loader text="Cargando turnos disponibles..." minTime={50}/>
+        <Loader text="Cargando turnos disponibles..." minTime={50} />
       </div>
     );
   }
@@ -196,7 +198,7 @@ const ProposeSwap = () => {
               />
             </div>
 
-            
+
 
             {errorPropose && (
               <p style={{ color: 'red', marginTop: '10px' }}>

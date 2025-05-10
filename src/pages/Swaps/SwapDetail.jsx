@@ -12,7 +12,7 @@ import Loader from '../../components/ui/Loader/Loader';
 import InputField from '../../components/ui/InputField/InputField';
 import { shiftTypeLabels, swapStatusLabels } from '../../utils/labelMaps';
 import EmptyState from '../../components/ui/EmptyState/EmptyState';
-import ConfirmationModal from '../../components/ui/ConfirmationModal/ConfirmationModal';
+import ConfirmationModal from '../../components/ui/Modal/ConfirmationModal';
 import useMinimumDelay from '../../hooks/useMinimumDelay';
 import { formatFriendlyDate } from '../../utils/formatFriendlyDate';
 
@@ -94,11 +94,11 @@ const SwapDetail = () => {
                 showSuccess('Intercambio cancelado correctamente');
                 navigate('/my-swaps');
             } else {
-                showError('Error al cancelar el intercambio');
+                showError('Error al anular el intercambio');
             }
         } catch (err) {
-            console.error('❌ Error cancelando swap:', err.message);
-            showError('Error inesperado al cancelar el intercambio');
+            console.error('❌ Error anular swap:', err.message);
+            showError('Error inesperado al anular el intercambio');
         } finally {
             setIsCancelling(false);
             setShowCancelModal(false);
@@ -188,7 +188,7 @@ const SwapDetail = () => {
                     {swap.status === 'proposed' && swap.requester_id === workerId && (
                         <div className="btn-group mb-4">
                             <Button
-                                label="Cancelar intercambio"
+                                label="Anular intercambio"
                                 variant="outline"
                                 size="lg"
                                 onClick={handleCancelSwap}
@@ -207,9 +207,9 @@ const SwapDetail = () => {
             </div>
             <ConfirmationModal
                 open={showCancelModal}
-                title="¿Cancelar intercambio?"
+                title="¿Anular intercambio?"
                 description="Esta acción no se puede deshacer. El otro trabajador dejará de verlo en su panel."
-                confirmLabel="Sí, cancelar"
+                confirmLabel="Sí, anular"
                 cancelLabel="Volver"
                 onConfirm={confirmCancelSwap}
                 onCancel={() => setShowCancelModal(false)}
