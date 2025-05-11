@@ -1,6 +1,7 @@
 // src/services/messagesService.js
 import supabase from '../config/supabase';
 
+
 // Obtener mensajes de un swap
 export const getMessagesBySwap = async (swapId) => {
   try {
@@ -39,21 +40,4 @@ export const sendMessage = async ({ swap_id, sender_id, recipient_id, content })
     console.error('❌ Error en sendMessage:', err.message);
     throw err;
   }
-};
-
-export const getUnreadMessagesPerChat = async (workerId) => {
-  const { data, error } = await supabase
-    .rpc('get_unread_messages_per_chat', { worker_id_param: workerId });
-  if (error) throw new Error(error.message);
-  return data;
-};
-
-export const markMessagesAsRead = async (swapId, workerId) => {
-  const { data, error } = await supabase
-    .rpc('mark_messages_as_read', {
-      swap_id_param: swapId,
-      worker_id_param: workerId,
-    });
-  if (error) throw new Error(error.message);
-  return data;
 };
