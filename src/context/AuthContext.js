@@ -51,17 +51,24 @@ export function AuthProvider({ children }) {
       setCurrentUser(session.user);
 
       if (!isAmplitudeInitialized) {
-        AmplitudeService.init();
-        isAmplitudeInitialized = true;
+        try {
+          AmplitudeService.init();
+          isAmplitudeInitialized = true;
+        } catch (err) {
+          console.warn('⛔️ Error iniciando Amplitude:', err.message);
+          reportError(err, { source: 'Amplitude init' });
+        }
       }
+
 
       try {
         const workerProfile = await getMyWorkerProfile(token);
         if (workerProfile) {
           setIsWorker(workerProfile);
-          console.log('Worker profile rehidratado:', workerProfile);
-          console.log('Aqui')
-          //AmplitudeService.identify(workerProfile);
+          console.log('[DEBUG] Entorno:', process.env.REACT_APP_ENV);
+          console.log('[DEBUG] Backend URL:', process.env.REACT_APP_BACKEND_URL);
+          console.log('[DEBUG] Token:', token?.slice?.(0, 12));
+          AmplitudeService.identify(workerProfile);
           setSentryTagsFromWorker(workerProfile);
 
         } else {
