@@ -16,15 +16,12 @@ export const markMessagesAsRead = async (token, swapId) => {
 
 export const getUnreadMessagesPerChat = async (token) => {
   try {
-    const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/messages/unread`, {
-      method: 'GET',
+    const response = await axios.get(`${API_URL}/api/messages/unread`, {
       headers: { Authorization: `Bearer ${token}` },
     });
-    const json = await response.json();
-    if (!response.ok) throw new Error(json.error || 'Error al obtener mensajes no leídos');
-    return json.data;
+    return response.data.data;
   } catch (err) {
-    console.error(err.message);
+    console.error('❌ Error al obtener mensajes no leídos:', err.message);
     return [];
   }
 };
