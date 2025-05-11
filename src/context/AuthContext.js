@@ -60,6 +60,7 @@ export function AuthProvider({ children }) {
         if (workerProfile) {
           setIsWorker(workerProfile);
           console.log('Worker profile rehidratado:', workerProfile);
+          console.log('Aqui')
           //AmplitudeService.identify(workerProfile);
           setSentryTagsFromWorker(workerProfile);
 
