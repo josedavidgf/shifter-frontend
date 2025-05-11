@@ -9,11 +9,11 @@ import * as Sentry from '@sentry/react';
 
 
 if (process.env.REACT_APP_ENV === 'production' && process.env.REACT_APP_SENTRY_DSN) {
-    Sentry.init({
-        dsn: process.env.REACT_APP_SENTRY_DSN,
-        tracesSampleRate: 0.0,
-        environment: 'production',
-    });
+  Sentry.init({
+    dsn: process.env.REACT_APP_SENTRY_DSN,
+    tracesSampleRate: 0.0,
+    environment: 'production',
+  });
 }
 
 
@@ -22,7 +22,9 @@ root.render(
     <React.StrictMode>
         <BrowserRouter>
             <AuthProvider>
-                <AppWrapper />
+                <Sentry.ErrorBoundary fallback={<p>Algo fue mal. Intenta refrescar la página.</p>}>
+                    <AppWrapper />
+                </Sentry.ErrorBoundary>
             </AuthProvider>
         </BrowserRouter>
     </React.StrictMode>
