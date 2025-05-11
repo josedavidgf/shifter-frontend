@@ -9,7 +9,7 @@ import axios from 'axios';
 
 const AuthCallback = () => {
   const navigate = useNavigate();
-  const { rehydrateUser, currentUser, setCurrentUser, setIsWorker } = useAuth();
+  const { rehydrateUser, setCurrentUser } = useAuth();
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -95,7 +95,7 @@ const AuthCallback = () => {
 
     handleCallback();
     return () => clearTimeout(fallbackTimeout);
-  }, []);
+  }, [error, navigate, rehydrateUser, setCurrentUser]);
 
 
 

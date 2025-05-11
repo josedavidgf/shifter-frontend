@@ -25,6 +25,7 @@
     "web-vitals": "^2.1.4"
   },
   "scripts": {
+    "lint": "eslint 'src/**/*.{js,jsx}'",
     "start": "react-scripts start",
     "build": "react-scripts --openssl-legacy-provider build",
     "test": "react-scripts test",
