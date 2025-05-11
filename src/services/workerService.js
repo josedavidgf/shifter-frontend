@@ -38,6 +38,7 @@ export const createWorker = async (data, token) => {
 // Obtener mi perfil de worker
 export const getMyWorkerProfile = async (token) => {
   try {
+    console.log('[DEBUG] Token:', token?.slice?.(0, 12));
     const response = await axios.get(`${API_URL}/api/workers/me`, authHeaders(token));
     return response.data.data;
   } catch (error) {
