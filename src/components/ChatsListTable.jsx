@@ -17,9 +17,6 @@ const ChatsListTable = ({ swaps, workerId }) => {
   const { unreadSwapIds } = useUnreadMessages();
 
 
-  console.log('isEnabled', isEnabled('chat_tanda_ai'));
-
-
   const filteredSwaps = query.length >= 3
     ? swaps.filter((swap) => {
       const iAmRequester = swap.requester_id === workerId;
