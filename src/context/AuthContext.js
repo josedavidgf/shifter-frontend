@@ -51,17 +51,21 @@ export function AuthProvider({ children }) {
       setCurrentUser(session.user);
 
       if (!isAmplitudeInitialized) {
-        AmplitudeService.init();
-        isAmplitudeInitialized = true;
+        try {
+          AmplitudeService.init();
+          isAmplitudeInitialized = true;
+        } catch (err) {
+          console.warn('⛔️ Error iniciando Amplitude:', err.message);
+          reportError(err, { source: 'Amplitude init' });
+        }
       }
+
 
       try {
         const workerProfile = await getMyWorkerProfile(token);
         if (workerProfile) {
           setIsWorker(workerProfile);
-          console.log('Worker profile rehidratado:', workerProfile);
-          console.log('Aqui')
-          //AmplitudeService.identify(workerProfile);
+          AmplitudeService.identify(workerProfile);
           setSentryTagsFromWorker(workerProfile);
 
         } else {
