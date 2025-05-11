@@ -3,14 +3,6 @@ import axios from 'axios';
 
 const API_URL = process.env.REACT_APP_BACKEND_URL;
 
-// Utilidad para capturar errores
-const handleError = (error, defaultMessage = 'Error en la operación') => {
-  if (axios.isAxiosError(error)) {
-    return error.response?.data?.message || defaultMessage;
-  }
-  return defaultMessage;
-};
-
 const authHeaders = (token) => ({
   headers: { Authorization: `Bearer ${token}` },
 });
