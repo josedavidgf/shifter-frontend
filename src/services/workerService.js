@@ -43,6 +43,7 @@ export const getMyWorkerProfile = async (token) => {
     console.log('[DEBUG] Backend URL:', process.env.REACT_APP_BACKEND_URL);
     console.log('[DEBUG] URL:', `${API_URL}/api/workers/me`);
     const response = await axios.get(`${API_URL}/api/workers/me`, authHeaders(token));
+    console.log('[DEBUG] Respuesta:', response.data);
     return response.data.data;
   } catch (error) {
     throw new Error(handleError(error, 'Error al cargar perfil de trabajador'));
