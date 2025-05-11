@@ -11,7 +11,7 @@ import { translateShiftType } from '../../utils/translateServices';
 import HeaderSecondLevel from '../../components/ui/Header/HeaderSecondLevel';
 import Loader from '../../components/ui/Loader/Loader'; // ✅
 import { Phone } from '../../theme/icons';
-import { markMessagesAsRead } from '../../services/messagesService';
+import { markMessagesAsRead } from '../../api/useMessagesApi';
 
 
 const ChatPage = () => {
@@ -58,7 +58,9 @@ const ChatPage = () => {
 
     useEffect(() => {
         if (swap && workerId) {
-            markMessagesAsRead(swap.swap_id, workerId);
+            getToken().then(token => {
+                markMessagesAsRead(token, swap.swap_id);
+            });
         }
     }, [swap, workerId]);
 
