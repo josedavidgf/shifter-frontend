@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "@amplitude/analytics-browser": "^2.15.0",
+    "@sentry/react": "^9.17.0",
     "@supabase/supabase-js": "^2.49.4",
     "@testing-library/dom": "^10.4.0",
     "@testing-library/jest-dom": "^6.6.3",

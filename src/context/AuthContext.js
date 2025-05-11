@@ -4,6 +4,8 @@ import { getMyWorkerProfile, } from '../services/workerService';
 import { initAmplitude, identifyUser } from '../lib/amplitude';
 import * as amplitude from '@amplitude/analytics-browser';
 import { useFeatureFlagApi } from '../api/useFeatureFlagApi';
+import { setSentryTagsFromWorker, clearSentryContext } from '../lib/sentry';
+import { reportError } from '../lib/sentry';
 
 
 const AuthContext = createContext();
@@ -59,11 +61,14 @@ export function AuthProvider({ children }) {
         if (workerProfile) {
           setIsWorker(workerProfile);
           identifyUser(workerProfile);
+          setSentryTagsFromWorker(workerProfile);
+
         } else {
           setIsWorker(false);
         }
       } catch (err) {
         console.warn('⛔️ Error al obtener perfil del worker:', err.message);
+        reportError(err, { source: 'rehydrateUser → getMyWorkerProfile' });
         setIsWorker(false);
       }
 
@@ -96,6 +101,7 @@ export function AuthProvider({ children }) {
           const workerProfile = await getMyWorkerProfile(token);
           setIsWorker(workerProfile || false);
         } catch (err) {
+          reportError(err, { source: 'onAuthStateChange → getMyWorkerProfile' });
           setIsWorker(false);
         }
       }
@@ -124,6 +130,7 @@ export function AuthProvider({ children }) {
         setFeatureFlags(flags);
         console.debug('[FF] Flags refrescadas automáticamente:', flags);
       } catch (err) {
+        reportError(err, { source: 'refreshWorkerProfile → getFeatureFlags' });
         console.warn('⚠️ No se pudieron refrescar las FF en background');
       }
     }, 900 * 1000); // cada 60 segundos
@@ -208,6 +215,7 @@ export function AuthProvider({ children }) {
     setCurrentUser(null);
     setIsWorker(false);
     amplitude.reset();
+    clearSentryContext(); // 👈 limpia el contexto de Sentry
 
     // Nueva línea extra para rehidratar supabase internamente
     await supabase.auth.getSession(); // <-- importante: forzamos actualizar la sesión en local
