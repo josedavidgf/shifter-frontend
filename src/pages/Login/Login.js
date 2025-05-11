@@ -29,6 +29,7 @@ function Login() {
     try {
       const { data } = await login(email, password);
       console.log('[Login] Login completo. Redirigiendo...');
+      console.log(process.env.REACT_APP_BACKEND_URL);
     } catch (err) {
       console.error('❌ Login error:', err);
       console.error('❌ Login error:', err.message);
