@@ -1,8 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import supabase from '../config/supabase';
 import { getMyWorkerProfile, } from '../services/workerService';
-import { initAmplitude, identifyUser } from '../lib/amplitude';
-import * as amplitude from '@amplitude/analytics-browser';
+import AmplitudeService from '../lib/amplitude';
 import { useFeatureFlagApi } from '../api/useFeatureFlagApi';
 import { setSentryTagsFromWorker, clearSentryContext } from '../lib/sentry';
 import { reportError } from '../lib/sentry';
@@ -52,7 +51,7 @@ export function AuthProvider({ children }) {
       setCurrentUser(session.user);
 
       if (!isAmplitudeInitialized) {
-        initAmplitude();
+        AmplitudeService.init();
         isAmplitudeInitialized = true;
       }
 
@@ -60,7 +59,7 @@ export function AuthProvider({ children }) {
         const workerProfile = await getMyWorkerProfile(token);
         if (workerProfile) {
           setIsWorker(workerProfile);
-          identifyUser(workerProfile);
+          AmplitudeService.identify(workerProfile);
           setSentryTagsFromWorker(workerProfile);
 
         } else {
@@ -214,7 +213,7 @@ export function AuthProvider({ children }) {
     //localStorage.removeItem('token');
     setCurrentUser(null);
     setIsWorker(false);
-    amplitude.reset();
+    AmplitudeService.reset();
     clearSentryContext(); // 👈 limpia el contexto de Sentry
 
     // Nueva línea extra para rehidratar supabase internamente

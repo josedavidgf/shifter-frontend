@@ -1,6 +1,6 @@
 // src/hooks/useTrackPageView.js
 import { useEffect, useRef } from 'react';
-import { logEvent } from '../lib/amplitude';
+import AmplitudeService from '../lib/amplitude';
 
 /**
  * Hook para trackear la vista de una página
@@ -11,7 +11,7 @@ export default function useTrackPageView(pageName) {
 
   useEffect(() => {
     if (!hasTrackedView.current) {
-      logEvent(`${pageName}-viewed`);
+      AmplitudeService.track(`${pageName}-viewed`);
       hasTrackedView.current = true;
     }
   }, [pageName]);
