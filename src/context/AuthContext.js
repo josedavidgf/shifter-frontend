@@ -64,10 +64,10 @@ export function AuthProvider({ children }) {
       try {
         const workerProfile = await getMyWorkerProfile(token);
         if (workerProfile) {
-          setIsWorker(workerProfile);
           console.log('[DEBUG] Entorno:', process.env.REACT_APP_ENV);
           console.log('[DEBUG] Backend URL:', process.env.REACT_APP_BACKEND_URL);
           console.log('[DEBUG] Token:', token?.slice?.(0, 12));
+          setIsWorker(workerProfile);
           AmplitudeService.identify(workerProfile);
           setSentryTagsFromWorker(workerProfile);
 
