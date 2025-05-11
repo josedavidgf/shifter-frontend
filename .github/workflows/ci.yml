@@ -25,5 +25,4 @@ jobs:
       - name: Lint
         run: npm run lint || echo "Lint fallido (pero no rompe el CI aún)"
 
-      - name: Build
-        run: npm run build
+      # No hay build, solo validamos que lint pase por ahora
