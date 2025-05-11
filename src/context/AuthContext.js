@@ -59,7 +59,8 @@ export function AuthProvider({ children }) {
         const workerProfile = await getMyWorkerProfile(token);
         if (workerProfile) {
           setIsWorker(workerProfile);
-          AmplitudeService.identify(workerProfile);
+          console.log('Worker profile rehidratado:', workerProfile);
+          //AmplitudeService.identify(workerProfile);
           setSentryTagsFromWorker(workerProfile);
 
         } else {
