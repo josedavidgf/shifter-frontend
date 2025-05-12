@@ -23,7 +23,7 @@ import DayDetailSwapped from './DayDetails/DayDetailSwapped';
 import DayDetailEmpty from './DayDetails/DayDetailEmpty';
 import Loader from '../components/ui/Loader/Loader';
 import Banner from '../components/ui/Banner/Banner';
-import { Sun, Fire, SunHorizon, Moon, Stack, Trash, CalendarPlus, Check, ChartPieSlice } from '../theme/icons';
+import { Sun, Fire, SunHorizon, Moon, Stack, Trash, CalendarPlus, Check, ChartPieSlice, FlagBanner, CalendarCheck, ChartPie } from '../theme/icons';
 import { useToast } from '../hooks/useToast'; // ya lo usas en otras vistas
 import { formatFriendlyDate } from '../utils/formatFriendlyDate';
 import { EVENTS } from '../utils/amplitudeEvents';
@@ -42,7 +42,7 @@ function renderShiftIcon(shift) {
     case 'reinforcement':
       return <Fire size={16} />;
     case 'total':
-      return <Stack size={16} />;
+      return <ChartPie size={16} />;
     default:
       return null;
   }
@@ -672,9 +672,9 @@ function MonthlyCalendar() {
             */}
             <Button
               variant="outline"
-              label="Turnos"
-              leftIcon={<CalendarPlus size={20} weight="fill" />}
-              size="md"
+              label="Añadir turnos"
+              leftIcon={<CalendarPlus size={20} />}
+              size="sm"
               style={{ margin: 0 }}
               onClick={() => {
                 trackEvent(EVENTS.BULK_SHIFT_BUTTON_CLICKED);

@@ -76,5 +76,9 @@ export {
     ChartLine,
     Repeat,
     ArrowClockwise,
-    ArrowDownLeft
+    ArrowDownLeft,
+    FlagBanner,
+    BellSimpleRinging,
+    BellSimple,
+    IdentificationBadge
   } from 'phosphor-react';
