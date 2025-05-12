@@ -6,6 +6,8 @@ import supabase from '../config/supabase';
 import { useToast } from '../hooks/useToast';
 import HeaderSecondLevel from '../components/ui/Header/HeaderSecondLevel';
 import { useNavigate } from 'react-router-dom';
+import { trackEvent } from '../hooks/useTrackPageView';
+import { EVENTS } from '../utils/amplitudeEvents';
 
 const VerifyEmail = () => {
   const { pendingEmail } = useAuth();
@@ -17,6 +19,7 @@ const VerifyEmail = () => {
   useTrackPageView('verify-email');
 
   const handleResend = async () => {
+    trackEvent(EVENTS.VERIFY_EMAIL_RESEND_CLICKED, { email: targetEmail });
     const targetEmail = pendingEmail || localStorage.getItem('lastRegisteredEmail');
 
     if (!targetEmail) {
@@ -36,9 +39,14 @@ const VerifyEmail = () => {
         password: 'dummy-temporal',
         options: { emailRedirectTo: redirectTo }
       });
+      trackEvent(EVENTS.VERIFY_EMAIL_RESEND_SUCCESS, { email: targetEmail });
       showSuccess('Verificación reenviada. Revisa tu correo.');
     } catch (err) {
       console.error('❌ Error reenviando email de verificación:', err.message);
+      trackEvent(EVENTS.VERIFY_EMAIL_RESEND_FAILED, {
+        email: targetEmail,
+        error: err.message,
+      });
       showError('Error al reenviar la verificación. Intenta de nuevo más tarde.');
     } finally {
       setLoadingResend(false);

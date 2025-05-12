@@ -5,6 +5,9 @@ import ToggleSwitch from '../components/ui/ToogleSwitch/ToogleSwitch';
 import { useToast } from '../hooks/useToast';
 import Loader from '../components/ui/Loader/Loader';
 import useMinimumDelay from '../hooks/useMinimumDelay';
+import { trackEvent } from '../hooks/useTrackPageView';
+import { EVENTS } from '../utils/amplitudeEvents';
+
 
 const CommunicationPreferences = () => {
   const { getToken } = useAuth();
@@ -37,11 +40,24 @@ const CommunicationPreferences = () => {
   const handleSwapToggleChange = async (newValue) => {
     setLoadingSwap(true);
     try {
+      trackEvent(EVENTS.COMM_PREF_TOGGLED, {
+        preference: 'receive_emails_swap',
+        value: newValue,
+      });
+
       setEmailSwapNotifications(newValue);
       const token = await getToken();
       await updateUserPreferences({ receive_emails_swap: newValue }, token);
+      trackEvent(EVENTS.COMM_PREF_SAVE_SUCCESS, {
+        preference: 'receive_emails_swap',
+      });
+
       showSuccess('Preferencias actualizadas correctamente');
     } catch {
+      trackEvent(EVENTS.COMM_PREF_SAVE_FAILED, {
+        preference: 'receive_emails_swap',
+      });
+
       showError('Error actualizando preferencias');
     } finally {
       setLoadingSwap(false);
@@ -51,18 +67,31 @@ const CommunicationPreferences = () => {
   const handleReminderToggleChange = async (newValue) => {
     setLoadingReminder(true);
     try {
+      trackEvent(EVENTS.COMM_PREF_TOGGLED, {
+        preference: 'receive_emails_reminders',
+        value: newValue,
+      });
+
       setEmailReminderNotifications(newValue);
       const token = await getToken();
       await updateUserPreferences({ receive_emails_reminders: newValue }, token);
+      trackEvent(EVENTS.COMM_PREF_SAVE_SUCCESS, {
+        preference: 'receive_emails_reminders',
+      });
+
       showSuccess('Preferencias actualizadas correctamente');
     } catch {
+      trackEvent(EVENTS.COMM_PREF_SAVE_FAILED, {
+        preference: 'receive_emails_reminders',
+      });
+
       showError('Error actualizando preferencias');
     } finally {
       setLoadingReminder(false);
     }
   };
 
-  if (showLoader) return <Loader text="Cargando preferencias..." minTime={50}/>;
+  if (showLoader) return <Loader text="Cargando preferencias..." minTime={50} />;
 
   return (
     <div>

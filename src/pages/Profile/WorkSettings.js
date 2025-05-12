@@ -16,7 +16,9 @@ import SpecialitiesTable from '../../components/SpecialitiesTable';
 import Loader from '../../components/ui/Loader/Loader';
 import useMinimumDelay from '../../hooks/useMinimumDelay';
 import { translateWorkerType } from '../../utils/translateServices';
-
+import useTrackPageView from '../../hooks/useTrackPageView';
+import { trackEvent } from '../../hooks/useTrackPageView';
+import { EVENTS } from '../../utils/amplitudeEvents';
 
 const WorkSettings = () => {
   const { getToken, refreshWorkerProfile, isWorker } = useAuth();
@@ -42,6 +44,8 @@ const WorkSettings = () => {
 
   const showLoader = useMinimumDelay(loadingInitial, 500);
 
+  useTrackPageView('work-settings');
+
   useEffect(() => {
     if (!isWorker) {
       showError('No tienes permisos para acceder a esta sección.');
@@ -52,6 +56,7 @@ const WorkSettings = () => {
   }, [isWorker]);
 
   const handleValidateCode = async (e) => {
+    trackEvent(EVENTS.WORK_SETTINGS_CODE_SUBMITTED, { code });
     e.preventDefault();
     try {
       const response = await validateAccessCode(code);
@@ -69,6 +74,10 @@ const WorkSettings = () => {
       setWorkerTypeLabel(translateWorkerType[workerType?.worker_type_name] || workerType?.worker_type_name || response.worker_type_id);
       setStep('confirm');
     } catch (err) {
+      trackEvent(EVENTS.WORK_SETTINGS_CODE_FAILED, {
+        code,
+        error: err.message,
+      });
       console.error('❌ Error en handleValidateCode:', err.message);
       showError('Código inválido. Por favor verifica y vuelve a intentarlo.');
     }
@@ -102,14 +111,23 @@ const WorkSettings = () => {
         showError('Selecciona una especialidad antes de continuar.');
         return;
       }
+      trackEvent(EVENTS.WORK_SETTINGS_SAVE_CHANGES_SUBMITTED, {
+        hospitalId,
+        specialityId: selectedSpeciality,
+      });
+
 
       await updateWorkerHospital({ hospital_id: effectiveHospitalId }, token);
       await updateWorkerSpeciality({ speciality_id: selectedSpeciality }, token);
       await refreshWorkerProfile();
+      trackEvent(EVENTS.WORK_SETTINGS_SAVE_CHANGES_SUCCESS);
 
       showSuccess('Cambios guardados');
       setStep('view');
     } catch (err) {
+      trackEvent(EVENTS.WORK_SETTINGS_SAVE_CHANGES_FAILED, {
+        error: err.message,
+      });
       console.error('❌ Error guardando cambios:', err.message);
       showError(err.message || 'Error guardando los cambios');
     }
@@ -124,7 +142,7 @@ const WorkSettings = () => {
   };
 
   if (showLoader) {
-    return <Loader text="Cargando datos..." minTime={50}/>;
+    return <Loader text="Cargando datos..." minTime={50} />;
   }
 
   return (
@@ -166,7 +184,10 @@ const WorkSettings = () => {
                   variant="primary"
                   leftIcon={<Briefcase size={20} />}
                   size="lg"
-                  onClick={handleLoadSpecialities}
+                  onClick={() => {
+                    trackEvent(EVENTS.WORK_SETTINGS_EDIT_SPECIALITY_CLICKED);
+                    handleLoadSpecialities();
+                  }}
                 />
                 <Button
                   label="Cambiar hospital"
@@ -174,9 +195,11 @@ const WorkSettings = () => {
                   leftIcon={<Buildings size={20} />}
                   size="lg"
                   onClick={() => {
+                    trackEvent(EVENTS.WORK_SETTINGS_EDIT_HOSPITAL_CLICKED);
                     setStep('code');
                     setSelectedSpeciality('');
                   }}
+
                 />
               </div>
             </div>
@@ -220,7 +243,15 @@ const WorkSettings = () => {
                   leftIcon={<CheckCircle size={20} />}
                   variant="primary"
                   size="lg"
-                  onClick={handleLoadSpecialities}
+                  onClick={() => {
+                    trackEvent(EVENTS.WORK_SETTINGS_CONFIRM_CODE_ACCEPTED, {
+                      hospitalId,
+                      workerTypeId,
+                      hospitalName,
+                      workerTypeName,
+                    });
+                    handleLoadSpecialities();
+                  }}
                   disabled={false}
                 />
               </div>

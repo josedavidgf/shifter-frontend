@@ -3,6 +3,11 @@ import { useToast } from '../../hooks/useToast';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import supabase from '../../config/supabase';
+import useTrackPageView from '../../hooks/useTrackPageView';
+import { trackEvent } from '../../hooks/useTrackPageView';
+import { EVENTS } from '../../utils/amplitudeEvents';
+
+
 
 import HeaderSecondLevel from '../../components/ui/Header/HeaderSecondLevel';
 import InputField from '../../components/ui/InputField/InputField';
@@ -17,6 +22,8 @@ const ResetPasswordPage = () => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [loading, setLoading] = useState(false);
 
+  useTrackPageView('reset-password');
+
   const handleSubmit = async () => {
     if (!password || !confirmPassword) {
       showError('Por favor completa todos los campos.');
@@ -27,14 +34,21 @@ const ResetPasswordPage = () => {
       showError('Las contraseñas no coinciden.');
       return;
     }
+    trackEvent(EVENTS.RESET_PASSWORD_SUBMITTED, {
+      passwordLength: password.length,
+    });
 
     setLoading(true);
     const { error } = await supabase.auth.updateUser({ password });
 
     if (error) {
+      trackEvent(EVENTS.RESET_PASSWORD_FAILED, {
+        error: error.message,
+      });
       console.error('❌ Error actualizando contraseña:', error.message);
       showError('No se pudo actualizar la contraseña. Inténtalo de nuevo.');
     } else {
+      trackEvent(EVENTS.RESET_PASSWORD_SUCCESS);
       showSuccess('Contraseña actualizada con éxito.');
       navigate('/profile');
     }

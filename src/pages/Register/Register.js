@@ -10,6 +10,8 @@ import { useToast } from '../../hooks/useToast';
 import { mapSupabaseError } from '../../utils/mapSupabaseError';
 import HeaderSecondLevel from '../../components/ui/Header/HeaderSecondLevel';
 import supabase from '../../config/supabase';
+import { trackEvent } from '../../hooks/useTrackPageView';
+import { EVENTS } from '../../utils/amplitudeEvents';
 
 
 function Register() {
@@ -28,35 +30,42 @@ function Register() {
     e.preventDefault();
     if (loadingForm) return;
     setLoadingForm(true);
-  
+
     const redirectTo = process.env.REACT_APP_REDIRECT_URL;
     if (!redirectTo) {
       showError('Error interno de configuración. Intenta más tarde.');
       return;
     }
-  
+    trackEvent(EVENTS.REGISTER_ATTEMPTED_WITH_EMAIL, { email });
+
     try {
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
         options: { emailRedirectTo: redirectTo },
       });
-  
+
       // 🧠 Guardamos el último email por UX
       localStorage.setItem('lastRegisteredEmail', email);
       setPendingEmail(email);
 
-      console.log('error',error);
-  
-      if (error) {  
+      console.log('error', error);
+
+      if (error) {
         throw error;
       }
-  
+      trackEvent(EVENTS.REGISTER_SUCCESS, { email });
+
       showSuccess('Te hemos enviado un correo de verificación. Revisa tu bandeja de entrada para activar tu cuenta.');
       return navigate('/verify-email');
-  
+
     } catch (err) {
       console.error('❌ Register error:', err.message);
+      trackEvent(EVENTS.REGISTER_FAILED, {
+        email,
+        error: err.message,
+      });
+
       if (err.message === 'rate_limit_exceeded') {
         showError('Has solicitado demasiados registros seguidos. Intenta de nuevo en unos minutos.');
       } else {
@@ -66,7 +75,7 @@ function Register() {
       setLoadingForm(false);
     }
   };
-  
+
 
 
 
@@ -124,8 +133,10 @@ function Register() {
               variant="outline"
               size="lg"
               leftIcon={<img src={logoGoogle} alt="Google" width="20" height="20" />}
-              onClick={loginWithGoogle}
-            />
+              onClick={() => {
+                trackEvent(EVENTS.REGISTER_ATTEMPTED_WITH_GOOGLE);
+                loginWithGoogle();
+              }} />
           </div>
         </div>
       </div>

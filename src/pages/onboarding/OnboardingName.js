@@ -6,6 +6,9 @@ import InputField from '../../components/ui/InputField/InputField';
 import HeaderSecondLevel from '../../components/ui/Header/HeaderSecondLevel';
 import Button from '../../components/ui/Button/Button';
 import { useToast } from '../../hooks/useToast';
+import { trackEvent } from '../../hooks/useTrackPageView';
+import { EVENTS } from '../../utils/amplitudeEvents';
+import useTrackPageView from '../../hooks/useTrackPageView';
 
 export default function OnboardingNameStep() {
   const [name, setFirstName] = useState('');
@@ -14,6 +17,8 @@ export default function OnboardingNameStep() {
   const { getToken, isWorker, refreshWorkerProfile } = useAuth();
   const navigate = useNavigate();
   const { showError } = useToast();
+
+  useTrackPageView('onboarding-name');
 
   useEffect(() => {
     if (!isWorker) {
@@ -29,6 +34,10 @@ export default function OnboardingNameStep() {
       .join(' ');
 
   const handleConfirm = async () => {
+    trackEvent(EVENTS.ONBOARDING_NAME_SUBMITTED, {
+      name: name.trim(),
+      surname: surname.trim(),
+    });
     setLoadingForm(true);
     try {
       const token = await getToken();
@@ -52,9 +61,17 @@ export default function OnboardingNameStep() {
       );
 
       await refreshWorkerProfile();
+      trackEvent(EVENTS.ONBOARDING_NAME_SUCCESS, {
+        name: capitalizeWords(name),
+        surname: capitalizeWords(surname),
+      });
+
       navigate('/onboarding/phone');
     } catch (err) {
       console.error('❌ Error updating worker profile:', err.message);
+      trackEvent(EVENTS.ONBOARDING_NAME_FAILED, {
+        error: err.message,
+      });
       showError('Error guardando el nombre. Intenta de nuevo.');
     } finally {
       setLoadingForm(false);

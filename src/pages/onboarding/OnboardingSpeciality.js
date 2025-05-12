@@ -8,6 +8,9 @@ import SpecialitiesTable from '../../components/SpecialitiesTable';
 import Loader from '../../components/ui/Loader/Loader';
 import useMinimumDelay from '../../hooks/useMinimumDelay';
 import { useToast } from '../../hooks/useToast';
+import { trackEvent } from '../../hooks/useTrackPageView';
+import { EVENTS } from '../../utils/amplitudeEvents';
+import useTrackPageView from '../../hooks/useTrackPageView';
 
 export default function OnboardingSpecialityStep() {
   const [specialities, setSpecialities] = useState([]);
@@ -26,6 +29,8 @@ export default function OnboardingSpecialityStep() {
   const { showError } = useToast();
 
   const showLoader = useMinimumDelay(loadingInitial, 400);
+
+  useTrackPageView('onboarding-speciality');
 
   useEffect(() => {
     const fetchSpecialities = async () => {
@@ -61,12 +66,18 @@ export default function OnboardingSpecialityStep() {
         showError('Debes seleccionar una especialidad antes de continuar.');
         return;
       }
-
+      trackEvent(EVENTS.ONBOARDING_SPECIALITY_CONFIRMED, {
+        specialityId: selectedSpeciality,
+      });
       await addSpecialityToWorker(workerId, selectedSpeciality, token);
       await refreshWorkerProfile();
       navigate('/onboarding/name');
     } catch (err) {
       console.error('❌ Error adding speciality to worker:', err.message);
+      trackEvent(EVENTS.ONBOARDING_SPECIALITY_FAILED, {
+        specialityId: selectedSpeciality,
+        error: err.message,
+      });
       showError('Error guardando la especialidad.');
     } finally {
       setSaving(false);
@@ -81,7 +92,7 @@ export default function OnboardingSpecialityStep() {
     }
   };
 
-  if (showLoader) return <Loader text="Cargando especialidades..." minTime={50}/>;
+  if (showLoader) return <Loader text="Cargando especialidades..." minTime={50} />;
 
   return (
     <>

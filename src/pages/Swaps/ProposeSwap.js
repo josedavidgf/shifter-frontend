@@ -16,7 +16,8 @@ import { useShiftApi } from '../../api/useShiftApi'; // asegúrate de tener esta
 import Banner from '../../components/ui/Banner/Banner';
 import { useToast } from '../../hooks/useToast'; // Ajusta la ruta según tu estructura de carpetas
 import { useCalendarApi } from '../../api/useCalendarApi';
-
+import { trackEvent } from '../../hooks/useTrackPageView'; // Importamos la función de tracking
+import { EVENTS } from '../../utils/amplitudeEvents'; // Importamos los eventos
 
 
 const ProposeSwap = () => {
@@ -59,7 +60,7 @@ const ProposeSwap = () => {
         );
 
 
-      // Paso 3: enriquecer excluyendo días donde receptor ya tiene turno
+        // Paso 3: enriquecer excluyendo días donde receptor ya tiene turno
 
         const preferences = await getMySwapPreferences(receiverId);
 
@@ -120,6 +121,16 @@ const ProposeSwap = () => {
         swap_comments: swapComments,
       };
 
+      // Trackear el evento SWAP_PROPOSAL_SUBMITTED
+      trackEvent(EVENTS.SWAP_PROPOSAL_SUBMITTED, {
+        offeredShiftId: selectedShift.id,
+        offeredShiftDate: selectedShift.date,
+        offeredShiftType: selectedShift.type,
+        hasComments: !!swapComments,
+        commentsLength: swapComments.length || 0,
+        targetShiftId: shift_id,
+      });
+
       const result = await proposeSwap(shift_id, form, token);
       if (result) {
         navigate(`/swap-feedback/${result.swap_id}`);
@@ -154,6 +165,11 @@ const ProposeSwap = () => {
   }
 
   if (!loadingShifts && shifts.length === 0) {
+    // Trackear el evento NO_SHIFTS_AVAILABLE_FOR_SWAP
+    trackEvent(EVENTS.NO_SHIFTS_AVAILABLE_FOR_SWAP, {
+      shiftId: shift_id,
+      reason: 'noShifts',
+    });
     return (
       <>
         <HeaderSecondLevel

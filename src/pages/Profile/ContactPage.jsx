@@ -4,11 +4,20 @@ import HeaderSecondLevel from '../../components/ui/Header/HeaderSecondLevel';
 import InputField from '../../components/ui/InputField/InputField';
 import Button from '../../components/ui/Button/Button';
 import { useSupportApi } from '../../api/useSupportApi';
+import useTrackPageView from '../../hooks/useTrackPageView';
+import { trackEvent } from '../../hooks/useTrackPageView';
+import { EVENTS } from '../../utils/amplitudeEvents';
+import { useToast } from '../../hooks/useToast';
+
 
 const ContactPage = () => {
     const [form, setForm] = useState({ title: '', description: '' });
     const { sendSupportContact, loading } = useSupportApi();
     const navigate = useNavigate();
+    const { showSuccess, showError, showWarning } = useToast();
+
+
+    useTrackPageView('contact-page');
 
     const handleBack = () => {
         if (window.history.length > 1) {
@@ -28,8 +37,22 @@ const ContactPage = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         if (!isValid) return;
+        trackEvent(EVENTS.CONTACT_FORM_SUBMITTED, {
+            titleLength: form.title.trim().length,
+            descriptionLength: form.description.trim().length,
+        });
         const result = await sendSupportContact(form.title.trim(), form.description.trim());
-        if (result) setForm({ title: '', description: '' });
+
+        if (result) {
+            trackEvent(EVENTS.CONTACT_FORM_SUCCESS);
+            showSuccess('Mensaje enviado con éxito. Te responderemos lo antes posible.');
+            setForm({ title: '', description: '' });
+            navigate('/profile');
+        } else {
+            trackEvent(EVENTS.CONTACT_FORM_FAILED);
+            showError('No hemos podido enviar tu mensaje. Intenta de nuevo más tarde.');
+        }
+
     };
 
     return (

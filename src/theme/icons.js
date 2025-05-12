@@ -1,6 +1,7 @@
 // src/theme/icons.js
 export {
     CheckCircle,
+    Check,
     XCircle,
     X,
     ArrowLeft,

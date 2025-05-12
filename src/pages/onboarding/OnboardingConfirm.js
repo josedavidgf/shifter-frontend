@@ -8,7 +8,9 @@ import Checkbox from '../../components/ui/Checkbox/Checkbox';
 import { useToast } from '../../hooks/useToast';
 import supabase from '../../config/supabase';
 import { translateWorkerType } from '../../utils/translateServices';
-
+import { trackEvent } from '../../hooks/useTrackPageView';
+import { EVENTS } from '../../utils/amplitudeEvents';
+import useTrackPageView from '../../hooks/useTrackPageView';
 
 export default function OnboardingConfirmStep() {
   const [hospitalId, setHospitalId] = useState('');
@@ -33,6 +35,8 @@ export default function OnboardingConfirmStep() {
     return match ? match[1] : 'v1';
   };
 
+  useTrackPageView('onboarding-confirm');
+
   useEffect(() => {
     if (!hospital_id || !worker_type_id) {
       navigate('/onboarding/code');
@@ -43,6 +47,12 @@ export default function OnboardingConfirmStep() {
   }, [hospital_id, worker_type_id, navigate]);
 
   const handleConfirm = async () => {
+    trackEvent(EVENTS.ONBOARDING_CONFIRM_SUBMITTED, {
+      hospitalId,
+      workerTypeId,
+      acceptedTerms,
+      acceptedPrivacy,
+    });
     setLoadingForm(true);
     try {
       const token = await getToken();
@@ -63,10 +73,19 @@ export default function OnboardingConfirmStep() {
       });
 
       await refreshWorkerProfile();
+      trackEvent(EVENTS.ONBOARDING_CONFIRM_SUCCESS, {
+        hospitalId,
+        workerTypeId,
+      });
       showSuccess('Trabajador creado con éxito');
       navigate('/onboarding/speciality');
     } catch (err) {
       console.error('❌ Error creando el worker o guardando consentimiento:', err.message);
+      trackEvent(EVENTS.ONBOARDING_CONFIRM_FAILED, {
+        error: err.message,
+        hospitalId,
+        workerTypeId,
+      });
       showError('Error creando el perfil. Por favor inténtalo de nuevo.');
     } finally {
       setLoadingForm(false);
@@ -133,7 +152,10 @@ export default function OnboardingConfirmStep() {
               label="Contactar con Tanda"
               variant="outline"
               size="lg"
-              onClick={() => navigate('/onboarding/code')}
+              onClick={() => {
+                trackEvent(EVENTS.ONBOARDING_CONTACT_CLICKED);
+                navigate('/onboarding/code');
+              }}
               disabled={loadingForm}
             />
           </div>

@@ -9,6 +9,8 @@ import { useToast } from '../../hooks/useToast';
 import { useShiftApi } from '../../api/useShiftApi';
 import { useAuth } from '../../context/AuthContext';
 import useTrackPageView from '../../hooks/useTrackPageView';
+import { trackEvent } from '../../hooks/useTrackPageView'; // Importamos trackEvent
+import { EVENTS } from '../../utils/amplitudeEvents'; // Importamos los eventos
 
 const CreateShift = () => {
   const navigate = useNavigate();
@@ -53,6 +55,15 @@ const CreateShift = () => {
     try {
       const token = await getToken();
       const success = await createShift(form, token);
+
+      // Tracking del evento "Publicar turno"
+      trackEvent(EVENTS.PUBLISH_SHIFT_BUTTON_CLICKED, {
+        date: form.date,
+        shiftType: form.shift_type,
+        specialityId: form.speciality_id,
+        hasComments: !!form.shift_comments,
+        commentsLength: form.shift_comments.length || 0,
+      });
 
       if (success) {
         showSuccess('Turno publicado correctamente');

@@ -7,6 +7,8 @@ import HeaderFirstLevel from '../../components/ui/Header/HeaderFirstLevel';
 import Loader from '../../components/ui/Loader/Loader';
 import EmptyState from '../../components/ui/EmptyState/EmptyState';
 import ChatsListTable from '../../components/ChatsListTable';
+import useTrackPageView from '../../hooks/useTrackPageView';
+
 
 const ChatsList = () => {
   const { getToken } = useAuth();
@@ -18,6 +20,8 @@ const ChatsList = () => {
   const [error, setError] = useState(null);
 
   const navigate = useNavigate();
+
+  useTrackPageView('chats-list');
 
   useEffect(() => {
     async function fetchData() {
@@ -58,13 +62,13 @@ const ChatsList = () => {
   };
 
   const activeSwaps = swaps
-  .filter(isActive)
-  .sort((a, b) => new Date(a.shift.date) - new Date(b.shift.date));
+    .filter(isActive)
+    .sort((a, b) => new Date(a.shift.date) - new Date(b.shift.date));
 
 
 
   if (loading) {
-    return <Loader text="Cargando chats activos..." minTime={50}/>;
+    return <Loader text="Cargando chats activos..." minTime={50} />;
   }
 
   if (error) {

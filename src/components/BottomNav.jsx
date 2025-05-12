@@ -3,7 +3,8 @@ import { NavLink } from 'react-router-dom';
 import { CalendarCheck, Lightning, MagnifyingGlass, ChatCircle } from '../theme/icons';
 import { useSwapNotifications } from '../hooks/useSwapNotifications';
 import { useUnreadMessages } from '../hooks/useUnreadMessages'; // nuevo hook
-
+import { trackEvent } from '../hooks/useTrackPageView'; // Importamos trackEvent
+import { EVENTS } from '../utils/amplitudeEvents'; // Importamos los eventos
 
 export default function BottomNav() {
   const { hasPendingSwaps } = useSwapNotifications();
@@ -11,7 +12,11 @@ export default function BottomNav() {
 
   return (
     <nav className="bottom-nav">
-      <NavLink to="/calendar" className="nav-item">
+      <NavLink
+        to="/calendar"
+        className="nav-item"
+        onClick={() => trackEvent(EVENTS.CALENDAR_ICON_CLICKED)} // Trackeamos clic en "Calendario"
+      >
         {({ isActive }) => (
           <div className={`nav-icon ${isActive ? 'active' : ''}`}>
             <CalendarCheck size={24} weight={isActive ? 'fill' : 'regular'} />
@@ -20,7 +25,11 @@ export default function BottomNav() {
         )}
       </NavLink>
 
-      <NavLink to="/shifts/hospital" className="nav-item">
+      <NavLink
+        to="/shifts/hospital"
+        className="nav-item"
+        onClick={() => trackEvent(EVENTS.SHIFTS_ICON_CLICKED)} // Trackeamos clic en "Turnos"
+      >
         {({ isActive }) => (
           <div className={`nav-icon ${isActive ? 'active' : ''}`}>
             <MagnifyingGlass size={24} weight={isActive ? 'fill' : 'regular'} />
@@ -29,7 +38,11 @@ export default function BottomNav() {
         )}
       </NavLink>
 
-      <NavLink to="/my-swaps" className="nav-item">
+      <NavLink
+        to="/my-swaps"
+        className="nav-item"
+        onClick={() => trackEvent(EVENTS.SWAPS_ICON_CLICKED)} // Trackeamos clic en "Cambios"
+      >
         {({ isActive }) => (
           <div className={`nav-icon ${isActive ? 'active' : ''}`}>
             <div className="notification-dot-wrapper">
@@ -41,8 +54,11 @@ export default function BottomNav() {
         )}
       </NavLink>
 
-
-      <NavLink to="/chats" className="nav-item">
+      <NavLink
+        to="/chats"
+        className="nav-item"
+        onClick={() => trackEvent(EVENTS.MESSAGES_ICON_CLICKED)} // Trackeamos clic en "Mensajes"
+      >
         {({ isActive }) => (
           <div className={`nav-icon ${isActive ? 'active' : ''}`}>
             <div className="notification-dot-wrapper">
@@ -53,8 +69,6 @@ export default function BottomNav() {
           </div>
         )}
       </NavLink>
-
-
     </nav>
   );
 }
