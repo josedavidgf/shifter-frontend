@@ -2,6 +2,8 @@
 import React from 'react';
 import Button from '../../components/ui/Button/Button';
 import { CalendarPlus, Lightbulb } from '../../theme/icons';
+import { trackEvent } from '../../hooks/useTrackPageView'; // Importamos la función de tracking
+import { EVENTS } from '../../utils/amplitudeEvents'; // Importamos los eventos
 
 export default function DayDetailEmpty({
   dateStr,
@@ -21,7 +23,10 @@ export default function DayDetailEmpty({
             variant="primary"
             size="lg"
             leftIcon={<CalendarPlus size={20} />}
-            onClick={() => onAddShift(dateStr)}
+            onClick={() => {
+              trackEvent(EVENTS.ADD_SINGLE_SHIFT_BUTTON_CLICKED, { day: dateStr });
+              onAddShift(dateStr);
+            }}
           />
 
           <Button
@@ -29,7 +34,10 @@ export default function DayDetailEmpty({
             variant="secondary"
             size="lg"
             leftIcon={<Lightbulb size={20} />}
-            onClick={() => onAddPreference(dateStr)}
+            onClick={() => {
+              trackEvent(EVENTS.ADD_SINGLE_AVAILABILITY_BUTTON_CLICKED, { day: dateStr });
+              onAddPreference(dateStr);
+            }}
           />
         </div>
       </div>

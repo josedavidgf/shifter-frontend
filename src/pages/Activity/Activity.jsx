@@ -4,11 +4,16 @@ import { useUserEvents } from '../../hooks/useUserEvents';
 import HeaderSecondLevel from '../../components/ui/Header/HeaderSecondLevel';
 import Loader from '../../components/ui/Loader/Loader';
 import ActivityTable from '../../components/ActivityTable';
+import useTrackPageView from '../../hooks/useTrackPageView';
+
 
 const Activity = () => {
   const { events, isLoading, markAllAsSeen, setEvents } = useUserEvents();
   const navigate = useNavigate();
   const hasMarkedRef = useRef(false);
+
+  useTrackPageView('activity');
+
 
   const handleBack = async () => {
     await markAllAsSeen();

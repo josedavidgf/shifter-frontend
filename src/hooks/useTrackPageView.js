@@ -16,3 +16,7 @@ export default function useTrackPageView(pageName) {
     }
   }, [pageName]);
 }
+
+export function trackEvent(eventName, eventProperties = {}) {
+  AmplitudeService.track(eventName, eventProperties);
+}

@@ -5,6 +5,8 @@ import { Lightning, Eye } from '../../theme/icons';
 import { shiftTypeLabels } from '../../utils/labelMaps';
 import { parseISO, format } from 'date-fns';
 import es from 'date-fns/locale/es';
+import { trackEvent } from '../../hooks/useTrackPageView'; // Importamos la función de tracking
+import { EVENTS } from '../../utils/amplitudeEvents'; // Importamos los eventos
 
 export default function DayDetailReceived({
   dateStr,
@@ -52,7 +54,10 @@ export default function DayDetailReceived({
           variant="primary"
           size="lg"
           leftIcon={<Lightning size={20} />}
-          onClick={() => navigate(`/shifts/create?date=${dateStr}&shift_type=${entry.shift_type}`)}
+          onClick={() => {
+            trackEvent(EVENTS.PUBLISH_RECEIVED_SHIFT_BUTTON_CLICKED, { day: dateStr, shiftType: entry.shift_type });
+            navigate(`/shifts/create?date=${dateStr}&shift_type=${entry.shift_type}`);
+          }}
         />
         
         {entry.swap_id && (
@@ -61,7 +66,10 @@ export default function DayDetailReceived({
             variant="ghost"
             leftIcon={<Eye size={20} />}
             size="lg"
-            onClick={() => navigate(`/swaps/${entry.swap_id}`)}
+            onClick={() => {
+              trackEvent(EVENTS.SHOW_RECEIVED_SHIFT_DETAILS_BUTTON_CLICKED, { swapId: entry.swap_id });
+              navigate(`/swaps/${entry.swap_id}`);
+            }}
           />
         )}
       </div>

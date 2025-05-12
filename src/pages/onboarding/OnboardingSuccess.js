@@ -5,6 +5,10 @@ import { useAuth } from '../../context/AuthContext';
 import Loader from '../../components/ui/Loader/Loader';
 import Button from '../../components/ui/Button/Button';
 import { useToast } from '../../hooks/useToast';
+import useTrackPageView from '../../hooks/useTrackPageView';
+import { trackEvent } from '../../hooks/useTrackPageView';
+import { EVENTS } from '../../utils/amplitudeEvents';
+
 
 export default function OnboardingSuccess() {
   const { setIsWorker, getToken } = useAuth();
@@ -15,6 +19,8 @@ export default function OnboardingSuccess() {
   const [failed, setFailed] = useState(false);
   const [shouldRedirect, setShouldRedirect] = useState(false);
 
+  useTrackPageView('onboarding-success');
+
   useEffect(() => {
     const completeAndRedirect = async () => {
       try {
@@ -24,13 +30,23 @@ export default function OnboardingSuccess() {
         setIsWorker(updatedWorker);
 
         if (updatedWorker?.onboarding_completed) {
+          trackEvent(EVENTS.ONBOARDING_SUCCESS_CONFIRMED, {
+            workerId: updatedWorker.worker_id,
+          });
           setShouldRedirect(true); // ← solo redirigimos cuando esté todo listo
         } else {
+          trackEvent(EVENTS.ONBOARDING_SUCCESS_FAILED, {
+            reason: 'onboarding_completed flag not true',
+          });
           showError('Tu perfil no se ha actualizado correctamente.');
           setFailed(true);
         }
       } catch (err) {
         console.error('❌ Error completando onboarding:', err.message);
+        trackEvent(EVENTS.ONBOARDING_SUCCESS_FAILED, {
+          reason: 'exception',
+          error: err.message,
+        });
         showError('Algo salió mal al completar el onboarding.');
         setFailed(true);
       } finally {
@@ -42,7 +58,7 @@ export default function OnboardingSuccess() {
   }, [getToken, setIsWorker, completeOnboarding, getMyWorkerProfile, showError]);
 
   if (loading || !shouldRedirect) {
-    return <Loader text="Finalizando onboarding y cargando tu calendario..." minTime={50}/>;
+    return <Loader text="Finalizando onboarding y cargando tu calendario..." minTime={50} />;
   }
 
   if (failed) {

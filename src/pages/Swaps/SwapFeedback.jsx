@@ -7,6 +7,9 @@ import { shiftTypeLabels } from '../../utils/labelMaps';
 import { formatFriendlyDate } from '../../utils/formatFriendlyDate';
 import illustration from '../../assets/illustration.png';
 import FullScreenFeedback from '../../components/ui/Modal/FullScreenFeedback';
+import useTrackPageView from '../../hooks/useTrackPageView';
+import { trackEvent } from '../../hooks/useTrackPageView'; // Importamos la función de tracking
+import { EVENTS } from '../../utils/amplitudeEvents'; // Importamos los eventos
 
 export default function SwapFeedback() {
     const { swap_id } = useParams();
@@ -16,6 +19,8 @@ export default function SwapFeedback() {
 
     const [swap, setSwap] = useState(null);
     const [loading, setLoading] = useState(true);
+
+    useTrackPageView('swap-feedback');
 
     useEffect(() => {
         const fetchSwap = async () => {
@@ -87,8 +92,14 @@ export default function SwapFeedback() {
             title_2={title_2}
             description_1={description_1}
             ctaLabel="Genial"
-            onClose={() => navigate('/shifts/hospital')}
+            onClose={() => {
+                // Trackear el evento SWAP_FEEDBACK_CTA_CLICKED
+                trackEvent(EVENTS.SWAP_FEEDBACK_CTA_CLICKED, {
+                    swapId: swap_id,
+                    status: swap?.status,
+                });
+                navigate('/shifts/hospital');
+            }}
         />
-
     );
 }

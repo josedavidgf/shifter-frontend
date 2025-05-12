@@ -6,7 +6,8 @@ import EmptyState from '../components/ui/EmptyState/EmptyState';
 import DateRangePicker from '../components/ui/DateRangePicker/DateRangePicker'; // ajusta path si es necesario
 import { addDays } from 'date-fns';
 import SwapCardContent from '../components/ui/Cards/SwapCardContent';
-
+import { trackEvent } from '../hooks/useTrackPageView';
+import { EVENTS } from '../utils/amplitudeEvents';
 
 
 const MySwapsTable = ({ swaps = [], isLoading, workerId }) => {
@@ -36,11 +37,16 @@ const MySwapsTable = ({ swaps = [], isLoading, workerId }) => {
     }
 
     setFiltered(result);
+    if (result.length === 0 && !isLoading) {
+      trackEvent(EVENTS.NO_SHIFTS_AVAILABLE_FOR_SWAP);
+    }
+
     setFiltersReady(true);
   }, [filterStatuses, filterRange, swaps]);
 
 
   const clearFilters = () => {
+    trackEvent(EVENTS.CLEAR_FILTERS_CLICKED);
     setFilterRange({
       startDate: today,
       endDate: addDays(today, 30)
@@ -48,15 +54,20 @@ const MySwapsTable = ({ swaps = [], isLoading, workerId }) => {
     setFilterStatuses([]);
   };
 
-  console.log('swap', swaps)
-
   return (
     <>
       <div className="filters-container">
         <div className="filters-group">
           <DateRangePicker
             value={filterRange}
-            onChange={(range) => setFilterRange(range)}
+            onChange={(range) => {
+              setFilterRange(range);
+              trackEvent(EVENTS.SWAPS_DATE_RANGE_FILTER_CHANGED, {
+                startDate: range.startDate.toISOString().split('T')[0],
+                endDate: range.endDate.toISOString().split('T')[0],
+              });
+            }}
+
           />
         </div>
 
@@ -72,12 +83,20 @@ const MySwapsTable = ({ swaps = [], isLoading, workerId }) => {
                   label={option.label}
                   selected={filterStatuses.includes(option.value)}
                   onClick={() => {
-                    setFilterStatuses((prev) =>
-                      prev.includes(option.value)
-                        ? prev.filter((v) => v !== option.value) // Deseleccionar
-                        : [...prev, option.value]               // Seleccionar
-                    );
+                    const isSelected = filterStatuses.includes(option.value);
+                    const updatedStatuses = isSelected
+                      ? filterStatuses.filter((v) => v !== option.value)
+                      : [...filterStatuses, option.value];
+
+                    setFilterStatuses(updatedStatuses);
+
+                    // Tracking del cambio de filtro por estado
+                    trackEvent(EVENTS.SHIFT_TYPE_FILTER_CHANGED, {
+                      selectedStatusesCount: updatedStatuses.length,
+                      selectedStatuses: updatedStatuses.join(','),
+                    });
                   }}
+
                 />
               );
             })}
@@ -119,7 +138,14 @@ const MySwapsTable = ({ swaps = [], isLoading, workerId }) => {
               <div
                 key={swap.swap_id}
                 className="card-base"
-                onClick={() => navigate(`/swaps/${swap.swap_id}`)}
+                onClick={() => {
+                  trackEvent(EVENTS.SWAP_CARD_CLICKED, {
+                    swapId: swap.swap_id,
+                    status: swap.status,
+                    iAmRequester,
+                  });
+                  navigate(`/swaps/${swap.swap_id}`);
+                }}
               >
                 <SwapCardContent
                   otherPersonName={otherPersonName}

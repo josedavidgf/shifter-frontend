@@ -5,6 +5,8 @@ import { useToast } from '../../hooks/useToast';
 import InputField from '../../components/ui/InputField/InputField';
 import Button from '../../components/ui/Button/Button';
 import HeaderSecondLevel from '../../components/ui/Header/HeaderSecondLevel';
+import { trackEvent } from '../../hooks/useTrackPageView';
+import { EVENTS } from '../../utils/amplitudeEvents';
 
 
 const ForgotPassword = () => {
@@ -16,6 +18,7 @@ const ForgotPassword = () => {
 
     const handlePasswordReset = async (e) => {
         e.preventDefault();
+        trackEvent(EVENTS.FORGOT_PASSWORD_ATTEMPTED, { email });
         if (!email) return;
 
         setLoading(true);
@@ -25,8 +28,10 @@ const ForgotPassword = () => {
             redirectTo,
         });
         if (error) {
+            trackEvent(EVENTS.FORGOT_PASSWORD_FAILED, { email, error: error.message });
             showError("No hemos podido enviar el email. ¿Está bien escrito?");
         } else {
+            trackEvent(EVENTS.FORGOT_PASSWORD_SUCCESS, { email });
             showInfo("Si tu correo está registrado, te hemos enviado instrucciones.");
             navigate('/login');
         }

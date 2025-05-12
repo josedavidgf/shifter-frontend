@@ -19,11 +19,9 @@ export function useSupportApi() {
       const token = await getToken();
       const workerId = isWorker?.worker_id;
       const data = await sendContactService(workerId, title, description, token);
-      showSuccess('¡Gracias! Hemos recibido tu mensaje.');
       return data;
     } catch (err) {
       setError(err.message);
-      showError('Error al enviar el mensaje. Intenta más tarde.');
       return null;
     } finally {
       setLoading(false);

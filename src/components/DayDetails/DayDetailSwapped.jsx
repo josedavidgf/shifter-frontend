@@ -4,6 +4,8 @@ import Button from '../ui/Button/Button';
 import { Lightning, Lightbulb, Eye } from '../../theme/icons';
 import { parseISO, format, isToday } from 'date-fns';
 import es from 'date-fns/locale/es';
+import { trackEvent } from '../../hooks/useTrackPageView'; // Importamos la función de tracking
+import { EVENTS } from '../../utils/amplitudeEvents'; // Importamos los eventos
 
 export default function DayDetailSwapped({
   dateStr,
@@ -22,7 +24,7 @@ export default function DayDetailSwapped({
   // Obtener workerId (ajusta esto según cómo obtienes el id del usuario actual)
   const workerId = entry.worker_id;
   const isRequester = entry.requester_id === workerId;
-  const name = entry.related_worker_name
+  const name = entry.related_worker_name;
   const surname = entry.related_worker_surname;
   const otherName = name && surname ? `${name} ${surname}` : null;
 
@@ -56,7 +58,10 @@ export default function DayDetailSwapped({
             variant="primary"
             size="lg"
             leftIcon={<Lightning size={20} />}
-            onClick={() => onAddShift(dateStr)}
+            onClick={() => {
+              trackEvent(EVENTS.ADD_SINGLE_SHIFT_BUTTON_CLICKED, { day: dateStr });
+              onAddShift(dateStr);
+            }}
           />
 
           <Button
@@ -64,7 +69,10 @@ export default function DayDetailSwapped({
             variant="secondary"
             size="lg"
             leftIcon={<Lightbulb size={20} />}
-            onClick={() => onAddPreference(dateStr)}
+            onClick={() => {
+              trackEvent(EVENTS.ADD_SINGLE_AVAILABILITY_BUTTON_CLICKED, { day: dateStr });
+              onAddPreference(dateStr);
+            }}
           />
           {entry.swap_id && (
             <Button
@@ -72,7 +80,10 @@ export default function DayDetailSwapped({
               variant="ghost"
               size="lg"
               leftIcon={<Eye size={20} />}
-              onClick={() => navigate(`/swaps/${entry.swap_id}`)}
+              onClick={() => {
+                trackEvent(EVENTS.SHOW_SWAPPED_SHIFT_DETAILS_BUTTON_CLICKED, { swapId: entry.swap_id });
+                navigate(`/swaps/${entry.swap_id}`);
+              }}
             />
           )}
         </div>

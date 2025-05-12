@@ -9,6 +9,10 @@ import { useToast } from '../../hooks/useToast';
 import { phonePrefixes } from '../../utils/phonePrefixes';
 import InputField from '../../components/ui/InputField/InputField';
 import PhoneInputGroup from '../../components/ui/PhoneInputGroup/PhoneInputGroup';
+import useTrackPageView from '../../hooks/useTrackPageView';
+import { trackEvent } from '../../hooks/useTrackPageView';
+import { EVENTS } from '../../utils/amplitudeEvents';
+
 
 const PersonalInfo = () => {
   const { getToken } = useAuth();
@@ -24,6 +28,8 @@ const PersonalInfo = () => {
     mobile_country_code: '+34',
     mobile_phone: '',
   });
+
+  useTrackPageView('personal-info');
 
   useEffect(() => {
     async function fetchData() {
@@ -44,29 +50,29 @@ const PersonalInfo = () => {
     fetchData();
   }, [getToken]);
 
-/*   const handleAvatarChange = async (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-
-    const user = await supabase.auth.getUser();
-    const userId = user?.data?.user?.id;
-    const filePath = `${userId}.jpg`;
-
-    const { error: uploadError } = await supabase.storage
-      .from('avatars')
-      .upload(filePath, file, {
-        upsert: true,
-        metadata: { user_id: userId }
-      });
-
-    if (uploadError) {
-      console.error('Error subiendo imagen:', uploadError.message);
-      showError('Error al subir imagen de perfil.');
-      return;
-    }
-
-    showSuccess('Imagen subida correctamente');
-  }; */
+  /*   const handleAvatarChange = async (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+  
+      const user = await supabase.auth.getUser();
+      const userId = user?.data?.user?.id;
+      const filePath = `${userId}.jpg`;
+  
+      const { error: uploadError } = await supabase.storage
+        .from('avatars')
+        .upload(filePath, file, {
+          upsert: true,
+          metadata: { user_id: userId }
+        });
+  
+      if (uploadError) {
+        console.error('Error subiendo imagen:', uploadError.message);
+        showError('Error al subir imagen de perfil.');
+        return;
+      }
+  
+      showSuccess('Imagen subida correctamente');
+    }; */
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -82,9 +88,17 @@ const PersonalInfo = () => {
   };
 
   async function handleSubmit(e) {
+    trackEvent(EVENTS.PERSONAL_INFO_SUBMITTED, {
+      nameLength: form.name.trim().length,
+      surnameLength: form.surname.trim().length,
+      phoneProvided: Boolean(form.mobile_phone.trim()),
+      prefix: form.mobile_country_code,
+    });
+
     e.preventDefault();
 
     if (JSON.stringify(form) === JSON.stringify(initialForm)) {
+      trackEvent(EVENTS.PERSONAL_INFO_NO_CHANGES);
       showWarning('No se han hecho cambios');
       return;
     }
@@ -111,12 +125,16 @@ const PersonalInfo = () => {
       }, token);
 
       if (updated) {
+        trackEvent(EVENTS.PERSONAL_INFO_SUCCESS);
         showSuccess('Información actualizada');
         navigate('/profile');
       } else {
         showWarning('No se pudo actualizar la información');
       }
     } catch (err) {
+      trackEvent(EVENTS.PERSONAL_INFO_FAILED, {
+        error: err.message,
+      });
       showError('Error al actualizar la información');
     }
   }
@@ -165,7 +183,7 @@ const PersonalInfo = () => {
               }))}
             />
 
-{/*             <div className="form-group">
+            {/*             <div className="form-group">
               <label>Imagen de perfil:</label>
               <input type="file" accept="image/*" onChange={handleAvatarChange} />
             </div> */}

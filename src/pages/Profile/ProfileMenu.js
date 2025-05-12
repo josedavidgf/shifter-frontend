@@ -3,6 +3,10 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import HeaderSecondLevel from '../../components/ui/Header/HeaderSecondLevel';
 import Button from '../../components/ui/Button/Button';
+import useTrackPageView from '../../hooks/useTrackPageView';
+import { trackEvent } from '../../hooks/useTrackPageView';
+import { EVENTS } from '../../utils/amplitudeEvents';
+
 
 import {
   AddressBook,
@@ -19,6 +23,8 @@ import {
 const ProfileMenu = () => {
   const navigate = useNavigate();
   const { logout } = useAuth();
+
+  useTrackPageView('profile-menu');
 
   const items = [
     {
@@ -75,6 +81,7 @@ const ProfileMenu = () => {
 
   const handleLogout = async () => {
     try {
+      trackEvent(EVENTS.LOGOUT_CLICKED);
       await logout();
       navigate('/login');
     } catch (error) {
@@ -106,6 +113,12 @@ const ProfileMenu = () => {
                 className="menu-item"
                 onClick={() => {
                   if (external) {
+                    if (label.includes('Términos')) {
+                      trackEvent(EVENTS.LEGAL_TERMS_CLICKED);
+                    }
+                    if (label.includes('Privacidad')) {
+                      trackEvent(EVENTS.LEGAL_PRIVACY_CLICKED);
+                    }
                     window.open(route, '_blank', 'noopener,noreferrer');
                   } else {
                     navigate(route);

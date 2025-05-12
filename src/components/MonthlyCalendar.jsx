@@ -23,11 +23,12 @@ import DayDetailSwapped from './DayDetails/DayDetailSwapped';
 import DayDetailEmpty from './DayDetails/DayDetailEmpty';
 import Loader from '../components/ui/Loader/Loader';
 import Banner from '../components/ui/Banner/Banner';
-import { Sun, SunHorizon, Moon, ShieldCheck, CirclesThree, SquaresFour, Stack, Trash, FloppyDisk, CalendarPlus } from '../theme/icons';
-import { Fire, FireSimple, ChartPieSlice, ChartBar, ChartLine, ChartBarHorizontal, ChartLineUp } from 'phosphor-react';
+import { Sun, Fire, SunHorizon, Moon, Stack, Trash, CalendarPlus, Check, ChartPieSlice } from '../theme/icons';
 import { useToast } from '../hooks/useToast'; // ya lo usas en otras vistas
-import { Check } from 'phosphor-react';
 import { formatFriendlyDate } from '../utils/formatFriendlyDate';
+import { EVENTS } from '../utils/amplitudeEvents';
+import { trackEvent } from '../hooks/useTrackPageView'; // Asegúrate de que la ruta sea correcta
+
 
 
 function renderShiftIcon(shift) {
@@ -217,9 +218,19 @@ function MonthlyCalendar() {
 
 
   function handleDayClick(dateStr) {
-    if (dateStr < today) return;
+    if (dateStr < today) {
+      // Mostrar un warning al usuario
+      showError('No se pueden realizar acciones sobre días pasados.');
+
+      // Trackear el intento de clic en un día pasado
+      trackEvent(EVENTS.PAST_DAY_CLICKED, { day: dateStr });
+
+      return;
+    }
 
     if (isMassiveEditMode) {
+      trackEvent(EVENTS.BULK_SHIFT_DAY_TAP_CLICKED, { day: dateStr });
+
       const entry = draftShiftMap[dateStr] || {};
 
       if (entry.source === 'received_swap' || entry.isPreference) return;
@@ -262,6 +273,7 @@ function MonthlyCalendar() {
 
     } else {
       setSelectedDay(dateStr);
+      trackEvent(EVENTS.CALENDAR_DAY_CLICKED, { day: dateStr });
       setTimeout(() => {
         detailRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
       }, 0);
@@ -618,7 +630,7 @@ function MonthlyCalendar() {
   if (isLoadingCalendar) {
     return (
       <div className="flex justify-center items-center min-h-screen">
-        <Loader text="Cargando tu AAAA..." minTime={1000}/>
+        <Loader text="Cargando tu AAAA..." minTime={1000} />
       </div>
     );
   }
@@ -642,13 +654,17 @@ function MonthlyCalendar() {
               variant="outline"
               leftIcon={<ChartPieSlice size={20} weight={showStats ? 'regular' : 'fill'} color={showStats ? undefined : '#1F2937'} />}
               size="sm"
-              onClick={() => setShowStats(prev => !prev)}
+              onClick={() => {
+                trackEvent(EVENTS.MONTHLY_STATS_CLICKED, { action: showStats ? 'hide' : 'show' });
+                setShowStats(prev => !prev);
+              }}
             />
             <Button
               variant="outline"
               leftIcon={<CalendarPlus size={20} weight="fill" />}
               size="sm"
               onClick={() => {
+                trackEvent(EVENTS.BULK_SHIFT_BUTTON_CLICKED);
                 setDraftShiftMap({ ...shiftMap });
                 setIsMassiveEditMode(true);
                 setSelectedDay(null);
@@ -715,7 +731,7 @@ function MonthlyCalendar() {
 
                 /*Por ahora descartamos el indicador de estado, pero lo dejamos comentado para el futuro*/
                 /* let indicator = '';
-
+ 
                 if (flags.isReceived) indicator += '✅';
                 if (flags.isSwapped) indicator += '🔁';
                 if (flags.isPublished) indicator += '📢';
@@ -728,7 +744,9 @@ function MonthlyCalendar() {
                   <div
                     key={dateStr}
                     className={`calendar-day-container ${!isSwappedOut ? `shift-${shiftType}` : ''} ${isPast ? 'past' : ''} ${isSelected ? 'selected-day' : ''}`}
-                    onClick={() => handleDayClick(dateStr)}
+                    onClick={() => {
+                      handleDayClick(dateStr);
+                    }}
                   >
                     <div className="calendar-day-number">{format(day, 'd')}{/* {getShiftLabel(shiftType)} {indicator} */}</div>
                     <div className="calendar-shift-icon">
@@ -760,8 +778,10 @@ function MonthlyCalendar() {
             variant="primary"
             leftIcon={<Check size={24} />}
             size="md"
-            onClick={handleSaveMassiveEdit}
-            isLoading={loadingMassiveSave}
+            onClick={() => {
+              trackEvent(EVENTS.BULK_SHIFT_SAVE_BUTTON_CLICKED);
+              handleSaveMassiveEdit();
+            }} isLoading={loadingMassiveSave}
             disabled={loadingMassiveSave} />
           <Button
             label="Descartar"
@@ -769,6 +789,7 @@ function MonthlyCalendar() {
             size="md"
             leftIcon={<Trash size={24} />}
             onClick={() => {
+              trackEvent(EVENTS.BULK_SHIFT_CANCEL_BUTTON_CLICKED);
               setDraftShiftMap(null);
               setIsMassiveEditMode(false);
             }}
