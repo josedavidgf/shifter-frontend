@@ -649,20 +649,33 @@ function MonthlyCalendar() {
       <div className="month-selector-group">
         <MonthSelector selectedMonth={selectedMonth} onChange={setSelectedMonth} />
         {!isMassiveEditMode && (
-          <div className="month-selector-actions">
+          <div
+            className="month-selector-actions"
+            style={{
+              display: 'flex',
+              justifyContent: 'flex-end',
+              padding: 0,
+              margin: 0,
+              width: '100%',
+            }}
+          >
+            {/* 
             <Button
               variant="outline"
               leftIcon={<ChartPieSlice size={20} weight={showStats ? 'regular' : 'fill'} color={showStats ? undefined : '#1F2937'} />}
-              size="sm"
+              size="sm" 
               onClick={() => {
                 trackEvent(EVENTS.MONTHLY_STATS_CLICKED, { action: showStats ? 'hide' : 'show' });
                 setShowStats(prev => !prev);
               }}
             />
+            */}
             <Button
               variant="outline"
+              label="Turnos"
               leftIcon={<CalendarPlus size={20} weight="fill" />}
-              size="sm"
+              size="md"
+              style={{ margin: 0 }}
               onClick={() => {
                 trackEvent(EVENTS.BULK_SHIFT_BUTTON_CLICKED);
                 setDraftShiftMap({ ...shiftMap });
