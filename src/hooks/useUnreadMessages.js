@@ -2,7 +2,7 @@
 import { useEffect, useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useWorkerApi } from '../api/useWorkerApi';
-import { getUnreadMessagesPerChat } from '../api/useMessagesApi';
+import { getUnreadMessagesPerChat } from '../services/messagesService';
 
 export function useUnreadMessages() {
   const { getToken } = useAuth();
@@ -13,9 +13,8 @@ export function useUnreadMessages() {
     try {
       const token = await getToken();
       const profile = await getMyWorkerProfile(token);
-      const res = await getUnreadMessagesPerChat(token);
+      const res = await getUnreadMessagesPerChat(profile.worker_id);
       setUnreadSwapIds(res.map((r) => r.swap_id));
-
     } catch (err) {
       console.error('Error al comprobar mensajes no leídos:', err.message);
     }

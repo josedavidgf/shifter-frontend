@@ -23,7 +23,7 @@
   --shift-reinforcement: #FF6000;
 
   /* 🧱 Roles semánticos */
-  --color-background: var(--color-gray-50);
+  --color-background: var(--color-white);
   --color-text: var(--color-black);
   --color-primary: var(--color-black);
 
