@@ -49,7 +49,7 @@
 .header-first__actions-group {
   display: flex;
   align-items: center;
-  gap: 12px; /* Espaciado entre iconos */
+  gap: 8px; /* Espaciado entre iconos */
 }
 .header-first__left {
   display: flex;

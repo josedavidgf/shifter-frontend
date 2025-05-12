@@ -25,7 +25,7 @@ export default function MonthSelector({ selectedMonth, onChange }) {
       <button onClick={goToPreviousMonth} className="arrow-button">
         <CaretLeft size={24} /> {/* Icono izquierdo */}
       </button>
-      <span className="month-label">
+      <span className="month-label" style={{ fontSize: '1.5rem', fontWeight: '600' }}>
         {capitalize(format(parseISO(selectedMonth + '-01'), 'MMMM', { locale: es }))}
       </span>
       <button onClick={goToNextMonth} className="arrow-button">
