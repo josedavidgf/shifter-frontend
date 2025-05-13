@@ -7,6 +7,9 @@ import Button from '../../components/ui/Button/Button';
 import PhoneInputGroup from '../../components/ui/PhoneInputGroup/PhoneInputGroup';
 import { useToast } from '../../hooks/useToast';
 import { phonePrefixes } from '../../utils/phonePrefixes';
+import { trackEvent } from '../../hooks/useTrackPageView';
+import { EVENTS } from '../../utils/amplitudeEvents';
+import useTrackPageView from '../../hooks/useTrackPageView';
 
 export default function OnboardingPhoneStep() {
   const [phone, setPhone] = useState('');
@@ -18,6 +21,8 @@ export default function OnboardingPhoneStep() {
   const { isWorker, refreshWorkerProfile } = useAuth();
   const { showError, showSuccess } = useToast();
 
+  useTrackPageView('onboarding-phone');
+
   useEffect(() => {
     if (!isWorker) {
       navigate('/onboarding/code');
@@ -25,6 +30,11 @@ export default function OnboardingPhoneStep() {
   }, [isWorker, navigate]);
 
   const handleConfirm = async () => {
+    trackEvent(EVENTS.ONBOARDING_PHONE_SUBMITTED, {
+      prefix,
+      phone,
+    });
+
     setLoadingForm(true);
     try {
       const workerId = isWorker?.worker_id;
@@ -52,9 +62,18 @@ export default function OnboardingPhoneStep() {
 
       await refreshWorkerProfile();
       showSuccess('Teléfono guardado correctamente');
+      trackEvent(EVENTS.ONBOARDING_COMPLETED, {
+        workerId: isWorker?.worker_id,
+        prefix,
+        phone: phone.replace(/\s+/g, ''),
+      });
       navigate('/onboarding/success');
     } catch (err) {
       console.error('❌ Error guardando teléfono:', err.message);
+      trackEvent(EVENTS.ONBOARDING_PHONE_FAILED, {
+        error: err.message,
+        workerId: isWorker?.worker_id,
+      });
       showError('Error guardando el teléfono.');
     } finally {
       setLoadingForm(false);

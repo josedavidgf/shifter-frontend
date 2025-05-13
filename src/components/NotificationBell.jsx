@@ -1,5 +1,5 @@
 import React from 'react';
-import { Bell } from '../theme/icons';
+import { Bell, BellSimple } from '../theme/icons';
 import { useUserEvents } from '../hooks/useUserEvents';
 
 export default function NotificationBell() {
@@ -8,7 +8,7 @@ export default function NotificationBell() {
 
   return (
     <div className="notification-dot-wrapper">
-      <Bell size={32} weight="regular" />
+      <BellSimple size={32} weight="bold" />
       {hasUnseen && <span className="notification-dot" />}
     </div>
   );

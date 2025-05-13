@@ -12,6 +12,10 @@ import HeaderSecondLevel from '../../components/ui/Header/HeaderSecondLevel';
 import Loader from '../../components/ui/Loader/Loader'; // ✅
 import { Phone } from '../../theme/icons';
 import { markMessagesAsRead } from '../../api/useMessagesApi';
+import useTrackPageView from '../../hooks/useTrackPageView';
+import { trackEvent } from '../../hooks/useTrackPageView';
+import { EVENTS } from '../../utils/amplitudeEvents';
+
 
 
 const ChatPage = () => {
@@ -25,7 +29,7 @@ const ChatPage = () => {
     const [error, setError] = useState(null); // ✅
     const navigate = useNavigate();
 
-
+    useTrackPageView('chat-page');
 
     useEffect(() => {
         async function fetchData() {
@@ -112,7 +116,12 @@ const ChatPage = () => {
                 title={`Chat con ${otherPersonName}`}
                 showBackButton
                 onBack={handleBack}
-                rightAction={phoneLink ? { icon: <Phone size={20} />, label: 'Llamar', onClick: () => window.open(phoneLink, '_blank') } : undefined}
+                rightAction={phoneLink ? {
+                    icon: <Phone size={20} />, label: 'Llamar', onClick: () => {
+                        trackEvent(EVENTS.CHAT_CALL_BUTTON_CLICKED, { swapId, phone: fullPhone });
+                        window.open(phoneLink, '_blank');
+                    }
+                } : undefined}
             />
             <div className="page">
                 <div className="container">

@@ -10,7 +10,8 @@ import { useToast } from '../../hooks/useToast';
 import { mapSupabaseError } from '../../utils/mapSupabaseError';
 import HeaderSecondLevel from '../../components/ui/Header/HeaderSecondLevel';
 import supabase from '../../config/supabase';
-
+import { trackEvent } from '../../hooks/useTrackPageView';
+import { EVENTS } from '../../utils/amplitudeEvents';
 
 
 function Login() {
@@ -26,13 +27,16 @@ function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoadingForm(true);
+    trackEvent(EVENTS.LOGIN_ATTEMPTED_WITH_EMAIL, { email });
     try {
       const { data } = await login(email, password);
       console.log('[Login] Login completo. Redirigiendo...');
-      console.log(process.env.REACT_APP_BACKEND_URL);
+      trackEvent(EVENTS.LOGIN_SUCCESS, { email });
     } catch (err) {
-      console.error('❌ Login error:', err);
-      console.error('❌ Login error:', err.message);
+      trackEvent(EVENTS.LOGIN_FAILED, {
+        email,
+        error: err.message,
+      });
       if (err.message === "Email not confirmed") {
         setPendingEmail(email);
         localStorage.setItem('lastRegisteredEmail', email);
@@ -119,11 +123,20 @@ function Login() {
               variant="outline"
               size="lg"
               leftIcon={<img src={logoGoogle} alt="Google" width="20" height="20" />}
-              onClick={loginWithGoogle}
+              onClick={() => {
+                trackEvent(EVENTS.LOGIN_ATTEMPTED_WITH_GOOGLE);
+                loginWithGoogle();
+              }}
             />
           </div>
           <div className="mt-4">
-            <p><Link to='/forgot-password'> ¿Has olvidado tu contraseña?</Link></p>
+            <p><Link
+              to='/forgot-password'
+              onClick={() => trackEvent(EVENTS.FORGOT_PASSWORD_CLICKED)}
+            >
+              ¿Has olvidado tu contraseña?
+            </Link>
+            </p>
           </div>
         </div>
       </div>

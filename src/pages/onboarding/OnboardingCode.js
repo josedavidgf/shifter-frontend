@@ -9,6 +9,10 @@ import Button from '../../components/ui/Button/Button';
 import AccessCodeInput from '../../components/ui/AccessCodeInput/AccessCodeInput';
 import Loader from '../../components/ui/Loader/Loader';
 import { useToast } from '../../hooks/useToast';
+import { trackEvent } from '../../hooks/useTrackPageView';
+import { EVENTS } from '../../utils/amplitudeEvents';
+import useTrackPageView from '../../hooks/useTrackPageView';
+
 
 export default function OnboardingCodeStep() {
   const [code, setCode] = useState('');
@@ -20,6 +24,9 @@ export default function OnboardingCodeStep() {
   const navigate = useNavigate();
   const { showError } = useToast();
 
+  useTrackPageView('onboarding-code');
+
+
   // Loader inicial mientras carga auth
   if (loading) return <Loader text="Cargando paso de onboarding..." minTime={50} />;
 
@@ -29,6 +36,7 @@ export default function OnboardingCodeStep() {
   }
 
   const handleValidateCode = async (e) => {
+    trackEvent(EVENTS.ONBOARDING_CODE_SUBMITTED, { code });
     e.preventDefault();
     setLoadingForm(true);
 
@@ -48,6 +56,12 @@ export default function OnboardingCodeStep() {
       const hospitalName = hospital?.name || '';
       const workerTypeName = workerType?.worker_type_name || '';
 
+      trackEvent(EVENTS.ONBOARDING_CODE_SUCCESS, {
+        code,
+        hospitalId: hospital_id,
+        workerTypeId: worker_type_id,
+      });
+
       navigate('/onboarding/confirm', {
         state: {
           hospital_id,
@@ -59,6 +73,10 @@ export default function OnboardingCodeStep() {
       });
     } catch (err) {
       console.error('❌ Error validando código:', err.message);
+      trackEvent(EVENTS.ONBOARDING_CODE_FAILED, {
+        code,
+        error: err.message,
+      });
       showError('Código inválido o error al validar. Verifica e intenta de nuevo.');
     } finally {
       setLoadingForm(false);
@@ -100,7 +118,13 @@ export default function OnboardingCodeStep() {
               isLoading={loadingForm}
             />
             <p className="text-sm mt-4">
-              ¿No te sabes tu código para entrar en Tanda? Ponte en <Link to='https://tally.so/r/3NOK0j'> contacto con nosotros</Link> para ayudarte a gestionarlo.
+              ¿No te sabes tu código para entrar en Tanda? Ponte en <Link
+                to='https://tally.so/r/3NOK0j'
+                onClick={() => trackEvent(EVENTS.ONBOARDING_HELP_LINK_CLICKED)}
+              >
+                contacto con nosotros
+              </Link>
+              para ayudarte a gestionarlo.
             </p>
           </form>
         </div>

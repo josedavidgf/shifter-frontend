@@ -1,6 +1,7 @@
 // src/theme/icons.js
 export {
     CheckCircle,
+    Check,
     XCircle,
     X,
     ArrowLeft,
@@ -75,5 +76,9 @@ export {
     ChartLine,
     Repeat,
     ArrowClockwise,
-    ArrowDownLeft
+    ArrowDownLeft,
+    FlagBanner,
+    BellSimpleRinging,
+    BellSimple,
+    IdentificationBadge
   } from 'phosphor-react';

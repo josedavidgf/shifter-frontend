@@ -7,6 +7,8 @@ import { Sparkle } from '../theme/icons';
 import ChatCardContent from '../components/ui/Cards/ChatCardContent';
 import { useFeatureFlags } from '../hooks/useFeatureFlags';
 import { useUnreadMessages } from '../hooks/useUnreadMessages';
+import { trackEvent } from '../hooks/useTrackPageView';
+import { EVENTS } from '../utils/amplitudeEvents';
 
 
 
@@ -31,7 +33,12 @@ const ChatsListTable = ({ swaps, workerId }) => {
       <div className="filters-container" style={{ marginBottom: '1rem' }}>
         <SearchFilterInput
           value={query}
-          onChange={setQuery}
+          onChange={(val) => {
+            if (val.length === 3) {
+              trackEvent(EVENTS.CHAT_SEARCH_STARTED);
+            }
+            setQuery(val);
+          }}
           placeholder="Busca por nombre de compañero..."
         />
         {query && (
@@ -39,7 +46,11 @@ const ChatsListTable = ({ swaps, workerId }) => {
             label="Limpiar filtros"
             variant="outline"
             size="lg"
-            onClick={() => setQuery('')}
+            onClick={() => {
+              trackEvent(EVENTS.CHAT_FILTER_CLEARED);
+              setQuery('');
+            }}
+
           />
         )}
       </div>
@@ -56,7 +67,10 @@ const ChatsListTable = ({ swaps, workerId }) => {
             borderRadius: '12px',
             padding: '16px',
           }}
-          onClick={() => navigate('/chat-turnos')}
+          onClick={() => {
+            trackEvent(EVENTS.TANDA_AI_CHAT_CLICKED);
+            navigate('/chat-turnos');
+          }}
         >
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
             <Sparkle size={18} weight="fill" color="#322659" />
@@ -65,6 +79,7 @@ const ChatsListTable = ({ swaps, workerId }) => {
           <p>Utiliza Tanda IA y haz preguntas sobre tus turnos, días libres, vacaciones, etc.</p>
         </div>
       )}
+      {filteredSwaps.length === 0 && query.length >= 3 && trackEvent(EVENTS.NO_CHATS_FOUND)}
 
       {filteredSwaps.length === 0 ? (
         <EmptyState
@@ -89,7 +104,14 @@ const ChatsListTable = ({ swaps, workerId }) => {
                 key={swap.swap_id}
                 className="card-base"
                 style={{ position: 'relative' }}
-                onClick={() => navigate(`/chats/${swap.swap_id}`)}
+                onClick={() => {
+                  trackEvent(EVENTS.CHAT_CARD_CLICKED, {
+                    swapId: swap.swap_id,
+                    iAmRequester,
+                    hasUnread,
+                  });
+                  navigate(`/chats/${swap.swap_id}`);
+                }}
               >
                 {hasUnread && <span className="card-notification-dot " />}
                 <ChatCardContent

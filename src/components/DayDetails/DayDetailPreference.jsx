@@ -6,6 +6,8 @@ import { shiftTypeLabels, shiftTypeIcons } from '../../utils/labelMaps'; // aseg
 import { parseISO, format, isToday } from 'date-fns';
 import es from 'date-fns/locale/es';
 import { Trash } from '../../theme/icons';
+import { trackEvent } from '../../hooks/useTrackPageView'; // Importamos la función de tracking
+import { EVENTS } from '../../utils/amplitudeEvents'; // Importamos los eventos
 
 const ALL_TYPES = ['morning', 'evening', 'night', 'reinforcement'];
 
@@ -35,7 +37,6 @@ export default function DayDetailPreference({
             : <>El {dayLabel.toLowerCase()} no tienes turno. <strong>Disponibilidad marcada para:</strong></>}
         </p>
 
-        
         <div className="chip-scroll-group mb-3">
           {ALL_TYPES.map((type) => {
             const isActive = activeTypes.includes(type);
@@ -47,13 +48,16 @@ export default function DayDetailPreference({
                 label={shiftTypeLabels[type]}
                 icon={Icon}
                 selected={isActive}
-                onClick={() => onEditPreference(dateStr, type)}
+                onClick={() => {
+                  const action = isActive ? 'remove' : 'add';
+                  trackEvent(EVENTS.SWITCH_AVAILABILITY_CLICKED, { day: dateStr, type, action });
+                  onEditPreference(dateStr, type);
+                }}
                 disabled={loadingDeletePreference}
               />
             );
           })}
         </div>
-
 
         {activeTypes.length > 0 && (
           <Button
@@ -61,7 +65,10 @@ export default function DayDetailPreference({
             variant="outline"
             size="lg"
             leftIcon={<Trash size={20} />}
-            onClick={() => onDeletePreference(dateStr)} // Borra todas
+            onClick={() => {
+              trackEvent(EVENTS.REMOVE_ALL_AVAILABILITIES_CLICKED, { day: dateStr });
+              onDeletePreference(dateStr); // Borra todas
+            }}
             isLoading={loadingDeletePreference}
             disabled={loadingDeletePreference}
           />

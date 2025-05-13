@@ -5,6 +5,8 @@ import { Lightning, PencilSimple, Trash } from '../../theme/icons';
 import { shiftTypeLabels } from '../../utils/labelMaps';
 import { format, parseISO, isToday } from 'date-fns';
 import es from 'date-fns/locale/es';
+import { trackEvent } from '../../hooks/useTrackPageView'; // Importamos la función de tracking
+import { EVENTS } from '../../utils/amplitudeEvents'; // Importamos los eventos
 
 const capitalize = (s) => s.charAt(0).toUpperCase() + s.slice(1);
 
@@ -61,14 +63,20 @@ export default function DayDetailMyShift({
               label="Editar disponibilidad"
               variant="outline"
               size="lg"
-              onClick={() => onEditShift(dateStr)}
+              onClick={() => {
+                trackEvent(EVENTS.EDIT_OWN_SHIFT_BUTTON_CLICKED, { day: dateStr });
+                onEditShift(dateStr);
+              }}
             />
             <Button
               label="Eliminar disponibilidad"
               variant="outline"
               color="danger"
               size="lg"
-              onClick={() => onRemoveShift(dateStr)}
+              onClick={() => {
+                trackEvent(EVENTS.DELETE_OWN_SHIFT_BUTTON_CLICKED, { day: dateStr });
+                onRemoveShift(dateStr);
+              }}
               isLoading={loadingRemoveShift}
               disabled={loadingRemoveShift}
             />
@@ -99,7 +107,10 @@ export default function DayDetailMyShift({
               variant="outline"
               leftIcon={<Trash size={20} />}
               size="lg"
-              onClick={() => onDeletePublication(entry.shift_id, dateStr)}
+              onClick={() => {
+                trackEvent(EVENTS.REMOVE_PUBLISH_OWN_SHIFT_BUTTON_CLICKED, { shiftId: entry.shift_id, day: dateStr });
+                onDeletePublication(entry.shift_id, dateStr);
+              }}
               isLoading={loadingDeletePublication}
               disabled={loadingDeletePublication}
             />
@@ -118,7 +129,10 @@ export default function DayDetailMyShift({
                 variant="primary"
                 size="lg"
                 leftIcon={<Lightning size={20} />}
-                onClick={() => navigate(`/shifts/create?date=${dateStr}&shift_type=${entry.shift_type}`)}
+                onClick={() => {
+                  trackEvent(EVENTS.PUBLISH_OWN_SHIFT_BUTTON_CLICKED, { day: dateStr, shiftType: entry.shift_type });
+                  navigate(`/shifts/create?date=${dateStr}&shift_type=${entry.shift_type}`);
+                }}
               />
               <div className="btn-group-row">
                 <Button
@@ -126,14 +140,20 @@ export default function DayDetailMyShift({
                   variant="outline"
                   size="md"
                   leftIcon={<PencilSimple size={20} />}
-                  onClick={() => onEditShift(dateStr)}
+                  onClick={() => {
+                    trackEvent(EVENTS.EDIT_OWN_SHIFT_BUTTON_CLICKED, { day: dateStr });
+                    onEditShift(dateStr);
+                  }}
                 />
                 <Button
                   label="Eliminar"
                   variant="outline"
                   size="md"
                   leftIcon={<Trash size={20} />}
-                  onClick={() => onRemoveShift(dateStr)}
+                  onClick={() => {
+                    trackEvent(EVENTS.DELETE_OWN_SHIFT_BUTTON_CLICKED, { day: dateStr });
+                    onRemoveShift(dateStr);
+                  }}
                   isLoading={loadingRemoveShift}
                   disabled={loadingRemoveShift}
                 />

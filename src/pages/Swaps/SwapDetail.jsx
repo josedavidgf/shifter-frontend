@@ -15,6 +15,9 @@ import EmptyState from '../../components/ui/EmptyState/EmptyState';
 import ConfirmationModal from '../../components/ui/Modal/ConfirmationModal';
 import useMinimumDelay from '../../hooks/useMinimumDelay';
 import { formatFriendlyDate } from '../../utils/formatFriendlyDate';
+import { trackEvent } from '../../hooks/useTrackPageView';
+import { EVENTS } from '../../utils/amplitudeEvents';
+
 
 
 const SwapDetail = () => {
@@ -57,7 +60,7 @@ const SwapDetail = () => {
     if (showLoader || !swap) {
         return (
             <div className="flex justify-center items-center min-h-screen">
-                <Loader text="Cargando detalle del intercambio..." minTime={50}/>
+                <Loader text="Cargando detalle del intercambio..." minTime={50} />
             </div>
         );
     }
@@ -91,6 +94,10 @@ const SwapDetail = () => {
             const token = await getToken();
             const success = await cancelSwap(swap.swap_id, token);
             if (success) {
+                trackEvent(EVENTS.SWAP_CANCELLED, {
+                    swapId: swap.swap_id,
+                    requesterId: workerId,
+                });
                 showSuccess('Intercambio cancelado correctamente');
                 navigate('/my-swaps');
             } else {
@@ -113,6 +120,11 @@ const SwapDetail = () => {
             const token = await getToken();
             const success = await respondToSwap(swap.swap_id, decision, token);
             if (success) {
+                trackEvent(EVENTS.SWAP_RESPONSE_SUBMITTED, {
+                    swapId: swap.swap_id,
+                    decision,
+                    responderId: workerId,
+                });
                 showRespondFeedback(decision);
                 navigate('/my-swaps');
             } else {
@@ -199,7 +211,10 @@ const SwapDetail = () => {
                     {swap.status === 'accepted' && (
                         <div className="mb-4">
                             <p className="text-sm mb-2">
-                                ¿Ha habido algún problema con este intercambio? Ponte en <Link to='/profile/contact'> contacto con Tanda</Link> para ayudarte a gestionarlo.
+                                ¿Ha habido algún problema con este intercambio? Ponte en <Link to='/profile/contact' onClick={() => trackEvent(EVENTS.SWAP_HELP_LINK_CLICKED)}>
+                                    contacto con Tanda
+                                </Link>
+                                para ayudarte a gestionarlo.
                             </p>
                         </div>
                     )}
