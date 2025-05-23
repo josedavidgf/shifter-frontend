@@ -38,6 +38,7 @@ import ForgotPassword from './pages/Login/ForgotPassword';
 import ResetPassword from './pages/Login/ResetPassword';
 import ResetPasswordPage from './pages/Profile/ResetPasswordPage';
 import Activity from './pages/Activity/Activity'
+import Stats from './pages/Stats';
 import ScrollToTop from './components/ScrollToTop';
 import SplashRedirectGuard from './components/SplashRedirectGuard.js';
 import SwapFeedback from './pages/Swaps/SwapFeedback';
@@ -78,6 +79,7 @@ function App() {
 
           <Route element={<SimpleLayout />}>
             <Route path="/activity" element={<PrivateRoute><Activity /></PrivateRoute>} />
+            <Route path="/stats" element={<PrivateRoute><Stats /></PrivateRoute>} />
             <Route path="/forgot-password" element={<PrivateRoute><ResetPassword /></PrivateRoute>} />
             <Route path="/profile/personal" element={<PrivateRoute><PersonalInfo /></PrivateRoute>} />
             <Route path="/profile/work" element={<PrivateRoute><WorkSettings /></PrivateRoute>} />

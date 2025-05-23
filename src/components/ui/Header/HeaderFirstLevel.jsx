@@ -1,3 +1,4 @@
+import { useNavigate } from 'react-router-dom';
 import React from 'react';
 import { UserCircle, Timer, Watch, Clock, ChartBar, ChartPie, ChatCircleDots, ChartPieSlice, ChartBarHorizontal, ChartLine } from '../../../theme/icons';
 
@@ -7,6 +8,8 @@ const HeaderFirstLevel = ({
   rightActions,
   showIcon = false,
 }) => {
+  const navigate = useNavigate();
+
   return (
     <header className="header-first">
       <div className="header-first__content">
@@ -16,7 +19,7 @@ const HeaderFirstLevel = ({
           <div className="header-first__actions-group">
             <button
               className="header-first__action"
-              onClick={() => console.log('Timer clicked')}
+              onClick={() => navigate('/stats')}
             >
               <ChartBar size={28} />
             </button>
