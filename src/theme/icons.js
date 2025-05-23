@@ -80,5 +80,10 @@ export {
     FlagBanner,
     BellSimpleRinging,
     BellSimple,
-    IdentificationBadge
+    IdentificationBadge,
+    Graph,
+    Timer,
+    ClockAfternoon,
+    Clock,
+    Watch
   } from 'phosphor-react';

@@ -1,5 +1,5 @@
 import React from 'react';
-import { UserCircle } from '../../../theme/icons';
+import { UserCircle, Timer, Watch, Clock, ChartBar, ChartPie, ChatCircleDots, ChartPieSlice, ChartBarHorizontal, ChartLine } from '../../../theme/icons';
 
 const HeaderFirstLevel = ({
   title,
@@ -14,13 +14,19 @@ const HeaderFirstLevel = ({
 
         {rightActions ? (
           <div className="header-first__actions-group">
+            <button
+              className="header-first__action"
+              onClick={() => console.log('Timer clicked')}
+            >
+              <ChartBar size={28} />
+            </button>
             {rightActions.map((action, index) => (
               <button
                 key={index}
                 className="header-first__action"
                 onClick={action.onClick}
               >
-                {action.icon}
+                {React.cloneElement(action.icon, { size: 32 })}
               </button>
             ))}
           </div>
