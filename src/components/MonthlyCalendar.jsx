@@ -692,21 +692,6 @@ function MonthlyCalendar() {
           Haz clic varias veces para alternar entre mañana, tarde, noche o refuerzo.
         </Banner>
       )}
-      {showStats && (
-        <div className="mt-3 mb-3 p-4 border rounded shadow">
-          <div className="badge-container">
-            {['total', 'morning', 'evening', 'night', 'reinforcement'].map((type) => {
-              const count = stats[type];
-              return (
-                <div key={type} className="stat-badge">
-                  <span className="badge-icon">{renderShiftIcon(type)}</span>
-                  <span className="badge-count">{count}</span>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      )}
 
       <div className="calendar-grid-container">
         <div className="calendar-header-container">
